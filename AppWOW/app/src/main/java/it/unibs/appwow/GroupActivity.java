@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GroupActivity extends AppCompatActivity {
@@ -27,7 +28,7 @@ public class GroupActivity extends AppCompatActivity {
             }
         });
 
-     /*   CardView cardView = (CardView) findViewById(R.id.card_view);
+     /*  CardView cardView = (CardView) findViewById(R.id.card_view);
         TextView textView = new TextView(this);
         textView.setText("Prova 2");
 
@@ -37,6 +38,10 @@ public class GroupActivity extends AppCompatActivity {
         textView.setText("Prova 3");
 
         cardView.addView(textView2);*/
+
+
+
+
     }
 
 }
