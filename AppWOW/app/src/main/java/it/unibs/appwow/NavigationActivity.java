@@ -82,8 +82,7 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            final Intent intent = new Intent(this,GroupActivity.class);
-            startActivity(intent);
+
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 

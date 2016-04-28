@@ -96,9 +96,11 @@ public class SplashActivity extends AppCompatActivity {
             // user already logged
             destinationActivity = MenuActivity.class;
         }*/
-
-        final Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+        final Intent intent = new Intent(this,GroupActivity.class);
         startActivity(intent);
+
+        /*final Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+        startActivity(intent);*/
         finish();
     }
 

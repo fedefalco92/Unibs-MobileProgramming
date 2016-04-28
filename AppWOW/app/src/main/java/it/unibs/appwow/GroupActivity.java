@@ -27,11 +27,16 @@ public class GroupActivity extends AppCompatActivity {
             }
         });
 
-        CardView cardView = (CardView) findViewById(R.id.card_view);
+     /*   CardView cardView = (CardView) findViewById(R.id.card_view);
         TextView textView = new TextView(this);
         textView.setText("Prova 2");
 
         cardView.addView(textView);
+
+        TextView textView2 = new TextView(this);
+        textView.setText("Prova 3");
+
+        cardView.addView(textView2);*/
     }
 
 }
