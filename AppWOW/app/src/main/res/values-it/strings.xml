@@ -5,4 +5,5 @@
     <string name="send">Invia</string>
     <string name="prompt_password"></string>
     <string name="share">Condividi</string>
+    <string name="action_offline_mode">Continua senza registrazione</string>
 </resources>
