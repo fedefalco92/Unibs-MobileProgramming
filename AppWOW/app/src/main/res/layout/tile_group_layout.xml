@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+
+   >
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <it.unibs.appwow.graphicTools.SquareImageView
+        android:id="@+id/imageView_groupPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:id="@+id/group_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:background="#99000000"
+        android:layout_alignBottom="@+id/imageView_groupPhoto">
+
+        <TextView
+            android:id="@+id/textView_groupName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:text="Lorem Ipsum" />
+
+        <TextView
+            android:id="@+id/textView_personalStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="5dp"
+            android:focusable="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:textSize="10sp"
+            android:text="123456789" />
+
+        <TextView
+            android:id="@+id/group_modified_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="modified"/>
+
+    </LinearLayout>
+
+    </FrameLayout>
+
+</android.support.percent.PercentRelativeLayout>
