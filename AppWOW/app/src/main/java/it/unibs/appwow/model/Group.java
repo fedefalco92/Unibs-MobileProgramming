@@ -6,10 +6,19 @@ package it.unibs.appwow.model;
 public class Group {
     public long id;
     public String groupName;
-    public String photoUri;
+    public int photoUri;
     public long createdAt;
     public long updatedAt;
     public long idAdmin;
+
+    public Group(long id, String groupName, int photoUri, long createdAt, long updatedAt, long idAdmin) {
+        this.id = id;
+        this.groupName = groupName;
+        this.photoUri = photoUri;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.idAdmin = idAdmin;
+    }
 
     public String toString(){
         StringBuilder builder = new StringBuilder();

@@ -6,8 +6,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import it.unibs.appwow.graphicTools.GroupAdapter;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -26,6 +29,9 @@ public class GroupActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        GridView gridView = (GridView)findViewById(R.id.gridview_groups);
+        gridView.setAdapter(new GroupAdapter(this));
 
      /*  CardView cardView = (CardView) findViewById(R.id.card_view);
         TextView textView = new TextView(this);
