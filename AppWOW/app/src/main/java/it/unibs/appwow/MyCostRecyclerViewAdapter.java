@@ -1,6 +1,7 @@
 package it.unibs.appwow;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import it.unibs.appwow.CostsFragment.OnListFragmentInteractionListener;
 import it.unibs.appwow.dummy.DummyContent.Cost;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,12 +31,13 @@ public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecycl
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.cost_fragment_item, parent, false);
+                .inflate(R.layout.fragment_cost_list, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        //Log.d("MyCostRecyclerViewAdapter","Position " + position);
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
