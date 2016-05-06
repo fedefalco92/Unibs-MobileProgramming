@@ -2,17 +2,23 @@ package it.unibs.appwow.graphicTools;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibs.appwow.GroupActivity;
+import it.unibs.appwow.GroupDetailsActivity;
+import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.model.Group;
 
@@ -60,7 +66,7 @@ public class GroupAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, ViewGroup parent) {
         Holder holder = null;
         if(view==null) {
             view = mInflater.inflate(R.layout.tile_group_layout,null);
@@ -83,4 +89,6 @@ public class GroupAdapter extends BaseAdapter {
         holder.luckVoteTextView.setText("Luck: " + itemModel.luckVote);*/
         return view;
     }
+
+
 }

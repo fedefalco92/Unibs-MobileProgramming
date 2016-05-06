@@ -27,4 +27,6 @@
     <string name="share">Share</string>
     <string name="send">Send</string>
     <string name="title_activity_group">GroupActivity</string>
+    <string name="title_activity_group_details">GroupDetailsActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>

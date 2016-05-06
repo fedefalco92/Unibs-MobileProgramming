@@ -9,7 +9,10 @@
         android:id="@+id/imageView_groupPhoto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        />
+    <!--android:focusable="false"
+        android:focusableInTouchMode="false"-->
 
     <RelativeLayout
         android:id="@+id/group_details"
@@ -39,7 +42,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
-            android:focusable="true"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
             android:textSize="10sp"

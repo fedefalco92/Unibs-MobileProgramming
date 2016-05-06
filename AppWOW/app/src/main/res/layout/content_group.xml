@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="56dp">
+    <!--android:descendantFocusability="blocksDescendants"-->
+
 
     <GridView
         android:id="@+id/gridview_groups"
@@ -12,6 +14,7 @@
         android:verticalSpacing="0dp"
         android:horizontalSpacing="0dp"
         android:stretchMode="columnWidth"
-        android:numColumns="2"/>
+        android:numColumns="2"
+        />
 
 </FrameLayout>
