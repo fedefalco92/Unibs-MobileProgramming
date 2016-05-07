@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import it.unibs.appwow.dummy.DummyContent;
 
@@ -93,6 +94,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
 
     @Override
     public void onListFragmentInteraction(DummyContent.Cost item) {
+        // TODO: 07/05/2016 Qui va implementato l'evento da gestire alla selezione dell'item
+        Toast.makeText(GroupDetailsActivity.this, "Item: "+item.id, Toast.LENGTH_SHORT).show();
 
     }
 

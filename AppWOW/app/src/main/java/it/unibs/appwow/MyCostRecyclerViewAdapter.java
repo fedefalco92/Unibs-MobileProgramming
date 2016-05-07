@@ -31,15 +31,19 @@ public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecycl
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_cost_list, parent, false);
+                .inflate(R.layout.fragment_cost, parent, false);
+                // FIXME: 07/05/2016 PRIMA qui sopra c'era R.layout.fragment_cost_list...Why?
+        //Log.d("AAA","here");
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         //Log.d("MyCostRecyclerViewAdapter","Position " + position);
+
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
+
         holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -70,6 +74,8 @@ public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecycl
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
+            //Log.d("AAA",mIdView.getId()+"");
+            //Log.d("AAA2",mContentView.getId()+"");
         }
 
         @Override
