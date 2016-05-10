@@ -11,20 +11,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
-import android.widget.TextView;
 import android.widget.Toast;
 
 import it.unibs.appwow.dummy.DummyContent;
+import it.unibs.appwow.model.Amount;
 import it.unibs.appwow.model.Cost;
 
-public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener{
+public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener, AmountsFragment.OnListFragmentInteractionListener, TransactionsFragment.OnListFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -97,10 +94,20 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     @Override
     public void onListFragmentInteraction(Cost item) {
         // TODO: 07/05/2016 Qui va implementato l'evento da gestire alla selezione dell'item
-        Toast.makeText(GroupDetailsActivity.this, "Item: "+item.id, Toast.LENGTH_SHORT).show();
+        Toast.makeText(GroupDetailsActivity.this, "Item: " + item.id, Toast.LENGTH_SHORT).show();
 
     }
 
+    @Override
+    public void onListFragmentInteraction(Amount item) {
+        // TODO: 10/05/2016  Qui va implementato l'evento da gestire alla selezione dell'item
+        Toast.makeText(GroupDetailsActivity.this, "Item: " + item.id, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.Transaction item) {
+        // TODO: 10/05/2016  Qui va implementato l'evento da gestire alla selezione dell'item
+    }
 
 
     /**
@@ -118,8 +125,17 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             //return PlaceholderFragment.newInstance(position + 1)
-            Log.d(GroupDetailsActivity.class.getSimpleName(),"Position: "+position);
-            return CostsFragment.newInstance(position+1);
+            switch (position) {
+                case 0:
+                    return CostsFragment.newInstance(1);
+                case 1:
+                    return AmountsFragment.newInstance(1);
+                case 2:
+                    return TransactionsFragment.newInstance(1);
+            }
+            return null;
+            //Log.d(GroupDetailsActivity.class.getSimpleName(),"Position: "+position);
+
         }
 
 
@@ -131,6 +147,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
 
         @Override
         public CharSequence getPageTitle(int position) {
+            // TODO: 10/05/2016  STRINGHE
             switch (position) {
                 case 0:
                     return "SPESE";

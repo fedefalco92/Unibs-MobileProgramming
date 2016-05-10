@@ -80,7 +80,7 @@ public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecycl
             mItemValue = (TextView) view.findViewById(R.id.cost_fragment_item_value);
             mDate = (TextView) view.findViewById(R.id.cost_fragment_item_date);
             //Log.d("AAA",mUsername.getId()+"");
-            //Log.d("AAA2",mContentView.getId()+"");
+            //Log.d("AAA2",mUserAmount.getId()+"");
         }
 
         @Override

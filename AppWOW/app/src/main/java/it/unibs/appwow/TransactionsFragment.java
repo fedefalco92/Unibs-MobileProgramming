@@ -9,43 +9,40 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.List;
-
-import it.unibs.appwow.dummy.DummyCostContent;
-import it.unibs.appwow.model.Cost;
+import it.unibs.appwow.dummy.DummyContent;
+import it.unibs.appwow.dummy.DummyContent.Transaction;
 
 /**
  * A fragment representing a list of Items.
- * <p/>
+ * <p />
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class CostsFragment extends Fragment {
+public class TransactionsFragment extends Fragment {
+
+    // TODO: Customize parameters
+    private int mColumnCount = 1;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+
     private OnListFragmentInteractionListener mListener;
 
-    private List<Cost> costList; //da riempire
+    // TODO: Customize parameter initialization
+    @SuppressWarnings("unused")
+    public static TransactionsFragment newInstance(int columnCount) {
+        TransactionsFragment fragment = new TransactionsFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public CostsFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static CostsFragment newInstance(int columnCount) {
-        CostsFragment fragment = new CostsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
+    public TransactionsFragment() {
     }
 
     @Override
@@ -60,7 +57,7 @@ public class CostsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cost_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_transaction_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -71,7 +68,7 @@ public class CostsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyCostRecyclerViewAdapter(DummyCostContent.ITEMS, mListener)); // FIXME: 06/05/2016 da mettere contenuto giusto (listCost)
+            recyclerView.setAdapter(new MyTransactionRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
         return view;
     }
@@ -106,6 +103,6 @@ public class CostsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Cost item);
+        void onListFragmentInteraction(Transaction item);
     }
 }

@@ -5,12 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.unibs.appwow.model.Cost;
-
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
- * <p/>
+ * <p>
  * TODO: Replace all uses of this class before publishing your app.
  */
 public class DummyContent {
@@ -18,12 +16,9 @@ public class DummyContent {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<Cost> ITEMS = new ArrayList<Cost>();
+    public static final List<Transaction> ITEMS = new ArrayList<Transaction>();
 
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-   // public static final Map<String, Cost> ITEM_MAP = new HashMap<String, Cost>();
+
 
     private static final int COUNT = 25;
 
@@ -34,21 +29,27 @@ public class DummyContent {
         }
     }
 
-    private static void addItem(Cost item) {
+    private static void addItem(Transaction item) {
         ITEMS.add(item);
-        //ITEM_MAP.put(item.id, item);
     }
 
-    private static Cost createDummyItem(int position) {
-        return new Cost(position,"Item: " + position,Math.round(Math.random()*position));
+    private static Transaction createDummyItem(int position) {
+        return new Transaction(Math.random()*100%50, "a/da" , "Marco");
     }
 
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
+
+    /**
+     * A dummy item representing a piece of content.
+     */
+    public static class Transaction {
+        public double amount;
+        public String preposition;
+        public String user;
+
+        public Transaction(double amount, String prep, String user) {
+            this.amount = amount;
+            this.preposition = prep;
+            this.user = user;
         }
-        return builder.toString();
     }
 }

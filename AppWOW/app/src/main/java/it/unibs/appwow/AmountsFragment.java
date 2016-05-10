@@ -10,10 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
-import it.unibs.appwow.dummy.DummyCostContent;
-import it.unibs.appwow.model.Cost;
+import it.unibs.appwow.dummy.DummyAmountContent;
+import it.unibs.appwow.model.Amount;
 
 /**
  * A fragment representing a list of Items.
@@ -21,7 +19,7 @@ import it.unibs.appwow.model.Cost;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class CostsFragment extends Fragment {
+public class AmountsFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -29,19 +27,17 @@ public class CostsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
-    private List<Cost> costList; //da riempire
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public CostsFragment() {
+    public AmountsFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static CostsFragment newInstance(int columnCount) {
-        CostsFragment fragment = new CostsFragment();
+    public static AmountsFragment newInstance(int columnCount) {
+        AmountsFragment fragment = new AmountsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -60,7 +56,7 @@ public class CostsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cost_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_amount_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -71,7 +67,7 @@ public class CostsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyCostRecyclerViewAdapter(DummyCostContent.ITEMS, mListener)); // FIXME: 06/05/2016 da mettere contenuto giusto (listCost)
+            recyclerView.setAdapter(new MyAmountRecyclerViewAdapter(DummyAmountContent.ITEMS, mListener));
         }
         return view;
     }
@@ -106,6 +102,6 @@ public class CostsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Cost item);
+        void onListFragmentInteraction(Amount item);
     }
 }
