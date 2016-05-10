@@ -6,17 +6,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-
-import java.util.List;
 
 import it.unibs.appwow.graphicTools.GroupAdapter;
 
@@ -27,7 +20,7 @@ public class GroupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group);
+        setContentView(R.layout.fragment_group_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -53,28 +46,6 @@ public class GroupActivity extends AppCompatActivity {
                 //finish();
             }
         });
-
-
-/*
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(GroupActivity.this, "Item position:" + position, Toast.LENGTH_SHORT).show();
-
-            }
-        });*/
-     /*  CardView cardView = (CardView) findViewById(R.id.card_view);
-        TextView textView = new TextView(this);
-        textView.setText("Prova 2");
-
-        cardView.addView(textView);
-
-        TextView textView2 = new TextView(this);
-        textView.setText("Prova 3");
-
-        cardView.addView(textView2);*/
-
-
 
 
     }
