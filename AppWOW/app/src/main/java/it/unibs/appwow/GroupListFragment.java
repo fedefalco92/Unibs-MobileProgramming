@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class GroupListFragment extends Fragment {
     private String mParam2;
 
     private GridView gridView;
+    private GroupAdapter groupAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,16 +67,22 @@ public class GroupListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.content_group, container, false);
-        gridView = (GridView)v.findViewById(R.id.gridview_groups);
-        gridView.setAdapter(new GroupAdapter(getContext()));
+        return inflater.inflate(R.layout.content_group, container, false);
+    }
+
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        groupAdapter = new GroupAdapter(getContext());
+        gridView = (GridView)view.findViewById(R.id.gridview_groups);
+        gridView.setAdapter(groupAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -86,7 +94,6 @@ public class GroupListFragment extends Fragment {
                 //finish();
             }
         });
-        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -112,7 +119,13 @@ public class GroupListFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
+/*
+    @Override
+    public void onResume() {
+        super.onResume();
+        groupAdapter.notifyDataSetChanged();
+    }
+*/
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

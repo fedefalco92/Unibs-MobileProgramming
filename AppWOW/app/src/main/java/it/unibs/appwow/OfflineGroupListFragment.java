@@ -34,6 +34,7 @@ public class OfflineGroupListFragment extends Fragment{
     private String mParam2;
 
     private GridView gridView;
+    private GroupAdapter groupAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -73,8 +74,13 @@ public class OfflineGroupListFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.content_group, container, false);
-        gridView = (GridView)v.findViewById(R.id.gridview_groups);
+        return inflater.inflate(R.layout.content_group, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        gridView = (GridView)view.findViewById(R.id.gridview_groups);
         gridView.setAdapter(new OfflineGroupAdapter(getContext()));
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -87,7 +93,7 @@ public class OfflineGroupListFragment extends Fragment{
                 //finish();
             }
         });
-        return v;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

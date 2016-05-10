@@ -1,11 +1,14 @@
 package it.unibs.appwow;
 
+import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +25,9 @@ public class NavigationActivity extends AppCompatActivity
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
 
+    private String TAG_ONLINE = NavigationActivity.class.getSimpleName().concat("_ONLINE_FRAGMENT");
+    private String TAG_OFFLINE = NavigationActivity.class.getSimpleName().concat("_OFFLINE_FRAGMENT");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,21 +43,32 @@ public class NavigationActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
         mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.replace(R.id.containerView,new GroupListFragment()).commit();
 
-
-
-
+        //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
+        navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*Class destinationClass = null;
+                Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_ONLINE);
+                if(onlineFragment!= null && onlineFragment.isVisible()){
+                    destinationClass = null;
+                    Log.d(NavigationActivity.class.getSimpleName(),"ONLINE fragment visible");
+                }
+                else{
+                    destinationClass = null;
+                    Log.d(NavigationActivity.class.getSimpleName(),"OFFLINE fragment visible");
+                }
+                Intent createIntent = new Intent(NavigationActivity.this,destinationClass);
+                startActivity(createIntent);*/
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -102,12 +119,12 @@ public class NavigationActivity extends AppCompatActivity
 
         if (id == R.id.nav_online_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView,new GroupListFragment()).commit();
+            fragmentTransaction.replace(R.id.containerView,new GroupListFragment(),TAG_ONLINE).commit();
 
             // Handle the camera action
         } else if (id == R.id.nav_offline_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView,new OfflineGroupListFragment()).commit();
+            fragmentTransaction.replace(R.id.containerView,new OfflineGroupListFragment(),TAG_OFFLINE).commit();
 
         } else if (id == R.id.nav_slideshow) {
 
