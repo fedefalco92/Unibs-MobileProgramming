@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
 
     <TextView
@@ -9,42 +9,42 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="nome_utente"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/textView3"
-        android:layout_alignLeft="@+id/textView3"
-        android:layout_alignStart="@+id/textView3" />
+        android:id="@+id/cost_fragment_item_username"
+        android:layout_alignTop="@+id/cost_fragment_item_date"
+        android:layout_alignLeft="@+id/cost_fragment_item_costname"
+        android:layout_alignStart="@+id/cost_fragment_item_costname" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Cost_name"
-        android:id="@+id/textView3"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
+        android:id="@+id/cost_fragment_item_costname"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="14dp"
+        android:layout_marginStart="14dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="+30"
-        android:id="@+id/textView4"
-        android:layout_above="@+id/textView2"
+        android:id="@+id/cost_fragment_item_value"
+        android:layout_marginRight="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="15dp"
-        android:layout_marginEnd="15dp" />
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="15/17/2016"
-        android:id="@+id/textView5"
-        android:layout_below="@+id/textView4"
-        android:layout_alignRight="@+id/textView4"
-        android:layout_alignEnd="@+id/textView4" />
+        android:id="@+id/cost_fragment_item_date"
+        android:layout_below="@+id/cost_fragment_item_value"
+        android:layout_alignRight="@+id/cost_fragment_item_value"
+        android:layout_alignEnd="@+id/cost_fragment_item_value" />
 </RelativeLayout>

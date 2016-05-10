@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.unibs.appwow.model.Cost;
+
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
@@ -21,7 +23,7 @@ public class DummyContent {
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, Cost> ITEM_MAP = new HashMap<String, Cost>();
+   // public static final Map<String, Cost> ITEM_MAP = new HashMap<String, Cost>();
 
     private static final int COUNT = 25;
 
@@ -34,11 +36,11 @@ public class DummyContent {
 
     private static void addItem(Cost item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+        //ITEM_MAP.put(item.id, item);
     }
 
     private static Cost createDummyItem(int position) {
-        return new Cost(String.valueOf(position), "Item " + position, makeDetails(position));
+        return new Cost(position,"Item: " + position,Math.round(Math.random()*position));
     }
 
     private static String makeDetails(int position) {
@@ -48,25 +50,5 @@ public class DummyContent {
             builder.append("\nMore details information here.");
         }
         return builder.toString();
-    }
-
-    /**
-     * A dummy item representing a piece of content.
-     */
-    public static class Cost {
-        public final String id;
-        public final String content;
-        public final String details;
-
-        public Cost(String id, String content, String details) {
-            this.id = id;
-            this.content = content;
-            this.details = details;
-        }
-
-        @Override
-        public String toString() {
-            return content;
-        }
     }
 }

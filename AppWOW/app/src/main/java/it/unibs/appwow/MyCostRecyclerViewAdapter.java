@@ -1,16 +1,15 @@
 package it.unibs.appwow;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import it.unibs.appwow.CostsFragment.OnListFragmentInteractionListener;
-import it.unibs.appwow.dummy.DummyContent.Cost;
+import it.unibs.appwow.model.Cost;
 
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecycl
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_cost, parent, false);
+                .inflate(R.layout.cost_fragment_item, parent, false);
                 // FIXME: 07/05/2016 PRIMA qui sopra c'era R.layout.fragment_cost_list...Why?
         //Log.d("AAA","here");
         return new ViewHolder(view);
@@ -42,9 +41,11 @@ public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecycl
         //Log.d("MyCostRecyclerViewAdapter","Position " + position);
 
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
+        holder.mUsername.setText(Long.toString(mValues.get(position).idUser));
+        holder.mCostName.setText(mValues.get(position).name);
+        holder.mDate.setText(Cost.DATE_FORMAT.format(mValues.get(position).createdAt));
+        holder.mItemValue.setText(Double.toString(mValues.get(position).amount));
 
-        holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,22 +66,26 @@ public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mUsername;
+        public final TextView mCostName;
+        public final TextView mItemValue;
+        public final TextView mDate;
         public Cost mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
-            //Log.d("AAA",mIdView.getId()+"");
+            mUsername = (TextView) view.findViewById(R.id.cost_fragment_item_username);
+            mCostName = (TextView) view.findViewById(R.id.cost_fragment_item_costname);
+            mItemValue = (TextView) view.findViewById(R.id.cost_fragment_item_value);
+            mDate = (TextView) view.findViewById(R.id.cost_fragment_item_date);
+            //Log.d("AAA",mUsername.getId()+"");
             //Log.d("AAA2",mContentView.getId()+"");
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mUsername.getText() + "'";
         }
     }
 /*

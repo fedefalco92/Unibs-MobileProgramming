@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import it.unibs.appwow.dummy.DummyContent;
-import it.unibs.appwow.dummy.DummyContent.Cost;
+import it.unibs.appwow.model.Cost;
 
 /**
  * A fragment representing a list of Items.

@@ -1,9 +1,13 @@
 package it.unibs.appwow.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 /**
  * Created by Massi on 06/05/2016.
  */
 public class Cost {
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("E dd MMMM yyyy");
     public long id;
     public double amount;
     public String name;
@@ -20,6 +24,7 @@ public class Cost {
         this.id = id;
         this.name = name;
         this.amount = amount;
+        this.createdAt = System.currentTimeMillis();
     }
 
     public String toString(){
