@@ -24,9 +24,13 @@ public class NavigationActivity extends AppCompatActivity
 
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
+    private NavigationView navigationView;
 
     private String TAG_ONLINE = NavigationActivity.class.getSimpleName().concat("_ONLINE_FRAGMENT");
     private String TAG_OFFLINE = NavigationActivity.class.getSimpleName().concat("_OFFLINE_FRAGMENT");
+
+   // private String MENU_ONLINE = NavigationActivity.class.getSimpleName().concat(".MENU_ONLINE");
+   // private String MENU_OFFLINE = NavigationActivity.class.getSimpleName().concat(".MENU_OFFLINE");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,7 @@ public class NavigationActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
@@ -78,7 +82,33 @@ public class NavigationActivity extends AppCompatActivity
 
         
     }
+/**
+ * UNCOMMENT THESE LINES IF YOU WANT TO MANAGE THE STATE: PRESERVE THE FRAGMENT VISUALIZED IF
+ * THE SCREEN IS ROTATED
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        boolean onlineChecked = navigationView.getMenu().findItem(R.id.nav_online_groups).isChecked();
+        boolean offlineChecked = navigationView.getMenu().findItem(R.id.nav_offline_groups).isChecked();
+        outState.putBoolean(MENU_ONLINE,onlineChecked);
+        outState.putBoolean(MENU_OFFLINE,offlineChecked);
+        super.onSaveInstanceState(outState);
+    }
 
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        boolean onlineChecked = savedInstanceState.getBoolean(MENU_ONLINE);
+        if(onlineChecked){
+            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.containerView,new GroupListFragment(),TAG_ONLINE).commit();
+        }
+        else{
+            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.containerView,new OfflineGroupListFragment(),TAG_OFFLINE).commit();
+        }
+    }
+*/
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
