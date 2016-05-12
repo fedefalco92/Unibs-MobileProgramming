@@ -23,4 +23,5 @@ public abstract class LocalDB_DAO {
     public void close() {
         dbHelper.close();
     }
+
 }
