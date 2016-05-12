@@ -25,4 +25,8 @@ public class Group {
         builder.append(groupName);
         return builder.toString();
     }
+
+    public static Group create(long id, String groupName, int photoUri, long createdAt, long updatedAt, long idAdmin){
+        return new Group(id, groupName, photoUri, createdAt, updatedAt, idAdmin);
+    }
 }

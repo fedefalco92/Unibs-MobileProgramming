@@ -3,7 +3,7 @@ package it.unibs.appwow.database;
 import android.provider.BaseColumns;
 
 /**
- * Created by Massi on 12/05/2016.
+ * This class contains all strings for our DB.
  */
 public final class AppDB {
     public static final String DATABASE_NAME = "localDatabase.db";
@@ -12,6 +12,7 @@ public final class AppDB {
 
 
     private AppDB() {
+
     }
 
     public static class Users implements BaseColumns {

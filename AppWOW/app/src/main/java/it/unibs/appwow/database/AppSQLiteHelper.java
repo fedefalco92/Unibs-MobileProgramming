@@ -20,6 +20,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
         Users.COLUMN_FULLNAME + " TEXT NOT NULL, " +
         Users.COLUMN_EMAIL + " TEXT NOT NULL, "+
         " PRIMARY KEY( "+ Users._ID + "));";
+
     private static final String TABLE_GROUPS_CREATE = "CREATE TABLE " + Groups.TABLE_GROUPS + " ("+
             Groups._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
             Groups.COLUMN_ID_ADMIN + " INTEGER, " +
@@ -28,6 +29,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Groups.COLUMN_CREATED_AT + " NUMERIC, " +
             Groups.COLUMN_UPDATED_AT + " NUMERIC " +
             ");";
+
     private static final String TABLE_COSTS_CREATE  = "CREATE TABLE " + Costs.TABLE_COSTS + "(" +
             Costs._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
             Costs.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
@@ -50,6 +52,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Balancings.COLUMN_COSTS_ID + " TEXT, "  +
             "FOREIGN KEY (" + Balancings.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ")" +
             ");";
+
     private static final String TABLE_TRANSACTIONS_CREATE = "CREATE TABLE " + Transactions.TABLE_TRANSACTIONS + " ("+
             Transactions._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
             Transactions.COLUMN_ID_BALANCING + " INTEGER NOT NULL, " +
@@ -93,8 +96,17 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    //from Object to database
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if(!db.isReadOnly()){
+            // Enable foreign key contraints
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
+    }
 
+    //from Object to database
+    // TODO: 12/05/16 da spostare da qualche parte ...
     private ContentValues costToValues(Cost data) {
         ContentValues values = new ContentValues();
         values.put(Costs._ID, data.id);
