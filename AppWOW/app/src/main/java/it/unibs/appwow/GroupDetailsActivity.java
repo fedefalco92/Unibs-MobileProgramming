@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,8 @@ import it.unibs.appwow.model.Amount;
 import it.unibs.appwow.model.Cost;
 
 public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener, AmountsFragment.OnListFragmentInteractionListener, TransactionsFragment.OnListFragmentInteractionListener {
+
+    private final String TAG_LOG = GroupDetailsActivity.class.getSimpleName();
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -60,6 +63,25 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        mViewPager.setCurrentItem(1);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //Log.d(TAG_LOG,"Page Scrolled : "+position);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                //Log.d(TAG_LOG,"Page Selected : "+position);
+                GroupDetailsActivity.this.invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +92,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         });
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

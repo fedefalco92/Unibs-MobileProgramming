@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -52,7 +53,7 @@ public class NavigationActivity extends AppCompatActivity
 
         mFragmentManager = getSupportFragmentManager();
         mFragmentTransaction = mFragmentManager.beginTransaction();
-        mFragmentTransaction.replace(R.id.containerView,new GroupListFragment()).commit();
+        mFragmentTransaction.replace(R.id.containerView, new GroupListFragment(),TAG_ONLINE).commit();
 
         //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
         navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
@@ -61,18 +62,20 @@ public class NavigationActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Class destinationClass = null;
+                // TODO: 12/05/2016 Gestione aggiunta gruppo online oppure offline modificando la classe di destinazione
+                Class destinationClass = null;
                 Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_ONLINE);
+                Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_OFFLINE);
                 if(onlineFragment!= null && onlineFragment.isVisible()){
                     destinationClass = null;
                     Log.d(NavigationActivity.class.getSimpleName(),"ONLINE fragment visible");
                 }
-                else{
+                else if(offlineFragment!= null && offlineFragment.isVisible()){
                     destinationClass = null;
                     Log.d(NavigationActivity.class.getSimpleName(),"OFFLINE fragment visible");
                 }
-                Intent createIntent = new Intent(NavigationActivity.this,destinationClass);
-                startActivity(createIntent);*/
+                //Intent createIntent = new Intent(NavigationActivity.this,destinationClass);
+                //startActivity(createIntent);
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
