@@ -1,6 +1,7 @@
 package it.unibs.appwow;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+
+import it.unibs.appwow.database.AppSQLiteHelper;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -18,6 +21,9 @@ public class SplashActivity extends AppCompatActivity {
     private static final String TAG_LOG = SplashActivity.class.getName();
 
     private long mStartTime = -1L; // first visualization instant
+
+   // private AppSQLiteHelper database;
+   // private SQLiteDatabase db;
 
     @Override
     protected void onSaveInstanceState(Bundle outState)
@@ -81,6 +87,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onDestroy()
     {
         super.onDestroy();
+       // db.close();
         Log.d(TAG_LOG, "Activity destroyed");
     }
 
@@ -97,12 +104,18 @@ public class SplashActivity extends AppCompatActivity {
             destinationActivity = MenuActivity.class;
         }*/
         //final Intent intent = new Intent(this,GroupActivity.class);
-        final Intent intent = new Intent(this,NavigationActivity.class);
-        startActivity(intent);
+        //database = new AppSQLiteHelper(getApplicationContext());
+      //  db = database.getWritableDatabase();
+      //  if(db != null) {
+            final Intent intent = new Intent(this, NavigationActivity.class);
+            startActivity(intent);
+      //  }
 
         /*final Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
         startActivity(intent);*/
         finish();
     }
+
+
 
 }

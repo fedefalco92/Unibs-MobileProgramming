@@ -1,10 +1,13 @@
 package it.unibs.appwow.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDB.*;
+import it.unibs.appwow.model.Cost;
+import it.unibs.appwow.model.Group;
 
 /**
  * Created by Massi on 12/05/2016.
@@ -88,9 +91,36 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
         } finally {
             database.endTransaction();
         }
-
-
     }
+
+    //from Object to database
+
+    private ContentValues costToValues(Cost data) {
+        ContentValues values = new ContentValues();
+        values.put(Costs._ID, data.id);
+        values.put(Costs.COLUMN_AMOUNT,data.amount);
+        values.put(Costs.COLUMN_NAME,data.name);
+        values.put(Costs.COLUMN_NOTES,data.notes);
+        values.put(Costs.COLUMN_CREATED_AT,data.createdAt);
+        values.put(Costs.COLUMN_ARCHIVED_AT,data.archivedAt);
+        values.put(Costs.COLUMN_ID_GROUP,data.idGroup);
+        values.put(Costs.COLUMN_ID_USER,data.idUser);
+        values.put(Costs.COLUMN_POSITION,data.position);
+        values.put(Costs.COLUMN_AMOUNT_DETAILS,data.amountDetails);
+        return values;
+    }
+
+    private ContentValues groupToValues(Group data) {
+        ContentValues values = new ContentValues();
+        values.put(Groups._ID, data.id);
+        values.put(Groups.COLUMN_NAME,data.groupName);
+        values.put(Groups.COLUMN_PHOTO,data.photoUri);
+        values.put(Groups.COLUMN_CREATED_AT,data.createdAt);
+        values.put(Groups.COLUMN_UPDATED_AT,data.updatedAt);
+        values.put(Groups.COLUMN_ID_ADMIN,data.idAdmin);
+        return values;
+    }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
