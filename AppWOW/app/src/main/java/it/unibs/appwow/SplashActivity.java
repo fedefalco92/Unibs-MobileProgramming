@@ -94,6 +94,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void goAhead()
     {
+        /* commento*/
        /* // check if the user is already logged
         final UserModel userModel = UserModel.load(this);
         Class destinationActivity = null;
