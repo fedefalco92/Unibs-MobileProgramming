@@ -1,6 +1,7 @@
 package it.unibs.appwow;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
@@ -107,12 +108,16 @@ public class SplashActivity extends AppCompatActivity {
         //database = new AppSQLiteHelper(getApplicationContext());
       //  db = database.getWritableDatabase();
       //  if(db != null) {
-            final Intent intent = new Intent(this, NavigationActivity.class);
-            startActivity(intent);
-      //  }
-
-        /*final Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-        startActivity(intent);*/
+        Class destinationClass = null;
+        SharedPreferences sharedPreferences = getSharedPreferences(getPackageName(),MODE_PRIVATE);
+        String userId = sharedPreferences.getString("logged_in",null);
+        if(userId != null) {
+            destinationClass = NavigationActivity.class;
+        }
+        else{
+            destinationClass = LoginActivity.class;
+        }
+        final Intent intent = new Intent(this, destinationClass);
         finish();
     }
 
