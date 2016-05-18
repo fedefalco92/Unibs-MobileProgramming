@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import it.unibs.appwow.database.AppSQLiteHelper;
+import it.unibs.appwow.model.parc.User;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -109,7 +111,7 @@ public class SplashActivity extends AppCompatActivity {
         //database = new AppSQLiteHelper(getApplicationContext());
       //  db = database.getWritableDatabase();
       //  if(db != null) {
-        Class destinationClass = null;
+        /*Class destinationClass = null;
         SharedPreferences sharedPreferences = getSharedPreferences(getPackageName(),MODE_PRIVATE);
         String userId = sharedPreferences.getString("logged_in",null);
         if(userId != null) {
@@ -119,6 +121,21 @@ public class SplashActivity extends AppCompatActivity {
             destinationClass = LoginActivity.class;
         }
         final Intent intent = new Intent(this, destinationClass);
+        startActivity(intent);
+        finish();
+        */
+        final User userModel = User.load(this);
+        //final User userModel = User.create(1);
+        Class destinationActivity = null;
+        if(userModel == null) {
+            // user not yet logged
+            destinationActivity = LoginActivity.class;
+        } else {
+            // user already logged
+            destinationActivity = NavigationActivity.class;
+        }
+
+        final Intent intent = new Intent(this, destinationActivity);
         startActivity(intent);
         finish();
     }

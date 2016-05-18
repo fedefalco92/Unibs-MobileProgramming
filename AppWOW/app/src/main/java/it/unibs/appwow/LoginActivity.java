@@ -322,6 +322,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             try {
                 // Simulate network access.
                 Thread.sleep(2000);
+
+                // TODO: 18/05/2016  CONNETTERE ALLA RETE PASSANDO USERNAME E PASSWORD
             } catch (InterruptedException e) {
                 return false;
             }
@@ -344,6 +346,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                // TODO: 18/05/2016 SALVARE SHARED PREFERENCES
+                Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
+                startActivity(i);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

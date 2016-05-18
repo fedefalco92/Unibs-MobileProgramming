@@ -102,6 +102,7 @@ public class GroupListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getActivity().setTitle(R.string.online_groups_string);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

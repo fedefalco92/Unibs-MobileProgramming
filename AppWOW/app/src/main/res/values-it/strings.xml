@@ -6,4 +6,7 @@
     <string name="prompt_password"></string>
     <string name="share">Condividi</string>
     <string name="action_offline_mode">Continua senza registrazione</string>
+    <string name="welcome_message">Benvenuto in AppWOW</string>
+    <string name="request_for_fullname">Inserisci il tuo nome</string>
+    <string name="save">Salva</string>
 </resources>
