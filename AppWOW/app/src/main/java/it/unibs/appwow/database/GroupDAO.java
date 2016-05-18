@@ -44,22 +44,24 @@ public class GroupDAO implements LocalDB_DAO {
     private ContentValues groupToValues(Group data) {
         ContentValues values = new ContentValues();
         values.put(AppDB.Groups._ID, data.id);
+        values.put(AppDB.Groups.COLUMN_ID_ADMIN, data.idAdmin);
         values.put(AppDB.Groups.COLUMN_NAME, data.groupName);
         values.put(AppDB.Groups.COLUMN_PHOTO, data.photoUri);
         values.put(AppDB.Groups.COLUMN_CREATED_AT, data.createdAt);
         values.put(AppDB.Groups.COLUMN_UPDATED_AT, data.updatedAt);
-        values.put(AppDB.Groups.COLUMN_ID_ADMIN, data.idAdmin);
+
         return values;
     }
 
     // from database to Object
     private Group cursorToGroup(Cursor cursor) {
         long id = cursor.getLong(0);
-        String groupName = cursor.getString(1);
-        int photoUri = cursor.getInt(2);
-        long createdAt = cursor.getLong(3);
-        long updatedAt = cursor.getLong(4);
-        long idAdmin = cursor.getLong(5);
+        long idAdmin = cursor.getLong(1);
+        String groupName = cursor.getString(2);
+        int photoUri = cursor.getInt(3);
+        long createdAt = cursor.getLong(4);
+        long updatedAt = cursor.getLong(5);
+
 
         return Group.create(id,groupName, photoUri, createdAt, updatedAt, idAdmin);
     }

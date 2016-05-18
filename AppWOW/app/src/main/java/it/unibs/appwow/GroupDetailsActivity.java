@@ -50,7 +50,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        setTitle(R.string.group_details_string);
+        Bundle b = getIntent().getExtras();
+        setTitle(b.getString("GroupName"));
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.

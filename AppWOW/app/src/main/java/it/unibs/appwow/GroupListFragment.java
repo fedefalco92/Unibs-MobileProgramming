@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import it.unibs.appwow.graphicTools.GroupAdapter;
+import it.unibs.appwow.model.Group;
 
 
 /**
@@ -89,7 +90,9 @@ public class GroupListFragment extends Fragment {
                                     int position, long id) {
                 //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
                 final Intent i = new Intent(getContext(), GroupDetailsActivity.class);
-                i.putExtra("GroupID", gridView.getAdapter().getItemId(position));
+                Group group = (Group)gridView.getAdapter().getItem(position);
+                i.putExtra("GroupID", group.id);
+                i.putExtra("GroupName",group.groupName);
                 startActivity(i);
                 //finish();
             }
@@ -99,7 +102,6 @@ public class GroupListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle(R.string.online_groups_string);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -147,3 +149,5 @@ public class GroupListFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
+
+// CIAONE DA Maffi: TVBFXXXXXXXXX <3
