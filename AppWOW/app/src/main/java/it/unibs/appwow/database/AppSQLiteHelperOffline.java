@@ -60,7 +60,7 @@ public class AppSQLiteHelperOffline extends SQLiteOpenHelper {
 
 
     public AppSQLiteHelperOffline(Context context) {
-        super(context, AppDB.DATABASE_NAME, null, AppDB.DATABASE_VERSION);
+        super(context, AppDBOffline.DATABASE_NAME, null, AppDB.DATABASE_VERSION);
     }
 
     @Override

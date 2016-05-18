@@ -15,11 +15,11 @@ import it.unibs.appwow.model.Group;
 public class AppSQLiteHelper extends SQLiteOpenHelper {
 
     // database creation (tables) SQL statement
-    private static final String TABLE_USERS_CREATE = "CREATE TABLE " + Users.TABLE_USERS + " ("+
+    private static final String TABLE_USERS_CREATE = "CREATE TABLE " + Users.TABLE_USERS + " ( "+
         Users._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
         Users.COLUMN_FULLNAME + " TEXT NOT NULL, " +
-        Users.COLUMN_EMAIL + " TEXT NOT NULL, "+
-        " PRIMARY KEY( "+ Users._ID + "));";
+        Users.COLUMN_EMAIL + " TEXT NOT NULL "+
+        " );";
 
     private static final String TABLE_GROUPS_CREATE = "CREATE TABLE " + Groups.TABLE_GROUPS + " ("+
             Groups._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +

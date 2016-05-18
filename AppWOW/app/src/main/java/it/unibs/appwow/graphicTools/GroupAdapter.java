@@ -20,6 +20,7 @@ import it.unibs.appwow.GroupActivity;
 import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
+import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.model.Group;
 
 /**
@@ -27,8 +28,9 @@ import it.unibs.appwow.model.Group;
  */
 public class GroupAdapter extends BaseAdapter {
 
-    private final List<Group> mItems = new ArrayList<Group>();
+    private List<Group> mItems = new ArrayList<Group>();
     private final LayoutInflater mInflater;
+    private GroupDAO dao = new GroupDAO();
 
     private class Holder {
         ImageView groupImageView;
@@ -39,7 +41,11 @@ public class GroupAdapter extends BaseAdapter {
 
     public GroupAdapter(Context context){
         mInflater = LayoutInflater.from(context);
-        mItems.add(new Group(1,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
+        dao.open();
+        mItems = dao.getAllGroups();
+        dao.close();
+
+        /*mItems.add(new Group(1,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
         mItems.add(new Group(2,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
         mItems.add(new Group(3,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
         mItems.add(new Group(4,"priasdasdasmo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
@@ -47,7 +53,10 @@ public class GroupAdapter extends BaseAdapter {
         mItems.add(new Group(6,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
         mItems.add(new Group(7,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
         mItems.add(new Group(8,"priasdasdasmo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
+        */
+
     }
+
 
     @Override
     public int getCount() {
