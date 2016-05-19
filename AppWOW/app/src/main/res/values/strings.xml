@@ -47,5 +47,9 @@
     <string name="create_group">Create</string>
     <string name="add_member_button">Add member</string>
     <string name="err_no_connection">No internet connection. Try again.</string>
+    <string name="registration_message">Registration</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="login">Login</string>
 
 </resources>

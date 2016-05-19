@@ -9,4 +9,5 @@ public final class WebServiceUri {
     public final static Uri BASE_ADDRESS = Uri.parse("http://api.bresciawebproject.it");
     public final static Uri USERS_URI = Uri.withAppendedPath(BASE_ADDRESS, "users");
     public final static Uri LOGIN_URI = Uri.withAppendedPath(USERS_URI, "login");
+    public final static Uri CHECK_USER_URI = Uri.withAppendedPath(USERS_URI, "check-user");
 }

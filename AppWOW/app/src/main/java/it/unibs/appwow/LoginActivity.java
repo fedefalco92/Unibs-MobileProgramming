@@ -46,6 +46,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibs.appwow.model.parc.User;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 
@@ -62,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known user names and passwords.
+     * A dummy authentication store containing known mUser names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
@@ -192,7 +193,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
+        // Check for a valid password, if the mUser entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
@@ -216,7 +217,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            // perform the mUser login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
@@ -272,7 +273,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
+                // Retrieve data rows for the device mUser's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
 
@@ -282,7 +283,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 .CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
+                // a primary email address if the mUser hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
@@ -325,12 +326,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
-     * the user.
+     * the mUser.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
+        private JSONObject mResjs = null;
+        private boolean mNewUser = false;
+        private User mUser = null;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -340,13 +344,111 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-            String response = "";
-            Uri uri = WebServiceUri.LOGIN_URI;
 
+            boolean userExists = checkUser(mEmail);
+            if(userExists){
+                String response = "";
+                Uri uri = WebServiceUri.LOGIN_URI;
+                try {
+                    URL url = new URL(uri.toString());
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000);
+                    conn.setConnectTimeout(15000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+
+                    Uri.Builder builder = new Uri.Builder()
+                            .appendQueryParameter("email", mEmail)
+                            .appendQueryParameter("password", mPassword);
+                    String query = builder.build().getEncodedQuery();
+                    OutputStream os = conn.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                    writer.write(query);
+                    writer.flush();
+                    writer.close();
+                    os.close();
+
+                    conn.connect();
+                    int responseCode = conn.getResponseCode();
+                    if(responseCode == HttpURLConnection.HTTP_OK){
+                        String line = "";
+                        BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        while ((line=br.readLine()) != null) {
+                            response+=line;
+                        }
+                    } else {
+                        response = "";
+                    }
+                    if(!response.isEmpty()){
+                        //response = response.substring(1,response.length()-1);
+                        mResjs = new JSONObject(response);
+                        Log.d("risposta", mResjs.toString(1));
+                    } else {
+                        return false;
+                    }
+                    Log.d("RISPOSTA_STRING", response);
+
+                    // TODO: 19/05/2016 SALVARE SHARED
+                    int id = mResjs.getInt("id");
+                    String fullname = mResjs.getString("fullName");
+                    mUser = User.create(id).withEmail(mEmail).withFullName(fullname);
+                    mUser.save(MyApplication.getAppContext());
+
+                } catch (MalformedURLException e){
+                    return false;
+                } catch (IOException e){
+                    return false;
+                } catch (JSONException e){
+                    e.printStackTrace();
+                    return false;
+                }
+                return true;
+            } else {
+                mNewUser = true;
+                //costruisco un User con i dati inseriti nel form
+                mUser = new User(mEmail, mPassword);
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mAuthTask = null;
+            showProgress(false);
+
+            if (success) {
+                if(mNewUser){
+                    Intent ri = new Intent(LoginActivity.this, RegistrationActivity.class);
+                    ri.putExtra("user", mUser);
+                    startActivity(ri);
+                } else {
+                    Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            } else {
+                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.requestFocus();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }
+
+        /**
+         * checks if the mUser with email exists
+         * @param email
+         * @return true if mUser exists
+         */
+        private boolean checkUser(String email){
+            String response = "";
+            Uri uri = WebServiceUri.CHECK_USER_URI;
+            boolean userExists = false;
             try {
-                // Simulate network access.
-                //Thread.sleep(2000);
-                // TODO: 18/05/2016  CONNETTERE ALLA RETE PASSANDO USERNAME E PASSWORD
                 URL url = new URL(uri.toString());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
@@ -356,8 +458,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 conn.setDoOutput(true);
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("email", mEmail)
-                        .appendQueryParameter("password", mPassword);
+                        .appendQueryParameter("email", mEmail);
                 String query = builder.build().getEncodedQuery();
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -377,52 +478,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 } else {
                     response = "";
                 }
-                // FIXME: 19/05/2016 PARENTESI QUADRE 
-                response = response.substring(1,response.length()-1);
-                JSONObject obj = new JSONObject(response);
-                Log.d("RISPOSTA_STRING", response);
-                Log.d("risposta", obj.toString(1));
+
+                if(!response.isEmpty()){
+                    Log.d("RISPOSTA_CHECK_USER", response);
+                    return true;
+                } else {
+                    return false;
+                }
 
             } catch (MalformedURLException e){
                 return false;
             } catch (IOException e){
                 return false;
-            } catch (JSONException e){
-                return false;
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                // TODO: 18/05/2016 SALVARE SHARED PREFERENCES
-                Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
-                startActivity(i);
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
         }
     }
 }

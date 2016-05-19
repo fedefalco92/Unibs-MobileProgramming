@@ -189,4 +189,9 @@ public class User implements Parcelable{
                 Context.MODE_PRIVATE).edit().clear().commit();
     }
 
+    @Override
+    public String toString(){
+        return "Fullname: " + mFullName + ", Email: " + mEmail;
+    }
+
 }

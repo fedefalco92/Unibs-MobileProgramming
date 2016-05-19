@@ -20,12 +20,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import it.unibs.appwow.model.parc.User;
+
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,GroupListFragment.OnFragmentInteractionListener,OfflineGroupListFragment.OnFragmentInteractionListener {
 
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
     private NavigationView navigationView;
+    private User mUser;
 
     private String TAG_ONLINE = NavigationActivity.class.getSimpleName().concat("_ONLINE_FRAGMENT");
     private String TAG_OFFLINE = NavigationActivity.class.getSimpleName().concat("_OFFLINE_FRAGMENT");
@@ -50,6 +53,15 @@ public class NavigationActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //controllo presenza utente per disabilitare eventualmente il logout
+        mUser = User.load(MyApplication.getAppContext());
+        if(mUser == null){
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
+        } else {
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+        }
+
 
         mFragmentManager = getSupportFragmentManager();
         mFragmentTransaction = mFragmentManager.beginTransaction();
@@ -162,10 +174,19 @@ public class NavigationActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_logout) {
+            // TODO: 19/05/2016 PULIRE IL DATABASE QUANDO SI FA LOGOUT
+            User currentUser = User.load(MyApplication.getAppContext());
+            currentUser.logout(MyApplication.getAppContext());
+            Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
+            startActivity(login);
+            finish();
+        } else if (id == R.id.nav_login){
+            Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
+            startActivity(login);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
