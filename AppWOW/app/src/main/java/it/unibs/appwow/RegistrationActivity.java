@@ -18,6 +18,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         User received = (User) getIntent().getExtras().getParcelable("user");
