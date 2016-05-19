@@ -3,23 +3,22 @@ package it.unibs.appwow;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,9 +28,26 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import it.unibs.appwow.services.WebServiceRequest;
+import it.unibs.appwow.services.WebServiceUri;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -87,7 +103,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                if(WebServiceRequest.checkNetwork()){
+                    attemptLogin();
+                } else {
+                    String err_no_connection_message = getResources().getString(R.string.err_no_connection);
+                    Toast.makeText(LoginActivity.this, err_no_connection_message,
+                            Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -208,7 +230,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return true;// password.length() > 4;
     }
 
     /**
@@ -318,13 +340,54 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+            String response = "";
+            Uri uri = WebServiceUri.LOGIN_URI;
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
-
+                //Thread.sleep(2000);
                 // TODO: 18/05/2016  CONNETTERE ALLA RETE PASSANDO USERNAME E PASSWORD
-            } catch (InterruptedException e) {
+                URL url = new URL(uri.toString());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("email", mEmail)
+                        .appendQueryParameter("password", mPassword);
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+                int responseCode = conn.getResponseCode();
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String line = "";
+                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response+=line;
+                    }
+                } else {
+                    response = "";
+                }
+                // FIXME: 19/05/2016 PARENTESI QUADRE 
+                response = response.substring(1,response.length()-1);
+                JSONObject obj = new JSONObject(response);
+                Log.d("RISPOSTA_STRING", response);
+                Log.d("risposta", obj.toString(1));
+
+            } catch (MalformedURLException e){
+                return false;
+            } catch (IOException e){
+                return false;
+            } catch (JSONException e){
                 return false;
             }
 

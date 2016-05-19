@@ -46,5 +46,6 @@
     <string name="go_ahead_menu">Go ahead</string>
     <string name="create_group">Create</string>
     <string name="add_member_button">Add member</string>
+    <string name="err_no_connection">No internet connection. Try again.</string>
 
 </resources>

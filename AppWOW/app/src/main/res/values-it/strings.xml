@@ -13,4 +13,5 @@
     <string name="go_ahead_menu">Avanti</string>
     <string name="create_group">Crea</string>
     <string name="add_member_button">Aggiungi</string>
+    <string name="err_no_connection">Nessuna connessione di rete. Riprova.</string>
 </resources>
