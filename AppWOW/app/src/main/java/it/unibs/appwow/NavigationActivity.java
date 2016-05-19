@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import it.unibs.appwow.model.parc.User;
 
@@ -60,6 +61,10 @@ public class NavigationActivity extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
         } else {
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+            TextView fullname = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_fullname);
+            TextView email = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_email);
+            fullname.setText(mUser.getFullName());
+            email.setText(mUser.getEmail());
         }
 
 

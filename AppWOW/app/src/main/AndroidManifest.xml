@@ -46,7 +46,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.unibs.appwow.GroupActivity" />
         </activity>
-        <activity android:name=".RegistrationActivity" />
+        <activity
+            android:name=".RegistrationActivity"
+            android:label="@string/title_activity_registration_activity"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.unibs.appwow.LoginActivity" />
+        </activity>
         <activity android:name=".AddGroupActivity" />
         <activity android:name=".AddGroupMembersActivity"></activity>
     </application>
