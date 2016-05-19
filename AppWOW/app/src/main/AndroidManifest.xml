@@ -33,10 +33,12 @@
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
@@ -46,6 +48,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.unibs.appwow.GroupActivity" />
         </activity>
+
         <activity
             android:name=".RegistrationActivity"
             android:label="@string/title_activity_registration_activity"
@@ -55,6 +58,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.unibs.appwow.LoginActivity" />
         </activity>
+
         <activity android:name=".AddGroupActivity" />
         <activity android:name=".AddGroupMembersActivity"></activity>
     </application>

@@ -25,7 +25,7 @@ public class RegistrationActivity extends AppCompatActivity {
         Log.d("UTENTE_RICEVUTO", received.toString());
         // TODO: 19/05/2016  precompilare form
         
-        Button save = (Button) findViewById(R.id.button_save_fullname);
+        Button save = (Button) findViewById(R.id.activity_registration_confirm);
         // TODO: 18/05/2016 AGGIUNGERE LISTENER
     }
 }
