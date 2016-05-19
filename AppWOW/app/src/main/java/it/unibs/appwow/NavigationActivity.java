@@ -67,17 +67,16 @@ public class NavigationActivity extends AppCompatActivity
                 Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_ONLINE);
                 Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_OFFLINE);
                 if(onlineFragment!= null && onlineFragment.isVisible()){
-                    destinationClass = null;
+                    destinationClass = AddGroupActivity.class;
                     Log.d(NavigationActivity.class.getSimpleName(),"ONLINE fragment visible");
                 }
                 else if(offlineFragment!= null && offlineFragment.isVisible()){
                     destinationClass = null;
                     Log.d(NavigationActivity.class.getSimpleName(),"OFFLINE fragment visible");
                 }
-                //Intent createIntent = new Intent(NavigationActivity.this,destinationClass);
-                //startActivity(createIntent);
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent createIntent = new Intent(NavigationActivity.this,destinationClass);
+                startActivity(createIntent);
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG.setAction("Action", null).show();
             }
         });
 

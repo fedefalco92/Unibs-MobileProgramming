@@ -9,4 +9,8 @@
     <string name="welcome_message">Benvenuto in AppWOW</string>
     <string name="request_for_fullname">Inserisci il tuo nome</string>
     <string name="save">Salva</string>
+    <string name="prompt_group_name">Nome del gruppo</string>
+    <string name="go_ahead_menu">Avanti</string>
+    <string name="create_group">Crea</string>
+    <string name="add_member_button">Aggiungi</string>
 </resources>

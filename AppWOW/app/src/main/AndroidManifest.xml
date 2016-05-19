@@ -45,7 +45,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.unibs.appwow.GroupActivity" />
         </activity>
-        <activity android:name=".RegistrationActivity"></activity>
+        <activity android:name=".RegistrationActivity" />
+        <activity android:name=".AddGroupActivity" />
+        <activity android:name=".AddGroupMembersActivity"></activity>
     </application>
 
 </manifest>
