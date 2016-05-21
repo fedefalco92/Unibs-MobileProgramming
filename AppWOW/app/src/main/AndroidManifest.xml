@@ -19,7 +19,7 @@
         <activity android:name=".MainActivity" />
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,7 +43,7 @@
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
             android:parentActivityName=".GroupActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.unibs.appwow.GroupActivity" />
