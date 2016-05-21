@@ -6,6 +6,6 @@
         android:id="@+id/add_new_cost"
         android:title="@string/title_add_cost"
         app:showAsAction="always"
-        android:icon="@drawable/ic_add_white_24px"
+        android:icon="@drawable/ic_add_white_24dp"
         />
 </menu>
