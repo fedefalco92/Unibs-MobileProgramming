@@ -1,18 +1,56 @@
 package it.unibs.appwow;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 public class AddGroupActivity extends AppCompatActivity {
+
+    private int SELECT_PICTURE_CODE = 100;
+    private ImageView groupImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
+        groupImage = (ImageView) findViewById(R.id.imageView2);
+        groupImage.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Intent intentPhoto = new Intent(Intent.ACTION_GET_CONTENT);
+                intentPhoto.setType("image/*");
+                startActivityForResult(Intent.createChooser(intentPhoto,getResources().getString(R.string.select_image_group)),SELECT_PICTURE_CODE);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_PICTURE_CODE) {
+                Uri selectedImage = data.getData();
+                String path = getPath(selectedImage);
+                Drawable image = Drawable.createFromPath(path);
+                groupImage.setImageDrawable(image);
+                Toast.makeText(AddGroupActivity.this, "Path: "+path, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -36,5 +74,18 @@ public class AddGroupActivity extends AppCompatActivity {
             default:
                 return true;
         }
+    }
+
+    private String getPath(Uri uri){
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri,projection,null,null,null);
+        if(cursor==null){
+            return null;
+        }
+        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String s = cursor.getString(columnIndex);
+        cursor.close();
+        return s;
     }
 }

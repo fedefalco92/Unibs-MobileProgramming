@@ -55,4 +55,6 @@
     <string name="prompt_fullname">Fullname</string>
     <string name="email">email</string>
 
+    <string name="select_image_group">Select a picture for the group</string>
+
 </resources>
