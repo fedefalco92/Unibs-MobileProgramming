@@ -28,10 +28,62 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_member_button"
-        android:id="@+id/add_member_button"
+        android:text="@string/verify_member"
+        android:id="@+id/verify_member"
         android:layout_below="@+id/view2"
         android:layout_alignRight="@+id/view2"
         android:layout_alignEnd="@+id/view2" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView_members"
+        android:layout_below="@+id/verify_member"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="149dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Actual members"
+        android:id="@+id/actual_members_label"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Match found"
+        android:id="@+id/match_label"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/verify_member"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="User"
+        android:id="@+id/username_found"
+        android:visibility="invisible"
+        android:layout_below="@+id/match_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Member"
+        android:id="@+id/button_add_member"
+        android:visibility="invisible"
+        android:layout_alignBottom="@+id/username_found"
+        android:layout_alignRight="@+id/verify_member"
+        android:layout_alignEnd="@+id/verify_member" />
 
 </RelativeLayout>

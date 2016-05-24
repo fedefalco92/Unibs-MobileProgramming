@@ -15,14 +15,19 @@ public class MyApplication extends Application {
     private static Context context;
     private RequestQueue mRequestQueue;
 
+    private static MyApplication mInstance;
+
     public void onCreate() {
         super.onCreate();
+        mInstance = this;
         MyApplication.context = getApplicationContext();
     }
 
     public static Context getAppContext() {
         return MyApplication.context;
     }
+
+    public static MyApplication getInstance() { return mInstance; }
 
     public static final String TAG = MyApplication.class.getSimpleName();
 

@@ -48,6 +48,10 @@ public class User implements Parcelable{
     private String mPassword;
     private String mEmail;
 
+    //added to handle the case of an administrator (of any group...)
+
+    private boolean mAdmin;
+
     /**
      * Read from the parcelized object.
      *
@@ -109,11 +113,13 @@ public class User implements Parcelable{
         {
             dest.writeByte(NOT_PRESENT);
         }
+
     }
 
     public User(String email, String password){
         this.mEmail = email;
         this.mPassword = password;
+        this.mAdmin = false;
     }
 
     private User(int id){
@@ -144,7 +150,13 @@ public class User implements Parcelable{
     }
 
 
+    public boolean ismAdmin() {
+        return mAdmin;
+    }
 
+    public void setmAdmin(){
+        mAdmin = true;
+    }
 
     public boolean isLogged(){
         return !TextUtils.isEmpty(this.mFullName);
@@ -191,7 +203,13 @@ public class User implements Parcelable{
 
     @Override
     public String toString(){
-        return "Fullname: " + mFullName + ", Email: " + mEmail;
+        if(!mAdmin){
+            return "Fullname: " + mFullName + ", Email: " + mEmail;
+        }
+        else{
+            return "Fullname: " + mFullName + ", Email: " + mEmail + " ADMIN";
+        }
+
     }
 
 }

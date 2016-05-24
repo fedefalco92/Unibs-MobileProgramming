@@ -45,7 +45,7 @@
     <string name="prompt_group_name">Group name</string>
     <string name="go_ahead_menu">Go ahead</string>
     <string name="create_group">Create</string>
-    <string name="add_member_button">Add member</string>
+    <string name="verify_member">Verify e-mail</string>
     <string name="err_no_connection">No internet connection. Try again.</string>
     <string name="registration_message">Registration</string>
     <string name="settings">Settings</string>
@@ -56,5 +56,6 @@
     <string name="email">email</string>
 
     <string name="select_image_group">Select a picture for the group</string>
+    <string name="delete">Delete</string>
 
 </resources>
