@@ -60,7 +60,16 @@
         </activity>
 
         <activity android:name=".AddGroupActivity" />
-        <activity android:name=".AddGroupMembersActivity"></activity>
+
+        <activity android:name=".AddGroupMembersActivity"
+            android:label="Add Group Members"
+            android:parentActivityName=".AddGroupActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.unibs.appwow.GroupActivity" />
+
+        </activity>
     </application>
 
 </manifest>

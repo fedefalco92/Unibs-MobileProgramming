@@ -52,7 +52,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         mSelectedItems = new HashSet<User>();
         users = new ArrayList<User>();
 
-        setContentView(R.layout.activity_add_group_members);
+        setContentView(R.layout.activity_add_group_members2);
 
         membersList = (ListView) findViewById(R.id.listView_members);
         matchLabel = (TextView) findViewById(R.id.match_label);
