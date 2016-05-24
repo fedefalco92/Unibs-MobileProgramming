@@ -3,13 +3,12 @@ package it.unibs.appwow;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.view.ActionMode;
-import android.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -52,7 +51,12 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         mSelectedItems = new HashSet<User>();
         users = new ArrayList<User>();
 
-        setContentView(R.layout.activity_add_group_members2);
+        setContentView(R.layout.activity_add_group_members);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         membersList = (ListView) findViewById(R.id.listView_members);
         matchLabel = (TextView) findViewById(R.id.match_label);
@@ -70,8 +74,81 @@ public class AddGroupMembersActivity extends AppCompatActivity{
             ((GroupMembersAdapter)membersList.getAdapter()).add(loggedUser);
         }
 
-        membersList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
+        membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        membersList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
+                // Here you can do something when items are selected/de-selected,
+                // such as update the title in the CAB
+                //Log.d("qui","qui");
+
+                GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
+                String title = "";
+                if(checked){
+                    mSelectedItems.add((User)adapter.getItem(position));
+                }
+                else{
+                    mSelectedItems.remove((User)adapter.getItem(position));
+                }
+
+                if(mSelectedItems.size() == 1){
+                    title = "1 selected item";
+                }
+                else{
+                    title = mSelectedItems.size()+" selected items";
+                }
+                mode.setTitle(title);
+            }
+
+            @Override
+            public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
+                // Inflate the menu for the CAB
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.context_menu_selection, menu);
+                // toolbar.setVisibility(View.GONE); // FIXME: 24/05/16 trovare soluzione piu' furba?
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+                // Here you can perform updates to the CAB due to
+                // an invalidate() request
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
+                // Respond to clicks on the actions in the CAB
+                switch (item.getItemId()){
+                    case R.id.context_delete:
+                        Iterator iterator = mSelectedItems.iterator();
+                        while(iterator.hasNext()){
+                            users.remove(iterator.next());
+                        }
+                        ((GroupMembersAdapter)membersList.getAdapter()).notifyDataSetChanged();
+                        mode.finish();
+                        return true;
+                    default:
+                        mode.finish();
+                        return true;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(android.view.ActionMode mode) {
+                // Here you can make any necessary updates to the activity when
+                // the CAB is removed. By default, selected items are deselected/unchecked.
+                // toolbar.setVisibility(View.);
+                GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
+                mSelectedItems.clear();
+                adapter.notifyDataSetChanged();
+            }
+
+            });
+
+        /*
+        membersList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
@@ -132,6 +209,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
 
             }
         });
+
+        */
 
         Button verifyMail = (Button) findViewById(R.id.verify_member);
         verifyMail.setOnClickListener(new View.OnClickListener() {

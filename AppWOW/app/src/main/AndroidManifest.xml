@@ -67,7 +67,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.unibs.appwow.GroupActivity" />
+                android:value="it.unibs.appwow.AddGroupActivity" />
 
         </activity>
     </application>

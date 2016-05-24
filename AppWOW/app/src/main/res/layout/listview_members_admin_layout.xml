@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
-    android:minHeight="?android:attr/listPreferredItemHeight">
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:orientation="horizontal">
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,7 +14,7 @@
         android:id="@+id/textView_userMember"
         android:textColor="@color/red"
         android:textStyle="bold"
-        android:layout_gravity="left|center" />
+        android:layout_gravity="start|center" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,5 +22,8 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Email"
         android:id="@+id/textView_email_member"
-        android:layout_gravity="right|center" />
-</FrameLayout>
+        android:layout_gravity="end|center"
+        android:layout_alignBottom="@+id/textView_userMember"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+</RelativeLayout>
