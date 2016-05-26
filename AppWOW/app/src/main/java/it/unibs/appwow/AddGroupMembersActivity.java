@@ -36,8 +36,8 @@ import it.unibs.appwow.services.WebServiceUri;
 public class AddGroupMembersActivity extends AppCompatActivity{
 
     private ListView membersList;
-    private TextView matchLabel;
-    private TextView matchText;
+    //private TextView matchLabel;
+    //private TextView matchText;
     private Button addMember;
     private TextView emailTV;
 
@@ -59,8 +59,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         membersList = (ListView) findViewById(R.id.listView_members);
-        matchLabel = (TextView) findViewById(R.id.match_label);
-        matchText = (TextView) findViewById(R.id.username_found);
+        //matchLabel = (TextView) findViewById(R.id.match_label);
+        //matchText = (TextView) findViewById(R.id.username_found);
         addMember = (Button) findViewById(R.id.button_add_member);
         emailTV = (TextView) findViewById(R.id.email);
 
@@ -212,8 +212,9 @@ public class AddGroupMembersActivity extends AppCompatActivity{
 
         */
 
-        Button verifyMail = (Button) findViewById(R.id.verify_member);
-        verifyMail.setOnClickListener(new View.OnClickListener() {
+        //Button verifyEmail = ...
+        addMember = (Button) findViewById(R.id.button_add_member);
+        addMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(WebServiceRequest.checkNetwork()) {
@@ -266,30 +267,32 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         final String fullname = jsonObject.getString("fullName");
                         final String email = jsonObject.getString("email");
                         final User retrievedUser = User.create(id).withEmail(email).withFullName(fullname);
-                        matchText.setText(fullname);
-                        matchText.setVisibility(View.VISIBLE);
-                        matchLabel.setVisibility(View.VISIBLE);
-                        addMember.setVisibility(View.VISIBLE);
-                        addMember.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
-                                matchText.setVisibility(View.INVISIBLE);
-                                matchLabel.setVisibility(View.INVISIBLE);
-                                addMember.setVisibility(View.INVISIBLE);
-                                emailTV.setText("");
+                        //matchText.setText(fullname);
+                        //matchText.setVisibility(View.VISIBLE);
+                        //matchLabel.setVisibility(View.VISIBLE);
+                        //addMember.setVisibility(View.VISIBLE);
+                        //addMember.setOnClickListener(new View.OnClickListener() {
+                        //    @Override
+                        //    public void onClick(View v) {
+                        ((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
+                        //matchText.setVisibility(View.INVISIBLE);
+                        //matchLabel.setVisibility(View.INVISIBLE);
+                        //addMember.setVisibility(View.INVISIBLE);
+                        emailTV.setText("");
 
-                            }
-                        });
+                        //   }
+                       // });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
                 else{
-                    Toast.makeText(AddGroupMembersActivity.this, "User not found", Toast.LENGTH_SHORT).show();
-                    matchText.setVisibility(View.INVISIBLE);
-                    matchLabel.setVisibility(View.INVISIBLE);
-                    addMember.setVisibility(View.INVISIBLE);
+                    //Toast.makeText(AddGroupMembersActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                    emailTV.requestFocus();
+                    emailTV.setError(getString(R.string.user_not_found));
+                    //matchText.setVisibility(View.INVISIBLE);
+                    //matchLabel.setVisibility(View.INVISIBLE);
+                    //addMember.setVisibility(View.INVISIBLE);
                 }
             }
         };

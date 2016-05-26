@@ -58,6 +58,13 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
+     * Stringhe per gestire connessione al server
+     */
+    private static final int CONN_ERROR = 0;
+    private static final int USER_EXISTS = 1;
+    private static final int USER_NOT_EXISTS = 2;
+
+    /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
@@ -334,6 +341,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private final String mPassword;
         private JSONObject mResjs = null;
         private boolean mNewUser = false;
+        private boolean mConnError = false;
         private User mUser = null;
 
         UserLoginTask(String email, String password) {
@@ -345,70 +353,77 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            boolean userExists = checkUser(mEmail);
-            if(userExists){
-                String response = "";
-                Uri uri = WebServiceUri.LOGIN_URI;
-                try {
-                    URL url = new URL(uri.toString());
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(10000);
-                    conn.setConnectTimeout(15000);
-                    conn.setRequestMethod("POST");
-                    conn.setDoInput(true);
-                    conn.setDoOutput(true);
+            int userExists = checkUser(mEmail);
+            switch (userExists){
+                case USER_EXISTS:
+                    String response = "";
+                    Uri uri = WebServiceUri.LOGIN_URI;
+                    try {
+                        URL url = new URL(uri.toString());
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        conn.setReadTimeout(10000);
+                        conn.setConnectTimeout(15000);
+                        conn.setRequestMethod("POST");
+                        conn.setDoInput(true);
+                        conn.setDoOutput(true);
 
-                    Uri.Builder builder = new Uri.Builder()
-                            .appendQueryParameter("email", mEmail)
-                            .appendQueryParameter("password", mPassword);
-                    String query = builder.build().getEncodedQuery();
-                    OutputStream os = conn.getOutputStream();
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                    writer.write(query);
-                    writer.flush();
-                    writer.close();
-                    os.close();
+                        Uri.Builder builder = new Uri.Builder()
+                                .appendQueryParameter("email", mEmail)
+                                .appendQueryParameter("password", mPassword);
+                        String query = builder.build().getEncodedQuery();
+                        OutputStream os = conn.getOutputStream();
+                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                        writer.write(query);
+                        writer.flush();
+                        writer.close();
+                        os.close();
 
-                    conn.connect();
-                    int responseCode = conn.getResponseCode();
-                    if(responseCode == HttpURLConnection.HTTP_OK){
-                        String line = "";
-                        BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                        while ((line=br.readLine()) != null) {
-                            response+=line;
+                        conn.connect();
+                        int responseCode = conn.getResponseCode();
+                        if(responseCode == HttpURLConnection.HTTP_OK){
+                            String line = "";
+                            BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                            while ((line=br.readLine()) != null) {
+                                response+=line;
+                            }
+                        } else {
+                            response = "";
                         }
-                    } else {
-                        response = "";
-                    }
-                    if(!response.isEmpty()){
-                        //response = response.substring(1,response.length()-1);
-                        mResjs = new JSONObject(response);
-                        Log.d("risposta", mResjs.toString(1));
-                    } else {
+                        if(!response.isEmpty()){
+                            //response = response.substring(1,response.length()-1);
+                            mResjs = new JSONObject(response);
+                            Log.d("risposta", mResjs.toString(1));
+                        } else {
+                            return false;
+                        }
+                        Log.d("RISPOSTA_STRING", response);
+
+                        // TODO: 19/05/2016 SALVARE SHARED
+                        int id = mResjs.getInt("id");
+                        String fullname = mResjs.getString("fullName");
+                        mUser = User.create(id).withEmail(mEmail).withFullName(fullname);
+                        mUser.save(MyApplication.getAppContext());
+
+                    } catch (MalformedURLException e){
+                        return false;
+                    } catch (IOException e){
+                        return false;
+                    } catch (JSONException e){
+                        e.printStackTrace();
                         return false;
                     }
-                    Log.d("RISPOSTA_STRING", response);
+                    return true;
+                case USER_NOT_EXISTS:
+                    mNewUser = true;
+                    //costruisco un User con i dati inseriti nel form
+                    mUser = new User(mEmail, mPassword);
+                    return true;
 
-                    // TODO: 19/05/2016 SALVARE SHARED
-                    int id = mResjs.getInt("id");
-                    String fullname = mResjs.getString("fullName");
-                    mUser = User.create(id).withEmail(mEmail).withFullName(fullname);
-                    mUser.save(MyApplication.getAppContext());
+                case CONN_ERROR:
+                    mConnError = true;
+                    return false;
 
-                } catch (MalformedURLException e){
-                    return false;
-                } catch (IOException e){
-                    return false;
-                } catch (JSONException e){
-                    e.printStackTrace();
-                    return false;
-                }
-                return true;
-            } else {
-                mNewUser = true;
-                //costruisco un User con i dati inseriti nel form
-                mUser = new User(mEmail, mPassword);
-                return true;
+                default: return false;
             }
         }
 
@@ -428,8 +443,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     finish();
                 }
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                if(!mConnError){
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                } else {
+                    Toast.makeText(getBaseContext(), getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+                }
+                
             }
         }
 
@@ -442,12 +462,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         /**
          * checks if the mUser with email exists
          * @param email
-         * @return true if mUser exists
+         * @return CONN_ERR if there is a connection error
+         *         USER_NOT_EXISTS if mUser doesn't exists
+         *         USER_EXISTS if mUser exists
          */
-        private boolean checkUser(String email){
+        private int checkUser(String email){
             String response = "";
             Uri uri = WebServiceUri.CHECK_USER_URI;
-            boolean userExists = false;
             try {
                 URL url = new URL(uri.toString());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -469,6 +490,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 conn.connect();
                 int responseCode = conn.getResponseCode();
+                Log.d("RESPONSE_CODE", responseCode + "");
                 if(responseCode == HttpURLConnection.HTTP_OK){
                     String line = "";
                     BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -476,20 +498,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         response+=line;
                     }
                 } else {
-                    response = "";
+                    return CONN_ERROR;
                 }
 
                 if(!response.isEmpty()){
                     Log.d("RISPOSTA_CHECK_USER", response);
-                    return true;
+                    return USER_EXISTS;
                 } else {
-                    return false;
+                    return USER_NOT_EXISTS;
                 }
 
             } catch (MalformedURLException e){
-                return false;
+                return CONN_ERROR;
             } catch (IOException e){
-                return false;
+                return CONN_ERROR;
             }
         }
     }

@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Inserisci il nome e l&apos;immagine (facoltativo) del gruppo"
+        android:text="@string/suggerimento_nome_gruppi"
         android:id="@+id/textView4"
         android:layout_marginTop="53dp"
         android:layout_alignTop="@+id/imageView2"

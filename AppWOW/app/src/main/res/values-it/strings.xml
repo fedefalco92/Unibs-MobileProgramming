@@ -18,4 +18,9 @@
     <string name="settings">Impostazioni</string>
     <string name="logout">Disconnetti</string>
     <string name="login">Accedi</string>
+    <string name="suggerimento_nome_gruppi">Inserisci il nome e l\'immagine (facoltativo) del gruppo</string>
+    <string name="actual_members_string">Aggiunti</string>
+    <string name="add_member">Aggiungi</string>
+    <string name="user_not_found">Utente non trovato</string>
+    <string name="server_connection_error">Errore di connessione al server. Riprova.</string>
 </resources>
