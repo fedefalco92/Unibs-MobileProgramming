@@ -48,7 +48,7 @@ public class User implements Parcelable{
 
     //added to handle the case of an administrator (of any group...)
 
-    private boolean mAdmin;
+    private boolean mIsGroupAdmin;
 
     /**
      * Read from the parcelized object.
@@ -117,11 +117,12 @@ public class User implements Parcelable{
     public User(String email, String password){
         this.mEmail = email;
         this.mPassword = password;
-        this.mAdmin = false;
+        this.mIsGroupAdmin = false;
     }
 
     private User(int id){
         this.mId = id;
+        this.mIsGroupAdmin = false;
     }
 
     public static User create(int id)
@@ -148,12 +149,12 @@ public class User implements Parcelable{
     }
 
 
-    public boolean ismAdmin() {
-        return mAdmin;
+    public boolean isGroupAdmin() {
+        return mIsGroupAdmin;
     }
 
-    public void setmAdmin(){
-        mAdmin = true;
+    public void setIsGroupAdmin(){
+        mIsGroupAdmin = true;
     }
 
     public boolean isLogged(){
@@ -201,13 +202,17 @@ public class User implements Parcelable{
 
     @Override
     public String toString(){
-        if(!mAdmin){
+        //if(!mAdmin){
             return "Fullname: " + mFullName + ", Email: " + mEmail;
-        }
-        else{
-            return "Fullname: " + mFullName + ", Email: " + mEmail + " ADMIN";
-        }
+        //}
+        //else{
+        //    return "Fullname: " + mFullName + ", Email: " + mEmail + " ADMIN";
+        //}
+    }
 
+    @Override
+    public boolean equals(Object u){
+       return (((User) u).getId()== mId);
     }
 
 }

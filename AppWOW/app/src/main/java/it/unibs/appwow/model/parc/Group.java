@@ -24,12 +24,12 @@ public class Group implements Parcelable {
     private static final String UPDATED_AT_KEY = "updatedAt";
     private static final String ID_ADMIN_KEY = "idAdmin";
 
-    private long mId;
+    private int mId;
     private String mGroupName;
     private String mPhotoUri;
     private long mCreatedAt;
     private long mUpdatedAt;
-    private long mIdAdmin;
+    private int mIdAdmin;
     private HashMap<Integer, User> mUsers;
 
 
@@ -53,7 +53,7 @@ public class Group implements Parcelable {
         return mUpdatedAt;
     }
 
-    public long getIdAdmin() {
+    public int getIdAdmin() {
         return mIdAdmin;
     }
 
@@ -77,21 +77,21 @@ public class Group implements Parcelable {
         this.mUpdatedAt = mUpdatedAt;
     }
 
-    public void setIdAdmin(long mIdAdmin) {
+    public void setIdAdmin(int mIdAdmin) {
         this.mIdAdmin = mIdAdmin;
     }
 
 
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>()
+    public static final Parcelable.Creator<Group> CREATOR = new Parcelable.Creator<Group>()
     {
-        public User createFromParcel(Parcel in)
+        public Group createFromParcel(Parcel in)
         {
-            return new User(in);
+            return new Group(in);
         }
 
-        public User[] newArray(int size)
+        public Group[] newArray(int size)
         {
-            return new User[size];
+            return new Group[size];
         }
     };
 
@@ -125,8 +125,10 @@ public class Group implements Parcelable {
 
         if(in.readByte() == PRESENT)
         {
-            this.mIdAdmin = in.readLong();
+            this.mIdAdmin = in.readInt();
         }
+        // FIXME: 26/05/2016 LA HashMap con gli utenti viene annullata quando si parcellizza il gruppo
+        this.mUsers = new HashMap<Integer, User>();
     }
 
     @Override
@@ -187,7 +189,7 @@ public class Group implements Parcelable {
 
     }
 
-    public Group(long id, String groupName, String photoUri, long createdAt, long updatedAt, long idAdmin) {
+    public Group(int id, String groupName, String photoUri, long createdAt, long updatedAt, int idAdmin) {
         this.mUsers = new HashMap<Integer, User>();
         this.mId = id;
         this.mGroupName = groupName;
@@ -217,8 +219,35 @@ public class Group implements Parcelable {
         return this;
     }
 
-    public void addUser(User user){
-        mUsers.put(user.getId(),user);
+    public Group withPhotoUri(String photoUri){
+        this.mPhotoUri = photoUri;
+        return this;
+    }
+
+    /**
+     * Adds a user to mUsers
+     * @param user
+     * @return true if the user has been successfully added,
+     *          false if the user with such ID already exists
+     */
+    public boolean addUser(User user){
+       return (mUsers.put(user.getId(),user) == null);
+    }
+
+    public boolean removeUser(User toRemove) {
+        return (mUsers.remove(toRemove.getId())!= null);
+    }
+
+    public User getUser(int id){
+        return mUsers.get(id);
+    }
+
+    public int getUsersCount(){
+        return mUsers.size();
+    }
+
+    public User getAdminUser(){
+        return mUsers.get(getIdAdmin());
     }
 
     public String toString(){
@@ -226,5 +255,6 @@ public class Group implements Parcelable {
         builder.append(mGroupName);
         return builder.toString();
     }
+
 
 }

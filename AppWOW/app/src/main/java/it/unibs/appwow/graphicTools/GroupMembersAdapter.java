@@ -53,8 +53,8 @@ public class GroupMembersAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        final User itemUser = (User)getItem(position);
-        if(itemUser.ismAdmin())
+        final User itemUser = (User) getItem(position);
+        if(itemUser.isGroupAdmin())
             return 1;
         else
             return 0;

@@ -6,6 +6,7 @@
         android:id="@+id/create_group"
         android:title="@string/create_group"
         app:showAsAction="always"
+        android:enabled="false"
         />
 
 </menu>

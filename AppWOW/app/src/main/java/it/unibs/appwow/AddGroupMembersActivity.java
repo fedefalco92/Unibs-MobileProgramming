@@ -40,10 +40,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     //private TextView matchLabel;
     //private TextView matchText;
     private Button mAddMemberButton;
-    private TextView mEmailTV;
+    private MenuItem mCreateGroupButton;
+    private TextView mEmailTextView;
     private Group mGroup;
-    private ArrayList<User> users;
-
+    private ArrayList<User> mDisplayedUsers;
     private Set<User> mSelectedItems;
 
     @Override
@@ -51,9 +51,13 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         //retrieving group from intent extras
         this.mGroup = (Group) getIntent().getExtras().getParcelable(AddGroupActivity.PASSING_GROUP_EXTRA);
+        //IMPORTANT: parceling does not save the HashMap mUsers which will be null after getParcelable(...)
+        User currentUser = User.load(MyApplication.getAppContext());
+        currentUser.setIsGroupAdmin();
+        mGroup.addUser(currentUser);
 
         mSelectedItems = new HashSet<User>();
-        users = new ArrayList<User>();
+        mDisplayedUsers = new ArrayList<User>();
 
         setContentView(R.layout.activity_add_group_members);
 
@@ -66,18 +70,23 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         //matchLabel = (TextView) findViewById(R.id.match_label);
         //matchText = (TextView) findViewById(R.id.username_found);
         mAddMemberButton = (Button) findViewById(R.id.button_add_member);
-        mEmailTV = (TextView) findViewById(R.id.email);
+        mEmailTextView = (TextView) findViewById(R.id.email);
 
         membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        //membersList.setAdapter(new ArrayAdapter<User>(this,android.R.layout.simple_list_item_multiple_choice,users));
-        membersList.setAdapter(new GroupMembersAdapter(this,users));
-
+        //membersList.setAdapter(new ArrayAdapter<User>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
+        membersList.setAdapter(new GroupMembersAdapter(this, mDisplayedUsers));
+        /*
         if(User.load(this) != null){
             User loggedUser = User.load(this);
             loggedUser.setmAdmin();
             ((GroupMembersAdapter)membersList.getAdapter()).add(loggedUser);
-        }
+        }*/
 
+        //displaying the current user as the admin of group
+        ((GroupMembersAdapter)membersList.getAdapter()).add(currentUser);
+        //User adminUser = mGroup.getAdminUser();
+        //adminUser.setIsGroupAdmin();
+        //((GroupMembersAdapter)membersList.getAdapter()).add(adminUser);
 
         membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         membersList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -87,7 +96,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 // such as update the title in the CAB
                 //Log.d("qui","qui");
 
-                GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
+                GroupMembersAdapter adapter = (GroupMembersAdapter) membersList.getAdapter();
                 String title = "";
                 if(checked){
                     mSelectedItems.add((User)adapter.getItem(position));
@@ -128,7 +137,9 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     case R.id.context_delete:
                         Iterator iterator = mSelectedItems.iterator();
                         while(iterator.hasNext()){
-                            users.remove(iterator.next());
+                            User toRemove = (User) iterator.next();
+                            mDisplayedUsers.remove(toRemove);
+                            mGroup.removeUser(toRemove);
                         }
                         ((GroupMembersAdapter)membersList.getAdapter()).notifyDataSetChanged();
                         mode.finish();
@@ -197,7 +208,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     case R.id.context_delete:
                         Iterator iterator = mSelectedItems.iterator();
                         while(iterator.hasNext()){
-                            users.remove(iterator.next());
+                            mDisplayedUsers.remove(iterator.next());
                         }
                         ((GroupMembersAdapter)membersList.getAdapter()).notifyDataSetChanged();
                         mode.finish();
@@ -223,16 +234,22 @@ public class AddGroupMembersActivity extends AppCompatActivity{
             public void onClick(View v) {
                 if(WebServiceRequest.checkNetwork()) {
                     String[] keys = {"email"};
-                    String[] values = {mEmailTV.getText().toString()};
+                    String[] values = {mEmailTextView.getText().toString()};
                     Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
                     StringRequest userRequest = WebServiceRequest.
                             stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
                     MyApplication.getInstance().addToRequestQueue(userRequest);
-
+                    //AGGIORNO IL MENU
+                    invalidateOptionsMenu();
+                    // TODO: 26/05/2016  AGGIORNARE IL MENU ANCHE QUANDO SI CANCELLA UN UTENTE 
                 }
             }
         });
 
+    }
+
+    private boolean minMemberNumberReached() {
+        return mGroup.getUsersCount() >= 2;
     }
 
     @Override
@@ -240,7 +257,16 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_create_group, menu);
+        mCreateGroupButton = (MenuItem) menu.findItem(R.id.create_group);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(minMemberNumberReached()){
+            mCreateGroupButton.setEnabled(true);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -250,6 +276,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         switch (id) {
             case R.id.create_group:
                 // TODO: 19/05/2016 creare il gruppo
+                Toast.makeText(AddGroupMembersActivity.this, "Creazione gruppo da implementare", Toast.LENGTH_SHORT).show();
                 //final Intent registrationIntent = new Intent(AddGroupMembersActivity.this, AddGroupMembersActivity.class);
                 //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
                 //startActivity(registrationIntent);
@@ -278,12 +305,18 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         //mAddMemberButton.setOnClickListener(new View.OnClickListener() {
                         //    @Override
                         //    public void onClick(View v) {
-                        ((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
-                        mGroup.addUser(retrievedUser);
+                        boolean userAlreadyExists = !mGroup.addUser(retrievedUser);
+                        if(userAlreadyExists){
+                            Toast.makeText(AddGroupMembersActivity.this, "Utente già inserito", Toast.LENGTH_SHORT).show();
+                        } else {
+                            ((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
+                        }
+
+
                         //matchText.setVisibility(View.INVISIBLE);
                         //matchLabel.setVisibility(View.INVISIBLE);
                         //mAddMemberButton.setVisibility(View.INVISIBLE);
-                        mEmailTV.setText("");
+                        mEmailTextView.setText("");
 
                         //   }
                        // });
@@ -293,8 +326,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 }
                 else{
                     //Toast.makeText(AddGroupMembersActivity.this, "User not found", Toast.LENGTH_SHORT).show();
-                    mEmailTV.requestFocus();
-                    mEmailTV.setError(getString(R.string.user_not_found));
+                    mEmailTextView.requestFocus();
+                    mEmailTextView.setError(getString(R.string.user_not_found));
                     //matchText.setVisibility(View.INVISIBLE);
                     //matchLabel.setVisibility(View.INVISIBLE);
                     //mAddMemberButton.setVisibility(View.INVISIBLE);

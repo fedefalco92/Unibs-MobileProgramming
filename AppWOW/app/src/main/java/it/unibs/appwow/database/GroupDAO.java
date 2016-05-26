@@ -55,8 +55,8 @@ public class GroupDAO implements LocalDB_DAO {
 
     // from database to Object
     private Group cursorToGroup(Cursor cursor) {
-        long id = cursor.getLong(0);
-        long idAdmin = cursor.getLong(1);
+        int id = cursor.getInt(0);
+        int idAdmin = cursor.getInt(1);
         String groupName = cursor.getString(2);
         String photoUri = cursor.getString(3);
         long createdAt = cursor.getLong(4);
