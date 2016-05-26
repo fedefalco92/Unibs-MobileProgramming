@@ -23,4 +23,5 @@
     <string name="add_member">Aggiungi</string>
     <string name="user_not_found">Utente non trovato</string>
     <string name="server_connection_error">Errore di connessione al server. Riprova.</string>
+    <string name="invalid_group_name">Inserisci nome valido</string>
 </resources>

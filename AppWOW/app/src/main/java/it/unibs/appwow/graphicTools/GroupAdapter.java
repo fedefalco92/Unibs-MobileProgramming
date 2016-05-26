@@ -2,26 +2,19 @@ package it.unibs.appwow.graphicTools;
 
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibs.appwow.GroupActivity;
-import it.unibs.appwow.GroupDetailsActivity;
-import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.model.Group;
+import it.unibs.appwow.model.parc.Group;
 
 /**
  * Created by Massi on 05/05/2016.
@@ -71,7 +64,7 @@ public class GroupAdapter extends BaseAdapter {
     @Override
     public long getItemId(int position) {
         final Group itemGroup = (Group) getItem(position);
-        return itemGroup.id;
+        return itemGroup.getId();
     }
 
     @Override
@@ -88,8 +81,8 @@ public class GroupAdapter extends BaseAdapter {
             holder = (Holder)view.getTag();
         }
         final Group itemGroup = (Group) getItem(position);
-        holder.groupName.setText(itemGroup.groupName);
-        holder.groupImageView.setImageResource(itemGroup.photoUri);
+        holder.groupName.setText(itemGroup.getGroupName());
+        holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoUri()));
        /* final LocalDataModel itemModel = (LocalDataModel)getItem(position);
         holder.dateTextView.setText(DATE_FORMAT.format(itemModel.entryDate));
         holder.loveVoteTextView.setText("Love: " + itemModel.loveVote);
@@ -99,5 +92,8 @@ public class GroupAdapter extends BaseAdapter {
         return view;
     }
 
-
+    private int getPhotoId(String photoURI){
+        // TODO: 26/05/2016 GROUP ADAPTER implementare la trasformazione da photo uri (string) a resource ID (int)
+        return R.drawable.ic_menu_send;
+    }
 }

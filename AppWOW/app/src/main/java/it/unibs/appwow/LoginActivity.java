@@ -58,6 +58,12 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
+     * Extra tag
+     */
+
+    public static final String PASSING_USER_EXTRA = "user";
+
+    /**
      * Stringhe per gestire connessione al server
      */
     private static final int CONN_ERROR = 0;
@@ -435,7 +441,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 if(mNewUser){
                     Intent ri = new Intent(LoginActivity.this, RegistrationActivity.class);
-                    ri.putExtra("user", mUser);
+                    ri.putExtra(PASSING_USER_EXTRA, mUser);
                     startActivity(ri);
                 } else {
                     Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
@@ -463,7 +469,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
          * checks if the mUser with email exists
          * @param email
          * @return CONN_ERR if there is a connection error
-         *         USER_NOT_EXISTS if mUser doesn't exists
+         *         USER_NOT_EXISTS if mUser doesn't exists on database
          *         USER_EXISTS if mUser exists
          */
         private int checkUser(String email){

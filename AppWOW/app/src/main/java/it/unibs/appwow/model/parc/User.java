@@ -19,8 +19,6 @@ public class User implements Parcelable{
     private static final String ID_KEY = "id";
     private static final String FULLNAME_KEY = "fullname";
     private static final String EMAIL_KEY = "email";
-    private static final String BIRTHDATE_KEY = "birthdate";
-    private static final String LOCATION_KEY = "location";
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>()
     {

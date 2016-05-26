@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import it.unibs.appwow.graphicTools.GroupAdapter;
-import it.unibs.appwow.model.Group;
+import it.unibs.appwow.model.parc.Group;
 
 
 /**
@@ -91,8 +90,8 @@ public class GroupListFragment extends Fragment {
                 //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
                 final Intent i = new Intent(getContext(), GroupDetailsActivity.class);
                 Group group = (Group)gridView.getAdapter().getItem(position);
-                i.putExtra("GroupID", group.id);
-                i.putExtra("GroupName",group.groupName);
+                i.putExtra("GroupID", group.getId());
+                i.putExtra("GroupName",group.getGroupName());
                 startActivity(i);
                 //finish();
             }

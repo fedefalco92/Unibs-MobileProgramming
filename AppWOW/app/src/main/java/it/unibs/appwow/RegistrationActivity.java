@@ -21,7 +21,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        User received = (User) getIntent().getExtras().getParcelable("user");
+        User received = (User) getIntent().getExtras().getParcelable(LoginActivity.PASSING_USER_EXTRA);
         Log.d("UTENTE_RICEVUTO", received.toString());
         // TODO: 19/05/2016  precompilare form
         

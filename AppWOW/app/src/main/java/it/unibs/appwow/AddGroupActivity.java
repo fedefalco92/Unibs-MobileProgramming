@@ -4,31 +4,36 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import it.unibs.appwow.model.parc.Group;
+import it.unibs.appwow.model.parc.User;
 
 public class AddGroupActivity extends AppCompatActivity {
 
     private int SELECT_PICTURE_CODE = 100;
-    private ImageView groupImage;
+    public static final String PASSING_GROUP_EXTRA = "group";
+    private ImageView mGroupImage;
+    private TextView mGroupNameView;
+    private Group mGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
-        groupImage = (ImageView) findViewById(R.id.imageView2);
-        groupImage.setOnTouchListener(new View.OnTouchListener() {
+        mGroupImage = (ImageView) findViewById(R.id.imageView2);
+        mGroupImage.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 Intent intentPhoto = new Intent(Intent.ACTION_GET_CONTENT);
@@ -37,6 +42,8 @@ public class AddGroupActivity extends AppCompatActivity {
                 return false;
             }
         });
+        mGroupNameView = (TextView) findViewById(R.id.group_name_field);
+        mGroup = Group.create("");
     }
 
     @Override
@@ -47,7 +54,8 @@ public class AddGroupActivity extends AppCompatActivity {
                 Uri selectedImage = data.getData();
                 String path = getPath(selectedImage);
                 Drawable image = Drawable.createFromPath(path);
-                groupImage.setImageDrawable(image);
+                mGroupImage.setImageDrawable(image);
+                mGroup.setPhotoUri(selectedImage.toString());
                 Toast.makeText(AddGroupActivity.this, "Path: "+path, Toast.LENGTH_SHORT).show();
             }
         }
@@ -67,12 +75,31 @@ public class AddGroupActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.go_ahead:
-                final Intent registrationIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
-                //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
-                startActivity(registrationIntent);
-                return true;
+                if(isGroupNameValid()){
+                    final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
+                    //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
+                    User currentUser = User.load(MyApplication.getAppContext());
+                    mGroup.setIdAdmin(currentUser.getId());
+                    mGroup.setGroupName(mGroupNameView.getText().toString());
+                    addMembersIntent.putExtra(PASSING_GROUP_EXTRA, mGroup);
+                    startActivity(addMembersIntent);
+                    return true;
+                } else {
+                    mGroupNameView.setError(getString(R.string.invalid_group_name));
+                    mGroupNameView.requestFocus();
+                }
+
             default:
                 return true;
+        }
+    }
+
+    private boolean isGroupNameValid() {
+        String groupName = mGroupNameView.getText().toString();
+        if(!groupName.isEmpty()){
+            return true;
+        } else {
+            return false;
         }
     }
 

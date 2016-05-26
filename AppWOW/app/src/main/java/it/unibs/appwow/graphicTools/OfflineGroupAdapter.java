@@ -6,14 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.R;
-import it.unibs.appwow.model.Group;
+import it.unibs.appwow.model.parc.Group;
 
 /**
  * Created by Massi on 10/05/2016.
@@ -32,8 +31,8 @@ public class OfflineGroupAdapter extends BaseAdapter {
 
     public OfflineGroupAdapter(Context context){
         mInflater = LayoutInflater.from(context);
-        mItems.add(new Group(1,"primo gruppo offline", R.drawable.ic_menu_send,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        mItems.add(new Group(2,"offline gruppo",R.drawable.ic_menu_send,System.currentTimeMillis(),System.currentTimeMillis(),2));
+        //mItems.add(new Group(1,"primo gruppo offline", R.drawable.ic_menu_send,System.currentTimeMillis(),System.currentTimeMillis(),1));
+        //mItems.add(new Group(2,"offline gruppo",R.drawable.ic_menu_send,System.currentTimeMillis(),System.currentTimeMillis(),2));
     }
 
     @Override
@@ -49,7 +48,7 @@ public class OfflineGroupAdapter extends BaseAdapter {
     @Override
     public long getItemId(int position) {
         final Group itemGroup = (Group) getItem(position);
-        return itemGroup.id;
+        return itemGroup.getId();
     }
 
     @Override
@@ -66,8 +65,8 @@ public class OfflineGroupAdapter extends BaseAdapter {
             holder = (Holder)view.getTag();
         }
         final Group itemGroup = (Group) getItem(position);
-        holder.groupName.setText(itemGroup.groupName);
-        holder.groupImageView.setImageResource(itemGroup.photoUri);
+        holder.groupName.setText(itemGroup.getGroupName());
+        holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoUri()));
        /* final LocalDataModel itemModel = (LocalDataModel)getItem(position);
         holder.dateTextView.setText(DATE_FORMAT.format(itemModel.entryDate));
         holder.loveVoteTextView.setText("Love: " + itemModel.loveVote);
@@ -75,6 +74,11 @@ public class OfflineGroupAdapter extends BaseAdapter {
         holder.workVoteTextView.setText("Work: " + itemModel.workVote);
         holder.luckVoteTextView.setText("Luck: " + itemModel.luckVote);*/
         return view;
+    }
+
+    private int getPhotoId(String photoURI){
+        // TODO: 26/05/2016 OFFLINE GROUP ADAPTER implementare la trasformazione da photo uri (string) a resource ID (int)
+        return R.drawable.ic_menu_send;
     }
 
 

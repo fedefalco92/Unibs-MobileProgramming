@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unibs.appwow.graphicTools.GroupMembersAdapter;
+import it.unibs.appwow.model.parc.Group;
 import it.unibs.appwow.model.parc.User;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -38,9 +39,9 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     private ListView membersList;
     //private TextView matchLabel;
     //private TextView matchText;
-    private Button addMember;
-    private TextView emailTV;
-
+    private Button mAddMemberButton;
+    private TextView mEmailTV;
+    private Group mGroup;
     private ArrayList<User> users;
 
     private Set<User> mSelectedItems;
@@ -48,6 +49,9 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //retrieving group from intent extras
+        this.mGroup = (Group) getIntent().getExtras().getParcelable(AddGroupActivity.PASSING_GROUP_EXTRA);
+
         mSelectedItems = new HashSet<User>();
         users = new ArrayList<User>();
 
@@ -61,8 +65,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         membersList = (ListView) findViewById(R.id.listView_members);
         //matchLabel = (TextView) findViewById(R.id.match_label);
         //matchText = (TextView) findViewById(R.id.username_found);
-        addMember = (Button) findViewById(R.id.button_add_member);
-        emailTV = (TextView) findViewById(R.id.email);
+        mAddMemberButton = (Button) findViewById(R.id.button_add_member);
+        mEmailTV = (TextView) findViewById(R.id.email);
 
         membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         //membersList.setAdapter(new ArrayAdapter<User>(this,android.R.layout.simple_list_item_multiple_choice,users));
@@ -213,13 +217,13 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         */
 
         //Button verifyEmail = ...
-        addMember = (Button) findViewById(R.id.button_add_member);
-        addMember.setOnClickListener(new View.OnClickListener() {
+        mAddMemberButton = (Button) findViewById(R.id.button_add_member);
+        mAddMemberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(WebServiceRequest.checkNetwork()) {
                     String[] keys = {"email"};
-                    String[] values = {emailTV.getText().toString()};
+                    String[] values = {mEmailTV.getText().toString()};
                     Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
                     StringRequest userRequest = WebServiceRequest.
                             stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
@@ -270,15 +274,16 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         //matchText.setText(fullname);
                         //matchText.setVisibility(View.VISIBLE);
                         //matchLabel.setVisibility(View.VISIBLE);
-                        //addMember.setVisibility(View.VISIBLE);
-                        //addMember.setOnClickListener(new View.OnClickListener() {
+                        //mAddMemberButton.setVisibility(View.VISIBLE);
+                        //mAddMemberButton.setOnClickListener(new View.OnClickListener() {
                         //    @Override
                         //    public void onClick(View v) {
                         ((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
+                        mGroup.addUser(retrievedUser);
                         //matchText.setVisibility(View.INVISIBLE);
                         //matchLabel.setVisibility(View.INVISIBLE);
-                        //addMember.setVisibility(View.INVISIBLE);
-                        emailTV.setText("");
+                        //mAddMemberButton.setVisibility(View.INVISIBLE);
+                        mEmailTV.setText("");
 
                         //   }
                        // });
@@ -288,11 +293,11 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 }
                 else{
                     //Toast.makeText(AddGroupMembersActivity.this, "User not found", Toast.LENGTH_SHORT).show();
-                    emailTV.requestFocus();
-                    emailTV.setError(getString(R.string.user_not_found));
+                    mEmailTV.requestFocus();
+                    mEmailTV.setError(getString(R.string.user_not_found));
                     //matchText.setVisibility(View.INVISIBLE);
                     //matchLabel.setVisibility(View.INVISIBLE);
-                    //addMember.setVisibility(View.INVISIBLE);
+                    //mAddMemberButton.setVisibility(View.INVISIBLE);
                 }
             }
         };
