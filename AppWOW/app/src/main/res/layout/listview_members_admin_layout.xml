@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:clickable="false">
 
     <TextView
         android:layout_width="wrap_content"

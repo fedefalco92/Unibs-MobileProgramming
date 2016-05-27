@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.view.ActionMode;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,6 +38,7 @@ import it.unibs.appwow.services.WebServiceUri;
 public class AddGroupMembersActivity extends AppCompatActivity{
 
     private ListView membersList;
+    private GroupMembersAdapter mAdapter;
     //private TextView matchLabel;
     //private TextView matchText;
     private Button mAddMemberButton;
@@ -74,7 +76,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
 
         membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         //membersList.setAdapter(new ArrayAdapter<User>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
-        membersList.setAdapter(new GroupMembersAdapter(this, mDisplayedUsers));
+        mAdapter = new GroupMembersAdapter(this, mDisplayedUsers);
+        membersList.setAdapter(mAdapter);
         /*
         if(User.load(this) != null){
             User loggedUser = User.load(this);
@@ -83,7 +86,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         }*/
 
         //displaying the current user as the admin of group
-        ((GroupMembersAdapter)membersList.getAdapter()).add(currentUser);
+        mAdapter.add(currentUser);
+
         //User adminUser = mGroup.getAdminUser();
         //adminUser.setIsGroupAdmin();
         //((GroupMembersAdapter)membersList.getAdapter()).add(adminUser);
@@ -140,6 +144,9 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                             User toRemove = (User) iterator.next();
                             mDisplayedUsers.remove(toRemove);
                             mGroup.removeUser(toRemove);
+                            Log.d("UTENTE RIMOSSO", "rimosso l'utente" + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
+                            //AGGIORNO IL MENU
+                            invalidateOptionsMenu();
                         }
                         ((GroupMembersAdapter)membersList.getAdapter()).notifyDataSetChanged();
                         mode.finish();
@@ -170,13 +177,12 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 // here you can do something when items are selected/de-selected
                 // such as update the title in the CAB
                 //Log.d("qui","qui");
-                GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
                 String title = "";
                 if(checked){
-                    mSelectedItems.add((User)adapter.getItem(position));
+                    mSelectedItems.add((User)mAdapter.getItem(position));
                 }
                 else{
-                    mSelectedItems.remove((User)adapter.getItem(position));
+                    mSelectedItems.remove((User)mAdapter.getItem(position));
                 }
 
                 if(mSelectedItems.size() == 1){
@@ -239,9 +245,6 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     StringRequest userRequest = WebServiceRequest.
                             stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
                     MyApplication.getInstance().addToRequestQueue(userRequest);
-                    //AGGIORNO IL MENU
-                    invalidateOptionsMenu();
-                    // TODO: 26/05/2016  AGGIORNARE IL MENU ANCHE QUANDO SI CANCELLA UN UTENTE 
                 }
             }
         });
@@ -317,7 +320,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         //matchLabel.setVisibility(View.INVISIBLE);
                         //mAddMemberButton.setVisibility(View.INVISIBLE);
                         mEmailTextView.setText("");
-
+                        //AGGIORNO IL MENU
+                        invalidateOptionsMenu();
                         //   }
                        // });
                     } catch (JSONException e) {

@@ -74,6 +74,7 @@ public class GroupMembersAdapter extends BaseAdapter {
                 view = mInflater.inflate(R.layout.listview_members_simpleitem_layout,null);
             } else {
                 view = mInflater.inflate(R.layout.listview_members_admin_layout,null);
+                view.setOnClickListener(null); //disabilita la selezione per l'utente admin
             }
             holder = new Holder();
             holder.fullnameUser = (TextView) view.findViewById(R.id.textView_userMember);
