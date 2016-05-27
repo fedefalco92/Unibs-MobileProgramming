@@ -3,6 +3,8 @@ package it.unibs.appwow;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,19 +13,36 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import it.unibs.appwow.database.AppSQLiteHelper;
 import it.unibs.appwow.model.parc.User;
+import it.unibs.appwow.services.WebServiceUri;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final long MIN_WAIT_INTERVAL = 2000L;
+    private static final long MIN_WAIT_INTERVAL = 1000L;
 
     private static final String START_TIME_KEY = "it.unibs.appwow.key.START_TIME_KEY";
 
     private static final String TAG_LOG = SplashActivity.class.getName();
 
     private long mStartTime = -1L; // first visualization instant
+
+    private DownloadFromServerTask mDownloadTask;
 
    // private AppSQLiteHelper database;
    // private SQLiteDatabase db;
@@ -133,11 +152,110 @@ public class SplashActivity extends AppCompatActivity {
         } else {
             // user already logged
             destinationActivity = NavigationActivity.class;
+
+            //// TODO: 27/05/2016 lettura database remoto
+            mDownloadTask = new DownloadFromServerTask(userModel);
+            mDownloadTask.execute((Void) null);
         }
 
         final Intent intent = new Intent(this, destinationActivity);
         startActivity(intent);
         finish();
+    }
+
+    public class DownloadFromServerTask extends AsyncTask<Void, Void, Boolean> {
+
+        private JSONObject mResjs = null;
+        private boolean mNewUser = false;
+        private boolean mConnError = false;
+        private User mUser = null;
+
+        DownloadFromServerTask(User user) {
+            mUser = user;
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            String response = "";
+            Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mUser.getId()));
+            Uri groups_uri = Uri.withAppendedPath(user_uri, "groups");
+            try {
+                URL url = new URL(groups_uri.toString());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder();
+                        //.appendQueryParameter("email", mEmail)
+                        //.appendQueryParameter("password", mPassword);
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+                int responseCode = conn.getResponseCode();
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String line = "";
+                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response+=line;
+                    }
+                } else {
+                    response = "";
+                }
+                if(!response.isEmpty()){
+                    //response = response.substring(1,response.length()-1);
+                    mResjs = new JSONObject(response);
+                    Log.d("risposta", mResjs.toString(1));
+                } else {
+                    return false;
+                }
+                Log.d("RISPOSTA_STRING", response);
+
+                // TODO: 19/05/2016 salvare nel database locale
+
+
+            } catch (MalformedURLException e){
+                return false;
+            } catch (IOException e){
+                return false;
+            } catch (JSONException e){
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+
+
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            // TODO: 27/05/2016 RIEMPIRE
+            if (success) {
+
+            } else {
+                if(!mConnError){
+
+                } else {
+                    Toast.makeText(getBaseContext(), getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            // TODO: 27/05/2016 riempire
+        }
+
     }
 
 

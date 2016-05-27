@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +34,8 @@ public class GroupListFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private GridView gridView;
-    private GroupAdapter groupAdapter;
+    private GridView mGridView;
+    private GroupAdapter mAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -80,16 +81,16 @@ public class GroupListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        groupAdapter = new GroupAdapter(getContext());
-        gridView = (GridView)view.findViewById(R.id.gridview_groups);
-        gridView.setAdapter(groupAdapter);
+        mAdapter = new GroupAdapter(getContext());
+        mGridView = (GridView)view.findViewById(R.id.gridview_groups);
+        mGridView.setAdapter(mAdapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
                 final Intent i = new Intent(getContext(), GroupDetailsActivity.class);
-                Group group = (Group)gridView.getAdapter().getItem(position);
+                Group group = (Group) mGridView.getAdapter().getItem(position);
                 i.putExtra("GroupID", group.getId());
                 i.putExtra("GroupName",group.getGroupName());
                 startActivity(i);
@@ -131,7 +132,7 @@ public class GroupListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        groupAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 */
     /**
@@ -148,6 +149,12 @@ public class GroupListFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-}
 
-// CIAONE DA Maffi: TVBFXXXXXXXXX <3
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter = new GroupAdapter(MyApplication.getAppContext());
+        mGridView.setAdapter(mAdapter);
+        //Log.d("ONRESUME","on resume fatto");
+    }
+}
