@@ -63,6 +63,7 @@
                 android:id="@+id/activity_registration_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
                 android:singleLine="true"
                 android:hint="@string/prompt_email"/>
 
@@ -78,6 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                android:inputType="textPassword"
                 android:hint="@string/prompt_password"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -91,7 +93,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:hint="@string/prompt_password"/>
+                android:inputType="textPassword"
+                android:hint="@string/prompt_password_confirm"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -101,7 +104,8 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:textColor="@android:color/white"
-            android:text="@string/save"/>
+            android:text="@string/save"
+            android:onClick="register"/>
 
 
     </LinearLayout>
