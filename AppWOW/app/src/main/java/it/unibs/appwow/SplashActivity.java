@@ -48,6 +48,9 @@ public class SplashActivity extends AppCompatActivity {
 
     private DownloadFromServerTask mDownloadTask;
 
+    private User mUserModel;
+    private boolean mDownloaded = false;
+
    // private AppSQLiteHelper database;
    // private SQLiteDatabase db;
 
@@ -76,13 +79,18 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         final ImageView logoImageView = (ImageView)findViewById(R.id.splash_imageview);
+        mUserModel = User.load(MyApplication.getAppContext());
+        if(mUserModel != null){
+            mDownloadTask = new DownloadFromServerTask(mUserModel);
+            mDownloadTask.execute((Void) null);
+        }
 
         logoImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 Log.d(TAG_LOG, "ImageView touched!");
                 long elapsedTime = SystemClock.uptimeMillis() - mStartTime;
-                if(elapsedTime >= MIN_WAIT_INTERVAL)
+                if(elapsedTime >= MIN_WAIT_INTERVAL && mDownloaded)
                 {
                     Log.d(TAG_LOG, "OK! Let's go ahead...");
                     goAhead();
@@ -94,6 +102,8 @@ public class SplashActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
         Log.d(TAG_LOG, "Activity created");
     }
 
@@ -107,6 +117,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         Log.d(TAG_LOG, "Activity started");
+
     }
 
     @Override
@@ -119,47 +130,15 @@ public class SplashActivity extends AppCompatActivity {
 
     private void goAhead()
     {
-        /* commento*/
-       /* // check if the user is already logged
-        final UserModel userModel = UserModel.load(this);
-        Class destinationActivity = null;
-        if(userModel == null) {
-            // user not yet logged
-            destinationActivity = FirstAccessActivity.class;
-        } else {
-            // user already logged
-            destinationActivity = MenuActivity.class;
-        }*/
-        //final Intent intent = new Intent(this,GroupActivity.class);
-        //database = new AppSQLiteHelper(getApplicationContext());
-      //  db = database.getWritableDatabase();
-      //  if(db != null) {
-        /*Class destinationClass = null;
-        SharedPreferences sharedPreferences = getSharedPreferences(getPackageName(),MODE_PRIVATE);
-        String userId = sharedPreferences.getString("logged_in",null);
-        if(userId != null) {
-            destinationClass = NavigationActivity.class;
-        }
-        else{
-            destinationClass = LoginActivity.class;
-        }
-        final Intent intent = new Intent(this, destinationClass);
-        startActivity(intent);
-        finish();
-        */
-        final User userModel = User.load(this);
+        //final User userModel = User.load(this);
         //final User userModel = User.create(1);
         Class destinationActivity = null;
-        if(userModel == null) {
+        if(mUserModel == null) {
             // user not yet logged
             destinationActivity = LoginActivity.class;
         } else {
             // user already logged
             destinationActivity = NavigationActivity.class;
-
-            //// TODO: 27/05/2016 lettura database remoto
-            mDownloadTask = new DownloadFromServerTask(userModel);
-            mDownloadTask.execute((Void) null);
         }
 
         final Intent intent = new Intent(this, destinationActivity);
@@ -261,13 +240,14 @@ public class SplashActivity extends AppCompatActivity {
                             int idAdmin = groupJs.getInt("idAdmin");
                             String created_at_string = groupJs.getString("created_at");
                             long created_at = DateUtils.dateToLong(created_at_string);
-
-                            JSONObject pivot = groupJs.getJSONObject("pivot");
-
+                            //JSONObject pivot = groupJs.getJSONObject("pivot");
                             Group group = Group.create(name).withId(id).withAdmin(idAdmin);
                             group.setCreatedAt(created_at);
                             group.setUpdatedAt(server_updated_at);
+                            group.highlight();
                             dao.insertGroup(group);
+                            //boolean highlighted = dao.highlightGroup(id);
+                            //if(highlighted) Log.d("HIGHLIGHT", "Gruppo " + id + " highlighted");
                         } else{
                             //per ora non faccio niente
                         }
@@ -287,6 +267,8 @@ public class SplashActivity extends AppCompatActivity {
                 }
 
             }
+
+            mDownloaded = true;
         }
 
         @Override

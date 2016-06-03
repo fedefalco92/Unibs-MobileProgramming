@@ -24,7 +24,8 @@ public class GroupDAO implements LocalDB_DAO {
             AppDB.Groups.COLUMN_NAME,
             AppDB.Groups.COLUMN_PHOTO,
             AppDB.Groups.COLUMN_CREATED_AT,
-            AppDB.Groups.COLUMN_UPDATED_AT};
+            AppDB.Groups.COLUMN_UPDATED_AT,
+            AppDB.Groups.COLUMN_HIGHLIGHTED};
 
     @Override
     public void open() {
@@ -49,6 +50,7 @@ public class GroupDAO implements LocalDB_DAO {
         values.put(AppDB.Groups.COLUMN_PHOTO, data.getPhotoUri());
         values.put(AppDB.Groups.COLUMN_CREATED_AT, data.getCreatedAt());
         values.put(AppDB.Groups.COLUMN_UPDATED_AT, data.getUpdatedAt());
+        values.put(AppDB.Groups.COLUMN_HIGHLIGHTED, data.getHighlighted());
 
         return values;
     }
@@ -61,9 +63,10 @@ public class GroupDAO implements LocalDB_DAO {
         String photoUri = cursor.getString(3);
         long createdAt = cursor.getLong(4);
         long updatedAt = cursor.getLong(5);
+        int highlighted = cursor.getInt(6);
 
 
-        return new Group(id,groupName, photoUri, createdAt, updatedAt, idAdmin);
+        return new Group(id,groupName, photoUri, createdAt, updatedAt, idAdmin, highlighted);
     }
 
     public Group insertGroup(Group data) {
@@ -111,6 +114,21 @@ public class GroupDAO implements LocalDB_DAO {
             return data.get(0).getUpdatedAt();
         }
     }
+
+    public boolean highlightGroup(int id){
+        ContentValues groupToUpdate = new ContentValues();
+        groupToUpdate.put(AppDB.Groups.COLUMN_HIGHLIGHTED, 1);
+        int res = database.update(AppDB.Groups.TABLE_GROUPS, groupToUpdate, AppDB.Groups._ID + " = ?",new String[] {"" + id});
+        return res > 0;
+    }
+
+    public boolean unHighlightGroup(int id){
+        ContentValues groupToUpdate = new ContentValues();
+        groupToUpdate.put(AppDB.Groups.COLUMN_HIGHLIGHTED, 0);
+        int res = database.update(AppDB.Groups.TABLE_GROUPS, groupToUpdate, AppDB.Groups._ID + " = ?",new String[] {"" + id});
+        return res > 0;
+    }
+
     
     public void resetAllGroups() {
         database.delete(AppDB.Groups.TABLE_GROUPS,null,null);

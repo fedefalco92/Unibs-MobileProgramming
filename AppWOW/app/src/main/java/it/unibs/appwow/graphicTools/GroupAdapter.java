@@ -29,6 +29,7 @@ public class GroupAdapter extends BaseAdapter {
     private class Holder {
         ImageView groupImageView;
         TextView groupName;
+        TextView groupModified;
        /* TextView personalStatus;
         TextView groupModfiedIndicator;*/
     }
@@ -76,7 +77,7 @@ public class GroupAdapter extends BaseAdapter {
             holder = new Holder();
             holder.groupImageView = (ImageView) view.findViewById(R.id.imageView_groupPhoto);
             holder.groupName = (TextView)view.findViewById(R.id.textView_groupName);
-
+            holder.groupModified = (TextView) view.findViewById(R.id.group_modified_indicator);
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();
@@ -84,6 +85,12 @@ public class GroupAdapter extends BaseAdapter {
         final Group itemGroup = (Group) getItem(position);
         holder.groupName.setText(itemGroup.getGroupName());
         holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoUri()));
+        // FIXME: 03/06/2016 MODIFICARE IN IMAGEVIEW
+        if(itemGroup.isHighlighted()){
+            holder.groupModified.setText("NEW");
+        } else {
+            holder.groupModified.setText("UP TO DATE");
+        }
        /* final LocalDataModel itemModel = (LocalDataModel)getItem(position);
         holder.dateTextView.setText(DATE_FORMAT.format(itemModel.entryDate));
         holder.loveVoteTextView.setText("Love: " + itemModel.loveVote);

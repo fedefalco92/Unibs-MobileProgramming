@@ -28,6 +28,7 @@ public final class AppDB {
         public static final String COLUMN_PHOTO = "photo";
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
+        public static final String COLUMN_HIGHLIGHTED = "highlighted";
     }
 
     public static class UserGroup{

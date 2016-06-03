@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.graphicTools.GroupAdapter;
 import it.unibs.appwow.model.parc.Group;
 
@@ -93,6 +94,14 @@ public class GroupListFragment extends Fragment {
                 Group group = (Group) mGridView.getAdapter().getItem(position);
                 i.putExtra("GroupID", group.getId());
                 i.putExtra("GroupName",group.getGroupName());
+                //i.putExtra("group", group);
+
+                //tolgo l'highlight dal gruppo
+                GroupDAO dao = new GroupDAO();
+                dao.open();
+                dao.unHighlightGroup(group.getId());
+                dao.close();
+
                 startActivity(i);
                 //finish();
             }

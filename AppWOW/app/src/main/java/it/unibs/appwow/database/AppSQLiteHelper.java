@@ -27,7 +27,8 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Groups.COLUMN_NAME + " TEXT, " +
             Groups.COLUMN_PHOTO + " TEXT, " +
             Groups.COLUMN_CREATED_AT + " NUMERIC, " +
-            Groups.COLUMN_UPDATED_AT + " NUMERIC " +
+            Groups.COLUMN_UPDATED_AT + " NUMERIC, " +
+            Groups.COLUMN_HIGHLIGHTED + " INTEGER DEFAULT 0 " +
             ");";
 
     private static final String TABLE_COSTS_CREATE  = "CREATE TABLE " + Costs.TABLE_COSTS + "(" +

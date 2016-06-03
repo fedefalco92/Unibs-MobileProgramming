@@ -30,10 +30,11 @@ public class Group implements Parcelable {
     private long mCreatedAt;
     private long mUpdatedAt;
     private int mIdAdmin;
+    private int mHighlighted;
     private HashMap<Integer, User> mUsers;
 
 
-    public long getId() {
+    public int getId() {
         return mId;
     }
 
@@ -81,6 +82,14 @@ public class Group implements Parcelable {
         this.mIdAdmin = mIdAdmin;
     }
 
+    public int getHighlighted() {
+        return mHighlighted;
+    }
+
+    public void setHighlighted(int mHighlighted) {
+        this.mHighlighted = mHighlighted;
+    }
+
 
     public static final Parcelable.Creator<Group> CREATOR = new Parcelable.Creator<Group>()
     {
@@ -126,6 +135,10 @@ public class Group implements Parcelable {
         if(in.readByte() == PRESENT)
         {
             this.mIdAdmin = in.readInt();
+        }
+        if(in.readByte() == PRESENT)
+        {
+            this.mHighlighted = in.readInt();
         }
         // FIXME: 26/05/2016 LA HashMap con gli utenti viene annullata quando si parcellizza il gruppo
         this.mUsers = new HashMap<Integer, User>();
@@ -187,9 +200,18 @@ public class Group implements Parcelable {
             dest.writeByte(NOT_PRESENT);
         }
 
+        if(this.mHighlighted!=0)
+        {
+            dest.writeByte(PRESENT);
+            dest.writeInt(this.mHighlighted);
+        } else
+        {
+            dest.writeByte(NOT_PRESENT);
+        }
+
     }
 
-    public Group(int id, String groupName, String photoUri, long createdAt, long updatedAt, int idAdmin) {
+    public Group(int id, String groupName, String photoUri, long createdAt, long updatedAt, int idAdmin, int highlighted) {
         this.mUsers = new HashMap<Integer, User>();
         this.mId = id;
         this.mGroupName = groupName;
@@ -197,6 +219,7 @@ public class Group implements Parcelable {
         this.mCreatedAt = createdAt;
         this.mUpdatedAt = updatedAt;
         this.mIdAdmin = idAdmin;
+        this.mHighlighted = highlighted;
     }
 
     private Group(String groupName) {
@@ -207,6 +230,7 @@ public class Group implements Parcelable {
         this.mCreatedAt = 0;
         this.mUpdatedAt = 0;
         this.mIdAdmin = 0;
+        this.mHighlighted = 0;
     }
 
     public static Group create(String groupName){
@@ -253,6 +277,17 @@ public class Group implements Parcelable {
 
     public User getAdminUser(){
         return mUsers.get(getIdAdmin());
+    }
+
+    public boolean isHighlighted(){
+        return mHighlighted > 0;
+    }
+
+    public void highlight(){
+        setHighlighted(1);
+    }
+    public void unHighlight(){
+        setHighlighted(0);
     }
 
     public String toString(){
