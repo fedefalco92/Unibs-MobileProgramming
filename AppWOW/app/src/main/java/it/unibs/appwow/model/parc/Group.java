@@ -214,6 +214,11 @@ public class Group implements Parcelable {
         return g;
     }
 
+    public Group withId(int id){
+        this.mId = id;
+        return this;
+    }
+
     public Group withAdmin(int idAdmin){
         this.mIdAdmin = idAdmin;
         return this;

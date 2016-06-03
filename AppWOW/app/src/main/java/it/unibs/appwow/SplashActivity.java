@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +30,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import it.unibs.appwow.database.AppSQLiteHelper;
+import it.unibs.appwow.database.DateUtils;
+import it.unibs.appwow.database.GroupDAO;
+import it.unibs.appwow.model.parc.Group;
 import it.unibs.appwow.model.parc.User;
 import it.unibs.appwow.services.WebServiceUri;
 
@@ -165,8 +169,7 @@ public class SplashActivity extends AppCompatActivity {
 
     public class DownloadFromServerTask extends AsyncTask<Void, Void, Boolean> {
 
-        private JSONObject mResjs = null;
-        private boolean mNewUser = false;
+        private JSONArray mResjs = null;
         private boolean mConnError = false;
         private User mUser = null;
 
@@ -181,14 +184,16 @@ public class SplashActivity extends AppCompatActivity {
             Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mUser.getId()));
             Uri groups_uri = Uri.withAppendedPath(user_uri, "groups");
             try {
+
                 URL url = new URL(groups_uri.toString());
+                //Log.d("URL", url.toString());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
+                conn.setRequestMethod("GET");
                 conn.setDoInput(true);
-                conn.setDoOutput(true);
-
+                //conn.setDoOutput(true);
+                /*
                 Uri.Builder builder = new Uri.Builder();
                         //.appendQueryParameter("email", mEmail)
                         //.appendQueryParameter("password", mPassword);
@@ -199,9 +204,10 @@ public class SplashActivity extends AppCompatActivity {
                 writer.flush();
                 writer.close();
                 os.close();
-
+                */
                 conn.connect();
                 int responseCode = conn.getResponseCode();
+                Log.d("RESPONSE CODE", responseCode + "");
                 if(responseCode == HttpURLConnection.HTTP_OK){
                     String line = "";
                     BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -209,19 +215,17 @@ public class SplashActivity extends AppCompatActivity {
                         response+=line;
                     }
                 } else {
+                    mConnError = true;
                     response = "";
                 }
                 if(!response.isEmpty()){
                     //response = response.substring(1,response.length()-1);
-                    mResjs = new JSONObject(response);
+                    mResjs = new JSONArray(response);
                     Log.d("risposta", mResjs.toString(1));
                 } else {
                     return false;
                 }
                 Log.d("RISPOSTA_STRING", response);
-
-                // TODO: 19/05/2016 salvare nel database locale
-
 
             } catch (MalformedURLException e){
                 return false;
@@ -240,10 +244,44 @@ public class SplashActivity extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             // TODO: 27/05/2016 RIEMPIRE
             if (success) {
+                // TODO: 03/06/2016 RIEMPIRE DATABASE LOCALE
+                GroupDAO dao = new GroupDAO();
+                dao.open();
+                for(int i = 0; i < mResjs.length(); i++){
 
+                    try {
+                        JSONObject groupJs = mResjs.getJSONObject(i);
+                        int id = groupJs.getInt("id");
+                        String server_updated_at_string = groupJs.getString("updated_at");
+                        long server_updated_at = DateUtils.dateToLong(server_updated_at_string);
+                        long local_updated_at = dao.getUpdatedAt(id);
+                        //aggiorno il gruppo solo se ha subito modifiche
+                        if(server_updated_at > local_updated_at){
+                            String name = groupJs.getString("name");
+                            int idAdmin = groupJs.getInt("idAdmin");
+                            String created_at_string = groupJs.getString("created_at");
+                            long created_at = DateUtils.dateToLong(created_at_string);
+
+                            JSONObject pivot = groupJs.getJSONObject("pivot");
+
+                            Group group = Group.create(name).withId(id).withAdmin(idAdmin);
+                            group.setCreatedAt(created_at);
+                            group.setUpdatedAt(server_updated_at);
+                            dao.insertGroup(group);
+                        } else{
+                            //per ora non faccio niente
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                dao.close();
             } else {
                 if(!mConnError){
-
+                    // TODO: 03/06/2016 differenziare errori
+                    Toast.makeText(getBaseContext(), getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getBaseContext(), getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
                 }

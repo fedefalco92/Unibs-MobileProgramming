@@ -16,13 +16,13 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
 
     // database creation (tables) SQL statement
     private static final String TABLE_USERS_CREATE = "CREATE TABLE " + Users.TABLE_USERS + " ( "+
-        Users._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+        Users._ID + " INTEGER NOT NULL PRIMARY KEY, " +
         Users.COLUMN_FULLNAME + " TEXT NOT NULL, " +
         Users.COLUMN_EMAIL + " TEXT NOT NULL "+
         " );";
 
     private static final String TABLE_GROUPS_CREATE = "CREATE TABLE " + Groups.TABLE_GROUPS + " ("+
-            Groups._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+            Groups._ID + " INTEGER NOT NULL PRIMARY KEY, " +
             Groups.COLUMN_ID_ADMIN + " INTEGER, " +
             Groups.COLUMN_NAME + " TEXT, " +
             Groups.COLUMN_PHOTO + " TEXT, " +

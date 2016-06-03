@@ -67,7 +67,7 @@ public class GroupDAO implements LocalDB_DAO {
     }
 
     public Group insertGroup(Group data) {
-        database.insert(AppDB.Groups.TABLE_GROUPS, null,
+        database.replace(AppDB.Groups.TABLE_GROUPS, null,
                 groupToValues(data));
         // now read from DB the inserted person and return it
         Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,allColumns,
@@ -92,6 +92,24 @@ public class GroupDAO implements LocalDB_DAO {
         }
         cursor.close(); // remember to always close the cursor!
         return data;
+    }
+
+    public long getUpdatedAt(int groupId){
+        List<Group> data = new ArrayList<Group>();
+        Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
+                allColumns, AppDB.Groups._ID + "=" + groupId,null,null,null,null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            Group d = cursorToGroup(cursor);
+            data.add(d);
+            cursor.moveToNext();
+        }
+        cursor.close(); // remember to always close the cursor!
+        if(data.size()!=1){
+            return 0L;
+        } else {
+            return data.get(0).getUpdatedAt();
+        }
     }
     
     public void resetAllGroups() {
