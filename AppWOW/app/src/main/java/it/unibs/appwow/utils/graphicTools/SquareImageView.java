@@ -1,4 +1,4 @@
-package it.unibs.appwow.graphicTools;
+package it.unibs.appwow.utils.graphicTools;
 
 import android.content.Context;
 import android.util.AttributeSet;

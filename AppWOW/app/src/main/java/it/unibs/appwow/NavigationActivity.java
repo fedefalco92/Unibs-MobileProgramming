@@ -6,10 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,7 +19,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import it.unibs.appwow.model.parc.User;
+import it.unibs.appwow.fragments.GroupListFragment;
+import it.unibs.appwow.fragments.OfflineGroupListFragment;
+import it.unibs.appwow.models.parc.User;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,GroupListFragment.OnFragmentInteractionListener,OfflineGroupListFragment.OnFragmentInteractionListener {

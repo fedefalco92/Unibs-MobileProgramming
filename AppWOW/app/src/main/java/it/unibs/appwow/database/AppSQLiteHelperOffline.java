@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDBOffline.*;
-import it.unibs.appwow.model.Cost;
-import it.unibs.appwow.model.parc.Group;
+import it.unibs.appwow.models.Cost;
+import it.unibs.appwow.models.parc.Group;
 
 /**
  * Created by Massi on 12/05/2016.

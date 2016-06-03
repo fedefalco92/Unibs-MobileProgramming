@@ -1,4 +1,4 @@
-package it.unibs.appwow;
+package it.unibs.appwow.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import it.unibs.appwow.graphicTools.GroupAdapter;
-import it.unibs.appwow.graphicTools.OfflineGroupAdapter;
+import it.unibs.appwow.GroupDetailsActivity;
+import it.unibs.appwow.R;
+import it.unibs.appwow.views.adapters.GroupAdapter;
+import it.unibs.appwow.views.adapters.OfflineGroupAdapter;
 
 
 /**

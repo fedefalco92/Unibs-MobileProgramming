@@ -11,19 +11,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
-import it.unibs.appwow.dummy.DummyContent;
-import it.unibs.appwow.model.Amount;
-import it.unibs.appwow.model.Cost;
-import it.unibs.appwow.model.parc.Group;
+import it.unibs.appwow.fragments.AmountsFragment;
+import it.unibs.appwow.fragments.CostsFragment;
+import it.unibs.appwow.fragments.TransactionsFragment;
+import it.unibs.appwow.utils.dummy.DummyContent;
+import it.unibs.appwow.models.Amount;
+import it.unibs.appwow.models.Cost;
+import it.unibs.appwow.models.parc.Group;
 
 public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener, AmountsFragment.OnListFragmentInteractionListener, TransactionsFragment.OnListFragmentInteractionListener {
 

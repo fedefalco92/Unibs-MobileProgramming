@@ -1,12 +1,10 @@
-package it.unibs.appwow.model.parc;
+package it.unibs.appwow.models.parc;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Massi on 05/05/2016.

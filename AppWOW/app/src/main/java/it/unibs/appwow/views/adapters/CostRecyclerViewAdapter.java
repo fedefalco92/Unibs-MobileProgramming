@@ -1,4 +1,4 @@
-package it.unibs.appwow;
+package it.unibs.appwow.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,10 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import it.unibs.appwow.CostsFragment.OnListFragmentInteractionListener;
-import it.unibs.appwow.model.Cost;
+import it.unibs.appwow.fragments.CostsFragment.OnListFragmentInteractionListener;
+import it.unibs.appwow.R;
+import it.unibs.appwow.models.Cost;
 
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -17,12 +17,12 @@ import java.util.List;
  * specified {@link OnCostListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecyclerViewAdapter.ViewHolder> {
+public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerViewAdapter.ViewHolder> {
 
     private final List<Cost> mValues;
     private final OnListFragmentInteractionListener mListener; // FIXME: 06/05/2016  DA IMPLEMENTARE 
 
-    public MyCostRecyclerViewAdapter(List<Cost> items, OnListFragmentInteractionListener listener) {
+    public CostRecyclerViewAdapter(List<Cost> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -38,7 +38,7 @@ public class MyCostRecyclerViewAdapter extends RecyclerView.Adapter<MyCostRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        //Log.d("MyCostRecyclerViewAdapter","Position " + position);
+        //Log.d("CostRecyclerViewAdapter","Position " + position);
 
         holder.mItem = mValues.get(position);
         holder.mUsername.setText(Long.toString(mValues.get(position).idUser));

@@ -1,4 +1,4 @@
-package it.unibs.appwow;
+package it.unibs.appwow.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,11 +25,14 @@ import org.json.JSONObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import it.unibs.appwow.database.DateUtils;
+import it.unibs.appwow.GroupDetailsActivity;
+import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.R;
+import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.graphicTools.GroupAdapter;
-import it.unibs.appwow.model.parc.Group;
-import it.unibs.appwow.model.parc.User;
+import it.unibs.appwow.views.adapters.GroupAdapter;
+import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceUri;
 
 

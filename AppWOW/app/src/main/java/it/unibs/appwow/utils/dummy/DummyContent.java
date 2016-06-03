@@ -1,9 +1,7 @@
-package it.unibs.appwow.dummy;
+package it.unibs.appwow.utils.dummy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Helper class for providing sample content for user interfaces created by

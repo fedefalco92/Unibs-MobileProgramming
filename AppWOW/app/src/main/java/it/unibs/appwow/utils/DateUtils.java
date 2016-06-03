@@ -1,4 +1,4 @@
-package it.unibs.appwow.database;
+package it.unibs.appwow.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -1,7 +1,6 @@
-package it.unibs.appwow.graphicTools;
+package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import it.unibs.appwow.R;
-import it.unibs.appwow.model.parc.User;
+import it.unibs.appwow.models.parc.User;
 
 /**
  * Created by Massi on 24/05/2016.

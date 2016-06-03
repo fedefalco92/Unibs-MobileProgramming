@@ -46,7 +46,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibs.appwow.model.parc.User;
+import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 

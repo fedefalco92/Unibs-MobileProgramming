@@ -11,7 +11,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import it.unibs.appwow.graphicTools.GroupAdapter;
+import it.unibs.appwow.views.adapters.GroupAdapter;
 
 public class GroupActivity extends AppCompatActivity {
 

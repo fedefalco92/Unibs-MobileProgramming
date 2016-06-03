@@ -1,12 +1,9 @@
 package it.unibs.appwow;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.SystemClock;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,20 +17,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import it.unibs.appwow.database.AppSQLiteHelper;
-import it.unibs.appwow.database.DateUtils;
+import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.model.parc.Group;
-import it.unibs.appwow.model.parc.User;
+import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceUri;
 
 public class SplashActivity extends AppCompatActivity {

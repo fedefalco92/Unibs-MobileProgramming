@@ -14,7 +14,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/view"
         android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="false">
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="false">
 
     </android.support.design.widget.TextInputLayout>
 

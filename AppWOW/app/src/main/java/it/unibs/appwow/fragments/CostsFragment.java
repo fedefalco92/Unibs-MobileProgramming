@@ -1,4 +1,4 @@
-package it.unibs.appwow;
+package it.unibs.appwow.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,11 +7,19 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import it.unibs.appwow.dummy.DummyAmountContent;
-import it.unibs.appwow.model.Amount;
+import java.util.List;
+
+import it.unibs.appwow.R;
+import it.unibs.appwow.views.adapters.CostRecyclerViewAdapter;
+import it.unibs.appwow.utils.dummy.DummyCostContent;
+import it.unibs.appwow.models.Cost;
 
 /**
  * A fragment representing a list of Items.
@@ -19,7 +27,7 @@ import it.unibs.appwow.model.Amount;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class AmountsFragment extends Fragment {
+public class CostsFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -27,17 +35,19 @@ public class AmountsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
+    private List<Cost> costList; //da riempire
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AmountsFragment() {
+    public CostsFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static AmountsFragment newInstance(int columnCount) {
-        AmountsFragment fragment = new AmountsFragment();
+    public static CostsFragment newInstance(int columnCount) {
+        CostsFragment fragment = new CostsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -51,12 +61,33 @@ public class AmountsFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        //per poter popolare l'action bar dell'activity
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.costs_fragment_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.add_new_cost:
+                Toast.makeText(getContext(), "Add item", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_amount_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_cost_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -67,11 +98,10 @@ public class AmountsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyAmountRecyclerViewAdapter(DummyAmountContent.ITEMS, mListener));
+            recyclerView.setAdapter(new CostRecyclerViewAdapter(DummyCostContent.ITEMS, mListener)); // FIXME: 06/05/2016 da mettere contenuto giusto (listCost)
         }
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -102,6 +132,6 @@ public class AmountsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Amount item);
+        void onListFragmentInteraction(Cost item);
     }
 }

@@ -1,4 +1,4 @@
-package it.unibs.appwow.model.parc;
+package it.unibs.appwow.models.parc;
 
 import android.content.Context;
 import android.content.SharedPreferences;

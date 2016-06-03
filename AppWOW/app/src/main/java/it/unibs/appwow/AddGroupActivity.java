@@ -17,8 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import it.unibs.appwow.model.parc.Group;
-import it.unibs.appwow.model.parc.User;
+import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.parc.User;
 
 public class AddGroupActivity extends AppCompatActivity {
 

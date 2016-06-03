@@ -1,4 +1,4 @@
-package it.unibs.appwow;
+package it.unibs.appwow.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,40 +9,41 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import it.unibs.appwow.dummy.DummyContent;
-import it.unibs.appwow.dummy.DummyContent.Transaction;
+
+import it.unibs.appwow.R;
+import it.unibs.appwow.views.adapters.AmountRecyclerViewAdapter;
+import it.unibs.appwow.utils.dummy.DummyAmountContent;
+import it.unibs.appwow.models.Amount;
 
 /**
  * A fragment representing a list of Items.
- * <p />
+ * <p/>
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class TransactionsFragment extends Fragment {
-
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+public class AmountsFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-
+    // TODO: Customize parameters
+    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static TransactionsFragment newInstance(int columnCount) {
-        TransactionsFragment fragment = new TransactionsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public TransactionsFragment() {
+    public AmountsFragment() {
+    }
+
+    // TODO: Customize parameter initialization
+    @SuppressWarnings("unused")
+    public static AmountsFragment newInstance(int columnCount) {
+        AmountsFragment fragment = new AmountsFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -57,7 +58,7 @@ public class TransactionsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_transaction_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_amount_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -68,7 +69,7 @@ public class TransactionsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyTransactionRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new AmountRecyclerViewAdapter(DummyAmountContent.ITEMS, mListener));
         }
         return view;
     }
@@ -103,6 +104,6 @@ public class TransactionsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Transaction item);
+        void onListFragmentInteraction(Amount item);
     }
 }

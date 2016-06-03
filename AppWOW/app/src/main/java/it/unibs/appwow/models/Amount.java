@@ -1,4 +1,4 @@
-package it.unibs.appwow.model;
+package it.unibs.appwow.models;
 
 /**
  * Created by Massi on 10/05/2016.

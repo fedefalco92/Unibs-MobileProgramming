@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import it.unibs.appwow.model.parc.User;
+import it.unibs.appwow.models.parc.User;
 
 
 public class RegistrationActivity extends AppCompatActivity {

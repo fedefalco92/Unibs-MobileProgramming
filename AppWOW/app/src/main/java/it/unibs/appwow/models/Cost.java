@@ -1,4 +1,4 @@
-package it.unibs.appwow.model;
+package it.unibs.appwow.models;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

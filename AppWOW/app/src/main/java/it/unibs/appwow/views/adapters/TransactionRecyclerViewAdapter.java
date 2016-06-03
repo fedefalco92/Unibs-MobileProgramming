@@ -1,4 +1,4 @@
-package it.unibs.appwow;
+package it.unibs.appwow.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,22 +6,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import it.unibs.appwow.AmountsFragment.OnListFragmentInteractionListener;
-import it.unibs.appwow.model.Amount;
+import it.unibs.appwow.R;
+import it.unibs.appwow.fragments.TransactionsFragment.OnListFragmentInteractionListener;
+import it.unibs.appwow.utils.dummy.DummyContent.Transaction;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Amount} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Transaction} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyAmountRecyclerViewAdapter extends RecyclerView.Adapter<MyAmountRecyclerViewAdapter.ViewHolder> {
+public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<TransactionRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Amount> mValues;
+    private final List<Transaction> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyAmountRecyclerViewAdapter(List<Amount> items, OnListFragmentInteractionListener listener) {
+    public TransactionRecyclerViewAdapter(List<Transaction> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -29,15 +30,16 @@ public class MyAmountRecyclerViewAdapter extends RecyclerView.Adapter<MyAmountRe
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_amount_item, parent, false);
+                .inflate(R.layout.fragment_transaction_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mUserFullname.setText(mValues.get(position).fullname);
-        holder.mUserAmount.setText(String.valueOf(mValues.get(position).amount));
+        holder.mAmountView.setText(String.valueOf(mValues.get(position).amount).substring(0,3));
+        holder.mPrepositionView.setText(mValues.get(position).preposition);
+        holder.mUserView.setText(mValues.get(position).user);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,20 +60,17 @@ public class MyAmountRecyclerViewAdapter extends RecyclerView.Adapter<MyAmountRe
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mUserFullname;
-        public final TextView mUserAmount;
-        public Amount mItem;
+        public final TextView mAmountView;
+        public final TextView mPrepositionView;
+        public final TextView mUserView;
+        public Transaction mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mUserFullname = (TextView) view.findViewById(R.id.amount_fragment_user_fullname);
-            mUserAmount = (TextView) view.findViewById(R.id.amount_fragment_user_amount);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mUserAmount.getText() + "'";
+            mAmountView = (TextView) view.findViewById(R.id.fragmemt_transaction_amount);
+            mPrepositionView = (TextView) view.findViewById(R.id.fragment_transaction_preposition);
+            mUserView = (TextView) view.findViewById(R.id.fragment_transaction_user);
         }
     }
 }

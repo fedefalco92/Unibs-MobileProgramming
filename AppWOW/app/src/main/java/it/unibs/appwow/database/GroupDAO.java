@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
-import it.unibs.appwow.model.parc.Group;
+import it.unibs.appwow.models.parc.Group;
 
 /**
  * Created by federicofalcone on 12/05/16.

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <it.unibs.appwow.graphicTools.SquareImageView
+    <it.unibs.appwow.utils.graphicTools.SquareImageView
         android:id="@+id/imageView_groupPhoto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,10 @@
         android:layout_width="match_parent"
         android:layout_height="43dp"
         android:orientation="horizontal"
-        android:paddingLeft="5dp"
+        android:paddingLeft="@dimen/list_padding_left"
+        android:paddingStart="@dimen/list_padding_left"
+        android:paddingRight="@dimen/list_padding_right"
+        android:paddingEnd="@dimen/list_padding_right"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:background="#99000000"
