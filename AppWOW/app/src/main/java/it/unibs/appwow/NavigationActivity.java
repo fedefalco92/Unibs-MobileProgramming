@@ -70,7 +70,7 @@ public class NavigationActivity extends AppCompatActivity
 
         mFragmentManager = getSupportFragmentManager();
         mFragmentTransaction = mFragmentManager.beginTransaction();
-        mFragmentTransaction.replace(R.id.containerView, new GroupListFragment(),TAG_ONLINE).commit();
+        mFragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mUser),TAG_ONLINE).commit();
 
         //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
         navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
@@ -168,7 +168,7 @@ public class NavigationActivity extends AppCompatActivity
 
         if (id == R.id.nav_online_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView,new GroupListFragment(),TAG_ONLINE).commit();
+            fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mUser),TAG_ONLINE).commit();
 
             // Handle the camera action
         } else if (id == R.id.nav_offline_groups) {

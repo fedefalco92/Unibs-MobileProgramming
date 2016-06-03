@@ -201,34 +201,10 @@ public class SplashActivity extends AppCompatActivity {
                     //response = response.substring(1,response.length()-1);
                     mResjs = new JSONArray(response);
                     Log.d("risposta", mResjs.toString(1));
-                } else {
-                    return false;
-                }
-                Log.d("RISPOSTA_STRING", response);
-
-            } catch (MalformedURLException e){
-                return false;
-            } catch (IOException e){
-                return false;
-            } catch (JSONException e){
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-
-
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            // TODO: 27/05/2016 RIEMPIRE
-            if (success) {
-                // TODO: 03/06/2016 RIEMPIRE DATABASE LOCALE
-                GroupDAO dao = new GroupDAO();
-                dao.open();
-                for(int i = 0; i < mResjs.length(); i++){
-
-                    try {
+                    //riempio il database locale
+                    GroupDAO dao = new GroupDAO();
+                    dao.open();
+                    for(int i = 0; i < mResjs.length(); i++){                        
                         JSONObject groupJs = mResjs.getJSONObject(i);
                         int id = groupJs.getInt("id");
                         String server_updated_at_string = groupJs.getString("updated_at");
@@ -251,13 +227,30 @@ public class SplashActivity extends AppCompatActivity {
                         } else{
                             //per ora non faccio niente
                         }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
+                    dao.close();
+                } else {
+                    return false;
                 }
+                Log.d("RISPOSTA_STRING", response);
 
-                dao.close();
+            } catch (MalformedURLException e){
+                return false;
+            } catch (IOException e){
+                return false;
+            } catch (JSONException e){
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+
+
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if (success) {
+                // FIXME: 03/06/2016 cosa fare in caso di success? per esempio mostrare un messaggio con il numero di gruppi aggiornati
             } else {
                 if(!mConnError){
                     // TODO: 03/06/2016 differenziare errori

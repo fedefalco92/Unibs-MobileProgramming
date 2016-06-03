@@ -23,9 +23,11 @@ import android.widget.Toast;
 import it.unibs.appwow.dummy.DummyContent;
 import it.unibs.appwow.model.Amount;
 import it.unibs.appwow.model.Cost;
+import it.unibs.appwow.model.parc.Group;
 
 public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener, AmountsFragment.OnListFragmentInteractionListener, TransactionsFragment.OnListFragmentInteractionListener {
 
+    private Group mGroup;
     private final String TAG_LOG = GroupDetailsActivity.class.getSimpleName();
 
     /**
@@ -52,8 +54,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Bundle b = getIntent().getExtras();
-        setTitle(b.getString("GroupName"));
+        mGroup = getIntent().getParcelableExtra("group");
+        setTitle(mGroup.getGroupName());
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.

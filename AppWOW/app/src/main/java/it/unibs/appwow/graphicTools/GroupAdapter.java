@@ -53,6 +53,8 @@ public class GroupAdapter extends BaseAdapter {
     }
 
 
+
+
     @Override
     public int getCount() {
         return mItems.size();
@@ -104,4 +106,5 @@ public class GroupAdapter extends BaseAdapter {
         // TODO: 26/05/2016 GROUP ADAPTER implementare la trasformazione da photo uri (string) a resource ID (int)
         return R.drawable.ic_menu_send;
     }
+
 }

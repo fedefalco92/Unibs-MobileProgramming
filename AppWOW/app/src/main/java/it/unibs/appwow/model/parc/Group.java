@@ -154,7 +154,7 @@ public class Group implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
-        dest.writeLong(this.mId);
+        dest.writeInt(this.mId);
         if(!TextUtils.isEmpty(this.mGroupName))
         {
             dest.writeByte(PRESENT);

@@ -54,7 +54,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //retrieving group from intent extras
-        this.mGroup = (Group) getIntent().getExtras().getParcelable(AddGroupActivity.PASSING_GROUP_EXTRA);
+        this.mGroup = getIntent().getExtras().getParcelable(AddGroupActivity.PASSING_GROUP_EXTRA);
         //IMPORTANT: parceling does not save the HashMap mUsers which will be null after getParcelable(...)
         User currentUser = User.load(MyApplication.getAppContext());
         currentUser.setIsGroupAdmin();
