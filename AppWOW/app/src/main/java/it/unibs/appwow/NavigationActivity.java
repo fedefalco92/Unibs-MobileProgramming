@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.OfflineGroupListFragment;
 import it.unibs.appwow.models.parc.User;
@@ -183,6 +184,7 @@ public class NavigationActivity extends AppCompatActivity
             // TODO: 19/05/2016 PULIRE IL DATABASE QUANDO SI FA LOGOUT
             User currentUser = User.load(MyApplication.getAppContext());
             currentUser.logout(MyApplication.getAppContext());
+            deleteDatabase(AppDB.DATABASE_NAME); // Elimina il db
             Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
             startActivity(login);
             finish();

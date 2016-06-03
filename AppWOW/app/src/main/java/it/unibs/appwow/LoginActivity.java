@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.services.DownloadFromServerTask;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;

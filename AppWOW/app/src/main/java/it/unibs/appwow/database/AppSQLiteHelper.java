@@ -108,6 +108,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
+
     //from Object to database
     // TODO: 12/05/16 da spostare da qualche parte ...
     private ContentValues costToValues(Cost data) {

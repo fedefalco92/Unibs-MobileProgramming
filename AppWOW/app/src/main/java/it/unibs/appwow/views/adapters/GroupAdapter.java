@@ -40,7 +40,7 @@ public class GroupAdapter extends BaseAdapter {
         dao.open();
         mItems = dao.getAllGroups();
         dao.close();
-        Log.d(TAG_LOG, "SIZE mItems = "+ mItems.size());
+        Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
         /*mItems.add(new Group(1,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
         mItems.add(new Group(2,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
         mItems.add(new Group(3,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));

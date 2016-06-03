@@ -128,18 +128,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         });
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
-        /*
-          swipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        swipeRefreshLayout.setRefreshing(true);
-
-                                        fetchMovies();
-                                    }
-                                }
-        );
-         */
+        // Richiamo questo metodo per fare un refresh una volta aperta l'activity
+        fetchGroups();
     }
 
     @Override
@@ -178,79 +168,88 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void fetchGroups(){
+        Log.d(TAG_LOG,"fetchGroups");
         // showing refresh animation before making http call
         mSwipeRefreshLayout.setRefreshing(true);
 
-        Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mUser.getId()));
-        Uri groups_uri = Uri.withAppendedPath(user_uri, "groups");
-        URL url = null;
-        try {
-            url = new URL(groups_uri.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        // Volley's json array request object
-        JsonArrayRequest req = new JsonArrayRequest(url.toString(),
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG_LOG, "Response = " + response.toString());
+        if(mUser != null){
+            Log.d(TAG_LOG,"mUser is not null");
+            Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mUser.getId()));
+            Uri groups_uri = Uri.withAppendedPath(user_uri, "groups");
+            URL url = null;
+            try {
+                url = new URL(groups_uri.toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
 
-                        if (response.length() > 0) {
-                            GroupDAO dao = new GroupDAO();
-                            dao.open();
-                            for(int i = 0; i < response.length(); i++){
-                                try {
-                                    JSONObject groupJs = response.getJSONObject(i);
-                                    int id = groupJs.getInt("id");
-                                    String server_updated_at_string = groupJs.getString("updated_at");
-                                    long server_updated_at = DateUtils.dateToLong(server_updated_at_string);
-                                    long local_updated_at = dao.getUpdatedAt(id);
-                                    //aggiorno il gruppo solo se ha subito modifiche
-                                    if (server_updated_at > local_updated_at) {
-                                        String name = groupJs.getString("name");
-                                        int idAdmin = groupJs.getInt("idAdmin");
-                                        String created_at_string = groupJs.getString("created_at");
-                                        long created_at = DateUtils.dateToLong(created_at_string);
-                                        //JSONObject pivot = groupJs.getJSONObject("pivot");
-                                        Group group = Group.create(name).withId(id).withAdmin(idAdmin);
-                                        group.setCreatedAt(created_at);
-                                        group.setUpdatedAt(server_updated_at);
-                                        group.highlight();
-                                        dao.insertGroup(group);
+            // Volley's json array request object
+            JsonArrayRequest req = new JsonArrayRequest(url.toString(),
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            Log.d(TAG_LOG, "Response = " + response.toString());
 
-                                    } else {
-                                        //per ora non faccio niente
+                            if (response.length() > 0) {
+                                GroupDAO dao = new GroupDAO();
+                                dao.open();
+                                for(int i = 0; i < response.length(); i++){
+                                    try {
+                                        JSONObject groupJs = response.getJSONObject(i);
+                                        int id = groupJs.getInt("id");
+                                        String server_updated_at_string = groupJs.getString("updated_at");
+                                        long server_updated_at = DateUtils.dateToLong(server_updated_at_string);
+                                        long local_updated_at = dao.getUpdatedAt(id);
+                                        //aggiorno il gruppo solo se ha subito modifiche
+                                        if (server_updated_at > local_updated_at) {
+                                            String name = groupJs.getString("name");
+                                            int idAdmin = groupJs.getInt("idAdmin");
+                                            String created_at_string = groupJs.getString("created_at");
+                                            long created_at = DateUtils.dateToLong(created_at_string);
+                                            //JSONObject pivot = groupJs.getJSONObject("pivot");
+                                            Group group = Group.create(name).withId(id).withAdmin(idAdmin);
+                                            group.setCreatedAt(created_at);
+                                            group.setUpdatedAt(server_updated_at);
+                                            group.highlight();
+                                            dao.insertGroup(group);
+
+                                        } else {
+                                            //per ora non faccio niente
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
+                                dao.close();
+                               // mAdapter.notifyDataSetChanged();
+                                mAdapter = new GroupAdapter(getActivity());
+                                mGridView.setAdapter(mAdapter);
+                                mAdapter.notifyDataSetChanged();
+
                             }
-                            dao.close();
-                           // mAdapter.notifyDataSetChanged();
-                            mAdapter = new GroupAdapter(getActivity());
-                            mGridView.setAdapter(mAdapter);
-                            mAdapter.notifyDataSetChanged();
+                            // stopping swipe refresh
+                            mSwipeRefreshLayout.setRefreshing(false);
 
                         }
-                        // stopping swipe refresh
-                        mSwipeRefreshLayout.setRefreshing(false);
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
 
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
+                            Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
 
-                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            // stopping swipe refresh
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
 
-                        // stopping swipe refresh
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
-
-        // Adding request to request queue
-        MyApplication.getInstance().addToRequestQueue(req);
+            // Adding request to request queue
+            MyApplication.getInstance().addToRequestQueue(req);
+        } else {
+            // stopping swipe refresh
+            mSwipeRefreshLayout.setRefreshing(false);
+            Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
+        }
     }
 
 /*

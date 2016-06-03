@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import it.unibs.appwow.services.DownloadFromServerTask;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.models.parc.Group;
@@ -42,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
     private DownloadFromServerTask mDownloadTask;
 
     private User mUserModel;
-    private boolean mDownloaded = false;
+    private boolean mDownloaded = false; // Serve?
 
    // private AppSQLiteHelper database;
    // private SQLiteDatabase db;
@@ -73,7 +74,7 @@ public class SplashActivity extends AppCompatActivity {
 
         final ImageView logoImageView = (ImageView)findViewById(R.id.splash_imageview);
         mUserModel = User.load(MyApplication.getAppContext());
-        Log.d(TAG_LOG, mUserModel==null?"nullo":"non nullo");
+        Log.d(TAG_LOG, "User " + mUserModel==null?"null":"not null");
         if(mUserModel != null){
             mDownloadTask = new DownloadFromServerTask(mUserModel);
             mDownloadTask.execute((Void) null);
@@ -137,6 +138,7 @@ public class SplashActivity extends AppCompatActivity {
         finish();
     }
 
+    /*
     public class DownloadFromServerTask extends AsyncTask<Void, Void, Boolean> {
         private final String TAG_LOG = DownloadFromServerTask.class.getSimpleName(); // aggiungere static se si sposta
 
@@ -146,7 +148,6 @@ public class SplashActivity extends AppCompatActivity {
 
         DownloadFromServerTask(User user) {
             mUser = user;
-
         }
 
         @Override
@@ -176,6 +177,7 @@ public class SplashActivity extends AppCompatActivity {
                 writer.close();
                 os.close();
                 */
+                /*
                 conn.connect();
                 int responseCode = conn.getResponseCode();
                 Log.d(TAG_LOG,"Response code = " + responseCode);
@@ -196,7 +198,7 @@ public class SplashActivity extends AppCompatActivity {
                     //riempio il database locale
                     GroupDAO dao = new GroupDAO();
                     dao.open();
-                    for(int i = 0; i < mResjs.length(); i++){                        
+                    for(int i = 0; i < mResjs.length(); i++){
                         JSONObject groupJs = mResjs.getJSONObject(i);
                         int id = groupJs.getInt("id");
                         String server_updated_at_string = groupJs.getString("updated_at");
@@ -262,7 +264,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 
     }
-
+*/
 
 
 }
