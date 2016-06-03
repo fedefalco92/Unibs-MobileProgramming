@@ -19,6 +19,9 @@ import java.util.List;
  */
 public class AmountRecyclerViewAdapter extends RecyclerView.Adapter<AmountRecyclerViewAdapter.ViewHolder> {
 
+    private static final String TAG_LOG = AmountRecyclerViewAdapter.class.getSimpleName();
+
+
     private final List<Amount> mValues;
     private final OnListFragmentInteractionListener mListener;
 

@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.views.adapters.TransactionRecyclerViewAdapter;
-import it.unibs.appwow.utils.dummy.DummyContent;
-import it.unibs.appwow.utils.dummy.DummyContent.Transaction;
+import it.unibs.appwow.utils.dummy.DummyTransactionContent;
+import it.unibs.appwow.utils.dummy.DummyTransactionContent.Transaction;
 
 /**
  * A fragment representing a list of Items.
@@ -22,6 +22,8 @@ import it.unibs.appwow.utils.dummy.DummyContent.Transaction;
  * interface.
  */
 public class TransactionsFragment extends Fragment {
+
+    private static final String TAG_LOG = TransactionsFragment.class.getSimpleName();
 
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -71,7 +73,7 @@ public class TransactionsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new TransactionRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new TransactionRecyclerViewAdapter(DummyTransactionContent.ITEMS, mListener));
         }
         return view;
     }

@@ -9,7 +9,9 @@ import java.util.List;
  * <p>
  * TODO: Replace all uses of this class before publishing your app.
  */
-public class DummyContent {
+public class DummyTransactionContent {
+
+    private static final String TAG_LOG = DummyTransactionContent.class.getSimpleName();
 
     /**
      * An array of sample (dummy) items.

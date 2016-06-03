@@ -12,11 +12,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.utils.Validator;
 
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private static final String TAG_LOG = RegistrationActivity.class.getName();
+    private static final String TAG_LOG = RegistrationActivity.class.getSimpleName();
 
     private User mReceived;
     private TextView mFullname;
@@ -101,14 +102,14 @@ public class RegistrationActivity extends AppCompatActivity {
             mEmail.setError(getString(R.string.error_field_required));
             focusView = mEmail;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!Validator.isEmailValid(email)) {
             mEmail.setError(getString(R.string.error_invalid_email));
             focusView = mEmail;
             cancel = true;
         }
 
         // Check for a valid password, if the mUser entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (!TextUtils.isEmpty(password) && !Validator.isPasswordValid(password)) {
             mPassword.setError(getString(R.string.error_invalid_password));
             focusView = mPassword;
             cancel = true;
@@ -134,16 +135,4 @@ public class RegistrationActivity extends AppCompatActivity {
             return true;
         }
     }
-
-    // TODO: 27/05/16 Spostare questi metodi e quelli della classe LoginActivity in una classe statica per controlli vari
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return true;// password.length() > 4;
-    }
-
 }

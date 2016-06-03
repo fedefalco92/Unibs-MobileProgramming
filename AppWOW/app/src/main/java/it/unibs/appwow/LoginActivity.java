@@ -49,6 +49,7 @@ import java.util.List;
 import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
+import it.unibs.appwow.utils.Validator;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -56,6 +57,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+
+    private final String TAG_LOG = LoginActivity.class.getSimpleName();
 
     /**
      * Extra tag
@@ -207,7 +210,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the mUser entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (!TextUtils.isEmpty(password) && !Validator.isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -218,7 +221,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!Validator.isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -235,16 +238,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return true;// password.length() > 4;
     }
 
     /**
@@ -398,11 +391,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if(!response.isEmpty()){
                             //response = response.substring(1,response.length()-1);
                             mResjs = new JSONObject(response);
-                            Log.d("risposta", mResjs.toString(1));
+                            Log.d(TAG_LOG,"Risposta" + mResjs.toString(1));
                         } else {
                             return false;
                         }
-                        Log.d("RISPOSTA_STRING", response);
+                        Log.d(TAG_LOG, "Risposta String: "+ response);
 
                         // TODO: 19/05/2016 SALVARE SHARED
                         int id = mResjs.getInt("id");
@@ -496,7 +489,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 conn.connect();
                 int responseCode = conn.getResponseCode();
-                Log.d("RESPONSE_CODE", responseCode + "");
+                Log.i(TAG_LOG,"Response code = " + responseCode);
                 if(responseCode == HttpURLConnection.HTTP_OK){
                     String line = "";
                     BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -508,7 +501,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
 
                 if(!response.isEmpty()){
-                    Log.d("RISPOSTA_CHECK_USER", response);
+                    Log.d(TAG_LOG,"RISPOSTA_CHECK_USER" + response);
                     return USER_EXISTS;
                 } else {
                     return USER_NOT_EXISTS;

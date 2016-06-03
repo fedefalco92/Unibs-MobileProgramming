@@ -45,6 +45,9 @@ import it.unibs.appwow.services.WebServiceUri;
  * create an instance of this fragment.
  */
 public class GroupListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+
+    private static final String TAG_LOG = GroupListFragment.class.getSimpleName();
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER= "user";
@@ -191,7 +194,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d("RESPONSE", response.toString());
+                        Log.d(TAG_LOG, "Response = " + response.toString());
 
                         if (response.length() > 0) {
                             GroupDAO dao = new GroupDAO();
@@ -237,7 +240,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("VOLLEY_ERROR", "Server Error: " + error.getMessage());
+                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
 
                         Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
 
@@ -276,6 +279,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         super.onResume();
         mAdapter = new GroupAdapter(MyApplication.getAppContext());
         mGridView.setAdapter(mAdapter);
-        //Log.d("ONRESUME","on resume fatto");
+        //Log.d(TAG_LOG, "on resume completed");
     }
 }

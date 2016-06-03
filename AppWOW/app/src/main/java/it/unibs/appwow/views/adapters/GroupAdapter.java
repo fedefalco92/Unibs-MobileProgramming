@@ -21,6 +21,7 @@ import it.unibs.appwow.models.parc.Group;
  * Created by Massi on 05/05/2016.
  */
 public class GroupAdapter extends BaseAdapter {
+    private static final String TAG_LOG = GroupAdapter.class.getSimpleName();
 
     private List<Group> mItems = new ArrayList<Group>();
     private final LayoutInflater mInflater;
@@ -39,7 +40,7 @@ public class GroupAdapter extends BaseAdapter {
         dao.open();
         mItems = dao.getAllGroups();
         dao.close();
-        Log.d("SIZE mItems", " SIZE: "+mItems.size());
+        Log.d(TAG_LOG, "SIZE mItems = "+ mItems.size());
         /*mItems.add(new Group(1,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
         mItems.add(new Group(2,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
         mItems.add(new Group(3,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));

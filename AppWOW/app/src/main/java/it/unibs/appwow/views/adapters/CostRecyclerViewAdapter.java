@@ -1,6 +1,7 @@
 package it.unibs.appwow.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import java.util.List;
  * TODO: Replace the implementation with code for your data type.
  */
 public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerViewAdapter.ViewHolder> {
+    private static final String TAG_LOG = CostRecyclerViewAdapter.class.getSimpleName();
 
     private final List<Cost> mValues;
     private final OnListFragmentInteractionListener mListener; // FIXME: 06/05/2016  DA IMPLEMENTARE 
@@ -32,13 +34,12 @@ public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerVi
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.cost_fragment_item, parent, false);
                 // FIXME: 07/05/2016 PRIMA qui sopra c'era R.layout.fragment_cost_list...Why?
-        //Log.d("AAA","here");
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        //Log.d("CostRecyclerViewAdapter","Position " + position);
+        Log.d(TAG_LOG,"Position " + position);
 
         holder.mItem = mValues.get(position);
         holder.mUsername.setText(Long.toString(mValues.get(position).idUser));
@@ -79,8 +80,6 @@ public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerVi
             mCostName = (TextView) view.findViewById(R.id.cost_fragment_item_costname);
             mItemValue = (TextView) view.findViewById(R.id.cost_fragment_item_value);
             mDate = (TextView) view.findViewById(R.id.cost_fragment_item_date);
-            //Log.d("AAA",mUsername.getId()+"");
-            //Log.d("AAA2",mUserAmount.getId()+"");
         }
 
         @Override

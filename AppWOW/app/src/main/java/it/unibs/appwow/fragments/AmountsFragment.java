@@ -23,6 +23,8 @@ import it.unibs.appwow.models.Amount;
  */
 public class AmountsFragment extends Fragment {
 
+    private static final String TAG_LOG = AmountsFragment.class.getSimpleName();
+
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters

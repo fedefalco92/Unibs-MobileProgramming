@@ -19,6 +19,8 @@ import it.unibs.appwow.models.parc.Group;
  */
 public class OfflineGroupAdapter extends BaseAdapter {
 
+    private static final String TAG_LOG = OfflineGroupAdapter.class.getSimpleName();
+
     private final List<Group> mItems = new ArrayList<Group>();
     private final LayoutInflater mInflater;
 

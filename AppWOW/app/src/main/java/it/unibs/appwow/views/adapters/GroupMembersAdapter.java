@@ -16,6 +16,8 @@ import it.unibs.appwow.models.parc.User;
  * Created by Massi on 24/05/2016.
  */
 public class GroupMembersAdapter extends BaseAdapter {
+    private static final String TAG_LOG = GroupMembersAdapter.class.getSimpleName();
+
     private final List<User> mItems;
     private final LayoutInflater mInflater;
 

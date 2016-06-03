@@ -15,6 +15,8 @@ import it.unibs.appwow.models.Amount;
  */
 public class DummyAmountContent {
 
+    private static final String TAG_LOG = DummyAmountContent.class.getSimpleName();
+
     /**
      * An array of sample (dummy) items.
      */

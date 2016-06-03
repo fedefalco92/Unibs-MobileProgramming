@@ -29,6 +29,8 @@ import it.unibs.appwow.models.Cost;
  */
 public class CostsFragment extends Fragment {
 
+    private static final String TAG_LOG = CostsFragment.class.getSimpleName();
+
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters

@@ -8,6 +8,9 @@ import java.util.Date;
  * Created by Alessandro on 03/06/2016.
  */
 public class DateUtils {
+
+    private static final String TAG_LOG = DateUtils.class.getSimpleName();
+
     public static final String DATE_FORMAT ="yyyy-MM-dd HH:mm:ss";
 
     public static long dateToLong(String date){

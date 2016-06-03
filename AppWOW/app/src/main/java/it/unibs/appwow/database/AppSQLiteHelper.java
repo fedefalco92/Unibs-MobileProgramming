@@ -14,6 +14,8 @@ import it.unibs.appwow.models.parc.Group;
  */
 public class AppSQLiteHelper extends SQLiteOpenHelper {
 
+    private static final String TAG_LOG = AppSQLiteHelper.class.getSimpleName();
+
     // database creation (tables) SQL statement
     private static final String TABLE_USERS_CREATE = "CREATE TABLE " + Users.TABLE_USERS + " ( "+
         Users._ID + " INTEGER NOT NULL PRIMARY KEY, " +

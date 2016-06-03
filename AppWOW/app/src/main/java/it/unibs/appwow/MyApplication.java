@@ -12,6 +12,9 @@ import com.android.volley.toolbox.Volley;
  * Created by Massi on 06/05/2016.
  */
 public class MyApplication extends Application {
+
+    private final String TAG_LOG = MyApplication.class.getSimpleName();
+
     private static Context context;
     private RequestQueue mRequestQueue;
 

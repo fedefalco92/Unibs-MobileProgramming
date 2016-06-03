@@ -26,6 +26,8 @@ import it.unibs.appwow.models.parc.User;
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,GroupListFragment.OnFragmentInteractionListener,OfflineGroupListFragment.OnFragmentInteractionListener {
 
+    private final String TAG_LOG = NavigationActivity.class.getSimpleName();
+
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
     private NavigationView navigationView;
@@ -85,11 +87,11 @@ public class NavigationActivity extends AppCompatActivity
                 Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_OFFLINE);
                 if(onlineFragment!= null && onlineFragment.isVisible()){
                     destinationClass = AddGroupActivity.class;
-                    Log.d(NavigationActivity.class.getSimpleName(),"ONLINE fragment visible");
+                    Log.d(TAG_LOG,"ONLINE fragment visible");
                 }
                 else if(offlineFragment!= null && offlineFragment.isVisible()){
                     destinationClass = null;
-                    Log.d(NavigationActivity.class.getSimpleName(),"OFFLINE fragment visible");
+                    Log.d(TAG_LOG,"OFFLINE fragment visible");
                 }
                 Intent createIntent = new Intent(NavigationActivity.this,destinationClass);
                 startActivity(createIntent);

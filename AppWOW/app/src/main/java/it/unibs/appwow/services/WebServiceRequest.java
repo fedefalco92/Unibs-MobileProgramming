@@ -24,6 +24,8 @@ import it.unibs.appwow.MyApplication;
  */
 public class WebServiceRequest {
 
+    private static final String TAG_LOG = WebServiceRequest.class.getSimpleName();
+
     public static JsonObjectRequest objectRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> onResponseListener, Response.ErrorListener errListener) {
         return new JsonObjectRequest(method, url, jsonRequest,onResponseListener ,errListener);
     }

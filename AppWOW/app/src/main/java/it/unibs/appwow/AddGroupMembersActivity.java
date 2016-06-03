@@ -37,7 +37,7 @@ import it.unibs.appwow.services.WebServiceUri;
 
 public class AddGroupMembersActivity extends AppCompatActivity{
 
-    private static final String TAG_LOG = AddGroupMembersActivity.class.getName();
+    private static final String TAG_LOG = AddGroupMembersActivity.class.getSimpleName();
 
     private ListView membersList;
     private GroupMembersAdapter mAdapter;
@@ -144,7 +144,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                             User toRemove = (User) iterator.next();
                             mDisplayedUsers.remove(toRemove);
                             mGroup.removeUser(toRemove);
-                            Log.d("UTENTE RIMOSSO", "rimosso l'utente" + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
+                            Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
                             //AGGIORNO IL MENU
                             invalidateOptionsMenu();
                         }
@@ -176,7 +176,6 @@ public class AddGroupMembersActivity extends AppCompatActivity{
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 // here you can do something when items are selected/de-selected
                 // such as update the title in the CAB
-                //Log.d("qui","qui");
                 String title = "";
                 if(checked){
                     mSelectedItems.add((User)mAdapter.getItem(position));
@@ -293,7 +292,6 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         return new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //Log.d("Response",response);
                 if(!response.isEmpty()){
                     try {
                         JSONObject jsonObject = new JSONObject(response);

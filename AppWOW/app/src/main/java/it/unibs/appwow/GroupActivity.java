@@ -15,6 +15,8 @@ import it.unibs.appwow.views.adapters.GroupAdapter;
 
 public class GroupActivity extends AppCompatActivity {
 
+    private static final String TAG_LOG = GroupActivity.class.getSimpleName();
+
     private GridView gridView;
 
     @Override

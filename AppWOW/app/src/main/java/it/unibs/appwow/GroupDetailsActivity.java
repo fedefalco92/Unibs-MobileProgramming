@@ -20,15 +20,16 @@ import android.widget.Toast;
 import it.unibs.appwow.fragments.AmountsFragment;
 import it.unibs.appwow.fragments.CostsFragment;
 import it.unibs.appwow.fragments.TransactionsFragment;
-import it.unibs.appwow.utils.dummy.DummyContent;
+import it.unibs.appwow.utils.dummy.DummyTransactionContent;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Cost;
 import it.unibs.appwow.models.parc.Group;
 
 public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener, AmountsFragment.OnListFragmentInteractionListener, TransactionsFragment.OnListFragmentInteractionListener {
 
-    private Group mGroup;
     private final String TAG_LOG = GroupDetailsActivity.class.getSimpleName();
+
+    private Group mGroup;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -134,7 +135,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.Transaction item) {
+    public void onListFragmentInteraction(DummyTransactionContent.Transaction item) {
         // TODO: 10/05/2016  Qui va implementato l'evento da gestire alla selezione dell'item
     }
 
@@ -163,7 +164,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                     return TransactionsFragment.newInstance(1);
             }
             return null;
-            //Log.d(GroupDetailsActivity.class.getSimpleName(),"Position: "+position);
+            //Log.d(TAG_LOG,"Position: "+position);
 
         }
 

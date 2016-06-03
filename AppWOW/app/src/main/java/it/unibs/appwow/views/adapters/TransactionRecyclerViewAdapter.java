@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.fragments.TransactionsFragment.OnListFragmentInteractionListener;
-import it.unibs.appwow.utils.dummy.DummyContent.Transaction;
+import it.unibs.appwow.utils.dummy.DummyTransactionContent.Transaction;
 
 import java.util.List;
 
@@ -18,6 +18,8 @@ import java.util.List;
  * TODO: Replace the implementation with code for your data type.
  */
 public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<TransactionRecyclerViewAdapter.ViewHolder> {
+
+    private static final String TAG_LOG = TransactionRecyclerViewAdapter.class.getSimpleName();
 
     private final List<Transaction> mValues;
     private final OnListFragmentInteractionListener mListener;

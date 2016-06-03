@@ -22,6 +22,8 @@ import it.unibs.appwow.models.parc.User;
 
 public class AddGroupActivity extends AppCompatActivity {
 
+    private static final String TAG_LOG = AddGroupActivity.class.getSimpleName();
+
     private int SELECT_PICTURE_CODE = 100;
     public static final String PASSING_GROUP_EXTRA = "group";
     private ImageView mGroupImage;

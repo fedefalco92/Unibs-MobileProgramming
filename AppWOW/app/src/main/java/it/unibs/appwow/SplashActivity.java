@@ -31,11 +31,11 @@ import it.unibs.appwow.services.WebServiceUri;
 
 public class SplashActivity extends AppCompatActivity {
 
+    private static final String TAG_LOG = SplashActivity.class.getSimpleName();
+
     private static final long MIN_WAIT_INTERVAL = 1000L;
 
     private static final String START_TIME_KEY = "it.unibs.appwow.key.START_TIME_KEY";
-
-    private static final String TAG_LOG = SplashActivity.class.getName();
 
     private long mStartTime = -1L; // first visualization instant
 
@@ -102,8 +102,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         if(mStartTime == -1L)
         {
@@ -115,15 +114,13 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy(){
         super.onDestroy();
        // db.close();
         Log.d(TAG_LOG, "Activity destroyed");
     }
 
-    private void goAhead()
-    {
+    private void goAhead() {
         //final User userModel = User.load(this);
         //final User userModel = User.create(1);
         Class destinationActivity = null;
@@ -141,6 +138,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public class DownloadFromServerTask extends AsyncTask<Void, Void, Boolean> {
+        private final String TAG_LOG = DownloadFromServerTask.class.getSimpleName(); // aggiungere static se si sposta
 
         private JSONArray mResjs = null;
         private boolean mConnError = false;
@@ -159,7 +157,7 @@ public class SplashActivity extends AppCompatActivity {
             try {
 
                 URL url = new URL(groups_uri.toString());
-                //Log.d("URL", url.toString());
+                //Log.d(TAG_LOG,"URL" + url.toString());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
@@ -180,7 +178,7 @@ public class SplashActivity extends AppCompatActivity {
                 */
                 conn.connect();
                 int responseCode = conn.getResponseCode();
-                Log.d("RESPONSE CODE", responseCode + "");
+                Log.d(TAG_LOG,"Response code = " + responseCode);
                 if(responseCode == HttpURLConnection.HTTP_OK){
                     String line = "";
                     BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -194,7 +192,7 @@ public class SplashActivity extends AppCompatActivity {
                 if(!response.isEmpty()){
                     //response = response.substring(1,response.length()-1);
                     mResjs = new JSONArray(response);
-                    Log.d("risposta", mResjs.toString(1));
+                    Log.d(TAG_LOG,"response=" + mResjs.toString(1));
                     //riempio il database locale
                     GroupDAO dao = new GroupDAO();
                     dao.open();
@@ -217,7 +215,7 @@ public class SplashActivity extends AppCompatActivity {
                             group.highlight();
                             dao.insertGroup(group);
                             //boolean highlighted = dao.highlightGroup(id);
-                            //if(highlighted) Log.d("HIGHLIGHT", "Gruppo " + id + " highlighted");
+                            //if(highlighted) Log.d(TAG_LOG,"HIGHLIGHT -"+ "Gruppo " + id + " highlighted");
                         } else{
                             //per ora non faccio niente
                         }
@@ -226,7 +224,7 @@ public class SplashActivity extends AppCompatActivity {
                 } else {
                     return false;
                 }
-                Log.d("RISPOSTA_STRING", response);
+                Log.d(TAG_LOG, "RISPOSTA_STRING" + response);
 
             } catch (MalformedURLException e){
                 return false;

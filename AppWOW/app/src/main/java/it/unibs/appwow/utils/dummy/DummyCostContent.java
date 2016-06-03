@@ -13,6 +13,8 @@ import it.unibs.appwow.models.Cost;
  */
 public class DummyCostContent {
 
+    private static final String TAG_LOG = DummyCostContent.class.getSimpleName();
+
     /**
      * An array of sample (dummy) items.
      */

@@ -8,6 +8,9 @@ import android.widget.ImageView;
  * Created by Massi on 05/05/2016.
  */
 public class SquareImageView extends ImageView {
+
+    private static final String TAG_LOG = SquareImageView.class.getSimpleName();
+
     public SquareImageView(Context context) {
         super(context);
     }
