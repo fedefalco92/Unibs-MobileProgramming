@@ -80,9 +80,13 @@ public class SplashActivity extends AppCompatActivity {
 
         final ImageView logoImageView = (ImageView)findViewById(R.id.splash_imageview);
         mUserModel = User.load(MyApplication.getAppContext());
+        Log.d(TAG_LOG, mUserModel==null?"nullo":"non nullo");
         if(mUserModel != null){
             mDownloadTask = new DownloadFromServerTask(mUserModel);
             mDownloadTask.execute((Void) null);
+            Log.d(TAG_LOG, "Everything is downloaded. Go ahead... ");
+            // In questo modo non appena ha caricato va ai gruppi. Dà l'impressione di essere più veloce.
+            goAhead();
         }
 
         logoImageView.setOnTouchListener(new View.OnTouchListener() {
@@ -90,13 +94,10 @@ public class SplashActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 Log.d(TAG_LOG, "ImageView touched!");
                 long elapsedTime = SystemClock.uptimeMillis() - mStartTime;
-                if(elapsedTime >= MIN_WAIT_INTERVAL && mDownloaded)
-                {
+                if(elapsedTime >= MIN_WAIT_INTERVAL) {
                     Log.d(TAG_LOG, "OK! Let's go ahead...");
                     goAhead();
-                }
-                else
-                {
+                } else {
                     Log.d(TAG_LOG, "Too much early! ");
                 }
                 return false;
