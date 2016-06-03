@@ -37,6 +37,8 @@ import it.unibs.appwow.services.WebServiceUri;
 
 public class AddGroupMembersActivity extends AppCompatActivity{
 
+    private static final String TAG_LOG = AddGroupMembersActivity.class.getName();
+
     private ListView membersList;
     private GroupMembersAdapter mAdapter;
     //private TextView matchLabel;
@@ -67,7 +69,6 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         membersList = (ListView) findViewById(R.id.listView_members);
         //matchLabel = (TextView) findViewById(R.id.match_label);
         //matchText = (TextView) findViewById(R.id.username_found);
@@ -98,7 +99,6 @@ public class AddGroupMembersActivity extends AppCompatActivity{
             public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
                 // Here you can do something when items are selected/de-selected,
                 // such as update the title in the CAB
-                //Log.d("qui","qui");
 
                 GroupMembersAdapter adapter = (GroupMembersAdapter) membersList.getAdapter();
                 String title = "";
