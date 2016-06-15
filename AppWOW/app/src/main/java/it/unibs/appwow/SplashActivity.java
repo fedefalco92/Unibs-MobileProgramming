@@ -1,8 +1,6 @@
 package it.unibs.appwow;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,25 +8,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import it.unibs.appwow.services.DownloadFromServerTask;
-import it.unibs.appwow.utils.DateUtils;
-import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.models.parc.Group;
 import it.unibs.appwow.models.parc.User;
-import it.unibs.appwow.services.WebServiceUri;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -75,13 +57,13 @@ public class SplashActivity extends AppCompatActivity {
         final ImageView logoImageView = (ImageView)findViewById(R.id.splash_imageview);
         mUserModel = User.load(MyApplication.getAppContext());
         Log.d(TAG_LOG, "User " + mUserModel==null?"null":"not null");
-        if(mUserModel != null){
+        /*if(mUserModel != null){
             mDownloadTask = new DownloadFromServerTask(mUserModel);
             mDownloadTask.execute((Void) null);
             Log.d(TAG_LOG, "Everything is downloaded. Go ahead... ");
             // In questo modo non appena ha caricato va ai gruppi. Dà l'impressione di essere più veloce.
             goAhead();
-        }
+        }*/
 
         logoImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override

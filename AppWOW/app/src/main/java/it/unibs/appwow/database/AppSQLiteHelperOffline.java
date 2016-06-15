@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDBOffline.*;
-import it.unibs.appwow.models.Cost;
-import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.CostDummy;
+import it.unibs.appwow.models.ser.Group;
 
 /**
  * Created by Massi on 12/05/2016.
@@ -93,7 +93,7 @@ public class AppSQLiteHelperOffline extends SQLiteOpenHelper {
 
     //from Object to database
     // TODO: 12/05/16 da spostare da qualche parte ...
-    private ContentValues costToValues(Cost data) {
+    private ContentValues costToValues(CostDummy data) {
         ContentValues values = new ContentValues();
         values.put(Costs._ID, data.id);
         values.put(Costs.COLUMN_AMOUNT,data.amount);

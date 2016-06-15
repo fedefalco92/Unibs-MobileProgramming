@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.R;
-import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.ser.Group;
 
 /**
  * Created by Massi on 10/05/2016.

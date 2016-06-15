@@ -15,7 +15,7 @@ import java.util.List;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.ser.Group;
 
 /**
  * Created by Massi on 05/05/2016.

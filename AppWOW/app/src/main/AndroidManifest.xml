@@ -35,18 +35,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".GroupActivity"
-            android:label="@string/title_activity_group"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity
             android:name=".GroupDetailsActivity"
             android:label="@string/title_activity_group_details"
-            android:parentActivityName=".GroupActivity"
+            android:parentActivityName=".NavigationActivity"
             android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.unibs.appwow.GroupActivity" />
+                android:value="it.unibs.appwow.NavigationActivity" />
         </activity>
 
         <activity

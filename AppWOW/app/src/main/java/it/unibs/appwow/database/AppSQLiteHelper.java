@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDB.*;
-import it.unibs.appwow.models.Cost;
-import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.CostDummy;
+import it.unibs.appwow.models.ser.Group;
 
 /**
  * Created by Massi on 12/05/2016.
@@ -20,7 +20,9 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
     private static final String TABLE_USERS_CREATE = "CREATE TABLE " + Users.TABLE_USERS + " ( "+
         Users._ID + " INTEGER NOT NULL PRIMARY KEY, " +
         Users.COLUMN_FULLNAME + " TEXT NOT NULL, " +
-        Users.COLUMN_EMAIL + " TEXT NOT NULL "+
+        Users.COLUMN_EMAIL + " TEXT NOT NULL, " +
+        Users.COLUMN_CREATED_AT + " NUMERIC, " +
+        Users.COLUMN_UPDATED_AT + " NUMERIC " +
         " );";
 
     private static final String TABLE_GROUPS_CREATE = "CREATE TABLE " + Groups.TABLE_GROUPS + " ("+
@@ -41,6 +43,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Costs.COLUMN_NAME + " TEXT, " +
             Costs.COLUMN_NOTES + " TEXT, " +
             Costs.COLUMN_CREATED_AT + " NUMERIC, " +
+            Costs.COLUMN_UPDATED_AT + " NUMERIC, " +
             Costs.COLUMN_ARCHIVED_AT + " NUMERIC, " +
             Costs.COLUMN_POSITION + " TEXT, " +
             Costs.COLUMN_AMOUNT_DETAILS + " TEXT, " +
@@ -71,6 +74,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             UserGroup.COLUMN_ID_USER + " INTEGER NOT NULL, " +
             UserGroup.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
             UserGroup.COLUMN_AMOUNT + " REAL, "+
+            UserGroup.COLUMN_UPDATED_AT + " NUMERIC, " +
             "PRIMARY KEY (" + UserGroup.COLUMN_ID_USER + ", " + UserGroup.COLUMN_ID_GROUP + "), " +
             "FOREIGN KEY (" + UserGroup.COLUMN_ID_USER + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
             "FOREIGN KEY (" + UserGroup.COLUMN_ID_GROUP+ ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ")" +
@@ -111,7 +115,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
 
     //from Object to database
     // TODO: 12/05/16 da spostare da qualche parte ...
-    private ContentValues costToValues(Cost data) {
+    private ContentValues costToValues(CostDummy data) {
         ContentValues values = new ContentValues();
         values.put(Costs._ID, data.id);
         values.put(Costs.COLUMN_AMOUNT,data.amount);

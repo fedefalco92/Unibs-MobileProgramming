@@ -1,10 +1,12 @@
-package it.unibs.appwow.models.parc;
+package it.unibs.appwow.models.ser;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
 import java.util.HashMap;
+
+import it.unibs.appwow.models.parc.User;
 
 /**
  * Created by Massi on 05/05/2016.
@@ -30,7 +32,6 @@ public class Group implements Parcelable {
     private int mIdAdmin;
     private int mHighlighted;
     private HashMap<Integer, User> mUsers;
-
 
     public int getId() {
         return mId;

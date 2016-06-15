@@ -19,7 +19,7 @@ import java.net.URL;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.ser.Group;
 import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.utils.DateUtils;
 

@@ -31,7 +31,7 @@ import it.unibs.appwow.R;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.views.adapters.GroupAdapter;
-import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.ser.Group;
 import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceUri;
 
@@ -51,6 +51,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER= "user";
+    public static final String PASSING_GROUP_TAG = "group";
 
     //parameters
     private User mUser;
@@ -112,11 +113,14 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                 //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
                 final Intent i = new Intent(getContext(), GroupDetailsActivity.class);
                 Group group = (Group) mGridView.getAdapter().getItem(position);
-                //i.putExtra("GroupID", group.getId());
-                //i.putExtra("GroupName",group.getGroupName());
-                i.putExtra("group", group);
 
-                //tolgo l'highlight dal gruppo
+                /**
+                 * il gruppo che sto passando è highlighted.
+                 * Userò questa informazione per aggiornare l'intero gruppo in GroupDetailsActivity
+                 */
+                i.putExtra(PASSING_GROUP_TAG, group);
+
+                //tolgo l'highlight dal gruppo NEL DB LOCALE, non nell'oggetto passato
                 GroupDAO dao = new GroupDAO();
                 dao.open();
                 dao.unHighlightGroup(group.getId());
@@ -129,7 +133,20 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
         // Richiamo questo metodo per fare un refresh una volta aperta l'activity
-        fetchGroups();
+        //fetchGroups();
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        mSwipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mSwipeRefreshLayout.setRefreshing(true);
+                                        fetchGroups();
+                                    }
+                                }
+        );
+
     }
 
     @Override
@@ -200,7 +217,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                         String server_updated_at_string = groupJs.getString("updated_at");
                                         long server_updated_at = DateUtils.dateToLong(server_updated_at_string);
                                         long local_updated_at = dao.getUpdatedAt(id);
-                                        //aggiorno il gruppo solo se ha subito modifiche
+                                        //aggiorno il gruppo solo se ha subito modifiche, SE IL GRUPPO NON ESISTE local_updated_at = 0L
+                                        //quindi il nuovo gruppo viene inserito
                                         if (server_updated_at > local_updated_at) {
                                             String name = groupJs.getString("name");
                                             int idAdmin = groupJs.getInt("idAdmin");
@@ -209,10 +227,11 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                             //JSONObject pivot = groupJs.getJSONObject("pivot");
                                             Group group = Group.create(name).withId(id).withAdmin(idAdmin);
                                             group.setCreatedAt(created_at);
-                                            group.setUpdatedAt(server_updated_at);
+                                            //group.setUpdatedAt(server_updated_at);
+                                            //NON AGGIORNO UPDATED AT per ora in modo che quando entro nei dettagli il gruppo venga riaggiornato
+                                            group.setUpdatedAt(local_updated_at);
                                             group.highlight();
                                             dao.insertGroup(group);
-
                                         } else {
                                             //per ora non faccio niente
                                         }

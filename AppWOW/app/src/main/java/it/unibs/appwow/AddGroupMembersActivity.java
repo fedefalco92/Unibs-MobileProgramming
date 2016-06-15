@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unibs.appwow.views.adapters.GroupMembersAdapter;
-import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.ser.Group;
 import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;

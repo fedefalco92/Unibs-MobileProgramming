@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
-import it.unibs.appwow.models.parc.Group;
+import it.unibs.appwow.models.ser.Group;
 
 /**
  * Created by federicofalcone on 12/05/16.
@@ -82,7 +82,7 @@ public class GroupDAO implements LocalDB_DAO {
         return d;
     }
 
-    // TODO: 12/05/16 aggiungere parametro User.
+    // TODO: 12/05/16 aggiungere parametro User? in realtà non serve perché lo user sono IO
     public List<Group> getAllGroups() {
         List<Group> data = new ArrayList<Group>();
         Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,

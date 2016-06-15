@@ -210,9 +210,14 @@ public class User implements Parcelable{
         //}
     }
 
-    @Override
+    /*@Override
     public boolean equals(Object u){
        return (((User) u).getId()== mId);
+    }*/
+
+    @Override
+    public int hashCode(){
+        return mId;
     }
 
 }

@@ -19,6 +19,8 @@ public final class AppDB {
         public static final String TABLE_USERS = "users";
         public static final String COLUMN_FULLNAME = "fullName";
         public static final String COLUMN_EMAIL = "email";
+        public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
     }
 
     public static class Groups implements BaseColumns{
@@ -36,6 +38,7 @@ public final class AppDB {
         public static final String COLUMN_ID_USER = "idUser";
         public static final String COLUMN_ID_GROUP = "idGroup";
         public static final String COLUMN_AMOUNT = "amount";
+        public static final String COLUMN_UPDATED_AT = "updatedAt";
     }
 
     public static class Balancings implements BaseColumns{
@@ -53,6 +56,7 @@ public final class AppDB {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_NOTES = "notes";
         public static final String COLUMN_CREATED_AT = "created_at";
+        public static final String COLUMN_UPDATED_AT = "updated_at";
         public static final String COLUMN_ARCHIVED_AT = "archived_at";
         public static final String COLUMN_POSITION = "position";
         public static final String COLUMN_AMOUNT_DETAILS = "amount_details";
