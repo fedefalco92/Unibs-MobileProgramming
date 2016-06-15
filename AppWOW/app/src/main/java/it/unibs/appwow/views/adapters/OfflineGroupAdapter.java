@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.R;
-import it.unibs.appwow.models.ser.Group;
+import it.unibs.appwow.models.parc.GroupModel;
 
 /**
  * Created by Massi on 10/05/2016.
@@ -21,7 +21,7 @@ public class OfflineGroupAdapter extends BaseAdapter {
 
     private static final String TAG_LOG = OfflineGroupAdapter.class.getSimpleName();
 
-    private final List<Group> mItems = new ArrayList<Group>();
+    private final List<GroupModel> mItems = new ArrayList<GroupModel>();
     private final LayoutInflater mInflater;
 
     private class Holder {
@@ -33,8 +33,8 @@ public class OfflineGroupAdapter extends BaseAdapter {
 
     public OfflineGroupAdapter(Context context){
         mInflater = LayoutInflater.from(context);
-        //mItems.add(new Group(1,"primo gruppo offline", R.drawable.ic_menu_send,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        //mItems.add(new Group(2,"offline gruppo",R.drawable.ic_menu_send,System.currentTimeMillis(),System.currentTimeMillis(),2));
+        //mItems.add(new GroupModel(1,"primo gruppo offline", R.drawable.ic_menu_send,System.currentTimeMillis(),System.currentTimeMillis(),1));
+        //mItems.add(new GroupModel(2,"offline gruppo",R.drawable.ic_menu_send,System.currentTimeMillis(),System.currentTimeMillis(),2));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class OfflineGroupAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        final Group itemGroup = (Group) getItem(position);
+        final GroupModel itemGroup = (GroupModel) getItem(position);
         return itemGroup.getId();
     }
 
@@ -66,7 +66,7 @@ public class OfflineGroupAdapter extends BaseAdapter {
         } else {
             holder = (Holder)view.getTag();
         }
-        final Group itemGroup = (Group) getItem(position);
+        final GroupModel itemGroup = (GroupModel) getItem(position);
         holder.groupName.setText(itemGroup.getGroupName());
         holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoUri()));
        /* final LocalDataModel itemModel = (LocalDataModel)getItem(position);

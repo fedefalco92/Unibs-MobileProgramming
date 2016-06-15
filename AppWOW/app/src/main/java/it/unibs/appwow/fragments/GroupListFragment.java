@@ -28,10 +28,10 @@ import java.net.URL;
 import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
+import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.views.adapters.GroupAdapter;
-import it.unibs.appwow.models.ser.Group;
 import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceUri;
 
@@ -112,7 +112,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                     int position, long id) {
                 //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
                 final Intent i = new Intent(getContext(), GroupDetailsActivity.class);
-                Group group = (Group) mGridView.getAdapter().getItem(position);
+                GroupModel group = (GroupModel) mAdapter.getItem(position);
 
                 /**
                  * il gruppo che sto passando è highlighted.
@@ -126,6 +126,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                 dao.unHighlightGroup(group.getId());
                 dao.close();
 
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 //finish();
             }
@@ -225,7 +226,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                             String created_at_string = groupJs.getString("created_at");
                                             long created_at = DateUtils.dateToLong(created_at_string);
                                             //JSONObject pivot = groupJs.getJSONObject("pivot");
-                                            Group group = Group.create(name).withId(id).withAdmin(idAdmin);
+                                            GroupModel group = GroupModel.create(name).withId(id).withAdmin(idAdmin);
                                             group.setCreatedAt(created_at);
                                             //group.setUpdatedAt(server_updated_at);
                                             //NON AGGIORNO UPDATED AT per ora in modo che quando entro nei dettagli il gruppo venga riaggiornato

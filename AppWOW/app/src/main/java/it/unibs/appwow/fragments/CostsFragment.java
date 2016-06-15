@@ -17,9 +17,11 @@ import android.widget.Toast;
 import java.util.List;
 
 import it.unibs.appwow.R;
+import it.unibs.appwow.models.CostDummy;
+import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.views.adapters.CostAdapter;
 import it.unibs.appwow.views.adapters.CostRecyclerViewAdapter;
 import it.unibs.appwow.utils.dummy.DummyCostContent;
-import it.unibs.appwow.models.Cost;
 
 /**
  * A fragment representing a list of Items.
@@ -30,14 +32,15 @@ import it.unibs.appwow.models.Cost;
 public class CostsFragment extends Fragment {
 
     private static final String TAG_LOG = CostsFragment.class.getSimpleName();
-
+    public static final String GROUP_PASSING_TAG = "group";
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
-    private List<Cost> costList; //da riempire
+    private CostAdapter mAdapter;
+    private GroupModel mGroup;
+    private List<CostDummy> mCostDummyList; //da riempire
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -48,12 +51,14 @@ public class CostsFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static CostsFragment newInstance(int columnCount) {
+    public static CostsFragment newInstance(int columnCount, GroupModel group) {
         CostsFragment fragment = new CostsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putParcelable(GROUP_PASSING_TAG, group);
         fragment.setArguments(args);
         return fragment;
+
     }
 
     @Override
@@ -62,10 +67,13 @@ public class CostsFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mGroup = getArguments().getParcelable(GROUP_PASSING_TAG);
         }
 
         //per poter popolare l'action bar dell'activity
         setHasOptionsMenu(true);
+
+        mAdapter =  new CostAdapter(getActivity(), mGroup.getId());
     }
 
     @Override
@@ -100,7 +108,8 @@ public class CostsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new CostRecyclerViewAdapter(DummyCostContent.ITEMS, mListener)); // FIXME: 06/05/2016 da mettere contenuto giusto (listCost)
+            //recyclerView.setAdapter(new CostRecyclerViewAdapter(DummyCostContent.ITEMS, mListener)); // FIXME: 06/05/2016 da mettere contenuto giusto (listCost)
+            //recyclerView.setAdapter(mAdapter);
         }
         return view;
     }
@@ -134,6 +143,6 @@ public class CostsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Cost item);
+        void onListFragmentInteraction(CostDummy item);
     }
 }

@@ -9,7 +9,6 @@ import java.util.List;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.models.UserModel;
-import it.unibs.appwow.models.ser.Group;
 
 /**
  * Created by Alessandro on 15/06/2016.
@@ -99,7 +98,7 @@ public class UserDAO implements LocalDB_DAO {
                 allColumns,null,null,null,null,null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            Group d = cursorToGroup(cursor);
+            GroupModel d = cursorToGroup(cursor);
             data.add(d);
             cursor.moveToNext();
         }

@@ -19,7 +19,7 @@ import java.net.URL;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.models.ser.Group;
+import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.utils.DateUtils;
 
@@ -99,7 +99,7 @@ public class DownloadFromServerTask extends AsyncTask<Void, Void, Boolean> {
                             String created_at_string = groupJs.getString("created_at");
                             long created_at = DateUtils.dateToLong(created_at_string);
                             //JSONObject pivot = groupJs.getJSONObject("pivot");
-                            Group group = Group.create(name).withId(id).withAdmin(idAdmin);
+                            GroupModel group = GroupModel.create(name).withId(id).withAdmin(idAdmin);
                             group.setCreatedAt(created_at);
                             group.setUpdatedAt(server_updated_at);
                             group.highlight();

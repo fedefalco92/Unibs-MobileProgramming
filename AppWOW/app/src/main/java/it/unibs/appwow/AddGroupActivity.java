@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import it.unibs.appwow.models.ser.Group;
+import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.User;
 
 public class AddGroupActivity extends AppCompatActivity {
@@ -28,7 +28,7 @@ public class AddGroupActivity extends AppCompatActivity {
     public static final String PASSING_GROUP_EXTRA = "group";
     private ImageView mGroupImage;
     private TextView mGroupNameView;
-    private Group mGroup;
+    private GroupModel mGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class AddGroupActivity extends AppCompatActivity {
             }
         });
         mGroupNameView = (TextView) findViewById(R.id.group_name_field);
-        mGroup = Group.create("");
+        mGroup = GroupModel.create("");
     }
 
     @Override

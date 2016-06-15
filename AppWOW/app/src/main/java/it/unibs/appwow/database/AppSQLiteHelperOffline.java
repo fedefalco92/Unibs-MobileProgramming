@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDBOffline.*;
 import it.unibs.appwow.models.CostDummy;
-import it.unibs.appwow.models.ser.Group;
+import it.unibs.appwow.models.parc.GroupModel;
 
 /**
  * Created by Massi on 12/05/2016.
@@ -106,7 +106,7 @@ public class AppSQLiteHelperOffline extends SQLiteOpenHelper {
         return values;
     }
 
-    private ContentValues groupToValues(Group data) {
+    private ContentValues groupToValues(GroupModel data) {
         ContentValues values = new ContentValues();
         values.put(Groups._ID, data.getId());
         values.put(Groups.COLUMN_NAME,data.getGroupName());

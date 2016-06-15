@@ -31,24 +31,28 @@ import org.json.JSONObject;
 
 import java.net.URL;
 
+import it.unibs.appwow.database.BalancingDAO;
 import it.unibs.appwow.database.CostsDAO;
 import it.unibs.appwow.database.GroupDAO;
+import it.unibs.appwow.database.TransactionDAO;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.AmountsFragment;
 import it.unibs.appwow.fragments.CostsFragment;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.TransactionsFragment;
+import it.unibs.appwow.models.BalancingModel;
 import it.unibs.appwow.models.CostDummy;
 import it.unibs.appwow.models.CostModel;
+import it.unibs.appwow.models.TransactionModel;
 import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
+import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.utils.dummy.DummyTransactionContent;
 import it.unibs.appwow.models.Amount;
-import it.unibs.appwow.models.ser.Group;
 
 public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
@@ -60,7 +64,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     /**
      * Gruppo ricevuto, già "pieno"
      */
-    private Group mGroup;
+    private GroupModel mGroup;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -133,7 +137,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         });
 
         mUser = User.load(MyApplication.getAppContext());
-        mGroup = getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
+        mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
         setTitle(mGroup.getGroupName());
         /**
          * Showing Swipe Refresh animation on activity create
@@ -247,17 +251,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         MyApplication.getInstance().addToRequestQueue(groupRequest);
         //mRequestPending++;
 
-
-        /**
-         * AGGIORNAMENTO TRANSACTIONS
-         */
-        // TODO: 08/06/2016
-        /**
-         * AGGIORNAMENTO BALANCING?
-         */
-        // TODO: 08/06/2016
-
-
         //mSwipeRefreshLayout.setRefreshing(false);
 
 
@@ -338,8 +331,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     private void fetchCosts(){
-        Uri groupUsersUri = WebServiceUri.getGroupUsersUri(mGroup.getId());
-        Uri groupCostsUri = Uri.withAppendedPath(groupUsersUri,"costs");
+        Uri groupCostsUri = WebServiceUri.getGroupCostsUri(mGroup.getId());
         URL url = WebServiceUri.uriToUrl(groupCostsUri);
 
         JsonArrayRequest costsRequest = new JsonArrayRequest(url.toString(),
@@ -349,16 +341,27 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                         if(response.length() > 0){
                             CostsDAO dao = new CostsDAO();
                             dao.open();
+                            dao.resetAllCosts(mGroup.getId());
                             for(int i = 0; i<response.length();i++){
                                 try{
                                     JSONObject costJs = response.getJSONObject(i);
                                     CostModel cost = CostModel.create(costJs);
+                                    dao.insertCost(cost);
                                 } catch(JSONException e){
                                     e.printStackTrace();
                                 }
                             }
                             dao.close();
                         }
+                        //fetchBalacings(); // FIXME: 15/06/2016 SCOMMENTARE
+                        // FIXME: 15/06/2016 SPOSTARE IN FETCHBALANCINGS
+                        //AGGIORNO LA DATA DI MODIFICA DEL GRUPPO IN LOCALE
+                        GroupDAO dao = new GroupDAO();
+                        dao.open();
+                        mGroup.setUpdatedAt(System.currentTimeMillis());
+                        dao.insertGroup(mGroup);
+                        dao.close();
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 },
                 new Response.ErrorListener(){
@@ -370,6 +373,57 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                 }
         );
         MyApplication.getInstance().addToRequestQueue(costsRequest);
+    }
+
+    private void fetchBalacings() {
+
+        Uri groupBalancingsUri = WebServiceUri.getGroupBalancingsUri(mGroup.getId());
+        URL url = WebServiceUri.uriToUrl(groupBalancingsUri);
+
+        JsonArrayRequest balancingsRequest = new JsonArrayRequest(url.toString(),
+                new Response.Listener<JSONArray>(){
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        
+                        if(response.length() > 0){
+                            BalancingDAO bdao = new BalancingDAO();
+                            bdao.open();
+                            TransactionDAO tdao = new TransactionDAO();
+                            tdao.open();
+
+                            bdao.resetAllBalancings(mGroup.getId()); //cancella anche tutte le transactions se funziona on delete cascade
+                            for(int i = 0; i<response.length();i++){
+                                try{
+                                    JSONObject balJs = response.getJSONObject(i);
+                                    BalancingModel b = BalancingModel.create(balJs);
+                                    bdao.insertBalancing(b);
+                                    JSONArray transactions = balJs.getJSONArray("transactions");
+                                    for(int j = 0; j<transactions.length(); j++){
+                                        JSONObject tjs = transactions.getJSONObject(j);
+                                        TransactionModel t = TransactionModel.create(tjs);
+                                        tdao.insertTransaction(t);
+                                    }
+                                } catch(JSONException e){
+                                    e.printStackTrace();
+                                }
+                            }
+                            bdao.close();
+                            tdao.close();
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
+                        Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+        MyApplication.getInstance().addToRequestQueue(balancingsRequest);
+
+
     }
 
     /**
@@ -389,7 +443,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             //return PlaceholderFragment.newInstance(position + 1)
             switch (position) {
                 case 0:
-                    return CostsFragment.newInstance(1);
+                    return CostsFragment.newInstance(1, mGroup);
                 case 1:
                     return AmountsFragment.newInstance(1);
                 case 2:

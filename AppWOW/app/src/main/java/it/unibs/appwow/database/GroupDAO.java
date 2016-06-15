@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
-import it.unibs.appwow.models.ser.Group;
+import it.unibs.appwow.models.parc.GroupModel;
 
 /**
  * Created by federicofalcone on 12/05/16.
@@ -42,7 +42,7 @@ public class GroupDAO implements LocalDB_DAO {
 
 
     // from Object to database
-    private ContentValues groupToValues(Group data) {
+    private ContentValues groupToValues(GroupModel data) {
         ContentValues values = new ContentValues();
         values.put(AppDB.Groups._ID, data.getId());
         values.put(AppDB.Groups.COLUMN_ID_ADMIN, data.getIdAdmin());
@@ -56,7 +56,7 @@ public class GroupDAO implements LocalDB_DAO {
     }
 
     // from database to Object
-    private Group cursorToGroup(Cursor cursor) {
+    private GroupModel cursorToGroup(Cursor cursor) {
         int id = cursor.getInt(0);
         int idAdmin = cursor.getInt(1);
         String groupName = cursor.getString(2);
@@ -66,10 +66,10 @@ public class GroupDAO implements LocalDB_DAO {
         int highlighted = cursor.getInt(6);
 
 
-        return new Group(id,groupName, photoUri, createdAt, updatedAt, idAdmin, highlighted);
+        return new GroupModel(id,groupName, photoUri, createdAt, updatedAt, idAdmin, highlighted);
     }
 
-    public Group insertGroup(Group data) {
+    public GroupModel insertGroup(GroupModel data) {
         database.replace(AppDB.Groups.TABLE_GROUPS, null,
                 groupToValues(data));
         // now read from DB the inserted person and return it
@@ -77,19 +77,19 @@ public class GroupDAO implements LocalDB_DAO {
                 AppDB.Groups._ID + " = ?",
                 new String[] {"" + data.getId()},null,null,null);
         cursor.moveToFirst();
-        Group d = cursorToGroup(cursor);
+        GroupModel d = cursorToGroup(cursor);
         cursor.close();
         return d;
     }
 
     // TODO: 12/05/16 aggiungere parametro User? in realtà non serve perché lo user sono IO
-    public List<Group> getAllGroups() {
-        List<Group> data = new ArrayList<Group>();
+    public List<GroupModel> getAllGroups() {
+        List<GroupModel> data = new ArrayList<GroupModel>();
         Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
                 allColumns,null,null,null,null,null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            Group d = cursorToGroup(cursor);
+            GroupModel d = cursorToGroup(cursor);
             data.add(d);
             cursor.moveToNext();
         }
@@ -98,12 +98,12 @@ public class GroupDAO implements LocalDB_DAO {
     }
 
     public long getUpdatedAt(int groupId){
-        List<Group> data = new ArrayList<Group>();
+        List<GroupModel> data = new ArrayList<GroupModel>();
         Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
                 allColumns, AppDB.Groups._ID + "=" + groupId,null,null,null,null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            Group d = cursorToGroup(cursor);
+            GroupModel d = cursorToGroup(cursor);
             data.add(d);
             cursor.moveToNext();
         }
@@ -134,7 +134,7 @@ public class GroupDAO implements LocalDB_DAO {
         database.delete(AppDB.Groups.TABLE_GROUPS,null,null);
     }
     
-    public void deleteSingleLGroup(Group data) {
+    public void deleteSingleLGroup(GroupModel data) {
         database.delete(AppDB.Groups.TABLE_GROUPS,AppDB.Groups._ID + " = ?",new String[] {"" + data.getId()});
     }
     

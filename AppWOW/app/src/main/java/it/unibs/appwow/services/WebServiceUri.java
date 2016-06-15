@@ -24,6 +24,16 @@ public final class WebServiceUri {
         return Uri.withAppendedPath(group_uri,"users");
     }
 
+    public final static Uri getGroupBalancingsUri(int idGroup){
+        Uri group_uri = Uri.withAppendedPath(GROUPS_URI, String.valueOf(idGroup));
+        return Uri.withAppendedPath(group_uri,"balancings");
+    }
+
+    public final static Uri getGroupCostsUri(int idGroup){
+        Uri group_uri = Uri.withAppendedPath(GROUPS_URI, String.valueOf(idGroup));
+        return Uri.withAppendedPath(group_uri,"costs");
+    }
+
     public static URL uriToUrl(Uri uri){
         URL url = null;
         try {

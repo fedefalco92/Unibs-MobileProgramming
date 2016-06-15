@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 /**
  * Created by Massi on 06/05/2016.
  */
-public class Cost {
+public class CostDummy {
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("E dd MMMM yyyy");
     public long id;
     public double amount;
@@ -20,7 +20,7 @@ public class Cost {
     public String amountDetails; // FIXME: 06/05/2016 da sostituire con un vector da riempire al momento dell'importazione dal DB
     public long archivedAt;
 
-    public Cost(long id, String name, double amount) {
+    public CostDummy(long id, String name, double amount) {
         this.id = id;
         this.name = name;
         this.amount = amount;

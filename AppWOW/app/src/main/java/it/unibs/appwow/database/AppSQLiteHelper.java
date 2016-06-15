@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDB.*;
 import it.unibs.appwow.models.CostDummy;
-import it.unibs.appwow.models.ser.Group;
+import it.unibs.appwow.models.parc.GroupModel;
 
 /**
  * Created by Massi on 12/05/2016.
@@ -66,7 +66,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Transactions.COLUMN_ID_TO + " INTEGER NOT NULL, " +
             Transactions.COLUMN_AMOUNT + " REAL, " +
             Transactions.COLUMN_PAYED_AT + " NUMERIC DEFAULT NULL, " +
-            "FOREIGN KEY (" + Transactions.COLUMN_ID_BALANCING + ") REFERENCES " + Balancings.TABLE_BALANCINGS + "(" + Balancings._ID + ")," +
+            "FOREIGN KEY (" + Transactions.COLUMN_ID_BALANCING + ") REFERENCES " + Balancings.TABLE_BALANCINGS + "(" + Balancings._ID + ") ON DELETE CASCADE," +
             "FOREIGN KEY (" + Transactions.COLUMN_ID_FROM + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
             "FOREIGN KEY (" + Transactions.COLUMN_ID_TO+ ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")" +
             ");";
@@ -130,7 +130,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
         return values;
     }
 
-    private ContentValues groupToValues(Group g) {
+    private ContentValues groupToValues(GroupModel g) {
         ContentValues values = new ContentValues();
         values.put(Groups._ID, g.getId());
         values.put(Groups.COLUMN_NAME,g.getGroupName());

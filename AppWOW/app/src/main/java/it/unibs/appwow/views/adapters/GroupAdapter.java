@@ -15,7 +15,7 @@ import java.util.List;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.models.ser.Group;
+import it.unibs.appwow.models.parc.GroupModel;
 
 /**
  * Created by Massi on 05/05/2016.
@@ -23,7 +23,7 @@ import it.unibs.appwow.models.ser.Group;
 public class GroupAdapter extends BaseAdapter {
     private static final String TAG_LOG = GroupAdapter.class.getSimpleName();
 
-    private List<Group> mItems = new ArrayList<Group>();
+    private List<GroupModel> mItems = new ArrayList<GroupModel>();
     private final LayoutInflater mInflater;
     private GroupDAO dao = new GroupDAO();
 
@@ -41,14 +41,14 @@ public class GroupAdapter extends BaseAdapter {
         mItems = dao.getAllGroups();
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
-        /*mItems.add(new Group(1,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        mItems.add(new Group(2,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
-        mItems.add(new Group(3,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
-        mItems.add(new Group(4,"priasdasdasmo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        mItems.add(new Group(5,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        mItems.add(new Group(6,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
-        mItems.add(new Group(7,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
-        mItems.add(new Group(8,"priasdasdasmo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
+        /*mItems.add(new GroupModel(1,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
+        mItems.add(new GroupModel(2,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
+        mItems.add(new GroupModel(3,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
+        mItems.add(new GroupModel(4,"priasdasdasmo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
+        mItems.add(new GroupModel(5,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
+        mItems.add(new GroupModel(6,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
+        mItems.add(new GroupModel(7,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
+        mItems.add(new GroupModel(8,"priasdasdasmo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
         */
 
     }
@@ -68,7 +68,7 @@ public class GroupAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        final Group itemGroup = (Group) getItem(position);
+        final GroupModel itemGroup = (GroupModel) getItem(position);
         return itemGroup.getId();
     }
 
@@ -85,7 +85,7 @@ public class GroupAdapter extends BaseAdapter {
         } else {
             holder = (Holder)view.getTag();
         }
-        final Group itemGroup = (Group) getItem(position);
+        final GroupModel itemGroup = (GroupModel) getItem(position);
         holder.groupName.setText(itemGroup.getGroupName());
         holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoUri()));
         // FIXME: 03/06/2016 MODIFICARE IN IMAGEVIEW

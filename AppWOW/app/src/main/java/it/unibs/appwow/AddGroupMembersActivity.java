@@ -29,8 +29,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.views.adapters.GroupMembersAdapter;
-import it.unibs.appwow.models.ser.Group;
+import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -46,9 +47,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     private Button mAddMemberButton;
     private MenuItem mCreateGroupButton;
     private TextView mEmailTextView;
-    private Group mGroup;
-    private ArrayList<User> mDisplayedUsers;
-    private Set<User> mSelectedItems;
+    private GroupModel mGroup;
+    private User mUser;
+    private ArrayList<UserModel> mDisplayedUsers;
+    private Set<UserModel> mSelectedItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +58,12 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         //retrieving group from intent extras
         this.mGroup = getIntent().getExtras().getParcelable(AddGroupActivity.PASSING_GROUP_EXTRA);
         //IMPORTANT: parceling does not save the HashMap mUsers which will be null after getParcelable(...)
-        User currentUser = User.load(MyApplication.getAppContext());
-        currentUser.setIsGroupAdmin();
-        mGroup.addUser(currentUser);
+        mUser = User.load(MyApplication.getAppContext());
+        //mUser.setIsGroupAdmin();
+        //mGroup.addUser(currentUser);
 
-        mSelectedItems = new HashSet<User>();
-        mDisplayedUsers = new ArrayList<User>();
+        mSelectedItems = new HashSet<UserModel>();
+        mDisplayedUsers = new ArrayList<UserModel>();
 
         setContentView(R.layout.activity_add_group_members);
 
@@ -87,7 +89,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         }*/
 
         //displaying the current user as the admin of group
-        mAdapter.add(currentUser);
+        UserModel u = UserModel.create(mUser);
+        mAdapter.add(u);
 
         //User adminUser = mGroup.getAdminUser();
         //adminUser.setIsGroupAdmin();
@@ -103,10 +106,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 GroupMembersAdapter adapter = (GroupMembersAdapter) membersList.getAdapter();
                 String title = "";
                 if(checked){
-                    mSelectedItems.add((User)adapter.getItem(position));
+                    mSelectedItems.add((UserModel)adapter.getItem(position));
                 }
                 else{
-                    mSelectedItems.remove((User)adapter.getItem(position));
+                    mSelectedItems.remove((UserModel)adapter.getItem(position));
                 }
 
                 if(mSelectedItems.size() == 1){
@@ -143,8 +146,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         while(iterator.hasNext()){
                             User toRemove = (User) iterator.next();
                             mDisplayedUsers.remove(toRemove);
-                            mGroup.removeUser(toRemove);
-                            Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
+                            //mGroup.removeUser(toRemove);
+                            //Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
                             //AGGIORNO IL MENU
                             invalidateOptionsMenu();
                         }
@@ -251,7 +254,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     }
 
     private boolean minMemberNumberReached() {
-        return mGroup.getUsersCount() >= 2;
+        return mDisplayedUsers.size() >= 2;
     }
 
     @Override
@@ -298,7 +301,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         final int id = jsonObject.getInt("id");
                         final String fullname = jsonObject.getString("fullName");
                         final String email = jsonObject.getString("email");
-                        final User retrievedUser = User.create(id).withEmail(email).withFullName(fullname);
+                        final UserModel retrievedUser = UserModel.create(id).withEmail(email).withFullName(fullname);
                         //matchText.setText(fullname);
                         //matchText.setVisibility(View.VISIBLE);
                         //matchLabel.setVisibility(View.VISIBLE);
@@ -306,8 +309,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         //mAddMemberButton.setOnClickListener(new View.OnClickListener() {
                         //    @Override
                         //    public void onClick(View v) {
-                        boolean userAlreadyExists = !mGroup.addUser(retrievedUser);
-                        if(userAlreadyExists){
+                        //boolean userAlreadyExists = !mGroup.addUser(retrievedUser);
+                        if(userAlreadyExists(retrievedUser)){
                             Toast.makeText(AddGroupMembersActivity.this, "Utente già inserito", Toast.LENGTH_SHORT).show();
                         } else {
                             ((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
@@ -336,6 +339,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 }
             }
         };
+    }
+
+    private boolean userAlreadyExists(UserModel retrievedUser) {
+        return mDisplayedUsers.contains(retrievedUser);
     }
 
     private Response.ErrorListener responseErrorListenerUser(){

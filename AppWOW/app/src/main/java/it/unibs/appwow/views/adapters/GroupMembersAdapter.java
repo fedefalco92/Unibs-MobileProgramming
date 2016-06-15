@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import it.unibs.appwow.R;
-import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.models.UserModel;
 
 /**
  * Created by Massi on 24/05/2016.
@@ -18,7 +18,7 @@ import it.unibs.appwow.models.parc.User;
 public class GroupMembersAdapter extends BaseAdapter {
     private static final String TAG_LOG = GroupMembersAdapter.class.getSimpleName();
 
-    private final List<User> mItems;
+    private final List<UserModel> mItems;
     private final LayoutInflater mInflater;
 
     private int VIEW_TYPE_NUMBER = 2;
@@ -28,7 +28,7 @@ public class GroupMembersAdapter extends BaseAdapter {
         TextView emailUser;
     }
 
-    public GroupMembersAdapter(Context context,List<User> users){
+    public GroupMembersAdapter(Context context,List<UserModel> users){
         mInflater = LayoutInflater.from(context);
         this.mItems = users;
     }
@@ -48,23 +48,24 @@ public class GroupMembersAdapter extends BaseAdapter {
         return VIEW_TYPE_NUMBER;
     }
 
-    public void add(User item){
+    public void add(UserModel item){
         mItems.add(item);
         this.notifyDataSetChanged();
     }
 
     @Override
     public int getItemViewType(int position) {
-        final User itemUser = (User) getItem(position);
+        /*final UserModel itemUser = (UserModel) getItem(position);
         if(itemUser.isGroupAdmin())
             return 1;
         else
-            return 0;
+            return 0;*/
+        return (position>0)?0:1;
     }
 
     @Override
     public long getItemId(int position) {
-        final User userItem = (User) getItem(position);
+        final UserModel userItem = (UserModel) getItem(position);
         return userItem.getId();
     }
 
@@ -85,7 +86,7 @@ public class GroupMembersAdapter extends BaseAdapter {
         } else {
             holder = (Holder)view.getTag();
         }
-        final User itemUser = (User) getItem(position);
+        final UserModel itemUser = (UserModel) getItem(position);
         holder.emailUser.setText(itemUser.getEmail());
         holder.fullnameUser.setText(itemUser.getFullName());
 

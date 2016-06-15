@@ -3,7 +3,7 @@ package it.unibs.appwow.utils.dummy;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibs.appwow.models.Cost;
+import it.unibs.appwow.models.CostDummy;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -18,12 +18,12 @@ public class DummyCostContent {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<Cost> ITEMS = new ArrayList<Cost>();
+    public static final List<CostDummy> ITEMS = new ArrayList<CostDummy>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-   // public static final Map<String, Cost> ITEM_MAP = new HashMap<String, Cost>();
+   // public static final Map<String, CostDummy> ITEM_MAP = new HashMap<String, CostDummy>();
 
     private static final int COUNT = 25;
 
@@ -34,13 +34,13 @@ public class DummyCostContent {
         }
     }
 
-    private static void addItem(Cost item) {
+    private static void addItem(CostDummy item) {
         ITEMS.add(item);
         //ITEM_MAP.put(item.id, item);
     }
 
-    private static Cost createDummyItem(int position) {
-        return new Cost(position,"Item: " + position,Math.round(Math.random()*position));
+    private static CostDummy createDummyItem(int position) {
+        return new CostDummy(position,"Item: " + position,Math.round(Math.random()*position));
     }
 
     private static String makeDetails(int position) {

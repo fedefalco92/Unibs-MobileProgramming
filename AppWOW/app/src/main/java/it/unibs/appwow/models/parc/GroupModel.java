@@ -1,17 +1,13 @@
-package it.unibs.appwow.models.ser;
+package it.unibs.appwow.models.parc;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import java.util.HashMap;
-
-import it.unibs.appwow.models.parc.User;
-
 /**
  * Created by Massi on 05/05/2016.
  */
-public class Group implements Parcelable {
+public class GroupModel implements Parcelable {
 
     private static final byte PRESENT = 1;
 
@@ -31,7 +27,7 @@ public class Group implements Parcelable {
     private long mUpdatedAt;
     private int mIdAdmin;
     private int mHighlighted;
-    private HashMap<Integer, User> mUsers;
+    //private HashMap<Integer, User> mUsers;
 
     public int getId() {
         return mId;
@@ -57,9 +53,10 @@ public class Group implements Parcelable {
         return mIdAdmin;
     }
 
+    /*
     public HashMap<Integer, User> getUsers() {
         return mUsers;
-    }
+    }*/
 
     public void setGroupName(String mGroupName) {
         this.mGroupName = mGroupName;
@@ -90,16 +87,16 @@ public class Group implements Parcelable {
     }
 
 
-    public static final Parcelable.Creator<Group> CREATOR = new Parcelable.Creator<Group>()
+    public static final Parcelable.Creator<GroupModel> CREATOR = new Parcelable.Creator<GroupModel>()
     {
-        public Group createFromParcel(Parcel in)
+        public GroupModel createFromParcel(Parcel in)
         {
-            return new Group(in);
+            return new GroupModel(in);
         }
 
-        public Group[] newArray(int size)
+        public GroupModel[] newArray(int size)
         {
-            return new Group[size];
+            return new GroupModel[size];
         }
     };
 
@@ -108,7 +105,7 @@ public class Group implements Parcelable {
      *
      * @param in
      */
-    public Group (Parcel in)
+    public GroupModel(Parcel in)
     {
         this.mId = in.readInt();
         if(in.readByte() == PRESENT)
@@ -140,7 +137,7 @@ public class Group implements Parcelable {
             this.mHighlighted = in.readInt();
         }
         // FIXME: 26/05/2016 LA HashMap con gli utenti viene annullata quando si parcellizza il gruppo
-        this.mUsers = new HashMap<Integer, User>();
+        //this.mUsers = new HashMap<Integer, User>();
     }
 
     @Override
@@ -210,8 +207,8 @@ public class Group implements Parcelable {
 
     }
 
-    public Group(int id, String groupName, String photoUri, long createdAt, long updatedAt, int idAdmin, int highlighted) {
-        this.mUsers = new HashMap<Integer, User>();
+    public GroupModel(int id, String groupName, String photoUri, long createdAt, long updatedAt, int idAdmin, int highlighted) {
+        //this.mUsers = new HashMap<Integer, User>();
         this.mId = id;
         this.mGroupName = groupName;
         this.mPhotoUri = photoUri;
@@ -221,8 +218,8 @@ public class Group implements Parcelable {
         this.mHighlighted = highlighted;
     }
 
-    private Group(String groupName) {
-        this.mUsers = new HashMap<Integer, User>();
+    private GroupModel(String groupName) {
+        //this.mUsers = new HashMap<Integer, User>();
         this.mId = 0;
         this.mGroupName = groupName;
         this.mPhotoUri = null;
@@ -232,32 +229,33 @@ public class Group implements Parcelable {
         this.mHighlighted = 0;
     }
 
-    public static Group create(String groupName){
-        final Group g = new Group(groupName);
+    public static GroupModel create(String groupName){
+        final GroupModel g = new GroupModel(groupName);
         return g;
     }
 
-    public Group withId(int id){
+    public GroupModel withId(int id){
         this.mId = id;
         return this;
     }
 
-    public Group withAdmin(int idAdmin){
+    public GroupModel withAdmin(int idAdmin){
         this.mIdAdmin = idAdmin;
         return this;
     }
 
-    public Group withPhotoUri(String photoUri){
+    public GroupModel withPhotoUri(String photoUri){
         this.mPhotoUri = photoUri;
         return this;
     }
 
     /**
      * Adds a user to mUsers
-     * @param user
-     * @return true if the user has been successfully added,
+     * //@param user
+     * //@return true if the user has been successfully added,
      *          false if the user with such ID already exists
      */
+    /*
     public boolean addUser(User user){
        return (mUsers.put(user.getId(),user) == null);
     }
@@ -276,7 +274,7 @@ public class Group implements Parcelable {
 
     public User getAdminUser(){
         return mUsers.get(getIdAdmin());
-    }
+    }*/
 
     public boolean isHighlighted(){
         return mHighlighted > 0;

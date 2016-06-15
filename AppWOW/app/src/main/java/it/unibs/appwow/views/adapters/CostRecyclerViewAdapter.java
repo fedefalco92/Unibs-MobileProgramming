@@ -9,22 +9,22 @@ import android.widget.TextView;
 
 import it.unibs.appwow.fragments.CostsFragment.OnListFragmentInteractionListener;
 import it.unibs.appwow.R;
-import it.unibs.appwow.models.Cost;
+import it.unibs.appwow.models.CostDummy;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Cost} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link CostDummy} and makes a call to the
  * specified {@link OnCostListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerViewAdapter.ViewHolder> {
     private static final String TAG_LOG = CostRecyclerViewAdapter.class.getSimpleName();
 
-    private final List<Cost> mValues;
+    private final List<CostDummy> mValues;
     private final OnListFragmentInteractionListener mListener; // FIXME: 06/05/2016  DA IMPLEMENTARE 
 
-    public CostRecyclerViewAdapter(List<Cost> items, OnListFragmentInteractionListener listener) {
+    public CostRecyclerViewAdapter(List<CostDummy> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -44,7 +44,7 @@ public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerVi
         holder.mItem = mValues.get(position);
         holder.mUsername.setText(Long.toString(mValues.get(position).idUser));
         holder.mCostName.setText(mValues.get(position).name);
-        holder.mDate.setText(Cost.DATE_FORMAT.format(mValues.get(position).createdAt));
+        holder.mDate.setText(CostDummy.DATE_FORMAT.format(mValues.get(position).createdAt));
         holder.mItemValue.setText(Double.toString(mValues.get(position).amount));
 
 
@@ -71,7 +71,7 @@ public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerVi
         public final TextView mCostName;
         public final TextView mItemValue;
         public final TextView mDate;
-        public Cost mItem;
+        public CostDummy mItem;
 
         public ViewHolder(View view) {
             super(view);
@@ -90,7 +90,7 @@ public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerVi
 /*
     public class OnCostListFragmentInteractionListener implements OnListFragmentInteractionListener{
         @Override
-        public void onListFragmentInteraction(Cost item) {
+        public void onListFragmentInteraction(CostDummy item) {
 
         }
     }*/

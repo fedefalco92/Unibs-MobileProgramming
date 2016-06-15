@@ -193,7 +193,7 @@ public class SplashActivity extends AppCompatActivity {
                             String created_at_string = groupJs.getString("created_at");
                             long created_at = DateUtils.dateToLong(created_at_string);
                             //JSONObject pivot = groupJs.getJSONObject("pivot");
-                            Group group = Group.create(name).withId(id).withAdmin(idAdmin);
+                            GroupModel group = GroupModel.create(name).withId(id).withAdmin(idAdmin);
                             group.setCreatedAt(created_at);
                             group.setUpdatedAt(server_updated_at);
                             group.highlight();
