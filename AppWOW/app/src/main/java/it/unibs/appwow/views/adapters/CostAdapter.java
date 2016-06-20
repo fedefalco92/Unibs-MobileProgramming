@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,9 +13,8 @@ import java.util.List;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.CostsDAO;
-import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.models.CostModel;
-import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.models.parc.CostModel;
+import it.unibs.appwow.utils.DateUtils;
 
 /**
  * Created by Alessandro on 15/06/2016.
@@ -63,7 +61,7 @@ public class CostAdapter extends BaseAdapter {
     public View getView(final int position, View view, ViewGroup parent) {
         Holder holder = null;
         if(view==null) {
-            view = mInflater.inflate(R.layout.cost_fragment_item,null);
+            view = mInflater.inflate(R.layout.fragment_cost_item,null);
             holder = new Holder();
             holder.costName = (TextView) view.findViewById(R.id.cost_fragment_item_costname);
             holder.costAmount = (TextView)view.findViewById(R.id.cost_fragment_item_value);
@@ -76,7 +74,7 @@ public class CostAdapter extends BaseAdapter {
         final CostModel itemCost = (CostModel) getItem(position);
         holder.costName.setText(itemCost.getName());
         holder.costAmount.setText(""+itemCost.getAmount());
-        holder.costDate.setText(""+itemCost.getUpdatedAt());
+        holder.costDate.setText(""+ DateUtils.dateLongToString(itemCost.getUpdatedAt()));
         holder.costUser.setText("ID_USER: " + itemCost.getIdUser());
         return view;
     }

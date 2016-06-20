@@ -1,27 +1,25 @@
 package it.unibs.appwow.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.List;
-
+import it.unibs.appwow.CostDetailsActivity;
 import it.unibs.appwow.R;
 import it.unibs.appwow.models.CostDummy;
+import it.unibs.appwow.models.parc.CostModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.views.adapters.CostAdapter;
-import it.unibs.appwow.views.adapters.CostRecyclerViewAdapter;
-import it.unibs.appwow.utils.dummy.DummyCostContent;
 
 /**
  * A fragment representing a list of Items.
@@ -35,12 +33,14 @@ public class CostsFragment extends Fragment {
     public static final String GROUP_PASSING_TAG = "group";
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    public static final String PASSING_COST_TAG = "cost";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private CostAdapter mAdapter;
     private GroupModel mGroup;
-    private List<CostDummy> mCostDummyList; //da riempire
+    private ListView mCostList;
+    //private List<CostModel> mCostList; //da riempire
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -73,7 +73,7 @@ public class CostsFragment extends Fragment {
         //per poter popolare l'action bar dell'activity
         setHasOptionsMenu(true);
 
-        mAdapter =  new CostAdapter(getActivity(), mGroup.getId());
+        //mAdapter =  new CostAdapter(getActivity(), mGroup.getId());
     }
 
     @Override
@@ -98,7 +98,7 @@ public class CostsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cost_list, container, false);
-
+        /*
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -108,10 +108,31 @@ public class CostsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            //recyclerView.setAdapter(new CostRecyclerViewAdapter(DummyCostContent.ITEMS, mListener)); // FIXME: 06/05/2016 da mettere contenuto giusto (listCost)
+            recyclerView.setAdapter(new CostRecyclerViewAdapter(DummyCostContent.ITEMS, mListener)); // FIXME: 06/05/2016 da mettere contenuto giusto (listCost)
+            //recyclerView.setAdapter(new CostRecyclerViewAdapter(mListener));
             //recyclerView.setAdapter(mAdapter);
-        }
+        }*/
         return view;
+    }
+
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mAdapter = new CostAdapter(getContext(), mGroup.getId());
+        mCostList = (ListView) view.findViewById(R.id.cost_list);
+        mCostList.setAdapter(mAdapter);
+
+        mCostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
+                final Intent i = new Intent(getContext(), CostDetailsActivity.class);
+                CostModel cost = (CostModel) mAdapter.getItem(position);
+
+                i.putExtra(PASSING_COST_TAG, cost);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+            }
+        });
     }
 
     @Override

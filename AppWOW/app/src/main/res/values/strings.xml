@@ -65,7 +65,7 @@
     <string name="invalid_group_name">Insert a valid name</string>
     <string name="prompt_password_confirm">Confirm password</string>
     <string name="error_password_matching">Passwords do not match</string>
-    
+
     <string name="toast_message_nothing_to_show">Nothing to show</string>
 
 </resources>

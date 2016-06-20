@@ -1,6 +1,10 @@
 package it.unibs.appwow.models;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.utils.DateUtils;
 
 /**
  * Created by Alessandro on 15/06/2016.
@@ -12,7 +16,7 @@ public class UserModel {
     private long mCreatedAt;
     private long mUpdatedAt;
 
-    private double mAmount;
+    //private double mAmount;
 
     public UserModel(int id, String fullName, String email, long createdAt, long updatedAt) {
         this.mId = id;
@@ -20,9 +24,9 @@ public class UserModel {
         this.mEmail = email;
         this.mCreatedAt = createdAt;
         this.mUpdatedAt = updatedAt;
-        this.mAmount = 0;
+        //this.mAmount = 0;
     }
-
+/*
     public UserModel(int id, String fullName, String email, long createdAt, long updatedAt, double amount) {
         this.mId = id;
         this.mFullName = fullName;
@@ -30,10 +34,19 @@ public class UserModel {
         this.mCreatedAt = createdAt;
         this.mUpdatedAt = updatedAt;
         this.mAmount = amount;
-    }
+    }*/
 
     private UserModel (int id){
         this.mId = id;
+    }
+
+    public static UserModel create(JSONObject ujs) throws JSONException{
+        int id = ujs.getInt("id");
+        String fullName = ujs.getString("fullName");
+        String email = ujs.getString("email");
+        long createdAt = DateUtils.dateStringToLong(ujs.getString("created_at"));
+        long updatedAt = DateUtils.dateStringToLong(ujs.getString("updated_at"));
+        return new UserModel(id, fullName,email,createdAt,updatedAt);
     }
 
     public static UserModel create(int id)
@@ -61,11 +74,11 @@ public class UserModel {
         this.mUpdatedAt = updatedAt;
         return this;
     }
-
+    /*
     public UserModel withAmount(long amount){
         this.mAmount = amount;
         return this;
-    }
+    }*/
 
     public int getId() {
         return mId;
@@ -106,14 +119,14 @@ public class UserModel {
     public void setUpdatedAt(long mUpdatedAt) {
         this.mUpdatedAt = mUpdatedAt;
     }
-
+/*
     public double getAmount() {
         return mAmount;
     }
 
     public void setAmount(double mAmount) {
         this.mAmount = mAmount;
-    }
+    }*/
 
     public static UserModel create(User user) {
         return UserModel.create(user.getId()).withFullName(user.getFullName()).withEmail(user.getEmail());

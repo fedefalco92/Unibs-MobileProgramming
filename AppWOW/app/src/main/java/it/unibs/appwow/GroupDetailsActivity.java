@@ -43,7 +43,7 @@ import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.TransactionsFragment;
 import it.unibs.appwow.models.BalancingModel;
 import it.unibs.appwow.models.CostDummy;
-import it.unibs.appwow.models.CostModel;
+import it.unibs.appwow.models.parc.CostModel;
 import it.unibs.appwow.models.TransactionModel;
 import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
@@ -200,7 +200,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     private void fetchGroupDetails(){
-        Log.d(TAG_LOG,"fetchGroupDetails");
+        Log.d(TAG_LOG,"fetching group details");
         // showing refresh animation before making http call
 
         mSwipeRefreshLayout.setRefreshing(true);
@@ -220,17 +220,19 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    Log.d(TAG_LOG, "GROUP response = " + response.toString());
                     GroupDAO dao = new GroupDAO();
                     dao.open();
                     try{
                         String server_updated_at_string = response.getString("updated_at");
-                        long server_updated_at = DateUtils.dateToLong(server_updated_at_string);
+                        long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
                         long local_updated_at = dao.getUpdatedAt(mGroup.getId());
 
                         if (server_updated_at > local_updated_at) {
                             fetchCosts();
                         } else {
                             //se il gruppo locale è più aggiornato di quello del server?
+                            Log.d(TAG_LOG, "group up to date");
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
                     } catch(JSONException e){
@@ -252,8 +254,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         //mRequestPending++;
 
         //mSwipeRefreshLayout.setRefreshing(false);
-
-
     }
 
     private void fetchUsers(){
@@ -267,48 +267,52 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    Log.d(TAG_LOG, "Response = " + response.toString());
+                    Log.d(TAG_LOG, "USERS response = " + response.toString());
 
                     if (response.length() > 0) {
-                        UserDAO dao = new UserDAO();
-                        dao.open();
-                        UserGroupDAO dao1 = new UserGroupDAO();
-                        dao1.open();
+                        UserDAO udao = new UserDAO();
+                        udao.open();
+                        UserGroupDAO ugdao = new UserGroupDAO();
+                        ugdao.open();
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 // TODO: 15/06/2016 SISTEMARE COME PER PIVOT PER RENDERLO PIU' COMPRENSIBILE
                                 JSONObject userJs = response.getJSONObject(i);
-                                int id = userJs.getInt("id");
-                                String server_updated_at_string = userJs.getString("updated_at");
-                                long server_updated_at = DateUtils.dateToLong(server_updated_at_string);
-                                long local_updated_at = dao.getUpdatedAt(id);
+                                UserModel user = UserModel.create(userJs);
+                                //int id = userJs.getInt("id");
+                                //String server_updated_at_string = userJs.getString("updated_at");
+                                //long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
+                                long server_updated_at = user.getUpdatedAt();
+                                long local_updated_at = udao.getUpdatedAt(user.getId());
                                 //aggiorno lo user solo se subito modifiche
                                 if (server_updated_at > local_updated_at) {
-                                    String fullName = userJs.getString("fullName");
+                                    /*String fullName = userJs.getString("fullName");
                                     String email = userJs.getString("email");
                                     String created_at_string = userJs.getString("created_at");
-                                    long created_at = DateUtils.dateToLong(created_at_string);
+                                    long created_at = DateUtils.dateStringToLong(created_at_string);
                                     UserModel u = UserModel.create(id).withFullName(fullName)
                                             .withEmail(email)
                                             .withCreatedAt(created_at)
                                             .withUpdatedAt(server_updated_at);
-                                    dao.insertUser(u);
+                                    udao.insertUser(u);*/
+                                    udao.insertUser(user);
+                                    Log.d(TAG_LOG, "INSERTED USER -> " + user);
                                 } else {
-                                    //per ora non faccio niente
+                                   Log.d(TAG_LOG, "User -> " + user + " up to date");
                                 }
 
                                 JSONObject pivot = userJs.getJSONObject("pivot");
                                 UserGroupModel piv = UserGroupModel.create(pivot);
                                 if(!piv.isUpdated()){
-                                    dao1.insertUserGroup(piv);
+                                    ugdao.insertUserGroup(piv);
                                 }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                        dao.close();
-                        dao1.close();
+                        udao.close();
+                        ugdao.close();
                         /*// mAdapter.notifyDataSetChanged();
                         mAdapter = new GroupAdapter(getActivity());
                         mGridView.setAdapter(mAdapter);
@@ -331,6 +335,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     private void fetchCosts(){
+        Log.d(TAG_LOG, "fetching costs");
         Uri groupCostsUri = WebServiceUri.getGroupCostsUri(mGroup.getId());
         URL url = WebServiceUri.uriToUrl(groupCostsUri);
 
@@ -338,6 +343,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                 new Response.Listener<JSONArray>(){
                     @Override
                     public void onResponse(JSONArray response) {
+                        Log.d(TAG_LOG, "COSTS response = " + response.toString());
                         if(response.length() > 0){
                             CostsDAO dao = new CostsDAO();
                             dao.open();
@@ -353,6 +359,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                             }
                             dao.close();
                         }
+
                         //fetchBalacings(); // FIXME: 15/06/2016 SCOMMENTARE
                         // FIXME: 15/06/2016 SPOSTARE IN FETCHBALANCINGS
                         //AGGIORNO LA DATA DI MODIFICA DEL GRUPPO IN LOCALE

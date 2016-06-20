@@ -4,14 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.net.IDN;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
-import it.unibs.appwow.models.CostModel;
-import it.unibs.appwow.models.UserModel;
+import it.unibs.appwow.models.parc.CostModel;
 
 /**
  * Created by Alessandro on 15/06/2016.

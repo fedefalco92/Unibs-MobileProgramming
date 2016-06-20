@@ -216,7 +216,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                         JSONObject groupJs = response.getJSONObject(i);
                                         int id = groupJs.getInt("id");
                                         String server_updated_at_string = groupJs.getString("updated_at");
-                                        long server_updated_at = DateUtils.dateToLong(server_updated_at_string);
+                                        long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
                                         long local_updated_at = dao.getUpdatedAt(id);
                                         //aggiorno il gruppo solo se ha subito modifiche, SE IL GRUPPO NON ESISTE local_updated_at = 0L
                                         //quindi il nuovo gruppo viene inserito
@@ -224,7 +224,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                             String name = groupJs.getString("name");
                                             int idAdmin = groupJs.getInt("idAdmin");
                                             String created_at_string = groupJs.getString("created_at");
-                                            long created_at = DateUtils.dateToLong(created_at_string);
+                                            long created_at = DateUtils.dateStringToLong(created_at_string);
                                             //JSONObject pivot = groupJs.getJSONObject("pivot");
                                             GroupModel group = GroupModel.create(name).withId(id).withAdmin(idAdmin);
                                             group.setCreatedAt(created_at);

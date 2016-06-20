@@ -32,7 +32,7 @@ public class CostRecyclerViewAdapter extends RecyclerView.Adapter<CostRecyclerVi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.cost_fragment_item, parent, false);
+                .inflate(R.layout.fragment_cost_item, parent, false);
                 // FIXME: 07/05/2016 PRIMA qui sopra c'era R.layout.fragment_cost_list...Why?
         return new ViewHolder(view);
     }

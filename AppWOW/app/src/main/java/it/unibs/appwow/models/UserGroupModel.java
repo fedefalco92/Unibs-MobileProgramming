@@ -26,7 +26,7 @@ public class UserGroupModel {
         int groupId = o.getInt("idGroup");
         int userId = o.getInt("idUser");
         double amount = o.getDouble("amount");
-        long updatedAt = DateUtils.dateToLong(o.getString("updated_at"));
+        long updatedAt = DateUtils.dateStringToLong(o.getString("updated_at"));
         return new UserGroupModel(groupId, userId, amount, updatedAt);
     }
 
