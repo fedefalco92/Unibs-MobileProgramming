@@ -46,8 +46,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibs.appwow.models.parc.User;
-import it.unibs.appwow.services.DownloadFromServerTask;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;
@@ -80,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known mUser names and passwords.
+     * A dummy authentication store containing known mLocalUser names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
@@ -210,7 +209,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the mUser entered one.
+        // Check for a valid password, if the mLocalUser entered one.
         if (!TextUtils.isEmpty(password) && !Validator.isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
@@ -234,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the mUser login attempt.
+            // perform the mLocalUser login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
@@ -280,7 +279,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
-                // Retrieve data rows for the device mUser's 'profile' contact.
+                // Retrieve data rows for the device mLocalUser's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
 
@@ -290,7 +289,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 .CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
-                // a primary email address if the mUser hasn't specified one.
+                // a primary email address if the mLocalUser hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
@@ -333,7 +332,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
-     * the mUser.
+     * the mLocalUser.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -342,7 +341,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private JSONObject mResjs = null;
         private boolean mNewUser = false;
         private boolean mConnError = false;
-        private User mUser = null;
+        private LocalUser mLocalUser = null;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -401,8 +400,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         // TODO: 19/05/2016 SALVARE SHARED
                         int id = mResjs.getInt("id");
                         String fullname = mResjs.getString("fullName");
-                        mUser = User.create(id).withEmail(mEmail).withFullName(fullname);
-                        mUser.save(MyApplication.getAppContext());
+                        mLocalUser = LocalUser.create(id).withEmail(mEmail).withFullName(fullname);
+                        mLocalUser.save(MyApplication.getAppContext());
 
                     } catch (MalformedURLException e){
                         return false;
@@ -415,8 +414,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return true;
                 case USER_NOT_EXISTS:
                     mNewUser = true;
-                    //costruisco un User con i dati inseriti nel form
-                    mUser = new User(mEmail, mPassword);
+                    //costruisco un LocalUser con i dati inseriti nel form
+                    mLocalUser = new LocalUser(mEmail, mPassword);
                     return true;
 
                 case CONN_ERROR:
@@ -435,7 +434,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 if(mNewUser){
                     Intent ri = new Intent(LoginActivity.this, RegistrationActivity.class);
-                    ri.putExtra(PASSING_USER_EXTRA, mUser);
+                    ri.putExtra(PASSING_USER_EXTRA, mLocalUser);
                     startActivity(ri);
                 } else {
                     Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
@@ -460,11 +459,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         /**
-         * checks if the mUser with email exists
+         * checks if the mLocalUser with email exists
          * @param email
          * @return CONN_ERR if there is a connection error
-         *         USER_NOT_EXISTS if mUser doesn't exists on database
-         *         USER_EXISTS if mUser exists
+         *         USER_NOT_EXISTS if mLocalUser doesn't exists on database
+         *         USER_EXISTS if mLocalUser exists
          */
         private int checkUser(String email){
             String response = "";

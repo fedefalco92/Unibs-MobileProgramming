@@ -27,7 +27,7 @@ public class GroupModel implements Parcelable {
     private long mUpdatedAt;
     private int mIdAdmin;
     private int mHighlighted;
-    //private HashMap<Integer, User> mUsers;
+    //private HashMap<Integer, LocalUser> mUsers;
 
     public int getId() {
         return mId;
@@ -54,7 +54,7 @@ public class GroupModel implements Parcelable {
     }
 
     /*
-    public HashMap<Integer, User> getUsers() {
+    public HashMap<Integer, LocalUser> getUsers() {
         return mUsers;
     }*/
 
@@ -137,7 +137,7 @@ public class GroupModel implements Parcelable {
             this.mHighlighted = in.readInt();
         }
         // FIXME: 26/05/2016 LA HashMap con gli utenti viene annullata quando si parcellizza il gruppo
-        //this.mUsers = new HashMap<Integer, User>();
+        //this.mUsers = new HashMap<Integer, LocalUser>();
     }
 
     @Override
@@ -208,7 +208,7 @@ public class GroupModel implements Parcelable {
     }
 
     public GroupModel(int id, String groupName, String photoUri, long createdAt, long updatedAt, int idAdmin, int highlighted) {
-        //this.mUsers = new HashMap<Integer, User>();
+        //this.mUsers = new HashMap<Integer, LocalUser>();
         this.mId = id;
         this.mGroupName = groupName;
         this.mPhotoUri = photoUri;
@@ -219,7 +219,7 @@ public class GroupModel implements Parcelable {
     }
 
     private GroupModel(String groupName) {
-        //this.mUsers = new HashMap<Integer, User>();
+        //this.mUsers = new HashMap<Integer, LocalUser>();
         this.mId = 0;
         this.mGroupName = groupName;
         this.mPhotoUri = null;
@@ -256,15 +256,15 @@ public class GroupModel implements Parcelable {
      *          false if the user with such ID already exists
      */
     /*
-    public boolean addUser(User user){
+    public boolean addUser(LocalUser user){
        return (mUsers.put(user.getId(),user) == null);
     }
 
-    public boolean removeUser(User toRemove) {
+    public boolean removeUser(LocalUser toRemove) {
         return (mUsers.remove(toRemove.getId())!= null);
     }
 
-    public User getUser(int id){
+    public LocalUser getUser(int id){
         return mUsers.get(id);
     }
 
@@ -272,7 +272,7 @@ public class GroupModel implements Parcelable {
         return mUsers.size();
     }
 
-    public User getAdminUser(){
+    public LocalUser getAdminUser(){
         return mUsers.get(getIdAdmin());
     }*/
 

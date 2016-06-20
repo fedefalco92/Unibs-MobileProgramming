@@ -20,7 +20,7 @@ import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.DateUtils;
 
 // TODO: 03/06/16 Magari da spostarla e farla diventare come sottoclasse... 
@@ -33,16 +33,16 @@ public class DownloadFromServerTask extends AsyncTask<Void, Void, Boolean> {
 
     private JSONArray mResjs = null;
     private boolean mConnError = false;
-    private User mUser = null;
+    private LocalUser mLocalUser = null;
 
-    public DownloadFromServerTask(User user) {
-        mUser = user;
+    public DownloadFromServerTask(LocalUser localUser) {
+        mLocalUser = localUser;
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
         String response = "";
-        Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mUser.getId()));
+        Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mLocalUser.getId()));
         Uri groups_uri = Uri.withAppendedPath(user_uri, "groups");
         try {
 

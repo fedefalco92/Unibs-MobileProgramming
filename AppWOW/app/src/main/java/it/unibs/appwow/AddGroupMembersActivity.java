@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.view.ActionMode;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,9 +29,9 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unibs.appwow.models.UserModel;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.views.adapters.GroupMembersAdapter;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.models.parc.User;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 
@@ -48,7 +47,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     private MenuItem mCreateGroupButton;
     private TextView mEmailTextView;
     private GroupModel mGroup;
-    private User mUser;
+    private LocalUser mLocalUser;
     private ArrayList<UserModel> mDisplayedUsers;
     private Set<UserModel> mSelectedItems;
 
@@ -58,8 +57,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         //retrieving group from intent extras
         this.mGroup = getIntent().getExtras().getParcelable(AddGroupActivity.PASSING_GROUP_EXTRA);
         //IMPORTANT: parceling does not save the HashMap mUsers which will be null after getParcelable(...)
-        mUser = User.load(MyApplication.getAppContext());
-        //mUser.setIsGroupAdmin();
+        mLocalUser = LocalUser.load(MyApplication.getAppContext());
+        //mLocalUser.setIsGroupAdmin();
         //mGroup.addUser(currentUser);
 
         mSelectedItems = new HashSet<UserModel>();
@@ -78,21 +77,21 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         mEmailTextView = (TextView) findViewById(R.id.email);
 
         membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        //membersList.setAdapter(new ArrayAdapter<User>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
+        //membersList.setAdapter(new ArrayAdapter<LocalUser>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
         mAdapter = new GroupMembersAdapter(this, mDisplayedUsers);
         membersList.setAdapter(mAdapter);
         /*
-        if(User.load(this) != null){
-            User loggedUser = User.load(this);
+        if(LocalUser.load(this) != null){
+            LocalUser loggedUser = LocalUser.load(this);
             loggedUser.setmAdmin();
             ((GroupMembersAdapter)membersList.getAdapter()).add(loggedUser);
         }*/
 
         //displaying the current user as the admin of group
-        UserModel u = UserModel.create(mUser);
+        UserModel u = UserModel.create(mLocalUser);
         mAdapter.add(u);
 
-        //User adminUser = mGroup.getAdminUser();
+        //LocalUser adminUser = mGroup.getAdminUser();
         //adminUser.setIsGroupAdmin();
         //((GroupMembersAdapter)membersList.getAdapter()).add(adminUser);
 
@@ -144,7 +143,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     case R.id.context_delete:
                         Iterator iterator = mSelectedItems.iterator();
                         while(iterator.hasNext()){
-                            User toRemove = (User) iterator.next();
+                            LocalUser toRemove = (LocalUser) iterator.next();
                             mDisplayedUsers.remove(toRemove);
                             //mGroup.removeUser(toRemove);
                             //Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
@@ -181,10 +180,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 // such as update the title in the CAB
                 String title = "";
                 if(checked){
-                    mSelectedItems.add((User)mAdapter.getItem(position));
+                    mSelectedItems.add((LocalUser)mAdapter.getItem(position));
                 }
                 else{
-                    mSelectedItems.remove((User)mAdapter.getItem(position));
+                    mSelectedItems.remove((LocalUser)mAdapter.getItem(position));
                 }
 
                 if(mSelectedItems.size() == 1){
@@ -330,7 +329,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     }
                 }
                 else{
-                    //Toast.makeText(AddGroupMembersActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(AddGroupMembersActivity.this, "LocalUser not found", Toast.LENGTH_SHORT).show();
                     mEmailTextView.requestFocus();
                     mEmailTextView.setError(getString(R.string.user_not_found));
                     //matchText.setVisibility(View.INVISIBLE);

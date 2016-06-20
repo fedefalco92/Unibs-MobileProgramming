@@ -3,17 +3,18 @@ package it.unibs.appwow.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
-import it.unibs.appwow.views.adapters.TransactionRecyclerViewAdapter;
-import it.unibs.appwow.utils.dummy.DummyTransactionContent;
-import it.unibs.appwow.utils.dummy.DummyTransactionContent.Transaction;
+import it.unibs.appwow.models.Transaction;
+import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.views.adapters.TransactionAdapter;
 
 /**
  * A fragment representing a list of Items.
@@ -24,7 +25,9 @@ import it.unibs.appwow.utils.dummy.DummyTransactionContent.Transaction;
 public class TransactionsFragment extends Fragment {
 
     private static final String TAG_LOG = TransactionsFragment.class.getSimpleName();
-
+    private GroupModel mGroup;
+    private TransactionAdapter mAdapter;
+    private ListView mTransactionList;
     // TODO: Customize parameters
     private int mColumnCount = 1;
 
@@ -35,10 +38,11 @@ public class TransactionsFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static TransactionsFragment newInstance(int columnCount) {
+    public static TransactionsFragment newInstance(int columnCount, GroupModel group) {
         TransactionsFragment fragment = new TransactionsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putParcelable(GroupListFragment.PASSING_GROUP_TAG, group);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,14 +60,18 @@ public class TransactionsFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mGroup = getArguments().getParcelable(GroupListFragment.PASSING_GROUP_TAG);
         }
+
+        //per poter popolare l'action bar dell'activity
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_transaction_list, container, false);
-
+        /*
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -74,10 +82,30 @@ public class TransactionsFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(new TransactionRecyclerViewAdapter(DummyTransactionContent.ITEMS, mListener));
-        }
+        }*/
         return view;
     }
 
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mAdapter = new TransactionAdapter(getContext(), mGroup.getId());
+        mTransactionList = (ListView) view.findViewById(R.id.transaction_list);
+        mTransactionList.setAdapter(mAdapter);
+
+        mTransactionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                // TODO: 20/06/2016  GESTIRE ON CLICK
+                Toast.makeText(MyApplication.getAppContext(), "Posizione " + position,Toast.LENGTH_SHORT).show();
+                /*final Intent i = new Intent(getContext(), CostDetailsActivity.class);
+                CostModel cost = (CostModel) mAdapter.getItem(position);
+
+                i.putExtra(PASSING_COST_TAG, cost);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);*/
+            }
+        });
+    }
 
     @Override
     public void onAttach(Context context) {

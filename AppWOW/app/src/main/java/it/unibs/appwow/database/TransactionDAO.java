@@ -4,9 +4,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.models.Transaction;
 import it.unibs.appwow.models.TransactionModel;
-import it.unibs.appwow.utils.dummy.DummyTransactionContent;
 
 /**
  * Created by Alessandro on 15/06/2016.
@@ -63,6 +66,18 @@ public class TransactionDAO implements LocalDB_DAO {
         return new TransactionModel(id, idBalancing, idFrom, idTo, amount, payedAt);
     }
 
+    private Transaction cursorToTransactionWithFullName(Cursor cursor) {
+        int id = cursor.getInt(0);
+        int idBalancing = cursor.getInt(1);
+        int idFrom = cursor.getInt(2);
+        int idTo = cursor.getInt(3);
+        double amount = cursor.getDouble(4);
+        long payedAt = cursor.getLong(5);
+        String fullName = cursor.getString(6);
+
+        return new Transaction(id, idBalancing, idFrom, idTo, amount, payedAt, fullName);
+    }
+
     public TransactionModel insertTransaction(TransactionModel data) {
 
         database.replace(AppDB.Transactions.TABLE_TRANSACTIONS, null,
@@ -81,20 +96,24 @@ public class TransactionDAO implements LocalDB_DAO {
     public void resetAllTransactions(int idGroup) {
        // database.delete(AppDB.Transactions.TABLE_TRANSACTIONS, AppDB.Transactions. + " = ?" , new String[]{"" + idGroup});
     }
-/*
-    public List<UserModel> getAllUsers(int idGroup) {
-        List<UserModel> data = new ArrayList<UserModel>();
-        Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
-                allColumns,null,null,null,null,null);
+
+    public List<Transaction> getAllTransactionsFrom(int idGroup, int idUser) {
+        List<Transaction> data = new ArrayList<Transaction>();
+        //String query = "SELECT idTo, amount FROM groups LEFT JOIN balancings ON groups._id = balancings.idGroup LEFT JOIN transactions ON balancings._id = transactions.idBalancing WHERE groups._id = ? AND transactions.idFrom = ?";
+        String query = "SELECT transactions._id, transactions.amount, transactions.idBalancing, transactions.idFrom, transactions.idTo, transactions.payed_at, users.fullName " +
+                "FROM groups LEFT JOIN balancings ON groups._id = balancings.idGroup LEFT JOIN transactions ON balancings._id = transactions.idBalancing LEFT JOIN users ON transactions.idTo = users._id "+
+                "WHERE groups._id = ? AND  (transactions.idFrom = ? OR transactions.idTo = ?)";
+        String[] values =  new String[]{String.valueOf(idGroup), String.valueOf(idUser),String.valueOf(idUser)};
+        Cursor cursor = database.rawQuery(query, values);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            GroupModel d = cursorToGroup(cursor);
+            Transaction d = cursorToTransactionWithFullName(cursor);
             data.add(d);
             cursor.moveToNext();
         }
         cursor.close(); // remember to always close the cursor!
         return data;
-    }*/
+    }
 
 
 

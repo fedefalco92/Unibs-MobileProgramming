@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.models.parc.LocalUser;
 
 public class AddGroupActivity extends AppCompatActivity {
 
@@ -80,7 +80,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 if(isGroupNameValid()){
                     final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
                     //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
-                    User currentUser = User.load(MyApplication.getAppContext());
+                    LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
                     mGroup.setIdAdmin(currentUser.getId());
                     mGroup.setGroupName(mGroupNameView.getText().toString());
                     addMembersIntent.putExtra(PASSING_GROUP_EXTRA, mGroup);

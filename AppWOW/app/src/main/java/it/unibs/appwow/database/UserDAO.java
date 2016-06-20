@@ -124,8 +124,6 @@ public class UserDAO implements LocalDB_DAO {
         }
     }
 
-
-
     public void resetAllUsers() {
         database.delete(AppDB.Users.TABLE_USERS,null,null);
     }

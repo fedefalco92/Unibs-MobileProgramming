@@ -32,7 +32,7 @@ import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.views.adapters.GroupAdapter;
-import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceUri;
 
 
@@ -54,7 +54,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     public static final String PASSING_GROUP_TAG = "group";
 
     //parameters
-    private User mUser;
+    private LocalUser mLocalUser;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private GridView mGridView;
@@ -71,14 +71,14 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param user
+     * @param localUser
      * @return A new instance of fragment GroupListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GroupListFragment newInstance(User user) {
+    public static GroupListFragment newInstance(LocalUser localUser) {
         GroupListFragment fragment = new GroupListFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_USER, user);
+        args.putParcelable(ARG_USER, localUser);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,7 +87,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mUser= getArguments().getParcelable(ARG_USER);
+            mLocalUser = getArguments().getParcelable(ARG_USER);
         }
     }
 
@@ -190,9 +190,9 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         // showing refresh animation before making http call
         mSwipeRefreshLayout.setRefreshing(true);
 
-        if(mUser != null){
-            Log.d(TAG_LOG,"mUser is not null");
-            Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mUser.getId()));
+        if(mLocalUser != null){
+            Log.d(TAG_LOG,"mLocalUser is not null");
+            Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mLocalUser.getId()));
             Uri groups_uri = Uri.withAppendedPath(user_uri, "groups");
             URL url = null;
             try {

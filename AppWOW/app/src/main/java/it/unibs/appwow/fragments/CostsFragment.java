@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import it.unibs.appwow.CostDetailsActivity;
 import it.unibs.appwow.R;
-import it.unibs.appwow.models.CostDummy;
 import it.unibs.appwow.models.parc.CostModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.views.adapters.CostAdapter;
@@ -30,7 +29,7 @@ import it.unibs.appwow.views.adapters.CostAdapter;
 public class CostsFragment extends Fragment {
 
     private static final String TAG_LOG = CostsFragment.class.getSimpleName();
-    public static final String GROUP_PASSING_TAG = "group";
+    public static final String PASSING_GROUP_TAG = "group";
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     public static final String PASSING_COST_TAG = "cost";
@@ -55,7 +54,7 @@ public class CostsFragment extends Fragment {
         CostsFragment fragment = new CostsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
-        args.putParcelable(GROUP_PASSING_TAG, group);
+        args.putParcelable(PASSING_GROUP_TAG, group);
         fragment.setArguments(args);
         return fragment;
 
@@ -67,7 +66,7 @@ public class CostsFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            mGroup = getArguments().getParcelable(GROUP_PASSING_TAG);
+            mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
         }
 
         //per poter popolare l'action bar dell'activity
@@ -164,6 +163,6 @@ public class CostsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(CostDummy item);
+        void onListFragmentInteraction(CostModel item);
     }
 }

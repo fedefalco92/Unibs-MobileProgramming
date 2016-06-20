@@ -42,16 +42,15 @@ import it.unibs.appwow.fragments.CostsFragment;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.TransactionsFragment;
 import it.unibs.appwow.models.BalancingModel;
-import it.unibs.appwow.models.CostDummy;
+import it.unibs.appwow.models.Transaction;
 import it.unibs.appwow.models.parc.CostModel;
 import it.unibs.appwow.models.TransactionModel;
 import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
-import it.unibs.appwow.utils.dummy.DummyTransactionContent;
 import it.unibs.appwow.models.Amount;
 
 public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener,
@@ -82,7 +81,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     private ViewPager mViewPager;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private User mUser;
+    private LocalUser mLocalUser;
     //private int mRequestPending;
 
     @Override
@@ -136,7 +135,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             }
         });
 
-        mUser = User.load(MyApplication.getAppContext());
+        mLocalUser = LocalUser.load(MyApplication.getAppContext());
         mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
         setTitle(mGroup.getGroupName());
         /**
@@ -177,9 +176,9 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     @Override
-    public void onListFragmentInteraction(CostDummy item) {
+    public void onListFragmentInteraction(CostModel item) {
         // TODO: 07/05/2016 Qui va implementato l'evento da gestire alla selezione dell'item
-        Toast.makeText(GroupDetailsActivity.this, "Item: " + item.id, Toast.LENGTH_SHORT).show();
+        Toast.makeText(GroupDetailsActivity.this, "Item: " + item.getId(), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -190,7 +189,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     @Override
-    public void onListFragmentInteraction(DummyTransactionContent.Transaction item) {
+    public void onListFragmentInteraction(Transaction item) {
         // TODO: 10/05/2016  Qui va implementato l'evento da gestire alla selezione dell'item
     }
 
@@ -298,7 +297,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                                     udao.insertUser(user);
                                     Log.d(TAG_LOG, "INSERTED USER -> " + user);
                                 } else {
-                                   Log.d(TAG_LOG, "User -> " + user + " up to date");
+                                   Log.d(TAG_LOG, "LocalUser -> " + user + " up to date");
                                 }
 
                                 JSONObject pivot = userJs.getJSONObject("pivot");
@@ -398,7 +397,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                             TransactionDAO tdao = new TransactionDAO();
                             tdao.open();
 
-                            bdao.resetAllBalancings(mGroup.getId()); //cancella anche tutte le transactions se funziona on delete cascade
+                            // FIXME: 20/06/2016 UNCOMMENT
+                            //bdao.resetAllBalancings(mGroup.getId()); //cancella anche tutte le transactions se funziona on delete cascade
                             for(int i = 0; i<response.length();i++){
                                 try{
                                     JSONObject balJs = response.getJSONObject(i);
@@ -452,9 +452,9 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                 case 0:
                     return CostsFragment.newInstance(1, mGroup);
                 case 1:
-                    return AmountsFragment.newInstance(1);
+                    return AmountsFragment.newInstance(1, mGroup);
                 case 2:
-                    return TransactionsFragment.newInstance(1);
+                    return TransactionsFragment.newInstance(1, mGroup);
             }
             return null;
             //Log.d(TAG_LOG,"Position: "+position);

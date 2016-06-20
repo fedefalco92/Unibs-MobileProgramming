@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDBOffline.*;
-import it.unibs.appwow.models.CostDummy;
 import it.unibs.appwow.models.parc.GroupModel;
 
 /**
@@ -91,20 +90,7 @@ public class AppSQLiteHelperOffline extends SQLiteOpenHelper {
         }
     }
 
-    //from Object to database
-    // TODO: 12/05/16 da spostare da qualche parte ...
-    private ContentValues costToValues(CostDummy data) {
-        ContentValues values = new ContentValues();
-        values.put(Costs._ID, data.id);
-        values.put(Costs.COLUMN_AMOUNT,data.amount);
-        values.put(Costs.COLUMN_NAME,data.name);
-        values.put(Costs.COLUMN_NOTES,data.notes);
-        values.put(Costs.COLUMN_CREATED_AT,data.createdAt);
-        values.put(Costs.COLUMN_ID_GROUP,data.idGroup);
-        values.put(Costs.COLUMN_ID_USER,data.idUser);
-        values.put(Costs.COLUMN_AMOUNT_DETAILS,data.amountDetails);
-        return values;
-    }
+
 
     private ContentValues groupToValues(GroupModel data) {
         ContentValues values = new ContentValues();

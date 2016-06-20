@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.Validator;
 
 
@@ -19,7 +19,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private static final String TAG_LOG = RegistrationActivity.class.getSimpleName();
 
-    private User mReceived;
+    private LocalUser mReceived;
     private TextView mFullname;
     private TextView mEmail;
     private TextView mPassword;
@@ -35,8 +35,8 @@ public class RegistrationActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mReceived = (User) getIntent().getExtras().getParcelable(LoginActivity.PASSING_USER_EXTRA);
-        Log.d(TAG_LOG, "User: " + mReceived.toString());
+        mReceived = (LocalUser) getIntent().getExtras().getParcelable(LoginActivity.PASSING_USER_EXTRA);
+        Log.d(TAG_LOG, "LocalUser: " + mReceived.toString());
 
 
         // Precompilo Forum

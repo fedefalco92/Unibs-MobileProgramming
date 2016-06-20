@@ -60,7 +60,7 @@
     <string name="delete">Delete</string>
     <string name="suggerimento_nome_gruppi">Insert a group name and a photo (optional)</string>
     <string name="actual_members_string">Actual members</string>
-    <string name="user_not_found">User not found</string>
+    <string name="user_not_found">LocalUser not found</string>
     <string name="server_connection_error">Connection to server failed. Try again later.</string>
     <string name="invalid_group_name">Insert a valid name</string>
     <string name="prompt_password_confirm">Confirm password</string>

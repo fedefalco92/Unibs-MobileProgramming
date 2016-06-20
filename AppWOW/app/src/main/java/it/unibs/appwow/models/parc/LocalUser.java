@@ -9,7 +9,7 @@ import android.text.TextUtils;
 /**
  * Created by Alessandro on 18/05/2016.
  */
-public class User implements Parcelable{
+public class LocalUser implements Parcelable{
 
     private static final byte PRESENT = 1;
 
@@ -20,16 +20,16 @@ public class User implements Parcelable{
     private static final String FULLNAME_KEY = "fullname";
     private static final String EMAIL_KEY = "email";
 
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>()
+    public static final Parcelable.Creator<LocalUser> CREATOR = new Parcelable.Creator<LocalUser>()
     {
-        public User createFromParcel(Parcel in)
+        public LocalUser createFromParcel(Parcel in)
         {
-            return new User(in);
+            return new LocalUser(in);
         }
 
-        public User[] newArray(int size)
+        public LocalUser[] newArray(int size)
         {
-            return new User[size];
+            return new LocalUser[size];
         }
     };
 
@@ -55,7 +55,7 @@ public class User implements Parcelable{
      *
      * @param in
      */
-    public User(Parcel in)
+    public LocalUser(Parcel in)
     {
         this.mId = in.readInt();
         if(in.readByte() == PRESENT)
@@ -114,35 +114,35 @@ public class User implements Parcelable{
 
     }
 
-    public User(String email, String password){
+    public LocalUser(String email, String password){
         this.mEmail = email;
         this.mPassword = password;
         this.mIsGroupAdmin = false;
     }
 
-    private User(int id){
+    private LocalUser(int id){
         this.mId = id;
         this.mIsGroupAdmin = false;
     }
 
-    public static User create(int id)
+    public static LocalUser create(int id)
     {
-        final User User = new User(id);
-        return User;
+        final LocalUser LocalUser = new LocalUser(id);
+        return LocalUser;
     }
 
-    public User withPassword(String newPassword)
+    public LocalUser withPassword(String newPassword)
     {
         this.mPassword = newPassword;
         return this;
     }
 
-    public User withFullName(String newFullName){
+    public LocalUser withFullName(String newFullName){
         this.mFullName = newFullName;
         return this;
     }
 
-    public User withEmail(String newEmail)
+    public LocalUser withEmail(String newEmail)
     {
         this.mEmail = newEmail;
         return this;
@@ -183,16 +183,16 @@ public class User implements Parcelable{
         editor.commit();
     }
 
-    public static User load(final Context ctx) {
+    public static LocalUser load(final Context ctx) {
         final SharedPreferences prefs = ctx.getSharedPreferences(USER_MODEL_PREFERENCES,
                 Context.MODE_PRIVATE);
         int id = prefs.getInt(ID_KEY,0);
-        User user = null;
+        LocalUser localUser = null;
         if(id != 0) {
-            user = user.create(id).withEmail(prefs.getString(EMAIL_KEY, null)).withFullName(prefs.getString(FULLNAME_KEY, null));
-            return user;
+            localUser = localUser.create(id).withEmail(prefs.getString(EMAIL_KEY, null)).withFullName(prefs.getString(FULLNAME_KEY, null));
+            return localUser;
         }
-        return user;
+        return localUser;
     }
 
     public void logout(final Context ctx) {
@@ -212,7 +212,7 @@ public class User implements Parcelable{
 
     /*@Override
     public boolean equals(Object u){
-       return (((User) u).getId()== mId);
+       return (((LocalUser) u).getId()== mId);
     }*/
 
     @Override

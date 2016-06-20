@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.parc.GroupModel;
 
 /**
@@ -69,6 +70,13 @@ public class GroupDAO implements LocalDB_DAO {
         return new GroupModel(id,groupName, photoUri, createdAt, updatedAt, idAdmin, highlighted);
     }
 
+    private Amount cursorToAmount(Cursor cursor, int id){
+        String fullName = cursor.getString(0);
+        double amount = cursor.getDouble(1);
+
+        return new Amount(id, fullName, amount);
+    }
+
     public GroupModel insertGroup(GroupModel data) {
         database.replace(AppDB.Groups.TABLE_GROUPS, null,
                 groupToValues(data));
@@ -82,7 +90,7 @@ public class GroupDAO implements LocalDB_DAO {
         return d;
     }
 
-    // TODO: 12/05/16 aggiungere parametro User? in realtà non serve perché lo user sono IO
+    // TODO: 12/05/16 aggiungere parametro LocalUser? in realtà non serve perché lo user sono IO
     public List<GroupModel> getAllGroups() {
         List<GroupModel> data = new ArrayList<GroupModel>();
         Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
@@ -94,6 +102,24 @@ public class GroupDAO implements LocalDB_DAO {
             cursor.moveToNext();
         }
         cursor.close(); // remember to always close the cursor!
+        return data;
+    }
+
+    public List<Amount> getAllAmounts(int idGroup){
+        List<Amount> data = new ArrayList<Amount>();
+        //String query = "SELECT DISTINCT users.fullName, user_group.amount FROM user_group, users WHERE user_group.idGroup = ?; user_group.idUser = users._id";
+        String query = "SELECT users.fullName, user_group.amount FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ?;";
+        Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
+        cursor.moveToFirst();
+        int id = 0;
+        while(!cursor.isAfterLast()) {
+            Amount d = cursorToAmount(cursor, id);
+            data.add(d);
+            cursor.moveToNext();
+            id++;
+        }
+        cursor.close(); // remember to always close the cursor!
+
         return data;
     }
 

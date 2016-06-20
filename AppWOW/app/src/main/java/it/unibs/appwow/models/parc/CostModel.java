@@ -206,7 +206,7 @@ public class CostModel implements Parcelable {
             this.mAmountDetails = in.readString();
         }
         // FIXME: 26/05/2016 LA HashMap con gli utenti viene annullata quando si parcellizza il gruppo
-        //this.mUsers = new HashMap<Integer, User>();
+        //this.mUsers = new HashMap<Integer, LocalUser>();
     }
 
     @Override

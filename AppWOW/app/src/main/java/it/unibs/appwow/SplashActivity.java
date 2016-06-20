@@ -9,8 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.DownloadFromServerTask;
-import it.unibs.appwow.models.parc.User;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -24,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private DownloadFromServerTask mDownloadTask;
 
-    private User mUserModel;
+    private LocalUser mUserModel;
     private boolean mDownloaded = false; // Serve?
 
    // private AppSQLiteHelper database;
@@ -55,8 +55,8 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         final ImageView logoImageView = (ImageView)findViewById(R.id.splash_imageview);
-        mUserModel = User.load(MyApplication.getAppContext());
-        Log.d(TAG_LOG, "User " + mUserModel==null?"null":"not null");
+        mUserModel = LocalUser.load(MyApplication.getAppContext());
+        Log.d(TAG_LOG, "LocalUser " + mUserModel==null?"null":"not null");
         /*if(mUserModel != null){
             mDownloadTask = new DownloadFromServerTask(mUserModel);
             mDownloadTask.execute((Void) null);
@@ -104,8 +104,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void goAhead() {
-        //final User userModel = User.load(this);
-        //final User userModel = User.create(1);
+        //final LocalUser userModel = LocalUser.load(this);
+        //final LocalUser userModel = LocalUser.create(1);
         Class destinationActivity = null;
         if(mUserModel == null) {
             // user not yet logged
@@ -126,9 +126,9 @@ public class SplashActivity extends AppCompatActivity {
 
         private JSONArray mResjs = null;
         private boolean mConnError = false;
-        private User mUser = null;
+        private LocalUser mUser = null;
 
-        DownloadFromServerTask(User user) {
+        DownloadFromServerTask(LocalUser user) {
             mUser = user;
         }
 

@@ -22,7 +22,7 @@ import android.widget.TextView;
 import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.OfflineGroupListFragment;
-import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.models.parc.LocalUser;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,GroupListFragment.OnFragmentInteractionListener,OfflineGroupListFragment.OnFragmentInteractionListener {
@@ -32,7 +32,7 @@ public class NavigationActivity extends AppCompatActivity
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
     private NavigationView navigationView;
-    private User mUser;
+    private LocalUser mLocalUser;
 
     private String TAG_ONLINE = NavigationActivity.class.getSimpleName().concat("_ONLINE_FRAGMENT");
     private String TAG_OFFLINE = NavigationActivity.class.getSimpleName().concat("_OFFLINE_FRAGMENT");
@@ -59,21 +59,21 @@ public class NavigationActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //controllo presenza utente per disabilitare eventualmente il logout
-        mUser = User.load(MyApplication.getAppContext());
-        if(mUser == null){
+        mLocalUser = LocalUser.load(MyApplication.getAppContext());
+        if(mLocalUser == null){
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
         } else {
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
             TextView fullname = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_fullname);
             TextView email = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_email);
-            fullname.setText(mUser.getFullName());
-            email.setText(mUser.getEmail());
+            fullname.setText(mLocalUser.getFullName());
+            email.setText(mLocalUser.getEmail());
         }
 
 
         mFragmentManager = getSupportFragmentManager();
         mFragmentTransaction = mFragmentManager.beginTransaction();
-        mFragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mUser),TAG_ONLINE).commit();
+        mFragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser),TAG_ONLINE).commit();
 
         //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
         navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
@@ -171,7 +171,7 @@ public class NavigationActivity extends AppCompatActivity
 
         if (id == R.id.nav_online_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mUser),TAG_ONLINE).commit();
+            fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser),TAG_ONLINE).commit();
 
             // Handle the camera action
         } else if (id == R.id.nav_offline_groups) {
@@ -182,7 +182,7 @@ public class NavigationActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             // TODO: 19/05/2016 PULIRE IL DATABASE QUANDO SI FA LOGOUT
-            User currentUser = User.load(MyApplication.getAppContext());
+            LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
             currentUser.logout(MyApplication.getAppContext());
             deleteDatabase(AppDB.DATABASE_NAME); // Elimina il db
             Intent login = new Intent(NavigationActivity.this, LoginActivity.class);

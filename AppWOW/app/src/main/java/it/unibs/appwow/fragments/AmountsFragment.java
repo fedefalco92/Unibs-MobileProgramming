@@ -3,16 +3,14 @@ package it.unibs.appwow.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import it.unibs.appwow.R;
-import it.unibs.appwow.views.adapters.AmountRecyclerViewAdapter;
-import it.unibs.appwow.utils.dummy.DummyAmountContent;
+import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.views.adapters.AmountItemAdapter;
 import it.unibs.appwow.models.Amount;
 
 /**
@@ -24,13 +22,16 @@ import it.unibs.appwow.models.Amount;
 public class AmountsFragment extends Fragment {
 
     private static final String TAG_LOG = AmountsFragment.class.getSimpleName();
+    public static final String PASSING_GROUP_TAG = "group";
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
+    private AmountItemAdapter mAdapter;
+    private GroupModel mGroup;
+    private ListView mAmountList;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -40,10 +41,11 @@ public class AmountsFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static AmountsFragment newInstance(int columnCount) {
+    public static AmountsFragment newInstance(int columnCount, GroupModel group) {
         AmountsFragment fragment = new AmountsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putParcelable(PASSING_GROUP_TAG, group);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,14 +56,17 @@ public class AmountsFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
         }
+        //per poter popolare l'action bar dell'activity
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_amount_list, container, false);
-
+        /*
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -72,8 +77,15 @@ public class AmountsFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(new AmountRecyclerViewAdapter(DummyAmountContent.ITEMS, mListener));
-        }
+        }*/
         return view;
+    }
+
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mAdapter = new AmountItemAdapter(getContext(), mGroup.getId());
+        mAmountList = (ListView) view.findViewById(R.id.amount_list);
+        mAmountList.setAdapter(mAdapter);
     }
 
 

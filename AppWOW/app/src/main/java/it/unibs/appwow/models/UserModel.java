@@ -3,7 +3,7 @@ package it.unibs.appwow.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.unibs.appwow.models.parc.User;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.DateUtils;
 
 /**
@@ -128,7 +128,7 @@ public class UserModel {
         this.mAmount = mAmount;
     }*/
 
-    public static UserModel create(User user) {
+    public static UserModel create(LocalUser user) {
         return UserModel.create(user.getId()).withFullName(user.getFullName()).withEmail(user.getEmail());
     }
 
