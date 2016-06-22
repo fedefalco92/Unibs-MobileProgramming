@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import it.unibs.appwow.AddCostActivity;
 import it.unibs.appwow.CostDetailsActivity;
 import it.unibs.appwow.R;
 import it.unibs.appwow.models.parc.CostModel;
@@ -85,7 +86,11 @@ public class CostsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.add_new_cost:
-                Toast.makeText(getContext(), "Add item", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Add item", Toast.LENGTH_SHORT).show();
+                final Intent i = new Intent(getContext(), AddCostActivity.class);
+                i.putExtra(PASSING_GROUP_TAG, mGroup);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

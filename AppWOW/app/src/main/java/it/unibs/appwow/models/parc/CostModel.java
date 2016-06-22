@@ -148,16 +148,16 @@ public class CostModel implements Parcelable {
         return new CostModel(id, idGroup, idUser, amount, name, notes, createdAt, updatedAt, archivedAt, position, amountDetails);
     }
 
-    public static final Parcelable.Creator<GroupModel> CREATOR = new Parcelable.Creator<GroupModel>()
+    public static final Parcelable.Creator<CostModel> CREATOR = new Parcelable.Creator<CostModel>()
     {
-        public GroupModel createFromParcel(Parcel in)
+        public CostModel createFromParcel(Parcel in)
         {
-            return new GroupModel(in);
+            return new CostModel(in);
         }
 
-        public GroupModel[] newArray(int size)
+        public CostModel[] newArray(int size)
         {
-            return new GroupModel[size];
+            return new CostModel[size];
         }
     };
 

@@ -67,5 +67,13 @@
     <string name="error_password_matching">Passwords do not match</string>
 
     <string name="toast_message_nothing_to_show">Nothing to show</string>
+    <string name="cost_detail_notes">Notes</string>
+    <string name="cost_detail_payed_by">Payed by </string>
+    <string name="cost_detail_date_preposition">On</string>
+    <string name="prompt_cost_name">Cost name</string>
+    <string name="prompt_cost_amount">Amount</string>
+    <string name="prompt_cost_notes">Notes</string>
+    <string name="action_add_position">Add position</string>
+    <string name="action_add_cost">Add cost</string>
 
 </resources>

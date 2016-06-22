@@ -24,4 +24,8 @@
     <string name="user_not_found">Utente non trovato</string>
     <string name="server_connection_error">Errore di connessione al server. Riprova.</string>
     <string name="invalid_group_name">Inserisci nome valido</string>
+    <string name="cost_detail_notes">Note</string>
+    <string name="cost_detail_payed_by">Spesa effettuata da </string>
+    <string name="cost_detail_date_preposition">Il</string>
+    <string name="prompt_cost_name">Nome spesa</string>
 </resources>
