@@ -92,6 +92,7 @@ public class TransactionsFragment extends Fragment {
         mTransactionList = (ListView) view.findViewById(R.id.transaction_list);
         mTransactionList.setAdapter(mAdapter);
 
+        // FIXME: 22/06/2016 e se facessimo un long click listener?
         mTransactionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
