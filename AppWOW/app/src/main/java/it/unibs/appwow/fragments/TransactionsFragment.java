@@ -90,6 +90,7 @@ public class TransactionsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mAdapter = new TransactionAdapter(getContext(), mGroup.getId());
         mTransactionList = (ListView) view.findViewById(R.id.transaction_list);
+        mTransactionList.setEmptyView(view.findViewById(R.id.transaction_fragment_empty_view));
         mTransactionList.setAdapter(mAdapter);
 
         // FIXME: 22/06/2016 e se facessimo un long click listener?

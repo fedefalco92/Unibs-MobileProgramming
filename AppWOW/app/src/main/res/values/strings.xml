@@ -77,5 +77,6 @@
     <string name="action_add_cost">Add cost</string>
     <string name="prompt_cost_position">Place</string>
     <string name="action_add_cost_delete_position">Delete place</string>
+    <string name="transaction_fragment_empty_message">No transactions to show</string>
 
 </resources>

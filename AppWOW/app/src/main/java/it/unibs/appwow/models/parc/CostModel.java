@@ -27,6 +27,9 @@ public class CostModel implements Parcelable {
     private long mCreatedAt;
     private long mUpdatedAt;
     private long mArchivedAt;
+    /**
+     * la stringa mPosition è una posizione fittizia tipo "casa mia" oppure un ID di google places preceduto da "###"
+     */
     private String mPosition;
     private String mAmountDetails; // FIXME: 06/05/2016 da sostituire con un vector da riempire al momento dell'importazione dal DB
 

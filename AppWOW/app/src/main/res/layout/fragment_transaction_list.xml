@@ -12,16 +12,31 @@
         app:layoutManager="LinearLayoutManager"
         tools:context=".fragments.TransactionsFragment"
         tools:listitem="@layout/fragment_transaction_item"/>-->
-<ListView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/transaction_list"
-    android:name="it.unibs.appwow.TransactionsFragment"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".fragments.TransactionsFragment"
-    tools:listitem="@layout/fragment_transaction_item"/>
+    app:layoutManager="LinearLayoutManager">
+    <ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/transaction_list"
+        android:name="it.unibs.appwow.TransactionsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        tools:context=".fragments.TransactionsFragment"
+        tools:listitem="@layout/fragment_transaction_item"/>
+    <TextView
+        android:id="@+id/transaction_fragment_empty_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:text="@string/transaction_fragment_empty_message"
+        android:visibility="gone"/>
+
+
+</LinearLayout>
