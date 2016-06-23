@@ -29,5 +29,6 @@
     <string name="cost_detail_date_preposition">Il</string>
     <string name="prompt_cost_name">Nome spesa</string>
     <string name="action_add_cost">Aggiungi</string>
-    <string name="action_add_position">Aggiungi posizione</string>
+    <string name="action_add_cost_add_position">Aggiungi posizione</string>
+    <string name="action_add_cost_delete_position">Cancella posizione</string>
 </resources>

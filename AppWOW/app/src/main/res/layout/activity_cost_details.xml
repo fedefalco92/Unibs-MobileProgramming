@@ -36,20 +36,17 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/cost_detail_notes"
-        android:id="@+id/textView4"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="70dp"/>
+        android:id="@+id/cost_detail_notes_label"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Notes here"
-        android:id="@+id/cost_detail_notes"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/textView4"
-        android:layout_alignParentLeft="true"/>
+        android:id="@+id/cost_detail_notes_text"
+        android:layout_below="@+id/cost_detail_notes_label"
+        android:layout_alignParentStart="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -92,5 +89,30 @@
         android:layout_below="@+id/cost_detail_user_fullName"
         android:layout_alignLeft="@+id/cost_detail_user_fullName"
         android:layout_alignStart="@+id/cost_detail_user_fullName"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Place"
+        android:id="@+id/cost_detail_position_label"
+        android:layout_below="@+id/cost_detail_notes_text"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Place here"
+        android:id="@+id/cost_detail_position_text"
+        android:layout_below="@+id/cost_detail_position_label"
+        android:layout_alignParentStart="true"/>
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:id="@+id/cost_detail_position_map"
+        android:layout_below="@+id/cost_detail_position_text"
+        />
 
 </RelativeLayout>

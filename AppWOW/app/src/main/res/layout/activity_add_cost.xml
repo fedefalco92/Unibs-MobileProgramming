@@ -9,47 +9,81 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="it.unibs.appwow.AddCostActivity">
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_cost_textInput1">
+        <EditText
+            android:id="@+id/add_cost_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_cost_name"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:layout_alignParentStart="true"/>
+    </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:id="@+id/add_cost_name"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/prompt_cost_name"
-        android:inputType="text"
-        android:maxLines="1"
-        android:singleLine="true" />
-    <EditText
-        android:id="@+id/add_cost_amount"
+        android:id="@+id/add_cost_textInput2"
+        android:layout_below="@+id/add_cost_textInput1">
+        <EditText
+            android:id="@+id/add_cost_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_cost_amount"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:layout_alignParentStart="true"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/prompt_cost_amount"
-        android:inputType="numberDecimal"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:layout_below="@+id/add_cost_name"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-    <EditText
-        android:id="@+id/add_cost_notes"
+        android:id="@+id/add_cost_textInput3"
+        android:layout_below="@+id/add_cost_textInput2">
+        <EditText
+            android:id="@+id/add_cost_notes"
+            android:inputType="textMultiLine"
+            android:lines="2"
+            android:minLines="1"
+            android:gravity="top|left"
+            android:maxLines="3"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:scrollbars="vertical"
+            android:hint="@string/prompt_cost_notes"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/add_cost_position_text"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/prompt_cost_notes"
-        android:inputType="text"
-        android:maxLines="5"
-        android:layout_below="@+id/add_cost_amount"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:id="@+id/add_cost_textInput4"
+        android:layout_below="@+id/add_cost_textInput3">
+        <EditText
+            android:id="@+id/add_cost_position_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_cost_position"
+            android:inputType="text"
+            android:maxLines="1"
+            android:layout_above="@+id/add_cost_add_position_button"
+            android:layout_alignParentStart="true"/>
+    </android.support.design.widget.TextInputLayout>
     <Button
         android:id="@+id/add_cost_add_position_button"
         style="?android:textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/action_add_position"
+        android:text="@string/action_add_cost_add_position"
         android:textStyle="bold"
-        android:layout_below="@+id/add_cost_notes"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="onPickButtonClick"/>
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/add_cost_textInput4"/>
     <Button
         android:id="@+id/add_cost_add_button"
         style="?android:textAppearanceSmall"
@@ -57,8 +91,8 @@
         android:layout_height="wrap_content"
         android:text="@string/action_add_cost"
         android:textStyle="bold"
-        android:layout_below="@+id/add_cost_add_position_button"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="onAddCostClick"
+       />
 </RelativeLayout>
