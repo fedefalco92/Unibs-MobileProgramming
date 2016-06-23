@@ -15,6 +15,7 @@ public class DateUtils {
     public static final String DATE_HOUR_FORMAT ="dd/MM/yyyy HH:mm";
 
     public static long dateStringToLong(String date){
+        if(date.equalsIgnoreCase("null")) return 0L;
         SimpleDateFormat f = new SimpleDateFormat(DATE_FORMAT);
         Date d = null;
         try {

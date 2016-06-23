@@ -275,7 +275,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                         ugdao.open();
                         for (int i = 0; i < response.length(); i++) {
                             try {
-                                // TODO: 15/06/2016 SISTEMARE COME PER PIVOT PER RENDERLO PIU' COMPRENSIBILE
                                 JSONObject userJs = response.getJSONObject(i);
                                 UserModel user = UserModel.create(userJs);
                                 //int id = userJs.getInt("id");

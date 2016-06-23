@@ -67,7 +67,7 @@ public class UserGroupDAO implements LocalDB_DAO {
         // now read from DB the inserted person and return it
         Cursor cursor = database.query(AppDB.UserGroup.TABLE_USER_GROUP, allColumns,
                 AppDB.UserGroup.COLUMN_ID_USER + " = ? AND " + AppDB.UserGroup.COLUMN_ID_GROUP + " = ?",
-                new String[] {"" + data.getUserId(), "" + data.getGroupId()},null,null,null);
+                new String[] {String.valueOf(data.getUserId()), String.valueOf(data.getGroupId())},null,null,null);
         cursor.moveToFirst();
         UserGroupModel d = cursorToUserGroup(cursor);
         cursor.close();

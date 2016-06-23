@@ -35,7 +35,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             ");";
 
     private static final String TABLE_COSTS_CREATE  = "CREATE TABLE " + Costs.TABLE_COSTS + "(" +
-            Costs._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+            Costs._ID + " INTEGER NOT NULL PRIMARY KEY, " +
             Costs.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
             Costs.COLUMN_ID_USER + " INTEGER NOT NULL, " +
             Costs.COLUMN_AMOUNT + " REAL NOT NULL, " +
@@ -51,7 +51,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             ");";
 
     private static final String TABLE_BALANCING_CREATE = "CREATE TABLE " + Balancings.TABLE_BALANCINGS + " (" +
-            Balancings._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+            Balancings._ID + " INTEGER NOT NULL PRIMARY KEY, " +
             Balancings.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
             Balancings.COLUMN_CREATED_AT + " NUMERIC, " +
             Balancings.COLUMN_COSTS_ID + " TEXT, "  +
@@ -59,7 +59,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             ");";
 
     private static final String TABLE_TRANSACTIONS_CREATE = "CREATE TABLE " + Transactions.TABLE_TRANSACTIONS + " ("+
-            Transactions._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+            Transactions._ID + " INTEGER NOT NULL PRIMARY KEY, " +
             Transactions.COLUMN_ID_BALANCING + " INTEGER NOT NULL, " +
             Transactions.COLUMN_ID_FROM + " INTEGER NOT NULL, " +
             Transactions.COLUMN_ID_TO + " INTEGER NOT NULL, " +
