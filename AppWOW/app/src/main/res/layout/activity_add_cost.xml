@@ -48,7 +48,8 @@
         android:textStyle="bold"
         android:layout_below="@+id/add_cost_notes"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:onClick="onPickButtonClick"/>
     <Button
         android:id="@+id/add_cost_add_button"
         style="?android:textAppearanceSmall"

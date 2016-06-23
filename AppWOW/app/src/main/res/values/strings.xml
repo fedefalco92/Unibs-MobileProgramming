@@ -73,7 +73,7 @@
     <string name="prompt_cost_name">Cost name</string>
     <string name="prompt_cost_amount">Amount</string>
     <string name="prompt_cost_notes">Notes</string>
-    <string name="action_add_position">Add position</string>
+    <string name="action_add_position">Pick a place</string>
     <string name="action_add_cost">Add cost</string>
 
 </resources>

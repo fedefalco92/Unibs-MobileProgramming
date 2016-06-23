@@ -28,4 +28,6 @@
     <string name="cost_detail_payed_by">Spesa effettuata da </string>
     <string name="cost_detail_date_preposition">Il</string>
     <string name="prompt_cost_name">Nome spesa</string>
+    <string name="action_add_cost">Aggiungi</string>
+    <string name="action_add_position">Aggiungi posizione</string>
 </resources>
