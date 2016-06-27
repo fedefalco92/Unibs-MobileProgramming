@@ -57,6 +57,7 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
     private TextView mDate;
     private TextView mNotes;
     private TextView mPositionText;
+    private TextView mPositionLabel;
     private Place mPlace;
     private GoogleMap mMap;
     private MapFragment mMapFragment;
@@ -65,7 +66,6 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient mClient;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +82,6 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
                 .enableAutoManage(this, this)
                 .build();
 
-        //mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        /*mClient = new GoogleApiClient.Builder(this)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();*/
-
         mName = (TextView) findViewById(R.id.cost_detail_name);
         mName.setText(mCost.getName());
 
@@ -103,8 +95,8 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
         mDate.setText(DateUtils.dateLongToString(mCost.getUpdatedAt()));
 
         mPositionText = (TextView) findViewById(R.id.cost_detail_position_text);
+        mPositionLabel = (TextView) findViewById(R.id.cost_detail_position_label);
         String stringaPosizione = mCost.getPosition();
-
         mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.cost_detail_position_map));
 
         /**
@@ -113,8 +105,8 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
         if (PositionUtils.isPositionId(stringaPosizione)) {
             String id = PositionUtils.decodePositionId(stringaPosizione);
             //riempire la mappa
-
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            /*if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG_LOG, "NO PERMISSIONS");
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -123,14 +115,15 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
                 return;
-            }
+            }*/
 
-            PendingResult<PlaceBuffer> result = Places.GeoDataApi.getPlaceById(mClient, id);
-            result.setResultCallback(new ResultCallback<PlaceBuffer>() {
+            Places.GeoDataApi.getPlaceById(mClient, id).setResultCallback(new ResultCallback<PlaceBuffer>() {
                 @Override
                 public void onResult(PlaceBuffer places) {
+                    Log.d("RESUL CALLBACK", "sono entrato nel result callback di getPlaceById");
                     if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                        mPlace = places.get(0);
+                        final Place myPlace = places.get(0);
+                        mPlace = myPlace.freeze();
                         Log.i(TAG_LOG, "Place found: " + mPlace.getName());
                     } else {
                         Log.e(TAG_LOG, "Place not found");
@@ -140,40 +133,6 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
                     places.release();
                 }
             });
-            /*
-            Places.GeoDataApi.getPlaceById(mClient, id)
-                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                        @Override
-                        public void onResult(PlaceBuffer places) {
-                            if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                                mPlace = places.get(0);
-                                mPositionText.setText(mPlace.getName());
-                                mMapFragment.getMapAsync(CostDetailsActivity.this);
-                                Log.i(TAG_LOG, "Place found: " + mPlace.getName());
-                            } else {
-                                Log.e(TAG_LOG, "Place not found");
-                            }
-                            places.release();
-                        }
-                    });*/
-
-            /*PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi.getCurrentPlace(mClient, null);
-
-            result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
-                @Override
-                public void onResult(PlaceLikelihoodBuffer placeLikelihoods) {
-
-                    for (PlaceLikelihood placeLikelihood : placeLikelihoods) {
-                        Log.d(TAG_LOG, String.format("Place '%s' has likelihood: %g",
-                                placeLikelihood.getPlace().getName(),
-                                placeLikelihood.getLikelihood()));
-                    }
-
-                    placeLikelihoods.release();
-                }
-            });*/
-
-
 
             /* DUMMY PLACE FOR DEBUGGING
             mPlace = new Place() {
@@ -246,12 +205,19 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
                 public boolean isDataValid() {
                     return false;
                 }
-            };*/
-
+            };
+            mPositionText.setText(mPlace.getName());
+            mMapFragment.getMapAsync(CostDetailsActivity.this);
+            Log.d("CALLING getMapAsync","method called...");*/
 
         } else {
-            mPositionText.setText(stringaPosizione);
             mMapFragment.getView().setVisibility(View.INVISIBLE);
+            if(stringaPosizione == null || stringaPosizione.isEmpty()){
+                mPositionText.setVisibility(View.INVISIBLE);
+                mPositionLabel.setVisibility(View.INVISIBLE);
+            } else {
+                mPositionText.setText(stringaPosizione);
+            }
         }
 
         if (mMap != null) {
@@ -261,6 +227,7 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
 
 
     }
+
 
 
     @Override
