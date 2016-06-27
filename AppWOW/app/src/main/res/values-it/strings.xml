@@ -23,7 +23,7 @@
     <string name="add_member">Aggiungi</string>
     <string name="user_not_found">Utente non trovato</string>
     <string name="server_connection_error">Errore di connessione al server. Riprova.</string>
-    <string name="invalid_group_name">Inserisci nome valido</string>
+    <string name="error_invalid_group_name">Inserisci un nome valido per il gruppo</string>
     <string name="cost_detail_notes">Note</string>
     <string name="cost_detail_payed_by">Spesa effettuata da </string>
     <string name="cost_detail_date_preposition">Il</string>
@@ -32,4 +32,10 @@
     <string name="action_add_cost_add_position">Aggiungi posizione</string>
     <string name="action_add_cost_delete_position">Cancella posizione</string>
     <string name="transaction_fragment_empty_message">Nessuna transazione</string>
+    <string name="delete">Cancella</string>
+    <string name="email">email</string>
+    <string name="cost_fragment_empty_message">Nessuna spesa</string>
+    <string name="add_cost_menu_item">Aggiungi spesa</string>
+    <string name="error_invalid_cost_name">Inserisci un nome valido per la spesa</string>
+    <string name="error_invalid_amount">Inserisci un importo</string>
 </resources>

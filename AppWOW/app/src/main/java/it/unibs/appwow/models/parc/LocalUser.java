@@ -212,7 +212,7 @@ public class LocalUser implements Parcelable{
 
     /*@Override
     public boolean equals(Object u){
-       return (((LocalUser) u).getId()== mId);
+       return (((LocalUser) u).getUserId()== mId);
     }*/
 
     @Override

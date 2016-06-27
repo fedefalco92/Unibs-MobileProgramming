@@ -70,12 +70,22 @@ public class GroupDAO implements LocalDB_DAO {
         return new GroupModel(id,groupName, photoUri, createdAt, updatedAt, idAdmin, highlighted);
     }
 
+    /*
     private Amount cursorToAmount(Cursor cursor, int id){
         String fullName = cursor.getString(0);
         double amount = cursor.getDouble(1);
 
         return new Amount(id, fullName, amount);
+    }*/
+
+    private Amount cursorToAmount(Cursor cursor){
+        int id = cursor.getInt(0);
+        String fullName = cursor.getString(1);
+        double amount = cursor.getDouble(2);
+
+        return new Amount(id, fullName, amount);
     }
+
 
     public GroupModel insertGroup(GroupModel data) {
         database.replace(AppDB.Groups.TABLE_GROUPS, null,
@@ -108,15 +118,16 @@ public class GroupDAO implements LocalDB_DAO {
     public List<Amount> getAllAmounts(int idGroup){
         List<Amount> data = new ArrayList<Amount>();
         //String query = "SELECT DISTINCT users.fullName, user_group.amount FROM user_group, users WHERE user_group.idGroup = ?; user_group.idUser = users._id";
-        String query = "SELECT users.fullName, user_group.amount FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ?;";
+        String query = "SELECT users._id, users.fullName, user_group.amount FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ?;";
         Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
         cursor.moveToFirst();
-        int id = 0;
+        //int id = 0;
         while(!cursor.isAfterLast()) {
-            Amount d = cursorToAmount(cursor, id);
+            //Amount d = cursorToAmount(cursor, id);
+            Amount d = cursorToAmount(cursor);
             data.add(d);
             cursor.moveToNext();
-            id++;
+            //id++;
         }
         cursor.close(); // remember to always close the cursor!
 

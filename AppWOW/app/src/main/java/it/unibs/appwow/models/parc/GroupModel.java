@@ -257,11 +257,11 @@ public class GroupModel implements Parcelable {
      */
     /*
     public boolean addUser(LocalUser user){
-       return (mUsers.put(user.getId(),user) == null);
+       return (mUsers.put(user.getUserId(),user) == null);
     }
 
     public boolean removeUser(LocalUser toRemove) {
-        return (mUsers.remove(toRemove.getId())!= null);
+        return (mUsers.remove(toRemove.getUserId())!= null);
     }
 
     public LocalUser getUser(int id){

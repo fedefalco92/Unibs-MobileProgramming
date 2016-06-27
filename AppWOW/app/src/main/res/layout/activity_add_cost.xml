@@ -74,6 +74,13 @@
             android:layout_above="@+id/add_cost_add_position_button"
             android:layout_alignParentStart="true"/>
     </android.support.design.widget.TextInputLayout>
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:id="@+id/add_cost_position_map_fragment"
+        android:layout_below="@+id/add_cost_textInput4"
+        />
     <Button
         android:id="@+id/add_cost_add_position_button"
         style="?android:textAppearanceSmall"
@@ -83,16 +90,15 @@
         android:textStyle="bold"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/add_cost_textInput4"/>
-    <Button
+        android:layout_below="@+id/add_cost_position_map_fragment"/>
+    <!--<Button
         android:id="@+id/add_cost_add_button"
         style="?android:textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/action_add_cost"
         android:textStyle="bold"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/add_cost_add_position_button"
         android:onClick="onAddCostClick"
-       />
+       />-->
 </RelativeLayout>

@@ -56,6 +56,7 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
     private TextView mAmount;
     private TextView mDate;
     private TextView mNotes;
+    private TextView mNotesLabel;
     private TextView mPositionText;
     private TextView mPositionLabel;
     private Place mPlace;
@@ -89,7 +90,13 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
         mAmount.setText("EUR " + mCost.getAmount());
 
         mNotes = (TextView) findViewById(R.id.cost_detail_notes_text);
-        mNotes.setText(mCost.getNotes());
+        if(mCost.getNotes() == null || mCost.getNotes().isEmpty()){
+            mNotesLabel = (TextView) findViewById(R.id.cost_detail_notes_label);
+            mNotesLabel.setVisibility(View.INVISIBLE);
+            mNotes.setVisibility(View.INVISIBLE);
+        } else {
+            mNotes.setText(mCost.getNotes());
+        }
 
         mDate = (TextView) findViewById(R.id.cost_detail_date);
         mDate.setText(DateUtils.dateLongToString(mCost.getUpdatedAt()));
@@ -137,7 +144,7 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
             /* DUMMY PLACE FOR DEBUGGING
             mPlace = new Place() {
                 @Override
-                public String getId() {
+                public String getUserId() {
                     return "ChIJZ8FwH8p3gUcR1pI7zb0RMwc";
                 }
 
@@ -248,7 +255,7 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
         //Build camera position
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(mPlace.getLatLng())
-                .zoom(13).build();
+                .zoom(14).build();
         //Zoom in and animate the camera.
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }

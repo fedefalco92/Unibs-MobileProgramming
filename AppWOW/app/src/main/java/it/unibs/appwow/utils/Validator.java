@@ -17,4 +17,27 @@ public class Validator {
         return true;// password.length() > 4;
     }
 
+    public static boolean isGroupNameValid(String groupName) {
+        if(!groupName.isEmpty()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isCostNameValid(String costName) {
+        if(!costName.isEmpty()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isAmountValid(String amount) {
+        if(!amount.isEmpty()){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

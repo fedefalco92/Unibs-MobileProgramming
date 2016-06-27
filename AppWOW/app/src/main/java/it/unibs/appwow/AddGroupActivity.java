@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.utils.Validator;
 
 public class AddGroupActivity extends AppCompatActivity {
 
@@ -77,7 +78,7 @@ public class AddGroupActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.go_ahead:
-                if(isGroupNameValid()){
+                if(Validator.isGroupNameValid(mGroupNameView.getText().toString())){
                     final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
                     //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
                     LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
@@ -87,21 +88,12 @@ public class AddGroupActivity extends AppCompatActivity {
                     startActivity(addMembersIntent);
                     return true;
                 } else {
-                    mGroupNameView.setError(getString(R.string.invalid_group_name));
+                    mGroupNameView.setError(getString(R.string.error_invalid_group_name));
                     mGroupNameView.requestFocus();
                 }
 
             default:
                 return true;
-        }
-    }
-
-    private boolean isGroupNameValid() {
-        String groupName = mGroupNameView.getText().toString();
-        if(!groupName.isEmpty()){
-            return true;
-        } else {
-            return false;
         }
     }
 

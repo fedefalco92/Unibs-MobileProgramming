@@ -73,7 +73,7 @@ public class CostsFragment extends Fragment {
         //per poter popolare l'action bar dell'activity
         setHasOptionsMenu(true);
 
-        //mAdapter =  new CostAdapter(getActivity(), mGroup.getId());
+        //mAdapter =  new CostAdapter(getActivity(), mGroup.getUserId());
     }
 
     @Override
@@ -123,6 +123,7 @@ public class CostsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mAdapter = new CostAdapter(getContext(), mGroup.getId());
         mCostList = (ListView) view.findViewById(R.id.cost_list);
+        mCostList.setEmptyView(view.findViewById(R.id.cost_fragment_empty_view));
         mCostList.setAdapter(mAdapter);
 
         mCostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

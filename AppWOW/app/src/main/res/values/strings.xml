@@ -62,7 +62,7 @@
     <string name="actual_members_string">Actual members</string>
     <string name="user_not_found">LocalUser not found</string>
     <string name="server_connection_error">Connection to server failed. Try again later.</string>
-    <string name="invalid_group_name">Insert a valid name</string>
+    <string name="error_invalid_group_name">Insert a valid name for the group</string>
     <string name="prompt_password_confirm">Confirm password</string>
     <string name="error_password_matching">Passwords do not match</string>
 
@@ -78,5 +78,9 @@
     <string name="prompt_cost_position">Place</string>
     <string name="action_add_cost_delete_position">Delete place</string>
     <string name="transaction_fragment_empty_message">No transactions to show</string>
+    <string name="cost_fragment_empty_message">No costs to show</string>
+    <string name="add_cost_menu_item">Add cost</string>
+    <string name="error_invalid_cost_name">Insert a valid name for the cost</string>
+    <string name="error_invalid_amount">Insert an amount</string>
 
 </resources>

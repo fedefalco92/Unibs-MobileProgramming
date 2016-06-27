@@ -185,7 +185,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     @Override
     public void onListFragmentInteraction(Amount item) {
         // TODO: 10/05/2016  Qui va implementato l'evento da gestire alla selezione dell'item
-        Toast.makeText(GroupDetailsActivity.this, "Item: " + item.id, Toast.LENGTH_SHORT).show();
+        Toast.makeText(GroupDetailsActivity.this, "Item: " + item.getUserId(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -397,7 +397,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                             tdao.open();
 
                             // FIXME: 20/06/2016 UNCOMMENT
-                            //bdao.resetAllBalancings(mGroup.getId()); //cancella anche tutte le transactions se funziona on delete cascade
+                            //bdao.resetAllBalancings(mGroup.getUserId()); //cancella anche tutte le transactions se funziona on delete cascade
                             for(int i = 0; i<response.length();i++){
                                 try{
                                     JSONObject balJs = response.getJSONObject(i);

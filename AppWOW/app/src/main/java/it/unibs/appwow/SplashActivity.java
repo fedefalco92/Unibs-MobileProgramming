@@ -135,7 +135,7 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             String response = "";
-            Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mUser.getId()));
+            Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mUser.getUserId()));
             Uri groups_uri = Uri.withAppendedPath(user_uri, "groups");
             try {
 

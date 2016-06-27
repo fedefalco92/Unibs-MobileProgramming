@@ -1,6 +1,8 @@
 package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +13,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
-import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.database.UserDAO;
-import it.unibs.appwow.database.UserGroupDAO;
-import it.unibs.appwow.fragments.AmountsFragment;
 import it.unibs.appwow.models.Amount;
 
 /**
@@ -56,7 +55,7 @@ public class AmountItemAdapter extends BaseAdapter {
     @Override
     public long getItemId(int position) {
         final Amount item = (Amount) getItem(position);
-        return item.id;
+        return item.getUserId();
     }
 
     @Override
@@ -73,8 +72,17 @@ public class AmountItemAdapter extends BaseAdapter {
         }
 
         final Amount item = (Amount) getItem(position);
-        holder.fullName.setText(item.fullName);
-        holder.amount.setText(""+item.amount);
+        holder.fullName.setText(item.getFullName());
+        holder.amount.setText(item.getAmountString());
+        Resources res = MyApplication.getAppContext().getResources();
+        if(item.getAmount() >0){
+            holder.amount.setTextColor(ContextCompat.getColor(MyApplication.getAppContext(), R.color.green));
+        } else if(item.getAmount() <0){
+            holder.amount.setTextColor(ContextCompat.getColor(MyApplication.getAppContext(), R.color.red));
+        } else{
+            holder.amount.setTextColor(ContextCompat.getColor(MyApplication.getAppContext(), R.color.black));
+        }
+
 
         return view;
     }
