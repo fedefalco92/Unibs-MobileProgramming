@@ -136,4 +136,9 @@ public class UserModel {
     public int hashCode() {
         return mId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return this.mId == ((UserModel) o ).getId();
+    }
 }

@@ -22,7 +22,6 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     private TextView mEmailTextView;
     private GroupModel mGroup;
     private LocalUser mLocalUser;
-    private ArrayList<UserModel> mDisplayedUsers;
+    //private ArrayList<UserModel> mDisplayedUsers;
     private Set<UserModel> mSelectedItems;
 
     @Override
@@ -62,7 +61,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         //mGroup.addUser(currentUser);
 
         mSelectedItems = new HashSet<UserModel>();
-        mDisplayedUsers = new ArrayList<UserModel>();
+        //mDisplayedUsers = new ArrayList<UserModel>();
 
         setContentView(R.layout.activity_add_group_members);
         setTitle(getString(R.string.add_group_members_activity_title));
@@ -79,7 +78,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
 
         membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         //membersList.setAdapter(new ArrayAdapter<LocalUser>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
-        mAdapter = new GroupMembersAdapter(this, mDisplayedUsers);
+        //mAdapter = new GroupMembersAdapter(this, mDisplayedUsers);
+        mAdapter = new GroupMembersAdapter(this);
         membersList.setAdapter(mAdapter);
         /*
         if(LocalUser.load(this) != null){
@@ -144,8 +144,9 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     case R.id.context_delete:
                         Iterator iterator = mSelectedItems.iterator();
                         while(iterator.hasNext()){
-                            LocalUser toRemove = (LocalUser) iterator.next();
-                            mDisplayedUsers.remove(toRemove);
+                            UserModel toRemove = (UserModel) iterator.next();
+                            //mDisplayedUsers.remove(toRemove);
+                            mAdapter.remove(toRemove);
                             //mGroup.removeUser(toRemove);
                             //Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
                             //AGGIORNO IL MENU
@@ -165,9 +166,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 // Here you can make any necessary updates to the activity when
                 // the CAB is removed. By default, selected items are deselected/unchecked.
                 // toolbar.setVisibility(View.);
-                GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
+                //GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
                 mSelectedItems.clear();
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             }
 
             });
@@ -254,7 +256,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     }
 
     private boolean minMemberNumberReached() {
-        return mDisplayedUsers.size() >= 2;
+        //return mDisplayedUsers.size() >= 2;
+        return mAdapter.minMemberNumberReached();
     }
 
     @Override
@@ -311,9 +314,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         //    public void onClick(View v) {
                         //boolean userAlreadyExists = !mGroup.addUser(retrievedUser);
                         if(userAlreadyExists(retrievedUser)){
-                            Toast.makeText(AddGroupMembersActivity.this, "Utente già inserito", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_members_user_already_added, Toast.LENGTH_SHORT).show();
                         } else {
-                            ((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
+                            //((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
+                            mAdapter.add(retrievedUser);
                         }
 
 
@@ -332,7 +336,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 else{
                     //Toast.makeText(AddGroupMembersActivity.this, "LocalUser not found", Toast.LENGTH_SHORT).show();
                     mEmailTextView.requestFocus();
-                    mEmailTextView.setError(getString(R.string.user_not_found));
+                    mEmailTextView.setError(getString(R.string.add_group_members_user_not_found));
                     //matchText.setVisibility(View.INVISIBLE);
                     //matchLabel.setVisibility(View.INVISIBLE);
                     //mAddMemberButton.setVisibility(View.INVISIBLE);
@@ -342,7 +346,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     }
 
     private boolean userAlreadyExists(UserModel retrievedUser) {
-        return mDisplayedUsers.contains(retrievedUser);
+        //return mDisplayedUsers.contains(retrievedUser);
+        return mAdapter.contains(retrievedUser);
     }
 
     private Response.ErrorListener responseErrorListenerUser(){

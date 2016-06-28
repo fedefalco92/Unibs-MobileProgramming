@@ -21,7 +21,7 @@
     <string name="suggerimento_nome_gruppi">Inserisci il nome e l\'immagine (facoltativo) del gruppo</string>
     <string name="actual_members_string">Aggiunti</string>
     <string name="add_member">Aggiungi</string>
-    <string name="user_not_found">Utente non trovato</string>
+    <string name="add_group_members_user_not_found">Utente non trovato</string>
     <string name="server_connection_error">Errore di connessione al server. Riprova.</string>
     <string name="error_invalid_group_name">Inserisci un nome valido per il gruppo</string>
     <string name="cost_detail_notes">Note</string>
@@ -42,4 +42,5 @@
     <string name="add_cost_activity_title">Nuova spesa</string>
     <string name="add_group_activity_title">Nuovo gruppo</string>
     <string name="add_group_members_activity_title">Aggiungi i membri del gruppo</string>
+    <string name="add_group_members_user_already_added">Utente già inserito</string>
 </resources>

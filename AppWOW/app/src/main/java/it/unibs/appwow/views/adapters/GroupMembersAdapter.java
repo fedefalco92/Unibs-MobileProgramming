@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.R;
@@ -23,6 +24,10 @@ public class GroupMembersAdapter extends BaseAdapter {
 
     private int VIEW_TYPE_NUMBER = 2;
 
+    public boolean minMemberNumberReached() {
+        return mItems.size() >= 2;
+    }
+
     private class Holder {
         TextView fullnameUser;
         TextView emailUser;
@@ -31,6 +36,11 @@ public class GroupMembersAdapter extends BaseAdapter {
     public GroupMembersAdapter(Context context,List<UserModel> users){
         mInflater = LayoutInflater.from(context);
         this.mItems = users;
+    }
+
+    public GroupMembersAdapter(Context context){
+        mInflater = LayoutInflater.from(context);
+        this.mItems = new ArrayList<UserModel>();
     }
 
     @Override
@@ -51,6 +61,15 @@ public class GroupMembersAdapter extends BaseAdapter {
     public void add(UserModel item){
         mItems.add(item);
         this.notifyDataSetChanged();
+    }
+
+    public void remove(UserModel item){
+        mItems.remove(item);
+        this.notifyDataSetChanged();
+    }
+
+    public boolean contains(UserModel user){
+        return mItems.contains(user);
     }
 
     @Override
