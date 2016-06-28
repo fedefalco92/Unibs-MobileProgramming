@@ -83,5 +83,8 @@
     <string name="error_invalid_cost_name">Insert a valid name for the cost</string>
     <string name="error_invalid_amount">Insert an amount</string>
     <string name="you">You</string>
+    <string name="add_cost_activity_title">New cost</string>
+    <string name="add_group_activity_title">New group</string>
+    <string name="add_group_members_activity_title">Add group members</string>
 
 </resources>

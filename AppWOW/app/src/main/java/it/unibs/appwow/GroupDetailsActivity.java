@@ -1,5 +1,6 @@
 package it.unibs.appwow;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -130,8 +131,12 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                final Intent i = new Intent(GroupDetailsActivity.this, AddCostActivity.class);
+                i.putExtra(CostsFragment.PASSING_GROUP_TAG, mGroup);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
             }
         });
 

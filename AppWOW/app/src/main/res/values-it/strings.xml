@@ -39,4 +39,7 @@
     <string name="error_invalid_cost_name">Inserisci un nome valido per la spesa</string>
     <string name="error_invalid_amount">Inserisci un importo</string>
     <string name="you">Tu</string>
+    <string name="add_cost_activity_title">Nuova spesa</string>
+    <string name="add_group_activity_title">Nuovo gruppo</string>
+    <string name="add_group_members_activity_title">Aggiungi i membri del gruppo</string>
 </resources>

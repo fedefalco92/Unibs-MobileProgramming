@@ -70,6 +70,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_cost);
+        setTitle(getString(R.string.add_cost_activity_title));
 
         mUser = LocalUser.load(this);
         mGroup = getIntent().getParcelableExtra(CostsFragment.PASSING_GROUP_TAG);

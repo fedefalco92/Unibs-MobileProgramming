@@ -65,6 +65,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         mDisplayedUsers = new ArrayList<UserModel>();
 
         setContentView(R.layout.activity_add_group_members);
+        setTitle(getString(R.string.add_group_members_activity_title));
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -35,6 +35,7 @@ public class AddGroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
+        setTitle(getString(R.string.add_group_activity_title));
         mGroupImage = (ImageView) findViewById(R.id.imageView2);
         mGroupImage.setOnTouchListener(new View.OnTouchListener() {
             @Override

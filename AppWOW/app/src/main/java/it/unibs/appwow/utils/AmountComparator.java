@@ -13,6 +13,9 @@ import it.unibs.appwow.models.Amount;
  * -amount pari a 0;
  *
  * a parità di amount ordina in ordine alfabetico.
+ *
+ * in realtà ordina tutto al contrario, per questo nell'adapter serve fare un "reverse".
+ *
  */
 public class AmountComparator implements Comparator<Amount> {
     private int mLocalUserId;
@@ -52,7 +55,7 @@ public class AmountComparator implements Comparator<Amount> {
 
         if(res == 0){
             //ordino in ordine alfabetico
-            res = lhs.getFullName().compareTo(rhs.getFullName());
+            res = -lhs.getFullName().compareToIgnoreCase(rhs.getFullName());
         }
         return res;
     }

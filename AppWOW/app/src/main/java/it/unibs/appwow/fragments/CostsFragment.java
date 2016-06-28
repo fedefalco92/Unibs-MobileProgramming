@@ -71,14 +71,14 @@ public class CostsFragment extends Fragment {
         }
 
         //per poter popolare l'action bar dell'activity
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
 
         //mAdapter =  new CostAdapter(getActivity(), mGroup.getUserId());
     }
-
+    /*
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.costs_fragment_menu,menu);
+       inflater.inflate(R.menu.costs_fragment_menu,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -96,7 +96,7 @@ public class CostsFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
 
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
