@@ -451,7 +451,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                 case 0:
                     return CostsFragment.newInstance(1, mGroup);
                 case 1:
-                    return AmountsFragment.newInstance(1, mGroup);
+                    return AmountsFragment.newInstance(1, mGroup, mLocalUser.getId());
                 case 2:
                     return TransactionsFragment.newInstance(1, mGroup);
             }

@@ -11,12 +11,15 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.models.Amount;
+import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.utils.AmountComparator;
 
 /**
  * Created by Alessandro on 20/06/2016.
@@ -27,17 +30,21 @@ public class AmountItemAdapter extends BaseAdapter {
     private List<Amount> mItems = new ArrayList<Amount>();
     private final LayoutInflater mInflater;
     private GroupDAO dao;
+    private int mLocalUserId;
 
     private class Holder {
         TextView fullName;
         TextView amount;
     }
 
-    public AmountItemAdapter(Context context, int idGroup){
+    public AmountItemAdapter(Context context, int idGroup, int localUserId){
         mInflater = LayoutInflater.from(context);
+        mLocalUserId = localUserId;
         dao = new GroupDAO();
         dao.open();
         mItems = dao.getAllAmounts(idGroup);
+        Collections.sort(mItems, new AmountComparator(mLocalUserId));
+        Collections.reverse(mItems);
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
     }
@@ -60,21 +67,28 @@ public class AmountItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
+        final Amount item = (Amount) getItem(position);
+        boolean isLocalUser = ((item.getUserId()== mLocalUserId) ? true:false);
         Holder holder = null;
         if(view==null) {
-            view = mInflater.inflate(R.layout.fragment_amount_item,null);
             holder = new Holder();
-            holder.fullName = (TextView) view.findViewById(R.id.amount_fragment_user_fullname);
-            holder.amount = (TextView)view.findViewById(R.id.amount_fragment_user_amount);
+            if(isLocalUser) {
+                view = mInflater.inflate(R.layout.fragment_amount_item_local_user,null);
+                holder.fullName = (TextView) view.findViewById(R.id.amount_fragment_local_user_fullname);
+                holder.amount = (TextView)view.findViewById(R.id.amount_fragment_local_user_amount);
+            } else {
+                view = mInflater.inflate(R.layout.fragment_amount_item,null);
+                holder.fullName = (TextView) view.findViewById(R.id.amount_fragment_user_fullname);
+                holder.amount = (TextView)view.findViewById(R.id.amount_fragment_user_amount);
+            }
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();
         }
 
-        final Amount item = (Amount) getItem(position);
-        holder.fullName.setText(item.getFullName());
+        if(!isLocalUser) holder.fullName.setText(item.getFullName());
         holder.amount.setText(item.getAmountString());
-        Resources res = MyApplication.getAppContext().getResources();
+        //colore
         if(item.getAmount() >0){
             holder.amount.setTextColor(ContextCompat.getColor(MyApplication.getAppContext(), R.color.green));
         } else if(item.getAmount() <0){
@@ -82,10 +96,12 @@ public class AmountItemAdapter extends BaseAdapter {
         } else{
             holder.amount.setTextColor(ContextCompat.getColor(MyApplication.getAppContext(), R.color.black));
         }
-
-
         return view;
     }
 
-
+    @Override
+    public void notifyDataSetChanged() {
+        Collections.sort(mItems, new AmountComparator(mLocalUserId));
+        super.notifyDataSetChanged();
+    }
 }

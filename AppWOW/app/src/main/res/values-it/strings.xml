@@ -38,4 +38,5 @@
     <string name="add_cost_menu_item">Aggiungi spesa</string>
     <string name="error_invalid_cost_name">Inserisci un nome valido per la spesa</string>
     <string name="error_invalid_amount">Inserisci un importo</string>
+    <string name="you">Tu</string>
 </resources>

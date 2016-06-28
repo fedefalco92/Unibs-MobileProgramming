@@ -22,12 +22,14 @@ import it.unibs.appwow.models.Amount;
 public class AmountsFragment extends Fragment {
 
     private static final String TAG_LOG = AmountsFragment.class.getSimpleName();
-    public static final String PASSING_GROUP_TAG = "group";
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    public static final String PASSING_GROUP_TAG = "group";
+    private static final String ARG_LOCAL_USER_ID = "local_usesr_id";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private int mLocalUserId;
     private OnListFragmentInteractionListener mListener;
     private AmountItemAdapter mAdapter;
     private GroupModel mGroup;
@@ -41,11 +43,12 @@ public class AmountsFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static AmountsFragment newInstance(int columnCount, GroupModel group) {
+    public static AmountsFragment newInstance(int columnCount, GroupModel group, int localUserId) {
         AmountsFragment fragment = new AmountsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putParcelable(PASSING_GROUP_TAG, group);
+        args.putInt(ARG_LOCAL_USER_ID, localUserId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,6 +60,7 @@ public class AmountsFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
+            mLocalUserId = getArguments().getInt(ARG_LOCAL_USER_ID);
         }
         //per poter popolare l'action bar dell'activity
         setHasOptionsMenu(true);
@@ -83,7 +87,7 @@ public class AmountsFragment extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAdapter = new AmountItemAdapter(getContext(), mGroup.getId());
+        mAdapter = new AmountItemAdapter(getContext(), mGroup.getId(), mLocalUserId);
         mAmountList = (ListView) view.findViewById(R.id.amount_list);
         mAmountList.setAdapter(mAdapter);
     }

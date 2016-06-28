@@ -82,5 +82,6 @@
     <string name="add_cost_menu_item">Add cost</string>
     <string name="error_invalid_cost_name">Insert a valid name for the cost</string>
     <string name="error_invalid_amount">Insert an amount</string>
+    <string name="you">You</string>
 
 </resources>
