@@ -82,8 +82,9 @@ public class GroupDAO implements LocalDB_DAO {
         int id = cursor.getInt(0);
         String fullName = cursor.getString(1);
         double amount = cursor.getDouble(2);
+        String email = cursor.getString(3);
 
-        return new Amount(id, fullName, amount);
+        return new Amount(id, fullName, amount, email);
     }
 
 
@@ -118,7 +119,7 @@ public class GroupDAO implements LocalDB_DAO {
     public List<Amount> getAllAmounts(int idGroup){
         List<Amount> data = new ArrayList<Amount>();
         //String query = "SELECT DISTINCT users.fullName, user_group.amount FROM user_group, users WHERE user_group.idGroup = ?; user_group.idUser = users._id";
-        String query = "SELECT users._id, users.fullName, user_group.amount FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ?;";
+        String query = "SELECT users._id, users.fullName, user_group.amount, users.email FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ?;";
         Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
         cursor.moveToFirst();
         //int id = 0;

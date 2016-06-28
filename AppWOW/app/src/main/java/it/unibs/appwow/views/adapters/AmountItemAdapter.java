@@ -35,6 +35,7 @@ public class AmountItemAdapter extends BaseAdapter {
     private class Holder {
         TextView fullName;
         TextView amount;
+        TextView email;
     }
 
     public AmountItemAdapter(Context context, int idGroup, int localUserId){
@@ -80,14 +81,19 @@ public class AmountItemAdapter extends BaseAdapter {
                 view = mInflater.inflate(R.layout.fragment_amount_item,null);
                 holder.fullName = (TextView) view.findViewById(R.id.amount_fragment_user_fullname);
                 holder.amount = (TextView)view.findViewById(R.id.amount_fragment_user_amount);
+                holder.email = (TextView) view.findViewById(R.id.amount_fragment_user_email);
             }
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();
         }
 
-        if(!isLocalUser) holder.fullName.setText(item.getFullName());
+        if(!isLocalUser){
+            holder.fullName.setText(item.getFullName());
+            holder.email.setText(item.getEmail());
+        }
         holder.amount.setText(item.getAmountString());
+
         //colore
         if(item.getAmount() >0){
             holder.amount.setTextColor(ContextCompat.getColor(MyApplication.getAppContext(), R.color.green));

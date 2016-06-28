@@ -11,10 +11,21 @@ public class Amount {
     private String mFullName;
     private double mAmount;
 
-    public Amount(int userId, String fullname, double amount) {
+    public String getEmail() {
+        return mEmail;
+    }
+
+    public void setEmail(String email) {
+        mEmail = email;
+    }
+
+    private String mEmail;
+
+    public Amount(int userId, String fullname, double amount, String email) {
         this.setUserId(userId);
         this.setFullName(fullname);
         this.setAmount(amount);
+        this.setEmail(email);
     }
 
 
