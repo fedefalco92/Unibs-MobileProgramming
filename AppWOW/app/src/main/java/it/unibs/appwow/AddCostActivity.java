@@ -1,7 +1,11 @@
 package it.unibs.appwow;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -73,6 +77,9 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
+    private View mProgressView;
+    private View mAddCostFormView;
+
     //private Button mAddCostButton;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -117,6 +124,9 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        mProgressView = findViewById(R.id.add_cost_post_request_progress);
+        mAddCostFormView = findViewById(R.id.add_cost_form_container);
     }
 
     @Override
@@ -136,9 +146,6 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
                 boolean amountOk = Validator.isAmountValid(mCostAmount.getText().toString());
                 if(nomeOk && amountOk){
                     sendPostRequest();
-                    // TODO: 22/06/2016 IMPLEMENTARE CARICAMENTO SU SERVER con richiesta volley
-                    Toast.makeText(AddCostActivity.this, "eheh pensavi che funzionasse...",
-                            Toast.LENGTH_LONG).show();
                     return true;
                 } else {
                     if(!nomeOk){
@@ -157,6 +164,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void sendPostRequest() {
+        showProgress(true);
         String[] keys = {"idGroup", "idUser", "amount", "name", "notes", "position", "amount_details"};
         String idGroup = String.valueOf(mGroup.getId());
         String idUser = String.valueOf(mUser.getId());
@@ -185,26 +193,66 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(String response) {
                 // TODO: 29/06/2016 SUCCESSO --> annullare progressbar
                 if (!response.isEmpty()) {
-                    Toast.makeText(AddCostActivity.this, "COSTO INSERITO CON SUCCESSO", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddCostActivity.this, R.string.add_cost_success, Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
-                    Toast.makeText(AddCostActivity.this, "ERRORE NELLA RICHIESTA (RISPOSTA VUOTA)", Toast.LENGTH_SHORT).show();
+                    showProgress(false);
+                    Toast.makeText(AddCostActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
                 }
             }
         };
+    }
+
+    private void showAlert() {
+
     }
 
     private Response.ErrorListener responseErrorListener() {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                showProgress(false);
                 //Log.e("Error",error.getMessage());
-                Toast.makeText(AddCostActivity.this, "Unable to process the request, try again!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddCostActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
             }
         };
     }
 
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+            mAddCostFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mAddCostFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mAddCostFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
 
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mAddCostFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
 
 
     /**

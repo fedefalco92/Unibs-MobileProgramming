@@ -88,5 +88,7 @@
     <string name="add_group_members_activity_title">Add group members</string>
     <string name="add_group_members_user_already_added">User already added</string>
     <string name="add_member_button">Add</string>
+    <string name="add_cost_success">Cost inserted successfully</string>
+    <string name="add_cost_error">Unable to process the request, try again!</string>
 
 </resources>

@@ -63,7 +63,7 @@ public class AmountsFragment extends Fragment {
             mLocalUserId = getArguments().getInt(ARG_LOCAL_USER_ID);
         }
         //per poter popolare l'action bar dell'activity
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -96,6 +97,40 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        setFragmentAdapter();
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                final Intent i = new Intent(GroupDetailsActivity.this, AddCostActivity.class);
+                i.putExtra(CostsFragment.PASSING_GROUP_TAG, mGroup);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+            }
+        });
+
+        mLocalUser = LocalUser.load(MyApplication.getAppContext());
+        mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
+        setTitle(mGroup.getGroupName());
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        mSwipeRefreshLayout.post(new Runnable() {
+                                     @Override
+                                     public void run() {
+                                         mSwipeRefreshLayout.setRefreshing(true);
+                                         fetchGroupDetails();
+                                     }
+                                 }
+        );
+
+    }
+
+    private void setFragmentAdapter() {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -127,35 +162,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             public void onPageScrollStateChanged(int state) {
             }
         });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                final Intent i = new Intent(GroupDetailsActivity.this, AddCostActivity.class);
-                i.putExtra(CostsFragment.PASSING_GROUP_TAG, mGroup);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-            }
-        });
-
-        mLocalUser = LocalUser.load(MyApplication.getAppContext());
-        mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
-        setTitle(mGroup.getGroupName());
-        /**
-         * Showing Swipe Refresh animation on activity create
-         * As animation won't start on onCreate, post runnable is used
-         */
-        mSwipeRefreshLayout.post(new Runnable() {
-                                     @Override
-                                     public void run() {
-                                         mSwipeRefreshLayout.setRefreshing(true);
-                                         fetchGroupDetails();
-                                     }
-                                 }
-        );
 
     }
 
@@ -424,6 +430,9 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                         mGroup.setUpdatedAt(server_updated_at);
                         dao.insertGroup(mGroup);
                         dao.close();
+
+                        // TODO: 29/06/2016  DA OTTIMIZZARE 
+                        setFragmentAdapter();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 },
@@ -438,6 +447,12 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         MyApplication.getInstance().addToRequestQueue(balancingsRequest);
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchGroupDetails();
     }
 
     /**
