@@ -75,6 +75,15 @@ public class CostsFragment extends Fragment {
 
         //mAdapter =  new CostAdapter(getActivity(), mGroup.getUserId());
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
     /*
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

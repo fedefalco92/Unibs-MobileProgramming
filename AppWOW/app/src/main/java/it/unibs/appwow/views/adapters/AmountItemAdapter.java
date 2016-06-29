@@ -108,6 +108,7 @@ public class AmountItemAdapter extends BaseAdapter {
     @Override
     public void notifyDataSetChanged() {
         Collections.sort(mItems, new AmountComparator(mLocalUserId));
+        Collections.reverse(mItems);
         super.notifyDataSetChanged();
     }
 }

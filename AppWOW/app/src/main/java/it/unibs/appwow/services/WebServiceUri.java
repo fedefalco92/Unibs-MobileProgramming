@@ -14,6 +14,7 @@ public final class WebServiceUri {
     public final static Uri LOGIN_URI = Uri.withAppendedPath(USERS_URI, "login");
     public final static Uri CHECK_USER_URI = Uri.withAppendedPath(USERS_URI, "check-user");
     public final static Uri GROUPS_URI = Uri.withAppendedPath(BASE_ADDRESS, "groups");
+    public final static Uri COSTS_URI = Uri.withAppendedPath(BASE_ADDRESS, "costs");
 
     public final static Uri getGroupUri (int idGroup){
         return Uri.withAppendedPath(GROUPS_URI, String.valueOf(idGroup));

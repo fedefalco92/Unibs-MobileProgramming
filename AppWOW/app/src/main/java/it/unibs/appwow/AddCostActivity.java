@@ -2,7 +2,6 @@ package it.unibs.appwow;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,7 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -35,10 +37,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.CostsFragment;
+import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.services.WebServiceRequest;
+import it.unibs.appwow.services.WebServiceUri;
+import it.unibs.appwow.utils.AmountDetailsUtils;
 import it.unibs.appwow.utils.DecimalDigitsInputFilter;
+import it.unibs.appwow.utils.PositionUtils;
 import it.unibs.appwow.utils.Validator;
 
 public class AddCostActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
@@ -50,6 +63,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
     private LocalUser mUser;
     private GroupModel mGroup;
     private Place mPlace;
+    private HashMap<Integer,UserModel> mGroupUsers;
 
     private EditText mCostName;
     private EditText mCostAmount;
@@ -74,6 +88,13 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
 
         mUser = LocalUser.load(this);
         mGroup = getIntent().getParcelableExtra(CostsFragment.PASSING_GROUP_TAG);
+
+        UserGroupDAO dao = new UserGroupDAO();
+        dao = new UserGroupDAO();
+        dao.open();
+        mGroupUsers = dao.getAllUsers(mGroup.getId());
+        dao.close();
+
         mPlace = null;
 
         mCostName = (EditText) findViewById(R.id.add_cost_name);
@@ -114,6 +135,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
                 boolean nomeOk = Validator.isCostNameValid(mCostName.getText().toString());
                 boolean amountOk = Validator.isAmountValid(mCostAmount.getText().toString());
                 if(nomeOk && amountOk){
+                    sendPostRequest();
                     // TODO: 22/06/2016 IMPLEMENTARE CARICAMENTO SU SERVER con richiesta volley
                     Toast.makeText(AddCostActivity.this, "eheh pensavi che funzionasse...",
                             Toast.LENGTH_LONG).show();
@@ -134,6 +156,81 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void sendPostRequest() {
+        String[] keys = {"idGroup", "idUser", "amount", "name", "notes", "position", "amount_details"};
+        String idGroup = String.valueOf(mGroup.getId());
+        String idUser = String.valueOf(mUser.getId());
+        double amountDouble = new Double(mCostAmount.getText().toString());
+        String amount = String.valueOf(amountDouble);
+        String name = mCostName.getText().toString();
+        String notes = mCostNotes.getText().toString();
+        String position;
+        if(mPlace!= null){
+            position = PositionUtils.encodePositionId(mPlace.getId());
+        } else {
+            position = mCostPositionText.getText().toString();
+        }
+        String amount_details = computeAmountDetails(mUser.getId(), amountDouble);
+        String[] values = {idGroup, idUser, amount, name, notes, position, amount_details};
+
+        Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
+        StringRequest postRequest = WebServiceRequest.
+                stringRequest(Request.Method.POST, WebServiceUri.COSTS_URI.toString(), requestParams, responseListener(), responseErrorListener());
+        MyApplication.getInstance().addToRequestQueue(postRequest);
+    }
+
+    private Response.Listener<String> responseListener() {
+        return new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // TODO: 29/06/2016 SUCCESSO --> annullare progressbar
+                if (!response.isEmpty()) {
+                    Toast.makeText(AddCostActivity.this, "COSTO INSERITO CON SUCCESSO", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AddCostActivity.this, "ERRORE NELLA RICHIESTA (RISPOSTA VUOTA)", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+    }
+
+    private Response.ErrorListener responseErrorListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e("Error",error.getMessage());
+                Toast.makeText(AddCostActivity.this, "Unable to process the request, try again!", Toast.LENGTH_SHORT).show();
+            }
+        };
+    }
+
+
+
+
+
+    /**
+     * versione base
+     * @param amount
+     * @return
+     */
+    private String computeAmountDetails(int id_pagante, double amount){
+        int npartecipants = mGroupUsers.size();
+        double perperson = amount/npartecipants;
+        HashMap<Integer, Double> amount_details = new HashMap<Integer, Double>();
+
+        Set<Integer> userSet = mGroupUsers.keySet();
+        Iterator iterator = userSet.iterator();
+        while(iterator.hasNext()){
+            int id = (int) iterator.next();
+            double value = 0;
+            if(id == id_pagante){
+                value = (npartecipants-1)*perperson;
+            } else {
+                value = -perperson;
+            }
+            amount_details.put(id,value);
+        }
+        return AmountDetailsUtils.encodeAmountDetails(amount_details);
+    }
 
 
     public void onPickButtonClick(View v) {
@@ -232,36 +329,11 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         mClient.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "AddCost Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://it.unibs.appwow/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(mClient, viewAction);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "AddCost Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://it.unibs.appwow/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(mClient, viewAction);
         mClient.disconnect();
     }
 

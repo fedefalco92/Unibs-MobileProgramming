@@ -220,6 +220,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                         long local_updated_at = dao.getUpdatedAt(id);
                                         //aggiorno il gruppo solo se ha subito modifiche, SE IL GRUPPO NON ESISTE local_updated_at = 0L
                                         //quindi il nuovo gruppo viene inserito
+                                        Log.d(TAG_LOG, "Group id: " + id + " SERVER UPD: " + server_updated_at_string + " LOCAL UPD: " + DateUtils.dateLongToString(local_updated_at));
                                         if (server_updated_at > local_updated_at) {
                                             String name = groupJs.getString("name");
                                             int idAdmin = groupJs.getInt("idAdmin");

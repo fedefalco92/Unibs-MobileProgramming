@@ -25,8 +25,7 @@
             android:name="it.unibs.appwow.CostListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+
             tools:context=".fragments.CostsFragment"
             tools:listitem="@layout/fragment_cost_item" />
     <TextView

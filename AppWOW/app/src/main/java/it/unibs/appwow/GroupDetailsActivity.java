@@ -100,6 +100,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.single_group_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -203,56 +204,58 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         fetchGroupDetails();
     }
 
+    /**
+     * ATTENZIONE QUI SI AGGIORNA L'INTERO GRUPPO COMPRENDENDO:
+     * Users
+     * Costs
+     * Transactions
+     * Balancings
+     */
     private void fetchGroupDetails(){
         Log.d(TAG_LOG,"fetching group details");
         // showing refresh animation before making http call
-
         mSwipeRefreshLayout.setRefreshing(true);
         fetchUsers();
-        //mRequestPending = 0;
-        /**
-         * ATTENZIONE QUI SI AGGIORNA L'INTERO GRUPPO COMPRENDENDO:
-         * Users
-         * Costs
-         * Transactions
-         * Balancings
-         */
+    }
+
+    private void fetchGroup(){
+        Log.d(TAG_LOG,"fetch group method");
         //CONTROLLO che il gruppo sia da aggiornare
         Uri groupUri = WebServiceUri.getGroupUri(mGroup.getId());
         URL url = WebServiceUri.uriToUrl(groupUri);
         JsonObjectRequest groupRequest = new JsonObjectRequest(url.toString(), null,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d(TAG_LOG, "GROUP response = " + response.toString());
-                    GroupDAO dao = new GroupDAO();
-                    dao.open();
-                    try{
-                        String server_updated_at_string = response.getString("updated_at");
-                        long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
-                        long local_updated_at = dao.getUpdatedAt(mGroup.getId());
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG_LOG, "GROUP response = " + response.toString());
+                        GroupDAO dao = new GroupDAO();
+                        dao.open();
+                        try{
+                            String server_updated_at_string = response.getString("updated_at");
+                            long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
+                            long local_updated_at = dao.getUpdatedAt(mGroup.getId());
 
-                        if (server_updated_at > local_updated_at) {
-                            fetchCosts();
-                        } else {
-                            //se il gruppo locale è più aggiornato di quello del server?
-                            Log.d(TAG_LOG, "group up to date");
-                            mSwipeRefreshLayout.setRefreshing(false);
+                            if (server_updated_at > local_updated_at) {
+                                fetchCosts(server_updated_at);
+                            } else {
+                                //se il gruppo locale è più aggiornato di quello del server?
+                                Log.d(TAG_LOG, "Group up to date");
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            }
+                        } catch(JSONException e){
+                            e.printStackTrace();
                         }
-                    } catch(JSONException e){
-                        e.printStackTrace();
                     }
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-                    Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                    // stopping swipe refresh
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-        });
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
+                        Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        // stopping swipe refresh
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                });
         // Adding request to request queue
         MyApplication.getInstance().addToRequestQueue(groupRequest);
         //mRequestPending++;
@@ -261,6 +264,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     private void fetchUsers(){
+        Log.d(TAG_LOG,"fetchUsers method");
         /**
          * AGGIORNAMENTO USERS (USER_GROUP)
          */
@@ -320,6 +324,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                         mAdapter = new GroupAdapter(getActivity());
                         mGridView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();*/
+                        fetchGroup();
 
                     } else {
                        // Toast.makeText(MyApplication.getAppContext(), "ERRORE SCONOSCIUTO", Toast.LENGTH_LONG).show();
@@ -337,8 +342,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         MyApplication.getInstance().addToRequestQueue(usersRequest);
     }
 
-    private void fetchCosts(){
-        Log.d(TAG_LOG, "fetching costs");
+    private void fetchCosts(final long server_updated_at){
+        Log.d(TAG_LOG, "fetching costs methods");
         Uri groupCostsUri = WebServiceUri.getGroupCostsUri(mGroup.getId());
         URL url = WebServiceUri.uriToUrl(groupCostsUri);
 
@@ -363,15 +368,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                             dao.close();
                         }
 
-                        //fetchBalacings(); // FIXME: 15/06/2016 SCOMMENTARE
-                        // FIXME: 15/06/2016 SPOSTARE IN FETCHBALANCINGS
-                        //AGGIORNO LA DATA DI MODIFICA DEL GRUPPO IN LOCALE
-                        GroupDAO dao = new GroupDAO();
-                        dao.open();
-                        mGroup.setUpdatedAt(System.currentTimeMillis());
-                        dao.insertGroup(mGroup);
-                        dao.close();
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        fetchBalacings(server_updated_at);
                     }
                 },
                 new Response.ErrorListener(){
@@ -385,7 +382,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         MyApplication.getInstance().addToRequestQueue(costsRequest);
     }
 
-    private void fetchBalacings() {
+    private void fetchBalacings(final long server_updated_at) {
 
         Uri groupBalancingsUri = WebServiceUri.getGroupBalancingsUri(mGroup.getId());
         URL url = WebServiceUri.uriToUrl(groupBalancingsUri);
@@ -421,6 +418,12 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                             bdao.close();
                             tdao.close();
                         }
+                        //AGGIORNO LA DATA DI MODIFICA DEL GRUPPO IN LOCALE
+                        GroupDAO dao = new GroupDAO();
+                        dao.open();
+                        mGroup.setUpdatedAt(server_updated_at);
+                        dao.insertGroup(mGroup);
+                        dao.close();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 },

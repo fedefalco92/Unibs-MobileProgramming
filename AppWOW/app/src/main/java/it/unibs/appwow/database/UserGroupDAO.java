@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
@@ -94,4 +95,21 @@ public class UserGroupDAO implements LocalDB_DAO {
         }
     }
 
+    public HashMap<Integer,UserModel> getAllUsers(int idGroup) {
+        HashMap<Integer, UserModel> res = new HashMap<Integer, UserModel>();
+        String query = "SELECT users._id, users.fullName, users.email FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ?;";
+        Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            int id = cursor.getInt(0);
+            String fullName = cursor.getString(1);
+            String email = cursor.getString(2);
+            UserModel user = UserModel.create(id).withFullName(fullName).withEmail(email);
+            res.put(id,user);
+
+            cursor.moveToNext();
+        }
+        cursor.close(); // remember to always close the cursor!
+        return res;
+    }
 }
