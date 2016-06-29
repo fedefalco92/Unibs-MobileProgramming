@@ -1,15 +1,22 @@
 package it.unibs.appwow;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.view.ActionMode;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,12 +30,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.views.adapters.GroupMembersAdapter;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.services.WebServiceRequest;
@@ -44,11 +53,14 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     //private TextView matchText;
     private Button mAddMemberButton;
     private MenuItem mCreateGroupButton;
-    private TextView mEmailTextView;
+    private EditText mEmailTextView;
     private GroupModel mGroup;
     private LocalUser mLocalUser;
     //private ArrayList<UserModel> mDisplayedUsers;
     private Set<UserModel> mSelectedItems;
+
+    private View mProgressView;
+    private View mAddGroupFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +86,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         //matchLabel = (TextView) findViewById(R.id.match_label);
         //matchText = (TextView) findViewById(R.id.username_found);
         mAddMemberButton = (Button) findViewById(R.id.button_add_member);
-        mEmailTextView = (TextView) findViewById(R.id.email);
+        mEmailTextView = (EditText) findViewById(R.id.email);
+
+        mProgressView = findViewById(R.id.add_group_members_post_request_progress);
+        mAddGroupFormView = findViewById(R.id.add_group_members_form_container);
 
         membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         //membersList.setAdapter(new ArrayAdapter<LocalUser>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
@@ -174,70 +189,6 @@ public class AddGroupMembersActivity extends AppCompatActivity{
 
             });
 
-        /*
-        membersList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                // here you can do something when items are selected/de-selected
-                // such as update the title in the CAB
-                String title = "";
-                if(checked){
-                    mSelectedItems.add((LocalUser)mAdapter.getItem(position));
-                }
-                else{
-                    mSelectedItems.remove((LocalUser)mAdapter.getItem(position));
-                }
-
-                if(mSelectedItems.size() == 1){
-                    title = "1 item";
-                }
-                else{
-                    title = mSelectedItems.size()+" items";
-                }
-                mode.setTitle(title);
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.getMenuInflater().inflate(R.menu.context_menu_selection, menu);
-                mode.setTitle("selection");
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                // here you can perform updates to the CAB due to an invalidate() request
-                return false;
-            }
-
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.context_delete:
-                        Iterator iterator = mSelectedItems.iterator();
-                        while(iterator.hasNext()){
-                            mDisplayedUsers.remove(iterator.next());
-                        }
-                        ((GroupMembersAdapter)membersList.getAdapter()).notifyDataSetChanged();
-                        mode.finish();
-                        return true;
-                    default:
-                        mode.finish();
-                        return true;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-
-            }
-        });
-
-        */
-
-        //Button verifyEmail = ...
         mAddMemberButton = (Button) findViewById(R.id.button_add_member);
         mAddMemberButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,9 +200,13 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     StringRequest userRequest = WebServiceRequest.
                             stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
                     MyApplication.getInstance().addToRequestQueue(userRequest);
+                } else {
+                    Toast.makeText(AddGroupMembersActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
+
 
     }
 
@@ -282,16 +237,58 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         switch (id) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.create_group:
-                // TODO: 19/05/2016 creare il gruppo
-                Toast.makeText(AddGroupMembersActivity.this, "Creazione gruppo da implementare", Toast.LENGTH_SHORT).show();
-                //final Intent registrationIntent = new Intent(AddGroupMembersActivity.this, AddGroupMembersActivity.class);
-                //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
-                //startActivity(registrationIntent);
+                sendPostRequest();
                 return true;
             default:
                 return true;
         }
+    }
+
+    private void sendPostRequest() {
+        showProgress(true);
+        String[] keys = {"name", "idAdmin", "users"};
+        String name = mGroup.getGroupName();
+        String idAdmin = String.valueOf(mGroup.getIdAdmin());
+        String users = IdEncodingUtils.encodeIds(mAdapter.getItems());
+        String[] values = {name, idAdmin, users};
+
+        Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
+        StringRequest postRequest = WebServiceRequest.
+                stringRequest(Request.Method.POST, WebServiceUri.GROUPS_URI.toString(), requestParams, responseListenerAddGroup(), responseErrorListenerAddGroup());
+        MyApplication.getInstance().addToRequestQueue(postRequest);
+    }
+
+    private Response.Listener<String> responseListenerAddGroup() {
+        return new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (!response.isEmpty()) {
+                    Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
+                    Intent navigationActivity = new Intent(AddGroupMembersActivity.this, NavigationActivity.class);
+                    navigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(navigationActivity);
+                } else {
+                    showProgress(false);
+                    Log.d(TAG_LOG, "EMPTY RESPONSE ################################################");
+                    Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+    }
+
+    private Response.ErrorListener responseErrorListenerAddGroup() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                showProgress(false);
+                Log.e(TAG_LOG,"VOLLEY ERROR " + error.getMessage());
+                Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     private Response.Listener<String> responseListenerUser(){
@@ -332,8 +329,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-                else{
+                } else{
                     //Toast.makeText(AddGroupMembersActivity.this, "LocalUser not found", Toast.LENGTH_SHORT).show();
                     mEmailTextView.requestFocus();
                     mEmailTextView.setError(getString(R.string.add_group_members_user_not_found));
@@ -343,6 +339,42 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 }
             }
         };
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mAddGroupFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mAddGroupFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mAddGroupFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mAddGroupFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 
     private boolean userAlreadyExists(UserModel retrievedUser) {

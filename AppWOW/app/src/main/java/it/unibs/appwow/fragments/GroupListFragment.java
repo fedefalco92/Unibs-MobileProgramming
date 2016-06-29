@@ -211,6 +211,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                             if (response.length() > 0) {
                                 GroupDAO dao = new GroupDAO();
                                 dao.open();
+                                dao.resetAllGroups();
                                 for(int i = 0; i < response.length(); i++){
                                     try {
                                         JSONObject groupJs = response.getJSONObject(i);
@@ -247,6 +248,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                 mGridView.setAdapter(mAdapter);
                                 mAdapter.notifyDataSetChanged();
 
+                            } else {
+                                Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
                             }
                             // stopping swipe refresh
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -257,7 +260,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                         public void onErrorResponse(VolleyError error) {
                             Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
 
-                            Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
 
                             // stopping swipe refresh
                             mSwipeRefreshLayout.setRefreshing(false);

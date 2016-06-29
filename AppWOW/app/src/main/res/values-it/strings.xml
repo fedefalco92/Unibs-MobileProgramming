@@ -43,6 +43,8 @@
     <string name="add_group_activity_title">Nuovo gruppo</string>
     <string name="add_group_members_activity_title">Aggiungi i membri del gruppo</string>
     <string name="add_group_members_user_already_added">Utente già inserito</string>
-    <string name="add_cost_success">Spesa inserita correttamente</string>
+    <string name="add_cost_success">Spesa inserita!</string>
     <string name="add_cost_error">Errore nel processare la richiesta, riprova!</string>
+    <string name="add_group_error">Errore nel processare la richiesta, riprova!</string>
+    <string name="add_group_success">Gruppo creato!</string>
 </resources>

@@ -90,5 +90,7 @@
     <string name="add_member_button">Add</string>
     <string name="add_cost_success">Cost inserted successfully</string>
     <string name="add_cost_error">Unable to process the request, try again!</string>
+    <string name="add_group_success">Group created successfully</string>
+    <string name="add_group_error">Unable to process the request, try again!</string>
 
 </resources>

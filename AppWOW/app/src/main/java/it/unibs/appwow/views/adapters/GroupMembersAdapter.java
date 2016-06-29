@@ -72,6 +72,10 @@ public class GroupMembersAdapter extends BaseAdapter {
         return mItems.contains(user);
     }
 
+    public List<UserModel> getItems() {
+        return mItems;
+    }
+
     @Override
     public int getItemViewType(int position) {
         /*final UserModel itemUser = (UserModel) getItem(position);

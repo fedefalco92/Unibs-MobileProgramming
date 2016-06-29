@@ -53,7 +53,7 @@ import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
-import it.unibs.appwow.utils.AmountDetailsUtils;
+import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.DecimalDigitsInputFilter;
 import it.unibs.appwow.utils.PositionUtils;
 import it.unibs.appwow.utils.Validator;
@@ -191,7 +191,6 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
         return new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // TODO: 29/06/2016 SUCCESSO --> annullare progressbar
                 if (!response.isEmpty()) {
                     Toast.makeText(AddCostActivity.this, R.string.add_cost_success, Toast.LENGTH_SHORT).show();
                     finish();
@@ -201,10 +200,6 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         };
-    }
-
-    private void showAlert() {
-
     }
 
     private Response.ErrorListener responseErrorListener() {
@@ -277,7 +272,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
             }
             amount_details.put(id,value);
         }
-        return AmountDetailsUtils.encodeAmountDetails(amount_details);
+        return IdEncodingUtils.encodeAmountDetails(amount_details);
     }
 
 
