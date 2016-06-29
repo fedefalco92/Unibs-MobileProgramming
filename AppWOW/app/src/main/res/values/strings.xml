@@ -92,5 +92,9 @@
     <string name="add_cost_error">Unable to process the request, try again!</string>
     <string name="add_group_success">Group created successfully</string>
     <string name="add_group_error">Unable to process the request, try again!</string>
+    <string name="add_group_take_photo">Take Photo</string>
+    <string name="add_group_choose_photo_from_library">Choose from Library</string>
+    <string name="add_group_cancel">Cancel</string>
+    <string name="add_group_add_photo_title">Add Photo!</string>
 
 </resources>

@@ -47,4 +47,8 @@
     <string name="add_cost_error">Errore nel processare la richiesta, riprova!</string>
     <string name="add_group_error">Errore nel processare la richiesta, riprova!</string>
     <string name="add_group_success">Gruppo creato!</string>
+    <string name="add_group_cancel">Annulla</string>
+    <string name="add_group_choose_photo_from_library">Scegli dal rullino</string>
+    <string name="add_group_take_photo">Scatta una foto</string>
+    <string name="add_group_add_photo_title">Aggiungi una foto!</string>
 </resources>
