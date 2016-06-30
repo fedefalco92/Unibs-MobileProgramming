@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,20 +31,18 @@ import org.json.JSONObject;
 
 import java.net.URL;
 
-import it.unibs.appwow.database.BalancingDAO;
-import it.unibs.appwow.database.CostsDAO;
+import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.database.TransactionDAO;
+import it.unibs.appwow.database.DebtDAO;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.AmountsFragment;
-import it.unibs.appwow.fragments.CostsFragment;
+import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.fragments.GroupListFragment;
-import it.unibs.appwow.fragments.TransactionsFragment;
-import it.unibs.appwow.models.BalancingModel;
-import it.unibs.appwow.models.Transaction;
-import it.unibs.appwow.models.parc.CostModel;
-import it.unibs.appwow.models.TransactionModel;
+import it.unibs.appwow.fragments.DebtsFragment;
+import it.unibs.appwow.models.Debt;
+import it.unibs.appwow.models.parc.PaymentModel;
+import it.unibs.appwow.models.DebtModel;
 import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
@@ -55,9 +51,9 @@ import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.models.Amount;
 
-public class GroupDetailsActivity extends AppCompatActivity implements CostsFragment.OnListFragmentInteractionListener,
+public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragment.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
-        TransactionsFragment.OnListFragmentInteractionListener,
+        DebtsFragment.OnListFragmentInteractionListener,
         SwipeRefreshLayout.OnRefreshListener{
 
     private final String TAG_LOG = GroupDetailsActivity.class.getSimpleName();
@@ -105,8 +101,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             public void onClick(View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                final Intent i = new Intent(GroupDetailsActivity.this, AddCostActivity.class);
-                i.putExtra(CostsFragment.PASSING_GROUP_TAG, mGroup);
+                final Intent i = new Intent(GroupDetailsActivity.this, AddPaymentActivity.class);
+                i.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
             }
@@ -162,7 +158,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             public void onPageScrollStateChanged(int state) {
             }
         });
-
     }
 
     @Override
@@ -188,7 +183,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     @Override
-    public void onListFragmentInteraction(CostModel item) {
+    public void onListFragmentInteraction(PaymentModel item) {
         // TODO: 07/05/2016 Qui va implementato l'evento da gestire alla selezione dell'item
         Toast.makeText(GroupDetailsActivity.this, "Item: " + item.getId(), Toast.LENGTH_SHORT).show();
 
@@ -201,7 +196,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     }
 
     @Override
-    public void onListFragmentInteraction(Transaction item) {
+    public void onListFragmentInteraction(Debt item) {
         // TODO: 10/05/2016  Qui va implementato l'evento da gestire alla selezione dell'item
     }
 
@@ -213,8 +208,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
     /**
      * ATTENZIONE QUI SI AGGIORNA L'INTERO GRUPPO COMPRENDENDO:
      * Users
-     * Costs
-     * Transactions
+     * Payments
+     * Debts
      * Balancings
      */
     private void fetchGroupDetails(){
@@ -246,6 +241,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                             } else {
                                 //se il gruppo locale è più aggiornato di quello del server?
                                 Log.d(TAG_LOG, "Group up to date");
+                                setFragmentAdapter();
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
                         } catch(JSONException e){
@@ -350,7 +346,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
 
     private void fetchCosts(final long server_updated_at){
         Log.d(TAG_LOG, "fetching costs methods");
-        Uri groupCostsUri = WebServiceUri.getGroupCostsUri(mGroup.getId());
+        Uri groupCostsUri = WebServiceUri.getGroupPaymentsUri(mGroup.getId());
         URL url = WebServiceUri.uriToUrl(groupCostsUri);
 
         JsonArrayRequest costsRequest = new JsonArrayRequest(url.toString(),
@@ -359,13 +355,13 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                     public void onResponse(JSONArray response) {
                         Log.d(TAG_LOG, "COSTS response = " + response.toString());
                         if(response.length() > 0){
-                            CostsDAO dao = new CostsDAO();
+                            PaymentDAO dao = new PaymentDAO();
                             dao.open();
                             dao.resetAllCosts(mGroup.getId());
                             for(int i = 0; i<response.length();i++){
                                 try{
                                     JSONObject costJs = response.getJSONObject(i);
-                                    CostModel cost = CostModel.create(costJs);
+                                    PaymentModel cost = PaymentModel.create(costJs);
                                     dao.insertCost(cost);
                                 } catch(JSONException e){
                                     e.printStackTrace();
@@ -374,7 +370,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                             dao.close();
                         }
 
-                        fetchBalacings(server_updated_at);
+                        fetchDebts(server_updated_at);
                     }
                 },
                 new Response.ErrorListener(){
@@ -388,41 +384,31 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
         MyApplication.getInstance().addToRequestQueue(costsRequest);
     }
 
-    private void fetchBalacings(final long server_updated_at) {
+    private void fetchDebts(final long server_updated_at) {
 
-        Uri groupBalancingsUri = WebServiceUri.getGroupBalancingsUri(mGroup.getId());
+        Uri groupBalancingsUri = WebServiceUri.getGroupDebtsUri(mGroup.getId());
         URL url = WebServiceUri.uriToUrl(groupBalancingsUri);
 
-        JsonArrayRequest balancingsRequest = new JsonArrayRequest(url.toString(),
+        JsonArrayRequest debtsRequest = new JsonArrayRequest(url.toString(),
                 new Response.Listener<JSONArray>(){
                     @Override
                     public void onResponse(JSONArray response) {
-                        
+                        Log.d(TAG_LOG, "DEBTS RESPONSE: " + response);
                         if(response.length() > 0){
-                            BalancingDAO bdao = new BalancingDAO();
-                            bdao.open();
-                            TransactionDAO tdao = new TransactionDAO();
-                            tdao.open();
-
-                            // FIXME: 20/06/2016 UNCOMMENT
-                            //bdao.resetAllBalancings(mGroup.getUserId()); //cancella anche tutte le transactions se funziona on delete cascade
+                            DebtDAO dao = new DebtDAO();
+                            dao.open();
+                            dao.resetAllDebts(mGroup.getId()); //cancella anche tutte le transactions se funziona on delete cascade
                             for(int i = 0; i<response.length();i++){
                                 try{
-                                    JSONObject balJs = response.getJSONObject(i);
-                                    BalancingModel b = BalancingModel.create(balJs);
-                                    bdao.insertBalancing(b);
-                                    JSONArray transactions = balJs.getJSONArray("transactions");
-                                    for(int j = 0; j<transactions.length(); j++){
-                                        JSONObject tjs = transactions.getJSONObject(j);
-                                        TransactionModel t = TransactionModel.create(tjs);
-                                        tdao.insertTransaction(t);
-                                    }
+                                    JSONObject debtsJs = response.getJSONObject(i);
+                                    DebtModel d = DebtModel.create(debtsJs);
+                                    DebtModel inserito  = dao.insertDebt(d);
+                                    Log.d(TAG_LOG, "DEBT INSERITO: " +inserito);
                                 } catch(JSONException e){
                                     e.printStackTrace();
                                 }
                             }
-                            bdao.close();
-                            tdao.close();
+                            dao.close();
                         }
                         //AGGIORNO LA DATA DI MODIFICA DEL GRUPPO IN LOCALE
                         GroupDAO dao = new GroupDAO();
@@ -431,7 +417,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                         dao.insertGroup(mGroup);
                         dao.close();
 
-                        // TODO: 29/06/2016  DA OTTIMIZZARE 
+                        // TODO: 29/06/2016  DA OTTIMIZZARE
                         setFragmentAdapter();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
@@ -444,7 +430,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
                     }
                 }
         );
-        MyApplication.getInstance().addToRequestQueue(balancingsRequest);
+        MyApplication.getInstance().addToRequestQueue(debtsRequest);
 
 
     }
@@ -472,11 +458,11 @@ public class GroupDetailsActivity extends AppCompatActivity implements CostsFrag
             //return PlaceholderFragment.newInstance(position + 1)
             switch (position) {
                 case 0:
-                    return CostsFragment.newInstance(1, mGroup);
+                    return PaymentsFragment.newInstance(1, mGroup);
                 case 1:
                     return AmountsFragment.newInstance(1, mGroup, mLocalUser.getId());
                 case 2:
-                    return TransactionsFragment.newInstance(1, mGroup);
+                    return DebtsFragment.newInstance(1, mGroup);
             }
             return null;
             //Log.d(TAG_LOG,"Position: "+position);

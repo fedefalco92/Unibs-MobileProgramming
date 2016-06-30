@@ -96,5 +96,11 @@
     <string name="add_group_choose_photo_from_library">Choose from Library</string>
     <string name="add_group_cancel">Cancel</string>
     <string name="add_group_add_photo_title">Add Photo!</string>
-
+    <string name="dialog_group_deleted_old">The group %1$s was deleted by %2$s! It will be also deleted from your device.</string>
+    <string name="ok">OK</string>
+    <string name="dialog_group_deleted_confirm">Group deleted</string>
+    <plurals name="dialog_group_deleted">
+        <item quantity="one"> 1 group deleted</item>
+        <item quantity="other"> %d groups deleted</item>
+    </plurals>
 </resources>

@@ -9,7 +9,7 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".fragments.CostsFragment"
+    tools:context=".fragments.PaymentsFragment"
     tools:listitem="@layout/fragment_cost" />-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,15 +21,15 @@
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:app="http://schemas.android.com/apk/res-auto"
           xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/cost_list"
+            android:id="@+id/payment_list"
             android:name="it.unibs.appwow.CostListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            tools:context=".fragments.CostsFragment"
-            tools:listitem="@layout/fragment_cost_item" />
+            tools:context=".fragments.PaymentsFragment"
+            tools:listitem="@layout/fragment_payment_item" />
     <TextView
-        android:id="@+id/cost_fragment_empty_view"
+        android:id="@+id/payment_fragment_empty_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"

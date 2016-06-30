@@ -14,7 +14,7 @@ public final class WebServiceUri {
     public final static Uri LOGIN_URI = Uri.withAppendedPath(USERS_URI, "login");
     public final static Uri CHECK_USER_URI = Uri.withAppendedPath(USERS_URI, "check-user");
     public final static Uri GROUPS_URI = Uri.withAppendedPath(BASE_ADDRESS, "groups");
-    public final static Uri COSTS_URI = Uri.withAppendedPath(BASE_ADDRESS, "costs");
+    public final static Uri PAYMENTS_URI = Uri.withAppendedPath(BASE_ADDRESS, "payments");
 
     public final static Uri getGroupUri (int idGroup){
         return Uri.withAppendedPath(GROUPS_URI, String.valueOf(idGroup));
@@ -25,14 +25,14 @@ public final class WebServiceUri {
         return Uri.withAppendedPath(group_uri,"users");
     }
 
-    public final static Uri getGroupBalancingsUri(int idGroup){
+    public final static Uri getGroupPaymentsUri(int idGroup){
         Uri group_uri = Uri.withAppendedPath(GROUPS_URI, String.valueOf(idGroup));
-        return Uri.withAppendedPath(group_uri,"balancings");
+        return Uri.withAppendedPath(group_uri,"payments");
     }
 
-    public final static Uri getGroupCostsUri(int idGroup){
+    public final static Uri getGroupDebtsUri(int idGroup){
         Uri group_uri = Uri.withAppendedPath(GROUPS_URI, String.valueOf(idGroup));
-        return Uri.withAppendedPath(group_uri,"costs");
+        return Uri.withAppendedPath(group_uri,"debts");
     }
 
     public static URL uriToUrl(Uri uri){

@@ -12,19 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.R;
-import it.unibs.appwow.database.CostsDAO;
-import it.unibs.appwow.models.parc.CostModel;
+import it.unibs.appwow.database.PaymentDAO;
+import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.utils.DateUtils;
 
 /**
  * Created by Alessandro on 15/06/2016.
  */
-public class CostAdapter extends BaseAdapter {
-    private static final String TAG_LOG = CostAdapter.class.getSimpleName();
+public class PaymentAdapter extends BaseAdapter {
+    private static final String TAG_LOG = PaymentAdapter.class.getSimpleName();
 
-    private List<CostModel> mItems = new ArrayList<CostModel>();
+    private List<PaymentModel> mItems = new ArrayList<PaymentModel>();
     private final LayoutInflater mInflater;
-    private CostsDAO dao = new CostsDAO();
+    private PaymentDAO dao = new PaymentDAO();
 
     private class Holder {
         TextView costName;
@@ -33,7 +33,7 @@ public class CostAdapter extends BaseAdapter {
         TextView costUser;
     }
 
-    public CostAdapter(Context context, int idGroup){
+    public PaymentAdapter(Context context, int idGroup){
         mInflater = LayoutInflater.from(context);
         dao.open();
         mItems = dao.getAllCosts(idGroup);
@@ -53,7 +53,7 @@ public class CostAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        final CostModel itemCost = (CostModel) getItem(position);
+        final PaymentModel itemCost = (PaymentModel) getItem(position);
         return itemCost.getId();
     }
 
@@ -61,17 +61,17 @@ public class CostAdapter extends BaseAdapter {
     public View getView(final int position, View view, ViewGroup parent) {
         Holder holder = null;
         if(view==null) {
-            view = mInflater.inflate(R.layout.fragment_cost_item,null);
+            view = mInflater.inflate(R.layout.fragment_payment_item,null);
             holder = new Holder();
-            holder.costName = (TextView) view.findViewById(R.id.cost_fragment_item_costname);
-            holder.costAmount = (TextView)view.findViewById(R.id.cost_fragment_item_value);
-            holder.costDate = (TextView) view.findViewById(R.id.cost_fragment_item_date);
-            holder.costUser = (TextView) view.findViewById(R.id.cost_fragment_item_username);
+            holder.costName = (TextView) view.findViewById(R.id.payment_fragment_item_costname);
+            holder.costAmount = (TextView)view.findViewById(R.id.payment_fragment_item_value);
+            holder.costDate = (TextView) view.findViewById(R.id.payment_fragment_item_date);
+            holder.costUser = (TextView) view.findViewById(R.id.payment_fragment_item_username);
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();
         }
-        final CostModel itemCost = (CostModel) getItem(position);
+        final PaymentModel itemCost = (PaymentModel) getItem(position);
         holder.costName.setText(itemCost.getName());
         holder.costAmount.setText(""+itemCost.getAmount());
         holder.costDate.setText(""+ DateUtils.dateLongToString(itemCost.getUpdatedAt()));

@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unibs.appwow.database.UserGroupDAO;
-import it.unibs.appwow.fragments.CostsFragment;
+import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
@@ -58,8 +58,8 @@ import it.unibs.appwow.utils.DecimalDigitsInputFilter;
 import it.unibs.appwow.utils.PositionUtils;
 import it.unibs.appwow.utils.Validator;
 
-public class AddCostActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
-    private final String TAG_LOG = AddCostActivity.class.getSimpleName();
+public class AddPaymentActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
+    private final String TAG_LOG = AddPaymentActivity.class.getSimpleName();
 
     private static final int REQUEST_PLACE_PICKER = 1;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 2;
@@ -94,7 +94,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
         setTitle(getString(R.string.add_cost_activity_title));
 
         mUser = LocalUser.load(this);
-        mGroup = getIntent().getParcelableExtra(CostsFragment.PASSING_GROUP_TAG);
+        mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
 
         UserGroupDAO dao = new UserGroupDAO();
         dao = new UserGroupDAO();
@@ -183,7 +183,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
 
         Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
         StringRequest postRequest = WebServiceRequest.
-                stringRequest(Request.Method.POST, WebServiceUri.COSTS_URI.toString(), requestParams, responseListener(), responseErrorListener());
+                stringRequest(Request.Method.POST, WebServiceUri.PAYMENTS_URI.toString(), requestParams, responseListener(), responseErrorListener());
         MyApplication.getInstance().addToRequestQueue(postRequest);
     }
 
@@ -192,11 +192,11 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(String response) {
                 if (!response.isEmpty()) {
-                    Toast.makeText(AddCostActivity.this, R.string.add_cost_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddPaymentActivity.this, R.string.add_cost_success, Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     showProgress(false);
-                    Toast.makeText(AddCostActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddPaymentActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -208,7 +208,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
                 //Log.e("Error",error.getMessage());
-                Toast.makeText(AddCostActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddPaymentActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -343,7 +343,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
                 mCostPositionText.setEnabled(false);
                 mCostPositionText.setText(mPlace.getName());
                 mMapFragment.getView().setVisibility(View.VISIBLE);
-                mMapFragment.getMapAsync(AddCostActivity.this);
+                mMapFragment.getMapAsync(AddPaymentActivity.this);
                 mAddPositionButton.setText(R.string.action_add_cost_delete_position);
                 Log.i(TAG_LOG, "Place: " + mPlace.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
@@ -361,7 +361,7 @@ public class AddCostActivity extends AppCompatActivity implements View.OnClickLi
 /*
     public void onAddCostClick(View view){
         // TODO: 22/06/2016 IMPLEMENTARE CARICAMENTO SU SERVER con richiesta volley
-        Toast.makeText(AddCostActivity.this, "eheh pensavi che funzionasse...",
+        Toast.makeText(AddPaymentActivity.this, "eheh pensavi che funzionasse...",
                 Toast.LENGTH_LONG).show();
     }*/
 

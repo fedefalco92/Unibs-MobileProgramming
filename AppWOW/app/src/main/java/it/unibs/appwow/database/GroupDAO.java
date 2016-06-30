@@ -3,9 +3,13 @@ package it.unibs.appwow.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.models.Amount;
@@ -172,8 +176,8 @@ public class GroupDAO implements LocalDB_DAO {
         database.delete(AppDB.Groups.TABLE_GROUPS,null,null);
     }
     
-    public void deleteSingleLGroup(GroupModel data) {
-        database.delete(AppDB.Groups.TABLE_GROUPS,AppDB.Groups._ID + " = ?",new String[] {"" + data.getId()});
+    public void deleteSingleLGroup(int id) {
+        database.delete(AppDB.Groups.TABLE_GROUPS,AppDB.Groups._ID + " = ? ;",new String[] {String.valueOf(id)});
     }
     
     public void updateSingleGroup(long id, String groupName, int photoUri, long createdAt, long updatedAt, long idAdmin) {
@@ -186,5 +190,45 @@ public class GroupDAO implements LocalDB_DAO {
         groupToInsert.put(AppDB.Groups.COLUMN_ID_ADMIN, idAdmin);
 
         database.update(AppDB.Groups.TABLE_GROUPS, groupToInsert, AppDB.Groups._ID + " = ?",new String[] {"" + id});
+    }
+
+    public Set<Integer> getLocalGroupsIds() {
+        Set<Integer> data = new HashSet<Integer>();
+        String query = "SELECT groups._id FROM groups;";
+        Cursor cursor = database.rawQuery(query, null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            int id = cursor.getInt(0);
+            data.add(id);
+            cursor.moveToNext();
+        }
+        cursor.close(); // remember to always close the cursor!
+        return data;
+    }
+
+    public String getGroupName(int idGroup) {
+        String groupName = "";
+        String query = "SELECT " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups.COLUMN_NAME + " FROM " +
+                AppDB.Groups.TABLE_GROUPS + " WHERE " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID + " = ? ;";
+        Log.d(TAG_LOG, "QUERY = " + query);
+        Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
+        Log.d(TAG_LOG, cursor.toString());
+        cursor.moveToFirst();
+        groupName = cursor.getString(0);
+        cursor.close(); // remember to always close the cursor!
+        return groupName;
+    }
+
+    public String getGroupAdminName(int idGroup) {
+        String adminName = "";
+        String query = "SELECT " + AppDB.Users.TABLE_USERS + "." + AppDB.Users.COLUMN_FULLNAME + " FROM " +
+                AppDB.Groups.TABLE_GROUPS + " LEFT JOIN " + AppDB.Users.TABLE_USERS + " ON " +
+                AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups.COLUMN_ID_ADMIN + " = " + AppDB.Users.TABLE_USERS + "." + AppDB.Users._ID +
+                " WHERE " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID + " = ? ;";
+        Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
+        cursor.moveToFirst();
+        adminName = cursor.getString(0);
+        cursor.close(); // remember to always close the cursor!
+        return adminName;
     }
 }

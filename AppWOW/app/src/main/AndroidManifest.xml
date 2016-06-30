@@ -64,9 +64,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.unibs.appwow.AddGroupActivity"/>
         </activity>
-        <activity android:name=".CostDetailsActivity">
+        <activity android:name=".PaymentDetailsActivity">
         </activity>
-        <activity android:name=".AddCostActivity">
+        <activity android:name=".AddPaymentActivity">
         </activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->

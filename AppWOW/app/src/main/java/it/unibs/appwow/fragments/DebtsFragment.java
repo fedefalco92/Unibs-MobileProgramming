@@ -12,9 +12,9 @@ import android.widget.Toast;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
-import it.unibs.appwow.models.Transaction;
+import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.views.adapters.TransactionAdapter;
+import it.unibs.appwow.views.adapters.DebtsAdapter;
 
 /**
  * A fragment representing a list of Items.
@@ -22,11 +22,11 @@ import it.unibs.appwow.views.adapters.TransactionAdapter;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class TransactionsFragment extends Fragment {
+public class DebtsFragment extends Fragment {
 
-    private static final String TAG_LOG = TransactionsFragment.class.getSimpleName();
+    private static final String TAG_LOG = DebtsFragment.class.getSimpleName();
     private GroupModel mGroup;
-    private TransactionAdapter mAdapter;
+    private DebtsAdapter mAdapter;
     private ListView mTransactionList;
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -38,8 +38,8 @@ public class TransactionsFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static TransactionsFragment newInstance(int columnCount, GroupModel group) {
-        TransactionsFragment fragment = new TransactionsFragment();
+    public static DebtsFragment newInstance(int columnCount, GroupModel group) {
+        DebtsFragment fragment = new DebtsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putParcelable(GroupListFragment.PASSING_GROUP_TAG, group);
@@ -51,7 +51,7 @@ public class TransactionsFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public TransactionsFragment() {
+    public DebtsFragment() {
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TransactionsFragment extends Fragment {
         }
 
         //per poter popolare l'action bar dell'activity
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class TransactionsFragment extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAdapter = new TransactionAdapter(getContext(), mGroup.getId());
+        mAdapter = new DebtsAdapter(getContext(), mGroup.getId());
         mTransactionList = (ListView) view.findViewById(R.id.transaction_list);
         mTransactionList.setEmptyView(view.findViewById(R.id.transaction_fragment_empty_view));
         mTransactionList.setAdapter(mAdapter);
@@ -99,10 +99,10 @@ public class TransactionsFragment extends Fragment {
                                     int position, long id) {
                 // TODO: 20/06/2016  GESTIRE ON CLICK
                 Toast.makeText(MyApplication.getAppContext(), "Posizione " + position,Toast.LENGTH_SHORT).show();
-                /*final Intent i = new Intent(getContext(), CostDetailsActivity.class);
-                CostModel cost = (CostModel) mAdapter.getItem(position);
+                /*final Intent i = new Intent(getContext(), PaymentDetailsActivity.class);
+                PaymentModel cost = (PaymentModel) mAdapter.getItem(position);
 
-                i.putExtra(PASSING_COST_TAG, cost);
+                i.putExtra(PASSING_PAYMENT_TAG, cost);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);*/
             }
@@ -138,6 +138,6 @@ public class TransactionsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Transaction item);
+        void onListFragmentInteraction(Debt item);
     }
 }

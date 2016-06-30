@@ -1,12 +1,6 @@
 package it.unibs.appwow;
 
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,17 +8,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.GeoDataApi;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,25 +20,19 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.nio.ByteOrder;
-import java.nio.CharBuffer;
-import java.util.List;
-import java.util.Locale;
-
-import it.unibs.appwow.fragments.CostsFragment;
-import it.unibs.appwow.models.parc.CostModel;
+import it.unibs.appwow.fragments.PaymentsFragment;
+import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.utils.PositionUtils;
 
-public class CostDetailsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class PaymentDetailsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
-    private final String TAG_LOG = CostDetailsActivity.class.getSimpleName();
+    private final String TAG_LOG = PaymentDetailsActivity.class.getSimpleName();
 
-    private CostModel mCost;
+    private PaymentModel mCost;
 
     private TextView mName;
     private TextView mAmount;
@@ -72,7 +54,7 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cost_details);
-        mCost = getIntent().getParcelableExtra(CostsFragment.PASSING_COST_TAG);
+        mCost = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
         setTitle(mCost.getName());
 
 
@@ -136,7 +118,7 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
                         Log.e(TAG_LOG, "Place not found");
                     }
                     mPositionText.setText(mPlace.getName());
-                    mMapFragment.getMapAsync(CostDetailsActivity.this);
+                    mMapFragment.getMapAsync(PaymentDetailsActivity.this);
                     places.release();
                 }
             });
@@ -214,7 +196,7 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
                 }
             };
             mPositionText.setText(mPlace.getName());
-            mMapFragment.getMapAsync(CostDetailsActivity.this);
+            mMapFragment.getMapAsync(PaymentDetailsActivity.this);
             Log.d("CALLING getMapAsync","method called...");*/
 
         } else {
@@ -313,6 +295,6 @@ public class CostDetailsActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(CostDetailsActivity.this, "Connection to google maps failed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PaymentDetailsActivity.this, "Connection to google maps failed", Toast.LENGTH_SHORT).show();
     }
 }

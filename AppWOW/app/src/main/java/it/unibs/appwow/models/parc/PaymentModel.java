@@ -12,7 +12,7 @@ import it.unibs.appwow.utils.DateUtils;
 /**
  * Created by Alessandro on 15/06/2016.
  */
-public class CostModel implements Parcelable {
+public class PaymentModel implements Parcelable {
 
     private static final byte PRESENT = 1;
 
@@ -26,14 +26,14 @@ public class CostModel implements Parcelable {
     private String mNotes;
     private long mCreatedAt;
     private long mUpdatedAt;
-    private long mArchivedAt;
+    private boolean mIsExchange;
     /**
      * la stringa mPosition è una posizione fittizia tipo "casa mia" oppure un ID di google places preceduto da "###"
      */
     private String mPosition;
     private String mAmountDetails; // FIXME: 06/05/2016 da sostituire con un vector da riempire al momento dell'importazione dal DB
 
-    public CostModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, long archivedAt, String position, String amountDetails) {
+    public PaymentModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, String position, String amountDetails) {
         mId = id;
         mIdGroup = idGroup;
         mIdUser = idUser;
@@ -42,9 +42,23 @@ public class CostModel implements Parcelable {
         mNotes = notes;
         mCreatedAt = createdAt;
         mUpdatedAt = updatedAt;
-        mArchivedAt = archivedAt;
         mPosition = position;
         mAmountDetails = amountDetails;
+        mIsExchange = false;
+    }
+
+    public PaymentModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, String position, String amountDetails, boolean isExchange) {
+        mId = id;
+        mIdGroup = idGroup;
+        mIdUser = idUser;
+        mAmount = amount;
+        mName = name;
+        mNotes = notes;
+        mCreatedAt = createdAt;
+        mUpdatedAt = updatedAt;
+        mPosition = position;
+        mAmountDetails = amountDetails;
+        mIsExchange = isExchange;
     }
 
     public int getId() {
@@ -111,14 +125,6 @@ public class CostModel implements Parcelable {
         mUpdatedAt = updatedAt;
     }
 
-    public long getArchivedAt() {
-        return mArchivedAt;
-    }
-
-    public void setArchivedAt(long archivedAt) {
-        mArchivedAt = archivedAt;
-    }
-
     public String getPosition() {
         return mPosition;
     }
@@ -135,32 +141,41 @@ public class CostModel implements Parcelable {
         mAmountDetails = amountDetails;
     }
 
-    public static CostModel create(JSONObject costJs) throws JSONException {
-        int id = costJs.getInt("id");
-        int idGroup = costJs.getInt("idGroup");
-        int idUser = costJs.getInt("idUser");
-        double amount = costJs.getDouble("amount");
-        String name = costJs.getString("name");
-        String notes = costJs.getString("notes");
-        long createdAt = DateUtils.dateStringToLong(costJs.getString("created_at"));
-        long updatedAt = DateUtils.dateStringToLong(costJs.getString("updated_at"));
-        long archivedAt = DateUtils.dateStringToLong(costJs.getString("archived_at"));
-        String position = costJs.getString("position");
-        String amountDetails = costJs.getString("amount_details");
-
-        return new CostModel(id, idGroup, idUser, amount, name, notes, createdAt, updatedAt, archivedAt, position, amountDetails);
+    public boolean isExchange() {
+        return mIsExchange;
     }
 
-    public static final Parcelable.Creator<CostModel> CREATOR = new Parcelable.Creator<CostModel>()
+    public void setExchange(boolean exchange) {
+        mIsExchange = exchange;
+    }
+
+    public static PaymentModel create(JSONObject paymentJs) throws JSONException {
+        int id = paymentJs.getInt("id");
+        int idGroup = paymentJs.getInt("idGroup");
+        int idUser = paymentJs.getInt("idUser");
+        double amount = paymentJs.getDouble("amount");
+        String name = paymentJs.getString("name");
+        String notes = paymentJs.getString("notes");
+        long createdAt = DateUtils.dateStringToLong(paymentJs.getString("created_at"));
+        long updatedAt = DateUtils.dateStringToLong(paymentJs.getString("updated_at"));
+        // FIXME: 30/06/2016 VERIFICARE FUNZIONAMENTO GETBOOLEAN
+        boolean isExchange = paymentJs.getInt("isExchange")!= 0;
+        String position = paymentJs.getString("position");
+        String amountDetails = paymentJs.getString("amount_details");
+
+        return new PaymentModel(id, idGroup, idUser, amount, name, notes, createdAt, updatedAt, position, amountDetails, isExchange);
+    }
+
+    public static final Parcelable.Creator<PaymentModel> CREATOR = new Parcelable.Creator<PaymentModel>()
     {
-        public CostModel createFromParcel(Parcel in)
+        public PaymentModel createFromParcel(Parcel in)
         {
-            return new CostModel(in);
+            return new PaymentModel(in);
         }
 
-        public CostModel[] newArray(int size)
+        public PaymentModel[] newArray(int size)
         {
-            return new CostModel[size];
+            return new PaymentModel[size];
         }
     };
 
@@ -169,12 +184,13 @@ public class CostModel implements Parcelable {
      *
      * @param in
      */
-    public CostModel(Parcel in)
+    public PaymentModel(Parcel in)
     {
         this.mId = in.readInt();
         this.mIdGroup = in.readInt();
         this.mIdUser = in.readInt();
         this.mAmount = in.readDouble();
+        this.mIsExchange = in.readByte() != 0;
         if(in.readByte() == PRESENT)
         {
             this.mName = in.readString();
@@ -195,10 +211,6 @@ public class CostModel implements Parcelable {
             this.mUpdatedAt = in.readLong();
         }
 
-        if(in.readByte() == PRESENT)
-        {
-            this.mArchivedAt= in.readLong();
-        }
 
         if(in.readByte() == PRESENT)
         {
@@ -226,6 +238,7 @@ public class CostModel implements Parcelable {
         dest.writeInt(this.mIdGroup);
         dest.writeInt(this.mIdUser);
         dest.writeDouble(this.mAmount);
+        dest.writeByte((byte) (isExchange() ? 1 : 0));
         if(!TextUtils.isEmpty(this.mName))
         {
             dest.writeByte(PRESENT);
@@ -262,14 +275,6 @@ public class CostModel implements Parcelable {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(this.mArchivedAt!=0)
-        {
-            dest.writeByte(PRESENT);
-            dest.writeLong(this.mArchivedAt);
-        } else
-        {
-            dest.writeByte(NOT_PRESENT);
-        }
 
         if(!TextUtils.isEmpty(this.mPosition))
         {

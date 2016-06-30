@@ -5,21 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import it.unibs.appwow.AddCostActivity;
-import it.unibs.appwow.CostDetailsActivity;
+import it.unibs.appwow.PaymentDetailsActivity;
 import it.unibs.appwow.R;
-import it.unibs.appwow.models.parc.CostModel;
+import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.views.adapters.CostAdapter;
+import it.unibs.appwow.views.adapters.PaymentAdapter;
 
 /**
  * A fragment representing a list of Items.
@@ -27,32 +22,32 @@ import it.unibs.appwow.views.adapters.CostAdapter;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class CostsFragment extends Fragment {
+public class PaymentsFragment extends Fragment {
 
-    private static final String TAG_LOG = CostsFragment.class.getSimpleName();
+    private static final String TAG_LOG = PaymentsFragment.class.getSimpleName();
     public static final String PASSING_GROUP_TAG = "group";
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    public static final String PASSING_COST_TAG = "cost";
+    public static final String PASSING_PAYMENT_TAG = "cost";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    private CostAdapter mAdapter;
+    private PaymentAdapter mAdapter;
     private GroupModel mGroup;
     private ListView mCostList;
-    //private List<CostModel> mCostList; //da riempire
+    //private List<PaymentModel> mCostList; //da riempire
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public CostsFragment() {
+    public PaymentsFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static CostsFragment newInstance(int columnCount, GroupModel group) {
-        CostsFragment fragment = new CostsFragment();
+    public static PaymentsFragment newInstance(int columnCount, GroupModel group) {
+        PaymentsFragment fragment = new PaymentsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putParcelable(PASSING_GROUP_TAG, group);
@@ -73,7 +68,7 @@ public class CostsFragment extends Fragment {
         //per poter popolare l'action bar dell'activity
         //setHasOptionsMenu(true);
 
-        //mAdapter =  new CostAdapter(getActivity(), mGroup.getUserId());
+        //mAdapter =  new PaymentAdapter(getActivity(), mGroup.getId());
     }
 
     @Override
@@ -96,7 +91,7 @@ public class CostsFragment extends Fragment {
         switch(item.getItemId()){
             case R.id.add_new_cost:
                 //Toast.makeText(getContext(), "Add item", Toast.LENGTH_SHORT).show();
-                final Intent i = new Intent(getContext(), AddCostActivity.class);
+                final Intent i = new Intent(getContext(), AddPaymentActivity.class);
                 i.putExtra(PASSING_GROUP_TAG, mGroup);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
@@ -110,7 +105,7 @@ public class CostsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cost_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_payment_list, container, false);
         /*
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -130,19 +125,19 @@ public class CostsFragment extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAdapter = new CostAdapter(getContext(), mGroup.getId());
-        mCostList = (ListView) view.findViewById(R.id.cost_list);
-        mCostList.setEmptyView(view.findViewById(R.id.cost_fragment_empty_view));
+        mAdapter = new PaymentAdapter(getContext(), mGroup.getId());
+        mCostList = (ListView) view.findViewById(R.id.payment_list);
+        mCostList.setEmptyView(view.findViewById(R.id.payment_fragment_empty_view));
         mCostList.setAdapter(mAdapter);
 
         mCostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
-                final Intent i = new Intent(getContext(), CostDetailsActivity.class);
-                CostModel cost = (CostModel) mAdapter.getItem(position);
+                final Intent i = new Intent(getContext(), PaymentDetailsActivity.class);
+                PaymentModel payment = (PaymentModel) mAdapter.getItem(position);
 
-                i.putExtra(PASSING_COST_TAG, cost);
+                i.putExtra(PASSING_PAYMENT_TAG, payment);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
             }
@@ -178,6 +173,6 @@ public class CostsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(CostModel item);
+        void onListFragmentInteraction(PaymentModel item);
     }
 }

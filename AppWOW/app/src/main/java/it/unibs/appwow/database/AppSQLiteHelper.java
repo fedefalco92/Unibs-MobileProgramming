@@ -34,40 +34,31 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Groups.COLUMN_HIGHLIGHTED + " INTEGER DEFAULT 0 " +
             ");";
 
-    private static final String TABLE_COSTS_CREATE  = "CREATE TABLE " + Costs.TABLE_COSTS + "(" +
-            Costs._ID + " INTEGER NOT NULL PRIMARY KEY, " +
-            Costs.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
-            Costs.COLUMN_ID_USER + " INTEGER NOT NULL, " +
-            Costs.COLUMN_AMOUNT + " REAL NOT NULL, " +
-            Costs.COLUMN_NAME + " TEXT, " +
-            Costs.COLUMN_NOTES + " TEXT, " +
-            Costs.COLUMN_CREATED_AT + " NUMERIC, " +
-            Costs.COLUMN_UPDATED_AT + " NUMERIC, " +
-            Costs.COLUMN_ARCHIVED_AT + " NUMERIC, " +
-            Costs.COLUMN_POSITION + " TEXT, " +
-            Costs.COLUMN_AMOUNT_DETAILS + " TEXT, " +
-            "FOREIGN KEY (" + Costs.COLUMN_ID_USER + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
-            "FOREIGN KEY (" + Costs.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ")" +
+    private static final String TABLE_PAYMENTS_CREATE = "CREATE TABLE " + Payments.TABLE_PAYMENTS + "(" +
+            Payments._ID + " INTEGER NOT NULL PRIMARY KEY, " +
+            Payments.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
+            Payments.COLUMN_ID_USER + " INTEGER NOT NULL, " +
+            Payments.COLUMN_AMOUNT + " REAL NOT NULL, " +
+            Payments.COLUMN_NAME + " TEXT, " +
+            Payments.COLUMN_NOTES + " TEXT, " +
+            Payments.COLUMN_CREATED_AT + " NUMERIC, " +
+            Payments.COLUMN_UPDATED_AT + " NUMERIC, " +
+            Payments.COLUMN_IS_EXCHANGE + " INTEGER, " +
+            Payments.COLUMN_POSITION + " TEXT, " +
+            Payments.COLUMN_AMOUNT_DETAILS + " TEXT, " +
+            "FOREIGN KEY (" + Payments.COLUMN_ID_USER + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
+            "FOREIGN KEY (" + Payments.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ")" +
             ");";
 
-    private static final String TABLE_BALANCING_CREATE = "CREATE TABLE " + Balancings.TABLE_BALANCINGS + " (" +
-            Balancings._ID + " INTEGER NOT NULL PRIMARY KEY, " +
-            Balancings.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
-            Balancings.COLUMN_CREATED_AT + " NUMERIC, " +
-            Balancings.COLUMN_COSTS_ID + " TEXT, "  +
-            "FOREIGN KEY (" + Balancings.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ")" +
-            ");";
-
-    private static final String TABLE_TRANSACTIONS_CREATE = "CREATE TABLE " + Transactions.TABLE_TRANSACTIONS + " ("+
-            Transactions._ID + " INTEGER NOT NULL PRIMARY KEY, " +
-            Transactions.COLUMN_ID_BALANCING + " INTEGER NOT NULL, " +
-            Transactions.COLUMN_ID_FROM + " INTEGER NOT NULL, " +
-            Transactions.COLUMN_ID_TO + " INTEGER NOT NULL, " +
-            Transactions.COLUMN_AMOUNT + " REAL, " +
-            Transactions.COLUMN_PAYED_AT + " NUMERIC DEFAULT NULL, " +
-            "FOREIGN KEY (" + Transactions.COLUMN_ID_BALANCING + ") REFERENCES " + Balancings.TABLE_BALANCINGS + "(" + Balancings._ID + ") ON DELETE CASCADE," +
-            "FOREIGN KEY (" + Transactions.COLUMN_ID_FROM + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
-            "FOREIGN KEY (" + Transactions.COLUMN_ID_TO+ ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")" +
+    private static final String TABLE_DEBTS_CREATE = "CREATE TABLE " + Debts.TABLE_DEBTS + " ("+
+            Debts._ID + " INTEGER NOT NULL PRIMARY KEY, " +
+            Debts.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
+            Debts.COLUMN_ID_FROM + " INTEGER NOT NULL, " +
+            Debts.COLUMN_ID_TO + " INTEGER NOT NULL, " +
+            Debts.COLUMN_AMOUNT + " REAL, " +
+            "FOREIGN KEY (" + Debts.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ") ON DELETE CASCADE," +
+            "FOREIGN KEY (" + Debts.COLUMN_ID_FROM + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
+            "FOREIGN KEY (" + Debts.COLUMN_ID_TO+ ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")" +
             ");";
     private static final String TABLE_USER_GROUP_CREATE = "CREATE TABLE " + UserGroup.TABLE_USER_GROUP + "(" +
             UserGroup.COLUMN_ID_USER + " INTEGER NOT NULL, " +
@@ -91,9 +82,8 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             database.execSQL(TABLE_USERS_CREATE);
             database.execSQL(TABLE_GROUPS_CREATE);
             database.execSQL(TABLE_USER_GROUP_CREATE);
-            database.execSQL(TABLE_COSTS_CREATE);
-            database.execSQL(TABLE_BALANCING_CREATE);
-            database.execSQL(TABLE_TRANSACTIONS_CREATE);
+            database.execSQL(TABLE_PAYMENTS_CREATE);
+            database.execSQL(TABLE_DEBTS_CREATE);
             database.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,19 +101,6 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-
-
-
-    private ContentValues groupToValues(GroupModel g) {
-        ContentValues values = new ContentValues();
-        values.put(Groups._ID, g.getId());
-        values.put(Groups.COLUMN_NAME,g.getGroupName());
-        values.put(Groups.COLUMN_PHOTO,g.getPhotoUri());
-        values.put(Groups.COLUMN_CREATED_AT,g.getCreatedAt());
-        values.put(Groups.COLUMN_UPDATED_AT,g.getUpdatedAt());
-        values.put(Groups.COLUMN_ID_ADMIN,g.getIdAdmin());
-        return values;
-    }
 
 
     @Override

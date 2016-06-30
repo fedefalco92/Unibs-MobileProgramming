@@ -51,4 +51,13 @@
     <string name="add_group_choose_photo_from_library">Scegli dal rullino</string>
     <string name="add_group_take_photo">Scatta una foto</string>
     <string name="add_group_add_photo_title">Aggiungi una foto!</string>
+    <string name="ok">OK</string>
+    <string name="dialog_group_deleted_old">Il gruppo %1$s è stato eliminato da %2$s!\nSarà eliminato anche dal tuo dispositivo.</string>
+    <string name="error_field_required">Questo campo è obbligatorio</string>
+    <string name="error_incorrect_password">Password errata</string>
+    <string name="dialog_group_deleted_confirm">Gruppo eliminato</string>
+    <plurals name="dialog_group_deleted">
+        <item quantity="one"> 1 gruppo eliminato</item>
+        <item quantity="other"> %d gruppi eleminati</item>
+    </plurals>
 </resources>

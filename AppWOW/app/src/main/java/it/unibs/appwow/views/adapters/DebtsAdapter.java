@@ -13,32 +13,33 @@ import java.util.List;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
-import it.unibs.appwow.database.TransactionDAO;
-import it.unibs.appwow.models.Transaction;
+import it.unibs.appwow.database.DebtDAO;
+import it.unibs.appwow.models.Debt;
+import it.unibs.appwow.models.DebtModel;
 import it.unibs.appwow.models.parc.LocalUser;
 
 /**
  * Created by Alessandro on 20/06/2016.
  */
-public class TransactionAdapter extends BaseAdapter {
+public class DebtsAdapter extends BaseAdapter {
     private static final String TAG_LOG = AmountItemAdapter.class.getSimpleName();
-    private LocalUser mUser;
-    private List<Transaction> mItems = new ArrayList<Transaction>();
+    //private LocalUser mUser;
+    private List<DebtModel> mItems = new ArrayList<DebtModel>();
     private final LayoutInflater mInflater;
-    private TransactionDAO dao;
+    private DebtDAO dao;
 
     private class Holder {
         TextView amount;
-        TextView preposition;
-        TextView fullName;
+        TextView fullNameFrom;
+        TextView fullNameTo;
     }
 
-    public TransactionAdapter(Context context, int idGroup){
+    public DebtsAdapter(Context context, int idGroup){
         mInflater = LayoutInflater.from(context);
-        dao = new TransactionDAO();
+        dao = new DebtDAO();
         dao.open();
-        mUser = LocalUser.load(MyApplication.getAppContext());
-        mItems = dao.getAllTransactionsFrom(idGroup, mUser.getId());
+        //mUser = LocalUser.load(MyApplication.getAppContext());
+        mItems = dao.getAllDebts(idGroup);
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
     }
@@ -55,7 +56,7 @@ public class TransactionAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        final Transaction item = (Transaction) getItem(position);
+        final Debt item = (Debt) getItem(position);
         return item.getId();
     }
 
@@ -63,27 +64,22 @@ public class TransactionAdapter extends BaseAdapter {
     public View getView(final int position, View view, ViewGroup parent) {
         Holder holder = null;
         if(view==null) {
-            view = mInflater.inflate(R.layout.fragment_amount_item, null);
+            view = mInflater.inflate(R.layout.fragment_debt_item, null);
             holder = new Holder();
-            holder.fullName = (TextView) view.findViewById(R.id.fragment_transaction_user);
-            holder.amount = (TextView)view.findViewById(R.id.fragment_transaction_amount);
-            holder.preposition = (TextView) view.findViewById(R.id.fragment_transaction_preposition);
+            holder.fullNameFrom = (TextView) view.findViewById(R.id.fragment_debt_item_user_from);
+            holder.fullNameTo = (TextView) view.findViewById(R.id.fragment_debt_item_user_to);
+            holder.amount = (TextView)view.findViewById(R.id.fragment_item_debt_amount);
 
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();
         }
 
-        final Transaction item = (Transaction) getItem(position);
+        final DebtModel item = (DebtModel) getItem(position);
         holder.amount.setText(String.valueOf(item.getAmount()));
-        holder.fullName.setText(item.getFullName());
-        // FIXME: 20/06/2016 SOSTITUIRE CON STRING RESOURCES
-        if(item.getIdFrom() == mUser.getId()){
-            holder.preposition.setText("A");
-        } else {
-            holder.preposition.setText("DA");
-        }
-
+        // FIXME: 30/06/2016 Aggiungere fullname di entrambi gli utenti
+        holder.fullNameFrom.setText("USER " + item.getIdFrom());
+        holder.fullNameTo.setText("USER " + item.getIdTo());
 
         return view;
     }
