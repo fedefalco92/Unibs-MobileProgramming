@@ -194,7 +194,9 @@ public class GroupDAO implements LocalDB_DAO {
 
     public Set<Integer> getLocalGroupsIds() {
         Set<Integer> data = new HashSet<Integer>();
-        String query = "SELECT groups._id FROM groups;";
+        //"SELECT groups._id FROM groups;";
+        String query = "SELECT " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID
+                + " FROM " + AppDB.Groups.TABLE_GROUPS;
         Cursor cursor = database.rawQuery(query, null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
@@ -233,8 +235,11 @@ public class GroupDAO implements LocalDB_DAO {
     }
 
     public void touchGroup(int idGroup, long timestamp){
-        String query = "UPDATE groups SET updated_at = " + timestamp + " WHERE _id = " + idGroup;
-        Cursor cursor = database.rawQuery(query,null);
+        //"UPDATE groups SET updated_at = " + timestamp + " WHERE _id = " + idGroup;
+        String query = "UPDATE " + AppDB.Groups.TABLE_GROUPS
+                + " SET " + AppDB.Groups.COLUMN_UPDATED_AT + " = " + timestamp
+                + " WHERE " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID + " = " + idGroup;
+        Cursor cursor = database.rawQuery(query, null);
         cursor.moveToFirst();
         cursor.close();
     }
