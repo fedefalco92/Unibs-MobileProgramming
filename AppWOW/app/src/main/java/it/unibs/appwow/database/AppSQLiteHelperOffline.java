@@ -96,7 +96,7 @@ public class AppSQLiteHelperOffline extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(Groups._ID, data.getId());
         values.put(Groups.COLUMN_NAME,data.getGroupName());
-        values.put(Groups.COLUMN_PHOTO,data.getPhotoUri());
+        values.put(Groups.COLUMN_PHOTO,data.getPhotoFileName());
         values.put(Groups.COLUMN_CREATED_AT,data.getCreatedAt());
         return values;
     }

@@ -68,7 +68,7 @@ public class OfflineGroupAdapter extends BaseAdapter {
         }
         final GroupModel itemGroup = (GroupModel) getItem(position);
         holder.groupName.setText(itemGroup.getGroupName());
-        holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoUri()));
+        holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoFileName()));
        /* final LocalDataModel itemModel = (LocalDataModel)getItem(position);
         holder.dateTextView.setText(DATE_FORMAT.format(itemModel.entryDate));
         holder.loveVoteTextView.setText("Love: " + itemModel.loveVote);

@@ -22,7 +22,7 @@ public class GroupModel implements Parcelable {
 
     private int mId;
     private String mGroupName;
-    private String mPhotoUri;
+    private String mPhotoFileName;
     private long mCreatedAt;
     private long mUpdatedAt;
     private int mIdAdmin;
@@ -37,8 +37,8 @@ public class GroupModel implements Parcelable {
         return mGroupName;
     }
 
-    public String getPhotoUri() {
-        return mPhotoUri;
+    public String getPhotoFileName() {
+        return mPhotoFileName;
     }
 
     public long getCreatedAt() {
@@ -62,8 +62,8 @@ public class GroupModel implements Parcelable {
         this.mGroupName = mGroupName;
     }
 
-    public void setPhotoUri(String mPhotoUri) {
-        this.mPhotoUri = mPhotoUri;
+    public void setPhotoFileName(String mPhotoUri) {
+        this.mPhotoFileName = mPhotoUri;
     }
 
     public void setCreatedAt(long mCreatedAt) {
@@ -115,7 +115,7 @@ public class GroupModel implements Parcelable {
 
         if(in.readByte() == PRESENT)
         {
-            this.mPhotoUri = in.readString();
+            this.mPhotoFileName = in.readString();
         }
 
         if(in.readByte() == PRESENT)
@@ -160,10 +160,10 @@ public class GroupModel implements Parcelable {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(!TextUtils.isEmpty(this.mPhotoUri))
+        if(!TextUtils.isEmpty(this.mPhotoFileName))
         {
             dest.writeByte(PRESENT);
-            dest.writeString(this.mPhotoUri);
+            dest.writeString(this.mPhotoFileName);
         } else
         {
             dest.writeByte(NOT_PRESENT);
@@ -207,11 +207,11 @@ public class GroupModel implements Parcelable {
 
     }
 
-    public GroupModel(int id, String groupName, String photoUri, long createdAt, long updatedAt, int idAdmin, int highlighted) {
+    public GroupModel(int id, String groupName, String photoFileName, long createdAt, long updatedAt, int idAdmin, int highlighted) {
         //this.mUsers = new HashMap<Integer, LocalUser>();
         this.mId = id;
         this.mGroupName = groupName;
-        this.mPhotoUri = photoUri;
+        this.mPhotoFileName = photoFileName;
         this.mCreatedAt = createdAt;
         this.mUpdatedAt = updatedAt;
         this.mIdAdmin = idAdmin;
@@ -222,7 +222,7 @@ public class GroupModel implements Parcelable {
         //this.mUsers = new HashMap<Integer, LocalUser>();
         this.mId = 0;
         this.mGroupName = groupName;
-        this.mPhotoUri = null;
+        this.mPhotoFileName = null;
         this.mCreatedAt = 0;
         this.mUpdatedAt = 0;
         this.mIdAdmin = 0;
@@ -245,7 +245,7 @@ public class GroupModel implements Parcelable {
     }
 
     public GroupModel withPhotoUri(String photoUri){
-        this.mPhotoUri = photoUri;
+        this.mPhotoFileName = photoUri;
         return this;
     }
 

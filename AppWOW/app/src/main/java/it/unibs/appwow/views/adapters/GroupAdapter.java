@@ -87,7 +87,7 @@ public class GroupAdapter extends BaseAdapter {
         }
         final GroupModel itemGroup = (GroupModel) getItem(position);
         holder.groupName.setText(itemGroup.getGroupName());
-        holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoUri()));
+        holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoFileName()));
         // FIXME: 03/06/2016 MODIFICARE IN IMAGEVIEW
         if(itemGroup.isHighlighted()){
             holder.groupModified.setText("NEW");

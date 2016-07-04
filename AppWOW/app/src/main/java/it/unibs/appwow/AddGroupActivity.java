@@ -1,9 +1,11 @@
 package it.unibs.appwow;
 
-import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -20,15 +22,21 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.utils.CropOption;
+import it.unibs.appwow.utils.CropOptionAdapter;
+import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.Validator;
 import it.unibs.appwow.utils.graphicTools.PermissionUtils;
 
@@ -37,13 +45,15 @@ public class AddGroupActivity extends AppCompatActivity {
     private static final String TAG_LOG = AddGroupActivity.class.getSimpleName();
 
     private static final int SELECT_PICTURE_INTENT = 1;
-    private static final int REQUEST_CAMERA_INTENT = 2;
+    private static final int PICK_FROM_CAMERA_INTENT = 2;
+    private static final int CROP_FROM_CAMERA = 3;
     public static final String PASSING_GROUP_EXTRA = "group";
     private ImageView mGroupImage;
     private TextView mGroupNameView;
     private GroupModel mGroup;
-    private Bitmap mThumbnail;
-    private String mPhotoUri;
+    //private Bitmap mThumbnail;
+    private Uri mPhotoUri;
+    private String mFileName;
 
     private int mChoosenPhotoTask;
     private static final int TAKE_PHOTO = 1;
@@ -67,18 +77,43 @@ public class AddGroupActivity extends AppCompatActivity {
         });
         mGroupNameView = (TextView) findViewById(R.id.group_name_field);
         mGroup = GroupModel.create("");
-        mPhotoUri = "";
+        mFileName = "";
+        //mPhotoUri = "";
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_PICTURE_INTENT)
-                onSelectFromGalleryResult(data);
-            else if (requestCode == REQUEST_CAMERA_INTENT)
-                onCaptureImageResult(data);
+        if (resultCode != RESULT_OK) return;
+        switch (requestCode) {
+            case PICK_FROM_CAMERA_INTENT:
+                doCrop();
+                break;
+            case SELECT_PICTURE_INTENT:
+                mPhotoUri = data.getData();
+                doCrop();
+                break;
+            case CROP_FROM_CAMERA:
+                Bundle extras = data.getExtras();
+                if (extras != null) {
+                    Bitmap photo = extras.getParcelable("data");
+                    mGroupImage.setImageBitmap(photo);
+                    mFileName = FileUtils.writeBitmap(photo, this);
+                    Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                }
+                File f = new File(mPhotoUri.getPath());
+                if (f.exists()) f.delete();
+                break;
+
         }
+        /*if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_PICTURE_INTENT) {
+                onSelectFromGalleryResult(data);
+            }
+            else if (requestCode == PICK_FROM_CAMERA_INTENT){
+                onCaptureImageResult(data);
+            }
+        }*/
         /*if (requestCode == SELECT_PICTURE_INTENT) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri selectedImage = data.getData();
@@ -86,34 +121,53 @@ public class AddGroupActivity extends AppCompatActivity {
                 String path = getPath(selectedImage);
                 Drawable image = Drawable.createFromPath(path);
                 mGroupImage.setImageDrawable(image);
-                mGroup.setPhotoUri(selectedImage.toString());
+                mGroup.setPhotoFileName(selectedImage.toString());
                 Toast.makeText(AddGroupActivity.this, "Path: "+path, Toast.LENGTH_SHORT).show();
             }
         }*/
     }
 
     private void onSelectFromGalleryResult(Intent data) {
-
-
         if (data != null) {
             try {
-                mThumbnail = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+                Bitmap choosen = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+
+                /*Bitmap resizedBitmap = getResizedBitmap(mThumbnail, 200);
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+                String fileName = "photo_" + System.currentTimeMillis() + ".png";
+                File destination = new File(getDir("group_images", MODE_PRIVATE), fileName);
+                FileOutputStream fos;
+                try {
+                    destination.createNewFile();
+                    fos = new FileOutputStream(destination);
+                    fos.write(bytes.toByteArray());
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //FileInputStream fis = openFileInput(destination.getName());
+                //Log.d(TAG_LOG, "FILENAME: " + destination.getName());
+
+                mGroupImage.setImageBitmap(resizedBitmap);
+                mPhotoUri = data.getData().toString();
+                Log.d(TAG_LOG,"photo uri: " + mPhotoUri);*/
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-        mGroupImage.setImageBitmap(mThumbnail);
-        mPhotoUri = data.getData().toString();
     }
 
 
     private void onCaptureImageResult(Intent data) {
-        mThumbnail = (Bitmap) data.getExtras().get("data");
+        /*mThumbnail = (Bitmap) data.getExtras().get("data");
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        mThumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        mThumbnail.compress(Bitmap.CompressFormat.PNG, 90, bytes);
         File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
+                System.currentTimeMillis() + ".png");
 
         FileOutputStream fo;
         try {
@@ -127,7 +181,7 @@ public class AddGroupActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         mGroupImage.setImageBitmap(mThumbnail);
-        mPhotoUri = data.getData().toString();
+        mPhotoUri = data.getData().toString();*/
     }
 
     private void selectImage() {
@@ -158,8 +212,17 @@ public class AddGroupActivity extends AppCompatActivity {
     }
 
     private void cameraIntent() {
+        /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, PICK_FROM_CAMERA_INTENT);*/
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CAMERA_INTENT);
+        mPhotoUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".png"));
+        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mPhotoUri);
+        try {
+            intent.putExtra("return-data", true);
+            startActivityForResult(intent, PICK_FROM_CAMERA_INTENT);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void galleryIntent() {
@@ -189,6 +252,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
                     mGroup.setIdAdmin(currentUser.getId());
                     mGroup.setGroupName(mGroupNameView.getText().toString());
+                    mGroup.setPhotoFileName(mFileName);
                     addMembersIntent.putExtra(PASSING_GROUP_EXTRA, mGroup);
                     startActivity(addMembersIntent);
                     return true;
@@ -229,6 +293,75 @@ public class AddGroupActivity extends AppCompatActivity {
                     Log.d(TAG_LOG, "PERMISSION DENIED");
                 }
                 break;
+        }
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 0) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    private void doCrop() {
+        final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setType("image/*");
+        List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
+        int size = list.size();
+        if (size == 0) {
+            Toast.makeText(this, "Can not find image crop app", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            intent.setData(mPhotoUri);
+            intent.putExtra("outputX", 200);
+            intent.putExtra("outputY", 200);
+            intent.putExtra("aspectX", 1);
+            intent.putExtra("aspectY", 1);
+            intent.putExtra("scale", true);
+            intent.putExtra("return-data", true);
+            if (size == 1) {
+                Intent i = new Intent(intent);
+                ResolveInfo res = list.get(0);
+                i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                startActivityForResult(i, CROP_FROM_CAMERA);
+            } else {
+                for (ResolveInfo res : list) {
+                    final CropOption co = new CropOption();
+                    co.title = getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
+                    co.icon = getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
+                    co.appIntent = new Intent(intent);
+                    co.appIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    cropOptions.add(co);
+                }
+                CropOptionAdapter adapter = new CropOptionAdapter(getApplicationContext(), cropOptions);
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+                builder.setTitle("Choose Crop App");
+                builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        startActivityForResult(cropOptions.get(item).appIntent, CROP_FROM_CAMERA);
+                    }
+                });
+                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        if (mPhotoUri != null) {
+                            getContentResolver().delete(mPhotoUri, null, null);
+                            mPhotoUri = null;
+                        }
+                    }
+                });
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
+            }
         }
     }
 }

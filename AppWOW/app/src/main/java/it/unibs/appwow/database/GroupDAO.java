@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.models.Amount;
@@ -52,7 +51,7 @@ public class GroupDAO implements LocalDB_DAO {
         values.put(AppDB.Groups._ID, data.getId());
         values.put(AppDB.Groups.COLUMN_ID_ADMIN, data.getIdAdmin());
         values.put(AppDB.Groups.COLUMN_NAME, data.getGroupName());
-        values.put(AppDB.Groups.COLUMN_PHOTO, data.getPhotoUri());
+        values.put(AppDB.Groups.COLUMN_PHOTO, data.getPhotoFileName());
         values.put(AppDB.Groups.COLUMN_CREATED_AT, data.getCreatedAt());
         values.put(AppDB.Groups.COLUMN_UPDATED_AT, data.getUpdatedAt());
         values.put(AppDB.Groups.COLUMN_HIGHLIGHTED, data.getHighlighted());
