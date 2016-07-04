@@ -112,23 +112,28 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         mLocalUser = LocalUser.load(MyApplication.getAppContext());
         mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
         setTitle(mGroup.getGroupName());
+
+
         /**
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
+        /*
+        // Il primo metodo chiamato e' onResume e viene eseguito lì.
+        // Resta comunque il problema di visualizzare una progress bar.
         mSwipeRefreshLayout.post(new Runnable() {
                                      @Override
                                      public void run() {
-                                        mSwipeRefreshLayout.setRefreshing(true);
                                         Log.d(TAG_LOG,"onCreate post");
                                         fetchGroupDetails();
                                      }
                                  }
-        );
+        );*/
 
     }
 
     private void setFragmentAdapter() {
+        Log.d(TAG_LOG,"setFragmentAdapter");
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -204,6 +209,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
     @Override
     public void onRefresh() {
+        Log.d(TAG_LOG,"onRefresh");
         fetchGroupDetails();
     }
 
@@ -215,7 +221,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
      * Balancings
      */
     private void fetchGroupDetails(){
-        Log.d(TAG_LOG,"fetching group details");
+        Log.d(TAG_LOG,"Fetching group details");
         // showing refresh animation before making http call
         mSwipeRefreshLayout.setRefreshing(true);
         fetchUsers();
@@ -456,6 +462,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG_LOG,"onResume");
         fetchGroupDetails();
     }
 
