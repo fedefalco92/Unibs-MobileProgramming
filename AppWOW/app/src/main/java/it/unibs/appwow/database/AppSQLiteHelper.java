@@ -29,6 +29,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Groups.COLUMN_ID_ADMIN + " INTEGER, " +
             Groups.COLUMN_NAME + " TEXT, " +
             Groups.COLUMN_PHOTO + " TEXT, " +
+            Groups.COLUMN_PHOTO_UPDATED_AT + " NUMERIC, " +
             Groups.COLUMN_CREATED_AT + " NUMERIC, " +
             Groups.COLUMN_UPDATED_AT + " NUMERIC, " +
             Groups.COLUMN_HIGHLIGHTED + " INTEGER DEFAULT 0 " +

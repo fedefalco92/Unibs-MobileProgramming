@@ -8,6 +8,7 @@
     <color name="red">@color/md_red_A400</color>
     <color name="green">@color/md_green_A400</color>
     <color name="black">@color/md_black_1000</color>
+    <color name="white">@color/md_white_1000</color>
 
 
 <!-- google's material design colours from

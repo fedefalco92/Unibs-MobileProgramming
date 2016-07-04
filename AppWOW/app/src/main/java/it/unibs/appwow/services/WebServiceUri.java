@@ -35,6 +35,11 @@ public final class WebServiceUri {
         return Uri.withAppendedPath(group_uri,"debts");
     }
 
+    public final static Uri getGroupPhotosUri(int idGroup){
+        Uri group_uri = Uri.withAppendedPath(GROUPS_URI, String.valueOf(idGroup));
+        return Uri.withAppendedPath(group_uri,"photo");
+    }
+
     public static URL uriToUrl(Uri uri){
         URL url = null;
         try {

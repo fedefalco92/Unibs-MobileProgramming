@@ -25,6 +25,7 @@ public final class AppDB {
         public static final String COLUMN_ID_ADMIN = "idAdmin";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_PHOTO = "photo";
+        public static final String COLUMN_PHOTO_UPDATED_AT = "photo_updated_at";
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
         public static final String COLUMN_HIGHLIGHTED = "highlighted";

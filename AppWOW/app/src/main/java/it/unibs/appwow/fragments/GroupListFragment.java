@@ -2,6 +2,7 @@ package it.unibs.appwow.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -13,10 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONArray;
@@ -35,6 +38,7 @@ import it.unibs.appwow.R;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.database.GroupDAO;
+import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.views.adapters.GroupAdapter;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceUri;
@@ -216,38 +220,41 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                             dao.open();
                             Set<Integer> gruppiRicevuti = new HashSet<Integer>();
                             Set<Integer> gruppiLocali = dao.getLocalGroupsIds();
-
+                            // TODO: 04/07/2016  METODO CREATE(jSON) IN GROUPMODEL
                             if (response.length() > 0) {
 
                                 //dao.resetAllGroups();
                                 for(int i = 0; i < response.length(); i++){
                                     try {
                                         JSONObject groupJs = response.getJSONObject(i);
-                                        int id = groupJs.getInt("id");
-                                        gruppiRicevuti.add(id);
-                                        String server_updated_at_string = groupJs.getString("updated_at");
-                                        long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
-                                        long local_updated_at = dao.getUpdatedAt(id);
-                                        //aggiorno il gruppo solo se ha subito modifiche, SE IL GRUPPO NON ESISTE local_updated_at = 0L
-                                        //quindi il nuovo gruppo viene inserito
-                                        Log.d(TAG_LOG, "Group id: " + id + " SERVER UPD: " + server_updated_at_string + " LOCAL UPD: " + DateUtils.dateLongToString(local_updated_at));
+                                        GroupModel g = GroupModel.create(groupJs);
+                                        gruppiRicevuti.add(g.getId());
+
+                                        long server_updated_at = g.getUpdatedAt();
+                                        long local_updated_at = dao.getUpdatedAt(g.getId());
+                                        long server_photo_updated_at = g.getPhotoUpdatedAt();
+                                        long local_photo_updated_at = dao.getPhotoUpdatedAt(g.getId());
+
                                         if (server_updated_at > local_updated_at) {
-                                            // TODO: 30/06/2016  AGGIORNARE FOTO
-                                            String name = groupJs.getString("name");
-                                            int idAdmin = groupJs.getInt("idAdmin");
-                                            String created_at_string = groupJs.getString("created_at");
-                                            long created_at = DateUtils.dateStringToLong(created_at_string);
-                                            //JSONObject pivot = groupJs.getJSONObject("pivot");
-                                            GroupModel group = GroupModel.create(name).withId(id).withAdmin(idAdmin);
-                                            group.setCreatedAt(created_at);
-                                            //group.setUpdatedAt(server_updated_at);
-                                            //NON AGGIORNO UPDATED AT per ora in modo che quando entro nei dettagli il gruppo venga riaggiornato
-                                            group.setUpdatedAt(local_updated_at);
-                                            group.highlight();
-                                            dao.insertGroup(group);
-                                        } else {
-                                            //per ora non faccio niente
+                                            g.setUpdatedAt(local_updated_at);
+                                            g.setPhotoUpdatedAt(local_photo_updated_at);
+                                            g.highlight();
+                                            dao.insertGroup(g);
                                         }
+
+                                        if (server_photo_updated_at > local_photo_updated_at) {
+                                            // TODO: 04/07/2016 AGGIUNGERE FOTO
+                                            /**
+                                             * 1) richiesta get per scaricare la foto
+                                             * nell'onResponse:
+                                             * 2) memorizzo la foto in un file locale
+                                             * 3) scrivo il nome del file nel db locale
+                                             * 4) carico la foto dal db locale per visualizzarla
+                                             */
+                                            fetchPhoto(g.getId(),server_photo_updated_at);
+                                        }
+
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -310,6 +317,32 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
             mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void fetchPhoto(final int idGroup, final long server_photo_updated_at) {
+        // FIXME: 04/07/2016 COMMENTED FOR DEBUG
+        //Uri photoUri = WebServiceUri.getGroupPhotosUri(idGroup);
+        String url = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Jessica_Chastain_by_Gage_Skidmore.jpg";
+        // Retrieves an image specified by the URL, displays it in the UI.
+        ImageRequest request = new ImageRequest(url /*photoUri.toString()*/,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap bitmap) {
+                        String fileName = FileUtils.writeBitmap(bitmap, getActivity());
+                        GroupDAO dao = new GroupDAO();
+                        boolean success = dao.setPhotoFileName(idGroup, fileName);
+                        if(success) dao.touchGroupPhoto(idGroup, server_photo_updated_at);
+                        dao.close();
+                        Log.d(TAG_LOG, "FOTO SCARICATA :" + fileName);
+                        // TODO: 04/07/2016 NOTIFICARE ALL'ADAPTER........COME?
+                    }
+                }, 0, 0, null,
+                new Response.ErrorListener() {
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG_LOG, "VOLLEY ERROR: " + error);
+                    }
+                });
+        MyApplication.getInstance().addToRequestQueue(request);
     }
 
     /*

@@ -2,6 +2,7 @@ package it.unibs.appwow.views.adapters;
 
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,10 @@ import java.util.List;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.utils.FileUtils;
 
 /**
  * Created by Massi on 05/05/2016.
@@ -26,16 +30,19 @@ public class GroupAdapter extends BaseAdapter {
     private List<GroupModel> mItems = new ArrayList<GroupModel>();
     private final LayoutInflater mInflater;
     private GroupDAO dao = new GroupDAO();
+    private Context mContext;
+    private LocalUser mLocalUser;
 
     private class Holder {
         ImageView groupImageView;
         TextView groupName;
         TextView groupModified;
-       /* TextView personalStatus;
-        TextView groupModfiedIndicator;*/
+        TextView personalStatus;
     }
 
     public GroupAdapter(Context context){
+        mContext = context;
+        mLocalUser = LocalUser.load(mContext);
         mInflater = LayoutInflater.from(context);
         dao.open();
         mItems = dao.getAllGroups();
@@ -79,21 +86,46 @@ public class GroupAdapter extends BaseAdapter {
             view = mInflater.inflate(R.layout.tile_group_layout,null);
             holder = new Holder();
             holder.groupImageView = (ImageView) view.findViewById(R.id.imageView_groupPhoto);
-            holder.groupName = (TextView)view.findViewById(R.id.textView_groupName);
-            holder.groupModified = (TextView) view.findViewById(R.id.group_modified_indicator);
+            holder.groupName = (TextView)view.findViewById(R.id.group_tile_groupName);
+            holder.groupModified = (TextView) view.findViewById(R.id.group_tile_modified_indicator);
+            holder.personalStatus = (TextView) view.findViewById(R.id.group_tile_personalStatus);
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();
         }
         final GroupModel itemGroup = (GroupModel) getItem(position);
         holder.groupName.setText(itemGroup.getGroupName());
-        holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoFileName()));
-        // FIXME: 03/06/2016 MODIFICARE IN IMAGEVIEW
+        if(itemGroup.getPhotoFileName().isEmpty()){
+            //holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoFileName()));
+            // TODO: 04/07/2016 scommentare, commentato per debug
+            holder.groupImageView.setImageBitmap(FileUtils.readBitmap("photo_1467633848847.png", mContext));
+        } else {
+            holder.groupImageView.setImageBitmap(FileUtils.readBitmap(itemGroup.getPhotoFileName(), mContext));
+        }
+
         if(itemGroup.isHighlighted()){
             holder.groupModified.setText("NEW");
         } else {
             holder.groupModified.setText("UP TO DATE");
         }
+
+        GroupDAO dao = new GroupDAO();
+        dao.open();
+        Double userAmount = dao.getAmount(itemGroup.getId(), mLocalUser.getId());
+        dao.close();
+        if (userAmount!=null){
+            holder.personalStatus.setText(Amount.getAmountString(userAmount));
+            if(userAmount>0){
+                holder.personalStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green));
+            } else if(userAmount <0){
+                holder.personalStatus.setTextColor(ContextCompat.getColor(mContext, R.color.red));
+            } else{
+                holder.personalStatus.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            }
+        } else {
+            holder.personalStatus.setText("");
+        }
+
        /* final LocalDataModel itemModel = (LocalDataModel)getItem(position);
         holder.dateTextView.setText(DATE_FORMAT.format(itemModel.entryDate));
         holder.loveVoteTextView.setText("Love: " + itemModel.loveVote);

@@ -97,9 +97,12 @@ public class AddGroupActivity extends AppCompatActivity {
                 Bundle extras = data.getExtras();
                 if (extras != null) {
                     Bitmap photo = extras.getParcelable("data");
-                    mGroupImage.setImageBitmap(photo);
                     mFileName = FileUtils.writeBitmap(photo, this);
                     Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                    Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);
+                    //mGroupImage.setImageBitmap(photo);
+                    // TODO: 04/07/2016 scommentare riga precedente e cancellare istruzione successiva
+                    mGroupImage.setImageBitmap(readBitmap);
                 }
                 File f = new File(mPhotoUri.getPath());
                 if (f.exists()) f.delete();
@@ -295,7 +298,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 break;
         }
     }
-
+    /*
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -309,7 +312,7 @@ public class AddGroupActivity extends AppCompatActivity {
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
-    }
+    }*/
 
     private void doCrop() {
         final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();

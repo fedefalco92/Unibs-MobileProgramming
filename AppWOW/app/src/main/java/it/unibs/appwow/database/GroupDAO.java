@@ -27,6 +27,7 @@ public class GroupDAO implements LocalDB_DAO {
             AppDB.Groups.COLUMN_ID_ADMIN,
             AppDB.Groups.COLUMN_NAME,
             AppDB.Groups.COLUMN_PHOTO,
+            AppDB.Groups.COLUMN_PHOTO_UPDATED_AT,
             AppDB.Groups.COLUMN_CREATED_AT,
             AppDB.Groups.COLUMN_UPDATED_AT,
             AppDB.Groups.COLUMN_HIGHLIGHTED};
@@ -52,6 +53,7 @@ public class GroupDAO implements LocalDB_DAO {
         values.put(AppDB.Groups.COLUMN_ID_ADMIN, data.getIdAdmin());
         values.put(AppDB.Groups.COLUMN_NAME, data.getGroupName());
         values.put(AppDB.Groups.COLUMN_PHOTO, data.getPhotoFileName());
+        values.put(AppDB.Groups.COLUMN_PHOTO_UPDATED_AT, data.getPhotoUpdatedAt());
         values.put(AppDB.Groups.COLUMN_CREATED_AT, data.getCreatedAt());
         values.put(AppDB.Groups.COLUMN_UPDATED_AT, data.getUpdatedAt());
         values.put(AppDB.Groups.COLUMN_HIGHLIGHTED, data.getHighlighted());
@@ -64,13 +66,13 @@ public class GroupDAO implements LocalDB_DAO {
         int id = cursor.getInt(0);
         int idAdmin = cursor.getInt(1);
         String groupName = cursor.getString(2);
-        String photoUri = cursor.getString(3);
-        long createdAt = cursor.getLong(4);
-        long updatedAt = cursor.getLong(5);
-        int highlighted = cursor.getInt(6);
+        String photoFileName = cursor.getString(3);
+        long photoUpdatedAt = cursor.getLong(4);
+        long createdAt = cursor.getLong(5);
+        long updatedAt = cursor.getLong(6);
+        int highlighted = cursor.getInt(7);
 
-
-        return new GroupModel(id,groupName, photoUri, createdAt, updatedAt, idAdmin, highlighted);
+        return new GroupModel(id,groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, idAdmin, highlighted);
     }
 
     /*
@@ -156,6 +158,24 @@ public class GroupDAO implements LocalDB_DAO {
         }
     }
 
+    public long getPhotoUpdatedAt(int groupId){
+        List<GroupModel> data = new ArrayList<GroupModel>();
+        Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
+                allColumns, AppDB.Groups._ID + "=" + groupId,null,null,null,null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            GroupModel d = cursorToGroup(cursor);
+            data.add(d);
+            cursor.moveToNext();
+        }
+        cursor.close(); // remember to always close the cursor!
+        if(data.size()!=1){
+            return 0L;
+        } else {
+            return data.get(0).getPhotoUpdatedAt();
+        }
+    }
+
     public boolean highlightGroup(int id){
         ContentValues groupToUpdate = new ContentValues();
         groupToUpdate.put(AppDB.Groups.COLUMN_HIGHLIGHTED, 1);
@@ -237,6 +257,43 @@ public class GroupDAO implements LocalDB_DAO {
         //"UPDATE groups SET updated_at = " + timestamp + " WHERE _id = " + idGroup;
         String query = "UPDATE " + AppDB.Groups.TABLE_GROUPS
                 + " SET " + AppDB.Groups.COLUMN_UPDATED_AT + " = " + timestamp
+                + " WHERE " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID + " = " + idGroup;
+        Cursor cursor = database.rawQuery(query, null);
+        cursor.moveToFirst();
+        cursor.close();
+    }
+
+    public Double getAmount(int idGroup, int idUser) {
+        Double amount = null;
+        String query = "SELECT " +AppDB.UserGroup.TABLE_USER_GROUP + "." + AppDB.UserGroup.COLUMN_AMOUNT +
+                " FROM " + AppDB.UserGroup.TABLE_USER_GROUP +
+                " WHERE " + AppDB.UserGroup.TABLE_USER_GROUP + "." + AppDB.UserGroup.COLUMN_ID_GROUP + " = ?" +
+                " AND " + AppDB.UserGroup.TABLE_USER_GROUP + "." + AppDB.UserGroup.COLUMN_ID_USER + " = ?;";
+        Log.d(TAG_LOG, "QUERY USER AMOUNT: " + query);
+
+        Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup), String.valueOf(idUser)});
+        cursor.moveToFirst();
+        if(!cursor.isAfterLast()){
+            amount = new Double(cursor.getDouble(0));
+            cursor.close(); // remember to always close the cursor!
+        }
+        return amount;
+    }
+
+    public boolean setPhotoFileName(int idGroup, String fileName) {
+        String query = "UPDATE " + AppDB.Groups.TABLE_GROUPS
+                + " SET " + AppDB.Groups.COLUMN_PHOTO + " = \"" + fileName + "\""
+                + " WHERE " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID + " = " + idGroup;
+        Cursor cursor = database.rawQuery(query, null);
+        cursor.moveToFirst();
+        cursor.close();
+        // FIXME: 04/07/2016 RITORNARE TRUE O FALSE...CAPIRE COME FUNZIONA RAWQUERY...EVENTUALMENTE USARE IL METODO UPDATE();
+        return true;
+    }
+
+    public void touchGroupPhoto(int idGroup, long timestamp) {
+        String query = "UPDATE " + AppDB.Groups.TABLE_GROUPS
+                + " SET " + AppDB.Groups.COLUMN_PHOTO_UPDATED_AT + " = " + timestamp
                 + " WHERE " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID + " = " + idGroup;
         Cursor cursor = database.rawQuery(query, null);
         cursor.moveToFirst();

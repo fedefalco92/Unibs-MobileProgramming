@@ -4,6 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import it.unibs.appwow.utils.DateUtils;
+
 /**
  * Created by Massi on 05/05/2016.
  */
@@ -23,6 +28,7 @@ public class GroupModel implements Parcelable {
     private int mId;
     private String mGroupName;
     private String mPhotoFileName;
+    private long mPhotoUpdatedAt;
     private long mCreatedAt;
     private long mUpdatedAt;
     private int mIdAdmin;
@@ -86,6 +92,13 @@ public class GroupModel implements Parcelable {
         this.mHighlighted = mHighlighted;
     }
 
+    public long getPhotoUpdatedAt() {
+        return mPhotoUpdatedAt;
+    }
+
+    public void setPhotoUpdatedAt(long photoUpdatedAt) {
+        mPhotoUpdatedAt = photoUpdatedAt;
+    }
 
     public static final Parcelable.Creator<GroupModel> CREATOR = new Parcelable.Creator<GroupModel>()
     {
@@ -116,6 +129,11 @@ public class GroupModel implements Parcelable {
         if(in.readByte() == PRESENT)
         {
             this.mPhotoFileName = in.readString();
+        }
+
+        if(in.readByte() == PRESENT)
+        {
+            this.mPhotoUpdatedAt = in.readLong();
         }
 
         if(in.readByte() == PRESENT)
@@ -151,67 +169,63 @@ public class GroupModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags)
     {
         dest.writeInt(this.mId);
-        if(!TextUtils.isEmpty(this.mGroupName))
-        {
+        if (!TextUtils.isEmpty(this.mGroupName)) {
             dest.writeByte(PRESENT);
             dest.writeString(this.mGroupName);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(!TextUtils.isEmpty(this.mPhotoFileName))
-        {
+        if (!TextUtils.isEmpty(this.mPhotoFileName)) {
             dest.writeByte(PRESENT);
             dest.writeString(this.mPhotoFileName);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(this.mCreatedAt!=0)
-        {
+        if (this.mPhotoUpdatedAt != 0) {
+            dest.writeByte(PRESENT);
+            dest.writeLong(this.mPhotoUpdatedAt);
+        } else {
+            dest.writeByte(NOT_PRESENT);
+        }
+
+        if (this.mCreatedAt != 0) {
             dest.writeByte(PRESENT);
             dest.writeLong(this.mCreatedAt);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(this.mUpdatedAt!=0)
-        {
+        if (this.mUpdatedAt != 0) {
             dest.writeByte(PRESENT);
             dest.writeLong(this.mUpdatedAt);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(this.mIdAdmin!=0)
-        {
+        if (this.mIdAdmin != 0) {
             dest.writeByte(PRESENT);
             dest.writeLong(this.mIdAdmin);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(this.mHighlighted!=0)
-        {
+        if (this.mHighlighted != 0) {
             dest.writeByte(PRESENT);
             dest.writeInt(this.mHighlighted);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
     }
 
-    public GroupModel(int id, String groupName, String photoFileName, long createdAt, long updatedAt, int idAdmin, int highlighted) {
+    public GroupModel(int id, String groupName, String photoFileName, long photoUpdatedAt, long createdAt, long updatedAt, int idAdmin, int highlighted) {
         //this.mUsers = new HashMap<Integer, LocalUser>();
         this.mId = id;
         this.mGroupName = groupName;
         this.mPhotoFileName = photoFileName;
+        this.mPhotoUpdatedAt =photoUpdatedAt;
         this.mCreatedAt = createdAt;
         this.mUpdatedAt = updatedAt;
         this.mIdAdmin = idAdmin;
@@ -223,6 +237,7 @@ public class GroupModel implements Parcelable {
         this.mId = 0;
         this.mGroupName = groupName;
         this.mPhotoFileName = null;
+        this.mPhotoUpdatedAt = 0;
         this.mCreatedAt = 0;
         this.mUpdatedAt = 0;
         this.mIdAdmin = 0;
@@ -244,7 +259,7 @@ public class GroupModel implements Parcelable {
         return this;
     }
 
-    public GroupModel withPhotoUri(String photoUri){
+    public GroupModel withPhotoFileName(String photoUri){
         this.mPhotoFileName = photoUri;
         return this;
     }
@@ -276,6 +291,18 @@ public class GroupModel implements Parcelable {
         return mUsers.get(getIdAdmin());
     }*/
 
+    public static GroupModel create(JSONObject gjs) throws JSONException{
+        int id = gjs.getInt("id");
+        int idAdmin = gjs.getInt("idAdmin");
+        String name = gjs.getString("name");
+        long photoUpdatedAt = DateUtils.dateStringToLong(gjs.getString("photo_updated_at"));
+        long createdAt = DateUtils.dateStringToLong(gjs.getString("created_at"));
+        long updatedAt = DateUtils.dateStringToLong(gjs.getString("updated_at"));
+
+        return new GroupModel(id,name, "", photoUpdatedAt,createdAt,updatedAt,idAdmin, 0);
+
+    }
+
     public boolean isHighlighted(){
         return mHighlighted > 0;
     }
@@ -292,6 +319,4 @@ public class GroupModel implements Parcelable {
         builder.append(mGroupName);
         return builder.toString();
     }
-
-
 }

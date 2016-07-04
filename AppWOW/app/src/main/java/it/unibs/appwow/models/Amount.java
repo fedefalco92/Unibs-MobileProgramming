@@ -54,6 +54,11 @@ public class Amount {
         return formatter.format(mAmount);
     }
 
+    public static String getAmountString(double amount){
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        return formatter.format(amount);
+    }
+
     public void setAmount(double amount) {
         this.mAmount = amount;
     }
