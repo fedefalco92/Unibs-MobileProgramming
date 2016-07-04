@@ -85,6 +85,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG_LOG,"onCreate");
         //mRequestPending = 0;
         
         setContentView(R.layout.activity_group_details);
@@ -118,8 +119,9 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         mSwipeRefreshLayout.post(new Runnable() {
                                      @Override
                                      public void run() {
-                                         mSwipeRefreshLayout.setRefreshing(true);
-                                         fetchGroupDetails();
+                                        mSwipeRefreshLayout.setRefreshing(true);
+                                        Log.d(TAG_LOG,"onCreate post");
+                                        fetchGroupDetails();
                                      }
                                  }
         );
@@ -235,9 +237,20 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                             String server_updated_at_string = response.getString("updated_at");
                             long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
                             long local_updated_at = dao.getUpdatedAt(mGroup.getId());
-
+                            dao.close();
                             if (server_updated_at > local_updated_at) {
                                 fetchCosts(server_updated_at);
+                                /*
+                                fetchDebts(server_updated_at); // Aggiunto DEBUG
+
+                                //AGGIORNO LA DATA DI MODIFICA DEL GRUPPO IN LOCALE
+                                mGroup.setUpdatedAt(server_updated_at);
+                                dao.insertGroup(mGroup);
+                                dao.close();
+
+                                // TODO: 29/06/2016  DA OTTIMIZZARE
+                                setFragmentAdapter();
+                                mSwipeRefreshLayout.setRefreshing(false);*/
                             } else {
                                 //se il gruppo locale è più aggiornato di quello del server?
                                 Log.d(TAG_LOG, "Group up to date");
@@ -370,7 +383,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                             dao.close();
                         }
 
-                        fetchDebts(server_updated_at);
+                        fetchDebts(server_updated_at); //rimosso DEBUG
                     }
                 },
                 new Response.ErrorListener(){
@@ -410,16 +423,21 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                             }
                             dao.close();
                         }
+
+
                         //AGGIORNO LA DATA DI MODIFICA DEL GRUPPO IN LOCALE
                         GroupDAO dao = new GroupDAO();
                         dao.open();
+                        /*
                         mGroup.setUpdatedAt(server_updated_at);
-                        dao.insertGroup(mGroup);
+                        dao.insertGroup(mGroup);*/
+                        dao.touchGroup(mGroup.getId(),server_updated_at);
                         dao.close();
 
-                        // TODO: 29/06/2016  DA OTTIMIZZARE
+                        // TODO: 29/06/2016  DA OTTIMIZZARE*/
                         setFragmentAdapter();
                         mSwipeRefreshLayout.setRefreshing(false);
+
                     }
                 },
                 new Response.ErrorListener(){

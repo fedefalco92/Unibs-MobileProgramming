@@ -47,7 +47,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Payments.COLUMN_POSITION + " TEXT, " +
             Payments.COLUMN_AMOUNT_DETAILS + " TEXT, " +
             "FOREIGN KEY (" + Payments.COLUMN_ID_USER + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
-            "FOREIGN KEY (" + Payments.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ")" +
+            "FOREIGN KEY (" + Payments.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ") ON UPDATE CASCADE ON DELETE CASCADE" +
             ");";
 
     private static final String TABLE_DEBTS_CREATE = "CREATE TABLE " + Debts.TABLE_DEBTS + " ("+
@@ -56,7 +56,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Debts.COLUMN_ID_FROM + " INTEGER NOT NULL, " +
             Debts.COLUMN_ID_TO + " INTEGER NOT NULL, " +
             Debts.COLUMN_AMOUNT + " REAL, " +
-            "FOREIGN KEY (" + Debts.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ") ON DELETE CASCADE," +
+            "FOREIGN KEY (" + Debts.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ") ON UPDATE CASCADE ON DELETE CASCADE," +
             "FOREIGN KEY (" + Debts.COLUMN_ID_FROM + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
             "FOREIGN KEY (" + Debts.COLUMN_ID_TO+ ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")" +
             ");";
@@ -67,7 +67,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             UserGroup.COLUMN_UPDATED_AT + " NUMERIC, " +
             "PRIMARY KEY (" + UserGroup.COLUMN_ID_USER + ", " + UserGroup.COLUMN_ID_GROUP + "), " +
             "FOREIGN KEY (" + UserGroup.COLUMN_ID_USER + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
-            "FOREIGN KEY (" + UserGroup.COLUMN_ID_GROUP+ ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ") ON DELETE CASCADE " +
+            "FOREIGN KEY (" + UserGroup.COLUMN_ID_GROUP+ ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ") ON UPDATE CASCADE ON DELETE CASCADE " +
             ");";
 
 

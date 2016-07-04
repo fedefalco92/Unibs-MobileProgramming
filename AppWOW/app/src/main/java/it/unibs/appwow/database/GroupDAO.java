@@ -231,4 +231,11 @@ public class GroupDAO implements LocalDB_DAO {
         cursor.close(); // remember to always close the cursor!
         return adminName;
     }
+
+    public void touchGroup(int idGroup, long timestamp){
+        String query = "UPDATE groups SET updated_at = " + timestamp + " WHERE _id = " + idGroup;
+        Cursor cursor = database.rawQuery(query,null);
+        cursor.moveToFirst();
+        cursor.close();
+    }
 }

@@ -56,7 +56,7 @@ public class DebtsAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        final Debt item = (Debt) getItem(position);
+        final DebtModel item = (DebtModel) getItem(position);
         return item.getId();
     }
 
