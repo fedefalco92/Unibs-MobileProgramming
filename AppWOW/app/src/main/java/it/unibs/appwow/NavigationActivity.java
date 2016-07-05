@@ -186,10 +186,12 @@ public class NavigationActivity extends AppCompatActivity
             currentUser.logout(MyApplication.getAppContext());
             deleteDatabase(AppDB.DATABASE_NAME); // Elimina il db
             Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
+            login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(login);
             finish();
         } else if (id == R.id.nav_login){
             Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
+            login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(login);
             finish();
         }

@@ -118,7 +118,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
-        /*
         // Il primo metodo chiamato e' onResume e viene eseguito lì.
         // Resta comunque il problema di visualizzare una progress bar.
         mSwipeRefreshLayout.post(new Runnable() {
@@ -128,7 +127,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                                         fetchGroupDetails();
                                      }
                                  }
-        );*/
+        );
 
     }
 
@@ -463,7 +462,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     protected void onResume() {
         super.onResume();
         Log.d(TAG_LOG,"onResume");
-        fetchGroupDetails();
+        //fetchGroupDetails();
     }
 
     /**

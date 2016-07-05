@@ -150,7 +150,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
-        /* // Viene chiamato onResume
+        // Viene chiamato onResume
         mSwipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -158,7 +158,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                         fetchGroups();
                                     }
                                 }
-        );*/
+        );
 
     }
 
@@ -328,7 +328,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void fetchPhoto(final int idGroup, final long server_photo_updated_at) {
-        Log.d(TAG_LOG,"fetchpPhoto");
+        Log.d(TAG_LOG,"fetchPhoto");
         // FIXME: 04/07/2016 COMMENTED FOR DEBUG
         //Uri photoUri = WebServiceUri.getGroupPhotosUri(idGroup);
         String url = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Jessica_Chastain_by_Gage_Skidmore.jpg";
@@ -400,7 +400,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onResume() {
         super.onResume();
         Log.d(TAG_LOG,"onResume");
-        fetchGroups(); // Aggiunto qui
+        //fetchGroups();
         refreshGrid();
         //Log.d(TAG_LOG, "on resume completed");
     }
