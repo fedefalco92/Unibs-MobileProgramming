@@ -94,6 +94,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG_LOG,"onCreate");
         if (getArguments() != null) {
             mLocalUser = getArguments().getParcelable(ARG_USER);
         }
@@ -102,6 +103,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG_LOG,"onCreateView");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.content_group, container, false);
     }
@@ -110,6 +112,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG_LOG,"onViewCreated");
         mAdapter = new GroupAdapter(getContext());
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.groups_swipe_refresh_layout);
         mGridView = (GridView)view.findViewById(R.id.gridview_groups);
@@ -147,6 +150,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
+        /* // Viene chiamato onResume
         mSwipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -154,13 +158,14 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                         fetchGroups();
                                     }
                                 }
-        );
+        );*/
 
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG_LOG,"onActivityCreated");
         getActivity().setTitle(R.string.online_groups_string);
     }
 
@@ -174,6 +179,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d(TAG_LOG,"onAttach");
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -185,11 +191,13 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d(TAG_LOG,"onDetach");
         mListener = null;
     }
 
     @Override
     public void onRefresh() {
+        Log.d(TAG_LOG,"onRefresh");
         fetchGroups();
     }
 
@@ -320,6 +328,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void fetchPhoto(final int idGroup, final long server_photo_updated_at) {
+        Log.d(TAG_LOG,"fetchpPhoto");
         // FIXME: 04/07/2016 COMMENTED FOR DEBUG
         //Uri photoUri = WebServiceUri.getGroupPhotosUri(idGroup);
         String url = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Jessica_Chastain_by_Gage_Skidmore.jpg";
@@ -373,13 +382,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         builder.show();*//*
     }*/
 
-/*
-    @Override
-    public void onResume() {
-        super.onResume();
-        mAdapter.notifyDataSetChanged();
-    }
-*/
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -397,11 +399,14 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG_LOG,"onResume");
+        fetchGroups(); // Aggiunto qui
         refreshGrid();
         //Log.d(TAG_LOG, "on resume completed");
     }
 
     private void refreshGrid() {
+        Log.d(TAG_LOG,"refreshGrid");
         mAdapter = new GroupAdapter(MyApplication.getAppContext());
         mGridView.setAdapter(mAdapter);
     }
