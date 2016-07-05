@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.VolleyMultipartHelper;
@@ -273,10 +274,25 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     public void onResponse(NetworkResponse response) {
                         String resultResponse = new String(response.data);
                         if (!resultResponse.isEmpty()) {
+                            try {
+                                GroupModel created = GroupModel.create(new JSONObject(resultResponse));
+                                String fileName = mGroup.getPhotoFileName();
+                                boolean success = FileUtils.renameImageFile(fileName,FileUtils.getGroupImageFileName(created.getId()), getBaseContext());
+                                if(success){
+                                    created.setPhotoFileName(FileUtils.getGroupImageFileName(created.getId()));
+                                }
+                                GroupDAO dao = new GroupDAO();
+                                dao.open();
+                                dao.insertGroup(created);
+                                dao.close();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
                             Intent navigationActivity = new Intent(AddGroupMembersActivity.this, NavigationActivity.class);
                             navigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(navigationActivity);
+
                         } else {
                             showProgress(false);
                             Log.d(TAG_LOG, "EMPTY RESPONSE ################################################");

@@ -96,4 +96,25 @@ public class FileUtils {
         }
         return immagine;
     }
+
+    public static boolean deleteTemporaryFile(String fileName, Context context){
+        File file = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), fileName);
+        if(file.exists()){
+            return file.delete();
+        }
+        return false;
+    }
+
+    public static File getImageFile(String fileName, Context context){
+        return new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), fileName);
+    }
+
+    public static boolean renameImageFile(String oldImageName, String newImageName, Context context){
+        File old = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), oldImageName);
+        File file = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), newImageName);
+        if(old.exists()){
+            return old.renameTo(file);
+        }
+        return false;
+    }
 }
