@@ -285,10 +285,10 @@ public class GroupDAO implements LocalDB_DAO {
                 + " SET " + AppDB.Groups.COLUMN_PHOTO + " = \"" + fileName + "\""
                 + " WHERE " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID + " = " + idGroup;
         Cursor cursor = database.rawQuery(query, null);
-        cursor.moveToFirst();
+        boolean ok = cursor.moveToFirst(); // Ritorna falso se e' vuoto.
         cursor.close();
         // FIXME: 04/07/2016 RITORNARE TRUE O FALSE...CAPIRE COME FUNZIONA RAWQUERY...EVENTUALMENTE USARE IL METODO UPDATE();
-        return true;
+        return ok;
     }
 
     public void touchGroupPhoto(int idGroup, long timestamp) {

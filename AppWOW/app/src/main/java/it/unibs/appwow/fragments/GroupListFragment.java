@@ -330,6 +330,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                     public void onResponse(Bitmap bitmap) {
                         String fileName = FileUtils.writeBitmap(bitmap, getActivity());
                         GroupDAO dao = new GroupDAO();
+                        dao.open(); // Riga mancante
                         boolean success = dao.setPhotoFileName(idGroup, fileName);
                         if(success) dao.touchGroupPhoto(idGroup, server_photo_updated_at);
                         dao.close();
