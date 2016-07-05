@@ -96,10 +96,10 @@ public class AddGroupActivity extends AppCompatActivity {
                     Bitmap photo = extras.getParcelable("data");
                     mFileName = FileUtils.writeBitmap(photo, this);
                     Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
-                    Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);
+                    //Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);
                     //mGroupImage.setImageBitmap(photo);
                     // TODO: 04/07/2016 scommentare riga precedente e cancellare istruzione successiva
-                    mGroupImage.setImageBitmap(readBitmap);
+                    mGroupImage.setImageBitmap(photo);
                 }
                 File f = new File(mPhotoUri.getPath());
                 if (f.exists()) f.delete();

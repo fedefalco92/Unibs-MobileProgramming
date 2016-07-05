@@ -253,12 +253,11 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                         GroupModel gserver = GroupModel.create(groupJs);
                                         GroupModel glocal = dao.getSingleGroup(gserver.getId());
                                         gruppiRicevuti.add(gserver.getId());
+                                        long server_updated_at = gserver.getUpdatedAt();
+                                        long server_photo_updated_at = gserver.getPhotoUpdatedAt();
                                         if(glocal!=null){
-                                            long server_updated_at = gserver.getUpdatedAt();
                                             long local_updated_at = glocal.getUpdatedAt();
-                                            long server_photo_updated_at = gserver.getPhotoUpdatedAt();
                                             long local_photo_updated_at = glocal.getPhotoUpdatedAt();
-
                                             if (server_updated_at > local_updated_at) {
 
                                                 //eseguo l'update
@@ -285,6 +284,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                             }
                                         } else {
                                             dao.insertGroup(gserver);
+                                            fetchPhoto(gserver.getId(),server_photo_updated_at);
+                                            // FIXME: 05/07/2016 la foto non si aggiorna subito
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -349,66 +350,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-/*
-    private void fetchUsers(){
-        Log.d(TAG_LOG,"fetchUsers method");
-
-        // Volley's json array request object
-        Uri groupUsersUri = WebServiceUri.getGroupUsersUri(mGroup.getId());
-        URL url = WebServiceUri.uriToUrl(groupUsersUri);
-        JsonArrayRequest usersRequest = new JsonArrayRequest(url.toString(),
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG_LOG, "USERS response = " + response.toString());
-
-                        if (response.length() > 0) {
-                            UserDAO udao = new UserDAO();
-                            udao.open();
-                            UserGroupDAO ugdao = new UserGroupDAO();
-                            ugdao.open();
-                            for (int i = 0; i < response.length(); i++) {
-                                try {
-                                    JSONObject userJs = response.getJSONObject(i);
-                                    UserModel user = UserModel.create(userJs);
-
-                                    long server_updated_at = user.getUpdatedAt();
-                                    long local_updated_at = udao.getUpdatedAt(user.getId());
-
-                                    if (server_updated_at > local_updated_at) {
-
-                                        udao.insertUser(user);
-                                        Log.d(TAG_LOG, "INSERTED USER -> " + user);
-                                    } else {
-                                        Log.d(TAG_LOG, "LocalUser -> " + user + " up to date");
-                                    }
-
-                                    JSONObject pivot = userJs.getJSONObject("pivot");
-                                    UserGroupModel piv = UserGroupModel.create(pivot);
-                                    if(!piv.isUpdated()){
-                                        ugdao.insertUserGroup(piv);
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            udao.close();
-                            ugdao.close();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-                        Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-        // Adding request to request queue
-        MyApplication.getInstance().addToRequestQueue(usersRequest);
-    }*/
-
     private void fetchPhoto(final int idGroup, final long server_photo_updated_at) {
         Log.d(TAG_LOG,"fetchPhoto");
         // FIXME: 04/07/2016 COMMENTED FOR DEBUG
@@ -437,6 +378,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                         Log.e(TAG_LOG, "VOLLEY ERROR: " + error);
                     }
                 });
+        // FIXME: 05/07/2016  è possibile sistemare sta cosa?
        /* int posizioneGruppo = mAdapter.getGroupPosition(idGroup);
         Log.d(TAG_LOG, "posizione gruppo: " + posizioneGruppo);
         View v = mAdapter.getView(posizioneGruppo,null,mGridView);

@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -29,6 +30,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -37,6 +39,9 @@ import java.util.Set;
 
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.services.VolleyMultipartHelper;
+import it.unibs.appwow.services.VolleyMultipartRequest;
+import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.views.adapters.GroupMembersAdapter;
 import it.unibs.appwow.models.parc.GroupModel;
@@ -254,11 +259,62 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         String name = mGroup.getGroupName();
         String idAdmin = String.valueOf(mGroup.getIdAdmin());
         String users = IdEncodingUtils.encodeIds(mAdapter.getItems());
-        String[] values = {name, idAdmin, users};
+        String[] values = {name, idAdmin, users,};
+
 
         Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
-        StringRequest postRequest = WebServiceRequest.
-                stringRequest(Request.Method.POST, WebServiceUri.GROUPS_URI.toString(), requestParams, responseListenerAddGroup(), responseErrorListenerAddGroup());
+
+
+        /*StringRequest postRequest = WebServiceRequest.
+                stringRequest(Request.Method.POST, WebServiceUri.GROUPS_URI.toString(), requestParams, responseListenerAddGroup(), responseErrorListenerAddGroup());*/
+        VolleyMultipartRequest postRequest = new VolleyMultipartRequest(Request.Method.POST, WebServiceUri.GROUPS_URI.toString(),
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        String resultResponse = new String(response.data);
+                        if (!resultResponse.isEmpty()) {
+                            Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
+                            Intent navigationActivity = new Intent(AddGroupMembersActivity.this, NavigationActivity.class);
+                            navigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(navigationActivity);
+                        } else {
+                            showProgress(false);
+                            Log.d(TAG_LOG, "EMPTY RESPONSE ################################################");
+                            Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_error, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                showProgress(false);
+                Log.e(TAG_LOG,"VOLLEY ERROR " + error.getMessage());
+                Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+            }
+        }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        String[] keys = {"name", "idAdmin", "users"};
+                        String name = mGroup.getGroupName();
+                        String idAdmin = String.valueOf(mGroup.getIdAdmin());
+                        String users = IdEncodingUtils.encodeIds(mAdapter.getItems());
+                        String[] values = {name, idAdmin, users,};
+                        Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
+                        return requestParams;
+                    }
+
+                @Override
+                protected Map<String, DataPart> getByteData() {
+                    Map<String, DataPart> params = new HashMap<>();
+                    // file name could found file base or direct access from real path
+                    // for now just get bitmap data from ImageView
+                    params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readBitmap(mGroup.getPhotoFileName(), getBaseContext())), "image/png"));
+
+
+                    return params;
+                }
+        };
+
+
         MyApplication.getInstance().addToRequestQueue(postRequest);
     }
 
