@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <it.unibs.appwow.utils.graphicTools.SquareImageView
-        android:id="@+id/imageView_groupPhoto"
+        android:id="@+id/group_tile_imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"

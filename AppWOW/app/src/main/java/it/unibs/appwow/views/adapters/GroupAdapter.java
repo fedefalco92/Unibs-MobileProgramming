@@ -79,13 +79,23 @@ public class GroupAdapter extends BaseAdapter {
         return itemGroup.getId();
     }
 
+    public int getGroupPosition(int idGroup){
+        for(GroupModel g:mItems){
+            if(g.getId()==idGroup)
+                return mItems.indexOf(g);
+        }
+        return -1;
+    }
+
+
+
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
         Holder holder = null;
         if(view==null) {
             view = mInflater.inflate(R.layout.tile_group_layout,null);
             holder = new Holder();
-            holder.groupImageView = (ImageView) view.findViewById(R.id.imageView_groupPhoto);
+            holder.groupImageView = (ImageView) view.findViewById(R.id.group_tile_imageView);
             holder.groupName = (TextView)view.findViewById(R.id.group_tile_groupName);
             holder.groupModified = (TextView) view.findViewById(R.id.group_tile_modified_indicator);
             holder.personalStatus = (TextView) view.findViewById(R.id.group_tile_personalStatus);
@@ -96,11 +106,11 @@ public class GroupAdapter extends BaseAdapter {
         final GroupModel itemGroup = (GroupModel) getItem(position);
         holder.groupName.setText(itemGroup.getGroupName());
         if(itemGroup.getPhotoFileName().isEmpty()){
-            //holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoFileName()));
+            holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoFileName()));
             // TODO: 04/07/2016 scommentare, commentato per debug
-            holder.groupImageView.setImageBitmap(FileUtils.readBitmap("photo_1467633848847.png", mContext));
+            //holder.groupImageView.setImageBitmap(FileUtils.readBitmap("photo_1467633848847.png", mContext));
         } else {
-            holder.groupImageView.setImageBitmap(FileUtils.readBitmap(itemGroup.getPhotoFileName(), mContext));
+            holder.groupImageView.setImageBitmap(FileUtils.readGroupImage(itemGroup.getId(), mContext));
         }
 
         if(itemGroup.isHighlighted()){

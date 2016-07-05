@@ -199,15 +199,8 @@ public class GroupDAO implements LocalDB_DAO {
         database.delete(AppDB.Groups.TABLE_GROUPS,AppDB.Groups._ID + " = ? ;",new String[] {String.valueOf(id)});
     }
     
-    public void updateSingleGroup(long id, String groupName, int photoUri, long createdAt, long updatedAt, long idAdmin) {
-        ContentValues groupToInsert = new ContentValues();
-        groupToInsert.put(AppDB.Groups._ID, id);
-        groupToInsert.put(AppDB.Groups.COLUMN_NAME, groupName);
-        groupToInsert.put(AppDB.Groups.COLUMN_PHOTO, photoUri);
-        groupToInsert.put(AppDB.Groups.COLUMN_CREATED_AT, createdAt);
-        groupToInsert.put(AppDB.Groups.COLUMN_UPDATED_AT, updatedAt);
-        groupToInsert.put(AppDB.Groups.COLUMN_ID_ADMIN, idAdmin);
-
+    public void updateSingleGroup(int id, int idAdmin, String groupName, String photoFileName, long photoUpdatedAt, long createdAt, long updatedAt, int highlighted) {
+        ContentValues groupToInsert = groupToValues(new GroupModel(id, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, idAdmin, highlighted));
         database.update(AppDB.Groups.TABLE_GROUPS, groupToInsert, AppDB.Groups._ID + " = ?",new String[] {"" + id});
     }
 
@@ -298,5 +291,16 @@ public class GroupDAO implements LocalDB_DAO {
         Cursor cursor = database.rawQuery(query, null);
         cursor.moveToFirst();
         cursor.close();
+    }
+
+    public GroupModel getSingleGroup(int idGroup){
+        GroupModel res = null;
+        Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
+                allColumns,AppDB.Groups._ID + " = " + idGroup ,null,null,null,null);
+        if(cursor.moveToFirst()){
+            res = cursorToGroup(cursor);
+        }
+        cursor.close();
+        return res;
     }
 }

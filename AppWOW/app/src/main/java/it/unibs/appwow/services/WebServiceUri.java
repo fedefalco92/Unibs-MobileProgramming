@@ -40,6 +40,11 @@ public final class WebServiceUri {
         return Uri.withAppendedPath(group_uri,"photo");
     }
 
+    public final static Uri getGroupsUri(int idUser){
+        Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(idUser));
+        return Uri.withAppendedPath(user_uri, "groups");
+    }
+
     public static URL uriToUrl(Uri uri){
         URL url = null;
         try {

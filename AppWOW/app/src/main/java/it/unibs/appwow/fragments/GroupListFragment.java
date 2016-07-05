@@ -1,9 +1,14 @@
 package it.unibs.appwow.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -26,8 +31,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.acl.Group;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -35,8 +48,11 @@ import java.util.Set;
 import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
+import it.unibs.appwow.database.UserDAO;
+import it.unibs.appwow.database.UserGroupDAO;
+import it.unibs.appwow.models.UserGroupModel;
+import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.views.adapters.GroupAdapter;
@@ -201,6 +217,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         fetchGroups();
     }
 
+
     private void fetchGroups(){
         Log.d(TAG_LOG,"fetchGroups");
         // showing refresh animation before making http call
@@ -208,8 +225,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
         if(mLocalUser != null){
             Log.d(TAG_LOG,"mLocalUser is not null");
-            Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(mLocalUser.getId()));
-            Uri groups_uri = Uri.withAppendedPath(user_uri, "groups");
+            Uri groups_uri = WebServiceUri.getGroupsUri(mLocalUser.getId());
             URL url = null;
             try {
                 url = new URL(groups_uri.toString());
@@ -230,45 +246,51 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                             Set<Integer> gruppiLocali = dao.getLocalGroupsIds();
                             // TODO: 04/07/2016  METODO CREATE(jSON) IN GROUPMODEL
                             if (response.length() > 0) {
-
                                 //dao.resetAllGroups();
                                 for(int i = 0; i < response.length(); i++){
                                     try {
                                         JSONObject groupJs = response.getJSONObject(i);
-                                        GroupModel g = GroupModel.create(groupJs);
-                                        gruppiRicevuti.add(g.getId());
+                                        GroupModel gserver = GroupModel.create(groupJs);
+                                        GroupModel glocal = dao.getSingleGroup(gserver.getId());
+                                        gruppiRicevuti.add(gserver.getId());
+                                        if(glocal!=null){
+                                            long server_updated_at = gserver.getUpdatedAt();
+                                            long local_updated_at = glocal.getUpdatedAt();
+                                            long server_photo_updated_at = gserver.getPhotoUpdatedAt();
+                                            long local_photo_updated_at = glocal.getPhotoUpdatedAt();
 
-                                        long server_updated_at = g.getUpdatedAt();
-                                        long local_updated_at = dao.getUpdatedAt(g.getId());
-                                        long server_photo_updated_at = g.getPhotoUpdatedAt();
-                                        long local_photo_updated_at = dao.getPhotoUpdatedAt(g.getId());
+                                            if (server_updated_at > local_updated_at) {
 
-                                        if (server_updated_at > local_updated_at) {
-                                            g.setUpdatedAt(local_updated_at);
-                                            g.setPhotoUpdatedAt(local_photo_updated_at);
-                                            g.highlight();
-                                            dao.insertGroup(g);
+                                                //eseguo l'update
+                                                int id = glocal.getId();
+                                                int idAdmin = gserver.getIdAdmin();
+                                                String groupName = gserver.getGroupName();
+                                                String photoFileName = glocal.getPhotoFileName();
+                                                long photoUpdatedAt = glocal.getPhotoUpdatedAt();
+                                                long createdAt = gserver.getCreatedAt();
+                                                long updatedAt = glocal.getUpdatedAt();
+                                                int highlighted = 1;
+
+                                                dao.updateSingleGroup(id,idAdmin, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, highlighted);
+
+                                                UserGroupModel ugm = UserGroupModel.create(groupJs.getJSONObject("pivot"));
+                                                UserGroupDAO ugdao = new UserGroupDAO();
+                                                ugdao.open();
+                                                ugdao.insertUserGroup(ugm);
+                                                ugdao.close();
+                                            }
+
+                                            if (server_photo_updated_at > local_photo_updated_at) {
+                                                fetchPhoto(gserver.getId(),server_photo_updated_at);
+                                            }
+                                        } else {
+                                            dao.insertGroup(gserver);
                                         }
-
-                                        if (server_photo_updated_at > local_photo_updated_at) {
-                                            // TODO: 04/07/2016 AGGIUNGERE FOTO
-                                            /**
-                                             * 1) richiesta get per scaricare la foto
-                                             * nell'onResponse:
-                                             * 2) memorizzo la foto in un file locale
-                                             * 3) scrivo il nome del file nel db locale
-                                             * 4) carico la foto dal db locale per visualizzarla
-                                             */
-                                            fetchPhoto(g.getId(),server_photo_updated_at);
-                                        }
-
-
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                 }
 
-                               // mAdapter.notifyDataSetChanged();
                                 mAdapter = new GroupAdapter(getActivity());
                                 mGridView.setAdapter(mAdapter);
                                 mAdapter.notifyDataSetChanged();
@@ -276,7 +298,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                             } else {
                                 Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
                             }
-
                             gruppiLocali.removeAll(gruppiRicevuti);
                             if(!gruppiLocali.isEmpty()){
                                 int size = gruppiLocali.size();
@@ -320,6 +341,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
             // Adding request to request queue
             MyApplication.getInstance().addToRequestQueue(req);
+
         } else {
             // stopping swipe refresh
             mSwipeRefreshLayout.setRefreshing(false);
@@ -327,23 +349,86 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
+/*
+    private void fetchUsers(){
+        Log.d(TAG_LOG,"fetchUsers method");
+
+        // Volley's json array request object
+        Uri groupUsersUri = WebServiceUri.getGroupUsersUri(mGroup.getId());
+        URL url = WebServiceUri.uriToUrl(groupUsersUri);
+        JsonArrayRequest usersRequest = new JsonArrayRequest(url.toString(),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG_LOG, "USERS response = " + response.toString());
+
+                        if (response.length() > 0) {
+                            UserDAO udao = new UserDAO();
+                            udao.open();
+                            UserGroupDAO ugdao = new UserGroupDAO();
+                            ugdao.open();
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject userJs = response.getJSONObject(i);
+                                    UserModel user = UserModel.create(userJs);
+
+                                    long server_updated_at = user.getUpdatedAt();
+                                    long local_updated_at = udao.getUpdatedAt(user.getId());
+
+                                    if (server_updated_at > local_updated_at) {
+
+                                        udao.insertUser(user);
+                                        Log.d(TAG_LOG, "INSERTED USER -> " + user);
+                                    } else {
+                                        Log.d(TAG_LOG, "LocalUser -> " + user + " up to date");
+                                    }
+
+                                    JSONObject pivot = userJs.getJSONObject("pivot");
+                                    UserGroupModel piv = UserGroupModel.create(pivot);
+                                    if(!piv.isUpdated()){
+                                        ugdao.insertUserGroup(piv);
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            udao.close();
+                            ugdao.close();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
+                        Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+        // Adding request to request queue
+        MyApplication.getInstance().addToRequestQueue(usersRequest);
+    }*/
+
     private void fetchPhoto(final int idGroup, final long server_photo_updated_at) {
         Log.d(TAG_LOG,"fetchPhoto");
         // FIXME: 04/07/2016 COMMENTED FOR DEBUG
-        //Uri photoUri = WebServiceUri.getGroupPhotosUri(idGroup);
-        String url = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Jessica_Chastain_by_Gage_Skidmore.jpg";
+        Uri photoUri = WebServiceUri.getGroupPhotosUri(idGroup);
+        //String url = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Jessica_Chastain_by_Gage_Skidmore.jpg";
         // Retrieves an image specified by the URL, displays it in the UI.
-        ImageRequest request = new ImageRequest(url /*photoUri.toString()*/,
+        ImageRequest request = new ImageRequest(photoUri.toString(),
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap bitmap) {
-                        String fileName = FileUtils.writeBitmap(bitmap, getActivity());
-                        GroupDAO dao = new GroupDAO();
-                        dao.open(); // Riga mancante
-                        boolean success = dao.setPhotoFileName(idGroup, fileName);
-                        if(success) dao.touchGroupPhoto(idGroup, server_photo_updated_at);
-                        dao.close();
-                        Log.d(TAG_LOG, "FOTO SCARICATA :" + fileName);
+                        boolean success = FileUtils.writeGroupImage(idGroup, bitmap, getActivity());
+                        if(success) {
+                            GroupDAO dao = new GroupDAO();
+                            dao.open();
+                            dao.setPhotoFileName(idGroup, FileUtils.getGroupImageFileName(idGroup));
+                            dao.touchGroupPhoto(idGroup, server_photo_updated_at);
+                            dao.close();
+                        }
+                        mAdapter.notifyDataSetChanged();
+                        Log.d(TAG_LOG, "FOTO SCARICATA!!");
                         // TODO: 04/07/2016 NOTIFICARE ALL'ADAPTER........COME?
                     }
                 }, 0, 0, null,
@@ -352,6 +437,13 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                         Log.e(TAG_LOG, "VOLLEY ERROR: " + error);
                     }
                 });
+       /* int posizioneGruppo = mAdapter.getGroupPosition(idGroup);
+        Log.d(TAG_LOG, "posizione gruppo: " + posizioneGruppo);
+        View v = mAdapter.getView(posizioneGruppo,null,mGridView);
+        ImageView iv = (ImageView) v.findViewById(R.id.group_tile_imageView);
+        iv.setImageResource(R.drawable.ic_menu_send);
+*/
+        request.setShouldCache(false);
         MyApplication.getInstance().addToRequestQueue(request);
     }
 
@@ -410,4 +502,177 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         mAdapter = new GroupAdapter(MyApplication.getAppContext());
         mGridView.setAdapter(mAdapter);
     }
+
+    /*
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        private boolean noGroups = false;
+        private boolean mConnError = false;
+        private LocalUser mLocalUser = null;
+
+        UserLoginTask() {
+            mLocalUser = LocalUser.load(getActivity());
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            String response = "";
+            Uri groups_uri = WebServiceUri.getGroupsUri(mLocalUser.getId());
+            try {
+                URL url = new URL(groups_uri.toString());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("GET");
+                conn.setDoOutput(true);
+                conn.connect();
+                int responseCode = conn.getResponseCode();
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String line = "";
+                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response+=line;
+                    }
+                } else {
+                    mConnError = true;
+                    return true;
+                }
+
+                if(!response.isEmpty()){
+                    //response = response.substring(1,response.length()-1);
+                    mResjs = new JSONObject(response);
+                    Log.d(TAG_LOG,"Risposta" + mResjs.toString(1));
+                } else {
+                    return false;
+                }
+                Log.d(TAG_LOG, "Risposta String: "+ response);
+
+                // TODO: 19/05/2016 SALVARE SHARED
+                int id = mResjs.getInt("id");
+                String fullname = mResjs.getString("fullName");
+                mLocalUser = LocalUser.create(id).withEmail(mEmail).withFullName(fullname);
+                mLocalUser.save(MyApplication.getAppContext());
+
+            } catch (MalformedURLException e){
+                return false;
+            } catch (IOException e){
+                return false;
+            } catch (JSONException e){
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mAuthTask = null;
+            showProgress(false);
+
+            if (success) {
+                if(mNewUser){
+                    Intent ri = new Intent(LoginActivity.this, RegistrationActivity.class);
+                    ri.putExtra(PASSING_USER_EXTRA, mLocalUser);
+                    startActivity(ri);
+                } else {
+                    Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            } else {
+                if(!mConnError){
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                } else {
+                    Toast.makeText(getBaseContext(), getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            showProgress(false);
+        }
+
+        private int checkUser(String email){
+            String response = "";
+            Uri uri = WebServiceUri.CHECK_USER_URI;
+            try {
+                URL url = new URL(uri.toString());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("email", mEmail);
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+                int responseCode = conn.getResponseCode();
+                Log.i(TAG_LOG,"Response code = " + responseCode);
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String line = "";
+                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response+=line;
+                    }
+                } else {
+                    return CONN_ERROR;
+                }
+
+                if(!response.isEmpty()){
+                    Log.d(TAG_LOG,"RISPOSTA_CHECK_USER" + response);
+                    return USER_EXISTS;
+                } else {
+                    return USER_NOT_EXISTS;
+                }
+
+            } catch (MalformedURLException e){
+                return CONN_ERROR;
+            } catch (IOException e){
+                return CONN_ERROR;
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }*/
 }

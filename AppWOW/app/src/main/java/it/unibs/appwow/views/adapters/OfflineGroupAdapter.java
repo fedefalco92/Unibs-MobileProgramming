@@ -59,7 +59,7 @@ public class OfflineGroupAdapter extends BaseAdapter {
         if(view==null) {
             view = mInflater.inflate(R.layout.tile_group_layout,null);
             holder = new Holder();
-            holder.groupImageView = (ImageView) view.findViewById(R.id.imageView_groupPhoto);
+            holder.groupImageView = (ImageView) view.findViewById(R.id.group_tile_imageView);
             holder.groupName = (TextView)view.findViewById(R.id.group_tile_groupName);
 
             view.setTag(holder);
