@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.models.SliderAmount;
 import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 
@@ -111,5 +112,31 @@ public class UserGroupDAO implements LocalDB_DAO {
         }
         cursor.close(); // remember to always close the cursor!
         return res;
+    }
+
+    public List<SliderAmount> getAllSliderAmounts(int idGroup){
+        List<SliderAmount> data = new ArrayList<SliderAmount>();
+        String query = "SELECT users._id, users.fullName, users.email FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ?;";
+        Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
+        cursor.moveToFirst();
+        //int id = 0;
+        while(!cursor.isAfterLast()) {
+            //Amount d = cursorToAmount(cursor, id);
+            SliderAmount d = cursorToSliderAmount(cursor);
+            data.add(d);
+            cursor.moveToNext();
+            //id++;
+        }
+        cursor.close(); // remember to always close the cursor!
+
+        return data;
+    }
+
+    private SliderAmount cursorToSliderAmount(Cursor cursor){
+        int id = cursor.getInt(0);
+        String fullName = cursor.getString(1);
+        String email = cursor.getString(2);
+
+        return new SliderAmount(id, fullName, email);
     }
 }

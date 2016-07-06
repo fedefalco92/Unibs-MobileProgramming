@@ -12,6 +12,7 @@ import java.util.Set;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.models.Amount;
+import it.unibs.appwow.models.SliderAmount;
 import it.unibs.appwow.models.parc.GroupModel;
 
 /**
@@ -92,7 +93,6 @@ public class GroupDAO implements LocalDB_DAO {
         return new Amount(id, fullName, amount, email);
     }
 
-
     public GroupModel insertGroup(GroupModel data) {
         database.replace(AppDB.Groups.TABLE_GROUPS, null,
                 groupToValues(data));
@@ -139,6 +139,7 @@ public class GroupDAO implements LocalDB_DAO {
 
         return data;
     }
+
 
     public long getUpdatedAt(int groupId){
         List<GroupModel> data = new ArrayList<GroupModel>();

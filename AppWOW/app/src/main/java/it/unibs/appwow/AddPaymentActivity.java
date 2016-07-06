@@ -7,9 +7,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatSeekBar;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -42,12 +49,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.PaymentsFragment;
+import it.unibs.appwow.models.SliderAmount;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
@@ -61,24 +71,34 @@ import it.unibs.appwow.utils.Validator;
 public class AddPaymentActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
     private final String TAG_LOG = AddPaymentActivity.class.getSimpleName();
 
+    private final static int COLOR_LOCKED = R.color.colorAccent;
+    private final static int COLOR_UNLOCKED = R.color.black;
+
     private static final int REQUEST_PLACE_PICKER = 1;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 2;
 
     private LocalUser mUser;
     private GroupModel mGroup;
     private Place mPlace;
-    private HashMap<Integer,UserModel> mGroupUsers;
+    private HashMap<Integer,UserModel> mGroupUsers; // FIXME: 06/07/2016 da eliminare
 
-    private EditText mCostName;
-    private EditText mCostAmount;
-    private EditText mCostNotes;
-    private EditText mCostPositionText;
+    private EditText mPaymentName;
+    private EditText mPaymentAmountEditText;
+    private double mPaymentAmount;
+    private EditText mPaymentNotes;
+    private EditText mPaymentPositionText;
     private Button mAddPositionButton;
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
     private View mProgressView;
     private View mAddCostFormView;
+    //private ListView mSliderListView;
+    private LinearLayout mSliderListView;
+    private List<SliderAmount> mSliderAmountList;
+    private Set<SliderAmount> mLockedAmount;
+    private Set<SliderAmount> mUnlockedAmount;
+    //private SliderAmountAdapter mAdapter;
 
     //private Button mAddCostButton;
     /**
@@ -90,8 +110,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_cost);
-        setTitle(getString(R.string.add_cost_activity_title));
+        setContentView(R.layout.activity_add_payment);
+        setTitle(getString(R.string.add_payment_activity_title));
 
         mUser = LocalUser.load(this);
         mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
@@ -99,24 +119,48 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         UserGroupDAO dao = new UserGroupDAO();
         dao = new UserGroupDAO();
         dao.open();
-        mGroupUsers = dao.getAllUsers(mGroup.getId());
+        mGroupUsers = dao.getAllUsers(mGroup.getId()); // FIXME: 06/07/2016 da eliminare
+        mSliderAmountList = dao.getAllSliderAmounts(mGroup.getId());
         dao.close();
+
+        mLockedAmount = new HashSet<SliderAmount>();
+        mUnlockedAmount = new HashSet<SliderAmount>();
 
         mPlace = null;
 
-        mCostName = (EditText) findViewById(R.id.add_cost_name);
+        mPaymentName = (EditText) findViewById(R.id.add_payment_name);
 
-        mCostAmount = (EditText) findViewById(R.id.add_cost_amount);
-        mCostAmount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
+        mPaymentAmountEditText = (EditText) findViewById(R.id.add_payment_amount);
+        mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
+        mPaymentAmountEditText.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        mCostNotes = (EditText) findViewById(R.id.add_cost_notes);
+                    }
 
-        mCostPositionText = (EditText) findViewById(R.id.add_cost_position_text);
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        retrieveAmountFromEditText();
+                        //mAdapter.initializeAmount(mPaymentAmount);
+                        initializeAmountAndSets();
+                    }
 
-        mAddPositionButton = (Button) findViewById(R.id.add_cost_add_position_button);
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                }
+        );
+
+        mPaymentNotes = (EditText) findViewById(R.id.add_payment_notes);
+
+        mPaymentPositionText = (EditText) findViewById(R.id.add_payment_position_text);
+
+        mAddPositionButton = (Button) findViewById(R.id.add_payment_add_position_button);
         mAddPositionButton.setOnClickListener(this);
 
-        mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.add_cost_position_map_fragment));
+        mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.add_payment_position_map_fragment));
         mMapFragment.getView().setVisibility(View.GONE);
 
         //mAddCostButton = (Button) findViewById(R.id.add_cost_add_button);
@@ -125,8 +169,55 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        mProgressView = findViewById(R.id.add_cost_post_request_progress);
-        mAddCostFormView = findViewById(R.id.add_cost_form_container);
+        mProgressView = findViewById(R.id.add_payment_post_request_progress);
+        //mAddCostFormView = findViewById(R.id.add_payment_form_container);
+        //mAddCostFormView = findViewById(R.id.add_payment_form);
+
+        //mSliderListView = (ListView) findViewById(R.id.add_payment_slider_listview);
+        mSliderListView = (LinearLayout) findViewById(R.id.add_payment_slider_listview);
+
+        for(final SliderAmount sa: mSliderAmountList){
+            mUnlockedAmount.add(sa);
+            View view = getLayoutInflater().inflate(R.layout.payment_slider_item, null, false);
+            TextView fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
+            TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
+            EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
+            amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
+            AppCompatSeekBar seekBar = (AppCompatSeekBar) view.findViewById(R.id.payment_slider_item_slider);
+
+            fullName.setText(sa.getFullName());
+            email.setText(sa.getEmail());
+            amount.setText(sa.getAmountString());
+            view.setTag(sa.getUserId());
+            mSliderListView.addView(view);
+            amount.setOnFocusChangeListener(new SliderAmountFocusChangeListener(sa));
+
+            sa.setAmountView(amount);
+            sa.setSeekBar(seekBar);
+        }
+    }
+
+    public void retrieveAmountFromEditText(){
+        String text = mPaymentAmountEditText.getText().toString();
+        if(!text.isEmpty()) mPaymentAmount = new Double(text);
+        else mPaymentAmount = 0;
+    }
+
+    public double getResidualAmount() {
+        double lockedAmount = 0;
+        for(SliderAmount s:mLockedAmount){
+            lockedAmount+=s.getAmount();
+        }
+        return mPaymentAmount-lockedAmount;
+    }
+
+
+    public double getPaymentAmount() {
+        return mPaymentAmount;
+    }
+
+    public void setPaymentAmount(double paymentAmount) {
+        mPaymentAmount = paymentAmount;
     }
 
     @Override
@@ -142,19 +233,19 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         int id = item.getItemId();
         switch (id) {
             case R.id.add_cost_menu_item:
-                boolean nomeOk = Validator.isCostNameValid(mCostName.getText().toString());
-                boolean amountOk = Validator.isAmountValid(mCostAmount.getText().toString());
+                boolean nomeOk = Validator.isCostNameValid(mPaymentName.getText().toString());
+                boolean amountOk = Validator.isAmountValid(mPaymentAmountEditText.getText().toString());
                 if(nomeOk && amountOk){
                     sendPostRequest();
                     return true;
                 } else {
                     if(!nomeOk){
-                        mCostName.setError(getString(R.string.error_invalid_cost_name));
-                        mCostName.requestFocus();
+                        mPaymentName.setError(getString(R.string.error_invalid_cost_name));
+                        mPaymentName.requestFocus();
                     }
                     if(!amountOk){
-                        mCostAmount.setError(getString(R.string.error_invalid_amount));
-                        mCostAmount.requestFocus();
+                        mPaymentAmountEditText.setError(getString(R.string.error_invalid_amount));
+                        mPaymentAmountEditText.requestFocus();
                     }
                 }
 
@@ -168,15 +259,15 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         String[] keys = {"idGroup", "idUser", "amount", "name", "notes", "position", "amount_details"};
         String idGroup = String.valueOf(mGroup.getId());
         String idUser = String.valueOf(mUser.getId());
-        double amountDouble = new Double(mCostAmount.getText().toString());
+        double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
         String amount = String.valueOf(amountDouble);
-        String name = mCostName.getText().toString();
-        String notes = mCostNotes.getText().toString();
+        String name = mPaymentName.getText().toString();
+        String notes = mPaymentNotes.getText().toString();
         String position;
         if(mPlace!= null){
             position = PositionUtils.encodePositionId(mPlace.getId());
         } else {
-            position = mCostPositionText.getText().toString();
+            position = mPaymentPositionText.getText().toString();
         }
         String amount_details = computeAmountDetails(mUser.getId(), amountDouble);
         String[] values = {idGroup, idUser, amount, name, notes, position, amount_details};
@@ -276,6 +367,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     }
 
 
+
+
     public void onPickButtonClick(View v) {
         // Construct an intent for the place picker
         try {
@@ -340,8 +433,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         } else */ if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 mPlace = PlaceAutocomplete.getPlace(this, data).freeze();
-                mCostPositionText.setEnabled(false);
-                mCostPositionText.setText(mPlace.getName());
+                mPaymentPositionText.setEnabled(false);
+                mPaymentPositionText.setText(mPlace.getName());
                 mMapFragment.getView().setVisibility(View.VISIBLE);
                 mMapFragment.getMapAsync(AddPaymentActivity.this);
                 mAddPositionButton.setText(R.string.action_add_cost_delete_position);
@@ -383,15 +476,15 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         Button buttonPosition = (Button) v;
-        String addPosition = getResources().getString(R.string.action_add_cost_add_position);
+        String addPosition = getResources().getString(R.string.action_add_payment_add_position);
         String deletePosition = getResources().getString(R.string.action_add_cost_delete_position);
         if(buttonPosition.getText().toString().equalsIgnoreCase(addPosition)){
             findPlace(v);
         } else if (buttonPosition.getText().toString().equalsIgnoreCase(deletePosition)){
             mPlace = null;
-            mCostPositionText.setEnabled(true);
-            mCostPositionText.setText("");
-            mAddPositionButton.setText(R.string.action_add_cost_add_position);
+            mPaymentPositionText.setEnabled(true);
+            mPaymentPositionText.setText("");
+            mAddPositionButton.setText(R.string.action_add_payment_add_position);
             mMapFragment.getView().setVisibility(View.GONE);
         }
     }
@@ -426,6 +519,77 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             mMap.setMyLocationEnabled(true);
         } catch (SecurityException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void initializeAmountAndSets() {
+        final int size = mSliderAmountList.size();
+        double each = mPaymentAmount/size;
+        for(SliderAmount s:mSliderAmountList){
+            s.setAmount(each);
+
+            EditText et = s.getAmountView();
+            et.setText(s.getAmountString());
+            et.setTextColor(ContextCompat.getColor(this, COLOR_UNLOCKED));
+            final int level = (int) Math.round((each/mPaymentAmount)*100);
+
+            Log.d(TAG_LOG, "LEVEL: " + level);
+            final AppCompatSeekBar sb = s.getSeekBar();
+            sb.setProgress(level);
+
+            mUnlockedAmount.add(s);
+            mLockedAmount.remove(s);
+        }
+
+
+
+
+    }
+
+    private class SliderAmountFocusChangeListener implements View.OnFocusChangeListener {
+
+        private SliderAmount sa;
+
+        SliderAmountFocusChangeListener(SliderAmount _sa) {
+            this.sa = _sa;
+        }
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                String str = ((EditText) v).getText().toString();
+                double partialAmount = 0;
+                if (!str.isEmpty()) partialAmount = new Double(str);
+                double residualAmount = getResidualAmount();
+                if (sa.getAmount() == partialAmount) {
+                    return;
+                }
+                if (partialAmount > residualAmount) {
+                    partialAmount = residualAmount;
+                }
+
+                if (mUnlockedAmount.size() > 1) {
+                    //metto a residualAmount lo SliderAmount corrente
+                    sa.setAmount(partialAmount);
+                    sa.getAmountView().setText(sa.getAmountString());
+                    // lo tolgo dall'insieme unlocked e lo metto in locked
+                    mUnlockedAmount.remove(sa);
+                    mLockedAmount.add(sa);
+                    sa.getAmountView().setTextColor(ContextCompat.getColor(getBaseContext(), COLOR_LOCKED));
+                    //cambio i valori di tutti gli unlocked
+                    for (SliderAmount sa_local : mUnlockedAmount) {
+                        sa_local.setAmount((residualAmount - partialAmount) / mUnlockedAmount.size());
+                        sa_local.getAmountView().setText(sa_local.getAmountString());
+                    }
+                } else {
+                    sa.getAmountView().setText(sa.getAmountString());
+                }
+
+            } else {
+                mLockedAmount.remove(sa);
+                mUnlockedAmount.add(sa);
+                sa.getAmountView().setTextColor(ContextCompat.getColor(getBaseContext(), COLOR_UNLOCKED));
+            }
         }
     }
 }

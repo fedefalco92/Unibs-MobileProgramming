@@ -29,7 +29,7 @@
     <string name="cost_detail_date_preposition">Il</string>
     <string name="prompt_cost_name">Nome spesa</string>
     <string name="action_add_cost">Aggiungi</string>
-    <string name="action_add_cost_add_position">Aggiungi posizione</string>
+    <string name="action_add_payment_add_position">Aggiungi posizione</string>
     <string name="action_add_cost_delete_position">Cancella posizione</string>
     <string name="transaction_fragment_empty_message">Nessuna transazione</string>
     <string name="delete">Cancella</string>
@@ -39,7 +39,7 @@
     <string name="error_invalid_cost_name">Inserisci un nome valido per la spesa</string>
     <string name="error_invalid_amount">Inserisci un importo</string>
     <string name="you">Tu</string>
-    <string name="add_cost_activity_title">Nuova spesa</string>
+    <string name="add_payment_activity_title">Nuova spesa</string>
     <string name="add_group_activity_title">Nuovo gruppo</string>
     <string name="add_group_members_activity_title">Aggiungi i membri del gruppo</string>
     <string name="add_group_members_user_already_added">Utente già inserito</string>

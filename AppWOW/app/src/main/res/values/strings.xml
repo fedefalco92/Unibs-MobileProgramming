@@ -72,10 +72,10 @@
     <string name="cost_detail_date_preposition">On</string>
     <string name="prompt_cost_name">Cost name</string>
     <string name="prompt_cost_amount">Amount</string>
-    <string name="prompt_cost_notes">Notes</string>
-    <string name="action_add_cost_add_position">Find place with google</string>
+    <string name="prompt_payment_notes">Notes</string>
+    <string name="action_add_payment_add_position">Find place with google</string>
     <string name="action_add_cost">Add cost</string>
-    <string name="prompt_cost_position">Place</string>
+    <string name="prompt_payment_position">Place</string>
     <string name="action_add_cost_delete_position">Delete place</string>
     <string name="transaction_fragment_empty_message">No transactions to show</string>
     <string name="cost_fragment_empty_message">No costs to show</string>
@@ -83,7 +83,7 @@
     <string name="error_invalid_cost_name">Insert a valid name for the cost</string>
     <string name="error_invalid_amount">Insert an amount</string>
     <string name="you">You</string>
-    <string name="add_cost_activity_title">New cost</string>
+    <string name="add_payment_activity_title">New cost</string>
     <string name="add_group_activity_title">New group</string>
     <string name="add_group_members_activity_title">Add group members</string>
     <string name="add_group_members_user_already_added">User already added</string>

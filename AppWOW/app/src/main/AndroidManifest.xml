@@ -67,7 +67,9 @@
         </activity>
         <activity android:name=".PaymentDetailsActivity">
         </activity>
-        <activity android:name=".AddPaymentActivity">
+        <activity android:name=".AddPaymentActivity"
+                  android:windowSoftInputMode="stateVisible|adjustPan">
+
         </activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
