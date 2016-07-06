@@ -70,6 +70,45 @@ public class FileUtils {
         else return null;
     }
 
+    public static String writeTemporaryBitmap(Bitmap bitmap, Context context){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+        String fileName = "photo_"+System.currentTimeMillis()+".png";
+        File destination = new File(context.getCacheDir(), fileName);
+        FileOutputStream fos;
+        if(destination.exists()){
+            destination.delete();
+        }
+        try {
+            destination.createNewFile();
+            fos = new FileOutputStream(destination);
+            fos.write(bytes.toByteArray());
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(destination.exists())
+            return fileName;
+        else return null;
+    }
+
+    public static Bitmap readTemporaryBitmap(String fileName, Context context) {
+        Bitmap immagine = null;
+        File toOpen = new File(context.getCacheDir(), fileName);
+        if (toOpen.exists()) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            immagine = BitmapFactory.decodeFile(toOpen.getPath(), options);
+        } else {
+            return null;
+        }
+        return immagine;
+    }
+
+
     public static Bitmap readGroupImage(int idGroup, Context context){
         Bitmap immagine = null;
         String fileName = getGroupImageFileName(idGroup);

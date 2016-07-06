@@ -2,6 +2,7 @@ package it.unibs.appwow;
 
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -94,7 +95,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 Bundle extras = data.getExtras();
                 if (extras != null) {
                     Bitmap photo = extras.getParcelable("data");
-                    mFileName = FileUtils.writeBitmap(photo, this);
+                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
                     Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
                     //Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);
                     //mGroupImage.setImageBitmap(photo);
@@ -362,6 +363,36 @@ public class AddGroupActivity extends AppCompatActivity {
                 android.app.AlertDialog alert = builder.create();
                 alert.show();
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        deleteCache(this);
+        super.onDestroy();
+    }
+
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
         }
     }
 }

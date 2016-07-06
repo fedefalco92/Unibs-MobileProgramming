@@ -323,8 +323,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     Map<String, DataPart> params = new HashMap<>();
                     // file name could found file base or direct access from real path
                     // for now just get bitmap data from ImageView
-                    params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readBitmap(mGroup.getPhotoFileName(), getBaseContext())), "image/png"));
-
+                    params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext())), "image/png"));
 
                     return params;
                 }
@@ -340,6 +339,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
             public void onResponse(String response) {
                 if (!response.isEmpty()) {
                     Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
+
                     Intent navigationActivity = new Intent(AddGroupMembersActivity.this, NavigationActivity.class);
                     navigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(navigationActivity);
