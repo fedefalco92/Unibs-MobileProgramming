@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -183,7 +184,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
             EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
             amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
-            AppCompatSeekBar seekBar = (AppCompatSeekBar) view.findViewById(R.id.payment_slider_item_slider);
+            ProgressBar seekBar = (ProgressBar) view.findViewById(R.id.payment_slider_item_slider);
 
             fullName.setText(sa.getFullName());
             email.setText(sa.getEmail());
@@ -191,7 +192,6 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             view.setTag(sa.getUserId());
             mSliderListView.addView(view);
             amount.setOnFocusChangeListener(new SliderAmountFocusChangeListener(sa));
-
             sa.setAmountView(amount);
             sa.setSeekBar(seekBar);
         }
@@ -527,16 +527,10 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         double each = mPaymentAmount/size;
         for(SliderAmount s:mSliderAmountList){
             s.setAmount(each);
-
+            s.setAmountText(s.getAmountString());
+            s.setSeekBarProgress(each, mPaymentAmount);
             EditText et = s.getAmountView();
-            et.setText(s.getAmountString());
             et.setTextColor(ContextCompat.getColor(this, COLOR_UNLOCKED));
-            final int level = (int) Math.round((each/mPaymentAmount)*100);
-
-            Log.d(TAG_LOG, "LEVEL: " + level);
-            final AppCompatSeekBar sb = s.getSeekBar();
-            sb.setProgress(level);
-
             mUnlockedAmount.add(s);
             mLockedAmount.remove(s);
         }
@@ -571,7 +565,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
                 if (mUnlockedAmount.size() > 1) {
                     //metto a residualAmount lo SliderAmount corrente
                     sa.setAmount(partialAmount);
-                    sa.getAmountView().setText(sa.getAmountString());
+                    sa.setAmountText(sa.getAmountString());
+                    sa.setSeekBarProgress(partialAmount, mPaymentAmount);
                     // lo tolgo dall'insieme unlocked e lo metto in locked
                     mUnlockedAmount.remove(sa);
                     mLockedAmount.add(sa);
@@ -579,10 +574,13 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
                     //cambio i valori di tutti gli unlocked
                     for (SliderAmount sa_local : mUnlockedAmount) {
                         sa_local.setAmount((residualAmount - partialAmount) / mUnlockedAmount.size());
-                        sa_local.getAmountView().setText(sa_local.getAmountString());
+                        sa_local.setAmountText(sa_local.getAmountString());
+                        sa_local.setSeekBarProgress(sa_local.getAmount(), mPaymentAmount);
                     }
                 } else {
-                    sa.getAmountView().setText(sa.getAmountString());
+                    sa.setAmountText(sa.getAmountString());
+                    sa.setSeekBarProgress(sa.getAmount(), mPaymentAmount);
+
                 }
 
             } else {

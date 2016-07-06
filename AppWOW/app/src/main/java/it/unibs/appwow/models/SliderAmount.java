@@ -2,6 +2,7 @@ package it.unibs.appwow.models;
 
 import android.support.v7.widget.AppCompatSeekBar;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -15,7 +16,7 @@ public class SliderAmount {
     private double mAmount;
     private String mEmail;
     private EditText mAmountText;
-    private AppCompatSeekBar mSeekBar;
+    private ProgressBar mSeekBar;
 
     public SliderAmount(int userId, String fullname, double amount, String email) {
         this.setUserId(userId);
@@ -74,6 +75,10 @@ public class SliderAmount {
         this.mAmount = amount;
     }
 
+    public void setAmountText(String amount){
+        mAmountText.setText(amount);
+    }
+
     public EditText getAmountView() {
         return mAmountText;
     }
@@ -82,12 +87,17 @@ public class SliderAmount {
         mAmountText = amountText;
     }
 
-    public AppCompatSeekBar getSeekBar() {
+    public ProgressBar getSeekBar() {
         return mSeekBar;
     }
 
-    public void setSeekBar(AppCompatSeekBar seekBar) {
+    public void setSeekBar(ProgressBar seekBar) {
         mSeekBar = seekBar;
+    }
+
+    public void setSeekBarProgress(double amount, double total){
+        int level = (int) Math.round((amount/total)*100);
+        mSeekBar.setProgress(level);
     }
 
     @Override
