@@ -10,11 +10,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".AddPaymentActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-    <!-- Post request progress -->
     <ProgressBar
         android:id="@+id/add_payment_post_request_progress"
         style="?android:attr/progressBarStyleLarge"
@@ -22,6 +17,13 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/add_payment_container">
+    <!-- Post request progress -->
+
     <!--<ScrollView
         android:id="@+id/add_payment_form_container"
         android:layout_width="match_parent"

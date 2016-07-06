@@ -93,7 +93,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     private GoogleMap mMap;
 
     private View mProgressView;
-    private View mAddCostFormView;
+    private View mAddPaymentContainerView;
     //private ListView mSliderListView;
     private LinearLayout mSliderListView;
     private List<SliderAmount> mSliderAmountList;
@@ -173,6 +173,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         mProgressView = findViewById(R.id.add_payment_post_request_progress);
         //mAddCostFormView = findViewById(R.id.add_payment_form_container);
         //mAddCostFormView = findViewById(R.id.add_payment_form);
+        mAddPaymentContainerView = findViewById(R.id.add_payment_container);
 
         //mSliderListView = (ListView) findViewById(R.id.add_payment_slider_listview);
         mSliderListView = (LinearLayout) findViewById(R.id.add_payment_slider_listview);
@@ -315,12 +316,12 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mAddCostFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mAddCostFormView.animate().setDuration(shortAnimTime).alpha(
+            mAddPaymentContainerView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mAddPaymentContainerView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mAddCostFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mAddPaymentContainerView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -336,7 +337,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mAddCostFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mAddPaymentContainerView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -351,7 +352,18 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         double perperson = amount/npartecipants;
         HashMap<Integer, Double> amount_details = new HashMap<Integer, Double>();
 
-        Set<Integer> userSet = mGroupUsers.keySet();
+        List<SliderAmount> list = mSliderAmountList;
+        for(SliderAmount s: list){
+            int id = s.getUserId();
+            double value = 0;
+            if(id == id_pagante){
+                value = amount-s.getAmount();
+            } else {
+                value = -s.getAmount();
+            }
+            amount_details.put(id,value);
+        }
+        /*Set<Integer> userSet = mGroupUsers.keySet();
         Iterator iterator = userSet.iterator();
         while(iterator.hasNext()){
             int id = (int) iterator.next();
@@ -362,7 +374,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
                 value = -perperson;
             }
             amount_details.put(id,value);
-        }
+        }*/
+
         return IdEncodingUtils.encodeAmountDetails(amount_details);
     }
 

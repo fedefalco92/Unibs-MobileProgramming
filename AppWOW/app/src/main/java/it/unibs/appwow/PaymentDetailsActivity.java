@@ -30,6 +30,8 @@ import it.unibs.appwow.utils.PositionUtils;
 
 public class PaymentDetailsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
+    // TODO: 06/07/2016  AGGIUNGERE NEI DETTAGLI DELLA SPESA I SINGOLI AMOUNT
+
     private final String TAG_LOG = PaymentDetailsActivity.class.getSimpleName();
 
     private PaymentModel mCost;
