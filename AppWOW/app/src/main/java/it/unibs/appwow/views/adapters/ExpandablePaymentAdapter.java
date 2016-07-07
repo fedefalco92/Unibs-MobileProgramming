@@ -3,12 +3,14 @@ package it.unibs.appwow.views.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,8 +19,10 @@ import java.util.List;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.PaymentDAO;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.utils.DateUtils;
+import it.unibs.appwow.utils.IdEncodingUtils;
 
 /**
  * Created by Alessandro on 15/06/2016.
@@ -104,6 +108,7 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
             holder.position = (TextView)view.findViewById(R.id.payment_detail_position_text);
             holder.positionLabel = (TextView) view.findViewById(R.id.payment_detail_position_label);
             holder.mapButton = (ImageButton) view.findViewById(R.id.payment_detail_map_button);
+            holder.amountDetailContainer = (LinearLayout) view.findViewById(R.id.payment_detail_amount_details_container);
             view.setTag(holder);
         } else {
             holder = (PaymentDetailsHolder)view.getTag();
@@ -127,6 +132,7 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
 
         final String position_id = itemCost.getPositionId();
         if(!position_id.isEmpty()){
+            holder.mapButton.setVisibility(View.VISIBLE);
             holder.mapButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -137,8 +143,23 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
                 }
             });
         } else {
-            holder.mapButton.setVisibility(View.GONE);
+            holder.mapButton.setVisibility(View.INVISIBLE);
         }
+
+
+
+        String ad = itemCost.getAmountDetails();
+        List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(ad, itemCost.getIdUser(), itemCost.getAmount());
+        holder.amountDetailContainer.removeAllViews();
+        for(Amount a: amounts){
+            TextView tv = new TextView(mContext, null);
+            tv.setText(a.toString());
+            holder.amountDetailContainer.addView(tv);
+        }
+
+
+
+
 
         return view;
     }
@@ -162,6 +183,7 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
         TextView position;
         TextView positionLabel;
         ImageButton mapButton;
+        LinearLayout amountDetailContainer;
     }
 
     public ExpandablePaymentAdapter(Context context, int idGroup){

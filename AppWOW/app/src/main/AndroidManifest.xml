@@ -68,7 +68,7 @@
         <activity android:name=".PaymentDetailsActivity">
         </activity>
         <activity android:name=".AddPaymentActivity"
-                  android:windowSoftInputMode="stateVisible|adjustPan">
+                  android:windowSoftInputMode="stateVisible|adjustResize">
 
         </activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for

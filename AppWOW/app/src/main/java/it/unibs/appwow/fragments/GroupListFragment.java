@@ -71,8 +71,9 @@ import it.unibs.appwow.services.WebServiceUri;
 public class GroupListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG_LOG = GroupListFragment.class.getSimpleName();
+    // TODO: 07/07/2016 TOGLIERE ADAPTER!!!!! IN QUESTO MODO E' POSSIBILE TENERE I RIFERIMENTI ALLE VIEWS E QUINDI GESTIRE L'AGGIORNAMENTO FOTO
 
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER= "user";
     public static final String PASSING_GROUP_TAG = "group";

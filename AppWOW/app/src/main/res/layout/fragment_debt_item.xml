@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <TextView
-        android:id="@+id/fragment_debt_item_user_from"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="USER FROM"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp">
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:gravity="center"
-        android:layout_alignParentStart="true"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/fragment_debt_item_user_from"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="USER FROM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_debt_item_email_from"
+            android:text="EMAIL FROM"/>
+
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="100dp"
         android:layout_height="wrap_content"
@@ -41,14 +52,22 @@
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/fragment_item_debt_amount"/>
     </RelativeLayout>
-    <TextView
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
         android:id="@+id/fragment_debt_item_user_to"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="USER TO"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:gravity="center"
-        android:layout_alignParentEnd="true"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_debt_item_email_to"
+            android:text="EMAIL FROM"/>
+    </LinearLayout>
 
 </LinearLayout>

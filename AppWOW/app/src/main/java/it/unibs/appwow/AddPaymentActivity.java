@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -77,6 +78,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
 
     private static final int REQUEST_PLACE_PICKER = 1;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 2;
+    private static final int DELETE_PLACE_TAG = 1;
+    private static final int FIND_PLACE_TAG = 2;
 
     private LocalUser mUser;
     private GroupModel mGroup;
@@ -88,7 +91,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     private double mPaymentAmount;
     private EditText mPaymentNotes;
     private EditText mPaymentPositionText;
-    private Button mAddPositionButton;
+    //private Button mAddPositionButton;
+    ImageButton mAddPositionButton;
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
@@ -158,7 +162,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
 
         mPaymentPositionText = (EditText) findViewById(R.id.add_payment_position_text);
 
-        mAddPositionButton = (Button) findViewById(R.id.add_payment_add_position_button);
+        mAddPositionButton = (ImageButton) findViewById(R.id.add_payment_add_position_button);
+        mAddPositionButton.setTag(FIND_PLACE_TAG);
         mAddPositionButton.setOnClickListener(this);
 
         mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.add_payment_position_map_fragment));
@@ -457,7 +462,9 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
                 mPaymentPositionText.setText(mPlace.getName());
                 mMapFragment.getView().setVisibility(View.VISIBLE);
                 mMapFragment.getMapAsync(AddPaymentActivity.this);
-                mAddPositionButton.setText(R.string.action_add_cost_delete_position);
+                mAddPositionButton.setImageResource(R.drawable.ic_highlight_off_black_24dp);
+                mAddPositionButton.setTag(DELETE_PLACE_TAG);
+                //mAddPositionButton.setText(R.string.action_add_cost_delete_position);
                 Log.i(TAG_LOG, "Place: " + mPlace.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
@@ -495,16 +502,16 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        Button buttonPosition = (Button) v;
-        String addPosition = getResources().getString(R.string.action_add_payment_add_position);
-        String deletePosition = getResources().getString(R.string.action_add_cost_delete_position);
-        if(buttonPosition.getText().toString().equalsIgnoreCase(addPosition)){
+        ImageButton buttonPosition = (ImageButton) v;
+        if(buttonPosition.getTag().equals(FIND_PLACE_TAG)){
             findPlace(v);
-        } else if (buttonPosition.getText().toString().equalsIgnoreCase(deletePosition)){
+        } else if (buttonPosition.getTag().equals(DELETE_PLACE_TAG)){
             mPlace = null;
             mPaymentPositionText.setEnabled(true);
             mPaymentPositionText.setText("");
-            mAddPositionButton.setText(R.string.action_add_payment_add_position);
+            //mAddPositionButton.setText(R.string.action_add_payment_add_position);
+            mAddPositionButton.setImageResource(R.drawable.ic_add_location_black_24dp);
+            mAddPositionButton.setTag(FIND_PLACE_TAG);
             mMapFragment.getView().setVisibility(View.GONE);
         }
     }

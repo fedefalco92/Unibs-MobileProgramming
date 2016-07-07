@@ -34,7 +34,9 @@ public class DebtDAO implements LocalDB_DAO {
             AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts.COLUMN_ID_TO,
             AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts.COLUMN_AMOUNT,
             "users1.fullName as fullNameFrom",
-            "users2.fullName as fullNameTo"
+            "users2.fullName as fullNameTo",
+            "users1.email as emailFrom",
+            "users2.email as emailTo"
     };
 
     @Override
@@ -84,7 +86,7 @@ public class DebtDAO implements LocalDB_DAO {
         return new Debt(id, idBalancing, idFrom, idTo, amount, fullName);
     }*/
 
-    private Debt cursorToDebtWithFullNames(Cursor cursor) {
+    private Debt cursorToDebtWithFullNamesAndEmails(Cursor cursor) {
         int id = cursor.getInt(0);
         int idBalancing = cursor.getInt(1);
         int idFrom = cursor.getInt(2);
@@ -92,8 +94,10 @@ public class DebtDAO implements LocalDB_DAO {
         double amount = cursor.getDouble(4);
         String fullNameFrom = cursor.getString(5);
         String fullNameTo = cursor.getString(6);
+        String emailFrom = cursor.getString(7);
+        String emailTo = cursor.getString(8);
 
-        return new Debt(id, idBalancing, idFrom, idTo, amount, fullNameFrom, fullNameTo);
+        return new Debt(id, idBalancing, idFrom, idTo, amount, fullNameFrom, fullNameTo, emailFrom, emailTo);
     }
 
     public DebtModel insertDebt(DebtModel data) {
@@ -150,11 +154,11 @@ public class DebtDAO implements LocalDB_DAO {
 
     public List<Debt> getAllDebtsExtra(int idGroup) {
         List<Debt> data = new ArrayList<Debt>();
-        Cursor cursor = database.query("debts LEFT JOIN users  users1 ON debts.idFrom = users1._id LEFT JOIN users users2",
+        Cursor cursor = database.query("debts LEFT JOIN users users1 ON debts.idFrom = users1._id LEFT JOIN users users2 ON debts.idTo = users2._id",
                 allColumnsExtra,AppDB.Debts.COLUMN_ID_GROUP + " = ? ;",new String[] {String.valueOf(idGroup)},null,null,null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            Debt d = cursorToDebtWithFullNames(cursor);
+            Debt d = cursorToDebtWithFullNamesAndEmails(cursor);
             data.add(d);
             cursor.moveToNext();
         }

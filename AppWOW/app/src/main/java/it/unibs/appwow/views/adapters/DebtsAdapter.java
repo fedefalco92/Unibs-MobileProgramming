@@ -32,6 +32,8 @@ public class DebtsAdapter extends BaseAdapter {
         TextView amount;
         TextView fullNameFrom;
         TextView fullNameTo;
+        TextView emailFrom;
+        TextView emailTo;
     }
 
     public DebtsAdapter(Context context, int idGroup){
@@ -69,6 +71,8 @@ public class DebtsAdapter extends BaseAdapter {
             holder.fullNameFrom = (TextView) view.findViewById(R.id.fragment_debt_item_user_from);
             holder.fullNameTo = (TextView) view.findViewById(R.id.fragment_debt_item_user_to);
             holder.amount = (TextView)view.findViewById(R.id.fragment_item_debt_amount);
+            holder.emailFrom = (TextView) view.findViewById(R.id.fragment_debt_item_email_from);
+            holder.emailTo = (TextView) view.findViewById(R.id.fragment_debt_item_email_to);
 
             view.setTag(holder);
         } else {
@@ -80,7 +84,8 @@ public class DebtsAdapter extends BaseAdapter {
         // FIXME: 30/06/2016 Aggiungere fullname di entrambi gli utenti
         holder.fullNameFrom.setText(item.getFullNameFrom());
         holder.fullNameTo.setText(item.getFullNameTo());
-
+        holder.emailFrom.setText(item.getEmailFrom());
+        holder.emailTo.setText(item.getEmailTo());
         return view;
     }
 

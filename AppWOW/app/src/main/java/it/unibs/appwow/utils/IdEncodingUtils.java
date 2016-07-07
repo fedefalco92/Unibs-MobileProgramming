@@ -1,11 +1,14 @@
 package it.unibs.appwow.utils;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import it.unibs.appwow.database.UserDAO;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.UserModel;
 
 /**
@@ -13,6 +16,8 @@ import it.unibs.appwow.models.UserModel;
  */
 public class IdEncodingUtils {
 
+    private static final String AMOUNT_SEPARATOR = "&";
+    private static final String INNER_SEPARATOR = "=";
     public static String encodeAmountDetails(HashMap<Integer,Double> amount_details){
         StringBuffer res = new StringBuffer();
         DecimalFormat numberFormat = new DecimalFormat("#.00");
@@ -25,10 +30,53 @@ public class IdEncodingUtils {
             res.append("=");
             res.append(numberFormat.format(amount));
             if(it.hasNext()){
-                res.append("&");
+                res.append(AMOUNT_SEPARATOR);
             }
         }
         return res.toString();
+    }
+
+    private static HashMap<Integer,Double> decodeAmountDetailsFromString(String ad){
+        HashMap<Integer,Double> res = new HashMap<Integer, Double>();
+        String[] amountArray = ad.split(AMOUNT_SEPARATOR);
+        for(String s: amountArray){
+            String [] singleAmount = s.split(INNER_SEPARATOR);
+            if(singleAmount.length == 2){
+                int id = new Integer(singleAmount[0]);
+                double amount = new Double(singleAmount[1]);
+                res.put(id, amount);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * ritorna una lista di Amount in cui il singolo amount è la spesa effettuata dal singolo user
+     * @param ad
+     * @return
+     */
+    public static List<Amount> decodeAmountDetails(String ad, int idPagante, double totalAmount){
+        List<Amount> res = new ArrayList<Amount>();
+        HashMap<Integer,Double> adhash = decodeAmountDetailsFromString(ad);
+        UserDAO dao = new UserDAO();
+        dao.open();
+        Set<Integer> ids = adhash.keySet();
+        for(int id:ids){
+            String[] info = dao.getSingleUserInfo(id);
+            String fullName = info[0];
+            String email = info[1];
+            //ricalcolo spesa singolo user
+            double amountDetail = adhash.get(id);
+            double amount = 0;
+            if(id == idPagante){
+                amount = totalAmount - amountDetail;
+            } else {
+                amount = -amountDetail;
+            }
+            Amount a = new Amount(id, fullName, amount, email);
+            res.add(a);
+        }
+        return res;
     }
 
     public static String encodeIds(List<UserModel> users){
@@ -41,4 +89,6 @@ public class IdEncodingUtils {
         int l = res.length();
         return res.substring(0,l-1);
     }
+
+
 }

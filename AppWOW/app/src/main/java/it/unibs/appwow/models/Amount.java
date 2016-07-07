@@ -10,6 +10,7 @@ public class Amount {
     private int mUserId;
     private String mFullName;
     private double mAmount;
+    private String mEmail;
 
     public String getEmail() {
         return mEmail;
@@ -18,8 +19,6 @@ public class Amount {
     public void setEmail(String email) {
         mEmail = email;
     }
-
-    private String mEmail;
 
     public Amount(int userId, String fullname, double amount, String email) {
         this.setUserId(userId);
@@ -61,5 +60,11 @@ public class Amount {
 
     public void setAmount(double amount) {
         this.mAmount = amount;
+    }
+
+    @Override
+    public String toString() {
+        // FIXME: 07/07/2016  OCIO ALLA VALUTA
+        return mFullName + " (" + mEmail + "): " +  getAmountString() + " eur";
     }
 }

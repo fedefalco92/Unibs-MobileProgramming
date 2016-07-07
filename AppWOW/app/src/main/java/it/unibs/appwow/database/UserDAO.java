@@ -140,4 +140,21 @@ public class UserDAO implements LocalDB_DAO {
 
         database.update(AppDB.Groups.TABLE_GROUPS, groupToInsert, AppDB.Groups._ID + " = ?",new String[] {"" + id});
     }*/
+
+    public String[] getSingleUserInfo(int idUser){
+        String[] res = new String[2];
+        String[] columns = {
+                    AppDB.Users.COLUMN_FULLNAME,
+                    AppDB.Users.COLUMN_EMAIL
+        };
+        String selection = AppDB.Users._ID + " = ?";
+        String[] args = {String.valueOf(idUser)};
+        Cursor cursor = database.query(AppDB.Users.TABLE_USERS, columns, selection, args, null, null, null);
+        if(cursor.moveToFirst()){
+            res[0] = cursor.getString(0);
+            res[1] = cursor.getString(1);
+        }
+        cursor.close();
+        return res;
+    }
 }

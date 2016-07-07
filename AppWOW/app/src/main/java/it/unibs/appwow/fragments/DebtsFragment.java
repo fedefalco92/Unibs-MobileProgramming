@@ -101,22 +101,37 @@ public class DebtsFragment extends Fragment {
         mAdapter = new DebtsAdapter(getContext(), mGroup.getId());
         mTransactionList = (ListView) view.findViewById(R.id.transaction_list);
         mTransactionList.setEmptyView(view.findViewById(R.id.transaction_fragment_empty_view));
+        mTransactionList.setOnTouchListener(new OnSwipeTouchListener(getActivity(), mTransactionList){
+
+            @Override
+            public void onSwipeRight(int pos) {
+
+                Toast.makeText(getActivity(), "right", Toast.LENGTH_LONG).show();
+                //showDeleteButton(pos);
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                Toast.makeText(getActivity(), "left", Toast.LENGTH_LONG).show();
+            }
+        });
+
         mTransactionList.setAdapter(mAdapter);
 
         // FIXME: 22/06/2016 e se facessimo un long click listener?
-        mTransactionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+     /*   mTransactionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 // TODO: 20/06/2016  GESTIRE ON CLICK
                 Toast.makeText(MyApplication.getAppContext(), "Posizione " + position,Toast.LENGTH_SHORT).show();
-                /*final Intent i = new Intent(getContext(), PaymentDetailsActivity.class);
+                final Intent i = new Intent(getContext(), PaymentDetailsActivity.class);
                 PaymentModel cost = (PaymentModel) mAdapter.getItem(position);
 
                 i.putExtra(PASSING_PAYMENT_TAG, cost);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);*/
+                startActivity(i);
             }
-        });
+        });*/
     }
 
     @Override
