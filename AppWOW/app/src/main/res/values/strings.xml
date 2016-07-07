@@ -78,7 +78,7 @@
     <string name="prompt_payment_position">Place</string>
     <string name="action_add_cost_delete_position">Delete place</string>
     <string name="transaction_fragment_empty_message">No transactions to show</string>
-    <string name="cost_fragment_empty_message">No costs to show</string>
+    <string name="payment_fragment_empty_message">No payments to show</string>
     <string name="add_cost_menu_item">Add cost</string>
     <string name="error_invalid_cost_name">Insert a valid name for the cost</string>
     <string name="error_invalid_amount">Insert an amount</string>

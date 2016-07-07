@@ -26,7 +26,15 @@ public class FileUtils {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
         String fileName = getGroupImageFileName(idGroup);
-        File destination = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), fileName);
+        File dir = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE).getPath());
+        if(!dir.exists()){
+            try {
+                dir.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        File destination = new File(dir, fileName);
         FileOutputStream fos;
         if(destination.exists()){
             boolean delete = destination.delete();

@@ -130,6 +130,7 @@ public class PaymentsFragment extends Fragment {
         mCostList.setEmptyView(view.findViewById(R.id.payment_fragment_empty_view));
         mCostList.setAdapter(mAdapter);
 
+        /*
         mCostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -141,7 +142,7 @@ public class PaymentsFragment extends Fragment {
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
             }
-        });
+        });*/
     }
 
     @Override

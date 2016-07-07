@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDB.*;
+import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.GroupModel;
 
 /**
@@ -46,6 +47,7 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Payments.COLUMN_UPDATED_AT + " NUMERIC, " +
             Payments.COLUMN_IS_EXCHANGE + " INTEGER, " +
             Payments.COLUMN_POSITION + " TEXT, " +
+            Payments.COLUMN_POSITION_ID + " TEXT, " +
             Payments.COLUMN_AMOUNT_DETAILS + " TEXT, " +
             "FOREIGN KEY (" + Payments.COLUMN_ID_USER + ") REFERENCES " + Users.TABLE_USERS + "(" + Users._ID + ")," +
             "FOREIGN KEY (" + Payments.COLUMN_ID_GROUP + ") REFERENCES " + Groups.TABLE_GROUPS + "(" + Groups._ID + ") ON UPDATE CASCADE ON DELETE CASCADE" +

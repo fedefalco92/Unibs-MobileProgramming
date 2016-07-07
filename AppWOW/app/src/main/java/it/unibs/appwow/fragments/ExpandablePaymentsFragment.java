@@ -1,6 +1,7 @@
 package it.unibs.appwow.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.GestureDetector;
@@ -9,51 +10,55 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.PaymentDetailsActivity;
 import it.unibs.appwow.R;
-import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.views.adapters.DebtsAdapter;
+import it.unibs.appwow.models.parc.PaymentModel;
+import it.unibs.appwow.views.adapters.ExpandablePaymentAdapter;
+import it.unibs.appwow.views.adapters.PaymentAdapter;
 
 /**
  * A fragment representing a list of Items.
- * <p />
+ * <p/>
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class DebtsFragment extends Fragment {
+public class ExpandablePaymentsFragment extends Fragment {
 
-    private static final String TAG_LOG = DebtsFragment.class.getSimpleName();
-    private GroupModel mGroup;
-    private DebtsAdapter mAdapter;
-    private ListView mTransactionList;
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
-
+    private static final String TAG_LOG = ExpandablePaymentsFragment.class.getSimpleName();
+    public static final String PASSING_GROUP_TAG = "group";
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-
+    public static final String PASSING_PAYMENT_TAG = "cost";
+    // TODO: Customize parameters
+    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static DebtsFragment newInstance(int columnCount, GroupModel group) {
-        DebtsFragment fragment = new DebtsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        args.putParcelable(GroupListFragment.PASSING_GROUP_TAG, group);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private ExpandablePaymentAdapter mAdapter;
+    private GroupModel mGroup;
+    private ExpandableListView mPaymentsList;
+    //private List<PaymentModel> mPaymentsList; //da riempire
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public DebtsFragment() {
+    public ExpandablePaymentsFragment() {
+    }
+
+    // TODO: Customize parameter initialization
+    @SuppressWarnings("unused")
+    public static ExpandablePaymentsFragment newInstance(int columnCount, GroupModel group) {
+        ExpandablePaymentsFragment fragment = new ExpandablePaymentsFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putParcelable(PASSING_GROUP_TAG, group);
+        fragment.setArguments(args);
+        return fragment;
+
     }
 
     @Override
@@ -62,11 +67,13 @@ public class DebtsFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            mGroup = getArguments().getParcelable(GroupListFragment.PASSING_GROUP_TAG);
+            mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
         }
 
         //per poter popolare l'action bar dell'activity
         //setHasOptionsMenu(true);
+
+        //mAdapter =  new PaymentAdapter(getActivity(), mGroup.getId());
     }
 
     @Override
@@ -80,43 +87,30 @@ public class DebtsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_transaction_list, container, false);
-        /*
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new TransactionRecyclerViewAdapter(DummyTransactionContent.ITEMS, mListener));
-        }*/
+        View view = inflater.inflate(R.layout.fragment_expandable_payment_list, container, false);
         return view;
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAdapter = new DebtsAdapter(getContext(), mGroup.getId());
-        mTransactionList = (ListView) view.findViewById(R.id.transaction_list);
-        mTransactionList.setEmptyView(view.findViewById(R.id.transaction_fragment_empty_view));
-        mTransactionList.setAdapter(mAdapter);
+        mAdapter = new ExpandablePaymentAdapter(getContext(), mGroup.getId());
+        mPaymentsList = (ExpandableListView) view.findViewById(R.id.expandable_payment_list);
+        mPaymentsList.setEmptyView(view.findViewById(R.id.expandable_payment_list_empty_view));
+        mPaymentsList.setOnTouchListener(new OnSwipeTouchListener(getActivity(), mPaymentsList){
 
-        // FIXME: 22/06/2016 e se facessimo un long click listener?
-        mTransactionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                // TODO: 20/06/2016  GESTIRE ON CLICK
-                Toast.makeText(MyApplication.getAppContext(), "Posizione " + position,Toast.LENGTH_SHORT).show();
-                /*final Intent i = new Intent(getContext(), PaymentDetailsActivity.class);
-                PaymentModel cost = (PaymentModel) mAdapter.getItem(position);
+            @Override
+            public void onSwipeRight(int pos) {
 
-                i.putExtra(PASSING_PAYMENT_TAG, cost);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);*/
+                Toast.makeText(getActivity(), "right", Toast.LENGTH_LONG).show();
+                //showDeleteButton(pos);
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                Toast.makeText(getActivity(), "left", Toast.LENGTH_LONG).show();
             }
         });
+        mPaymentsList.setAdapter(mAdapter);
     }
 
     @Override
@@ -148,7 +142,7 @@ public class DebtsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Debt item);
+        void onListFragmentInteraction(PaymentModel item);
     }
 
     public class OnSwipeTouchListener implements View.OnTouchListener {
@@ -200,9 +194,9 @@ public class DebtsFragment extends Fragment {
                 float distanceY = e2.getY() - e1.getY();
                 if (Math.abs(distanceX)  > Math.abs(distanceY) && Math.abs(distanceX)  > SWIPE_THRESHOLD && Math.abs(velocityX)  > SWIPE_VELOCITY_THRESHOLD) {
                     if (distanceX  > 0)
-                        onSwipeRight(getPostion(e1));
+                    onSwipeRight(getPostion(e1));
                     else
-                        onSwipeLeft();
+                    onSwipeLeft();
                     return true;
                 }
                 return false;

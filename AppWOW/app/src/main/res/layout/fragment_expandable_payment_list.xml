@@ -18,18 +18,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager">
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ExpandableListView xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:app="http://schemas.android.com/apk/res-auto"
           xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/payment_list"
+            android:id="@+id/expandable_payment_list"
             android:name="it.unibs.appwow.CostListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             tools:context=".fragments.PaymentsFragment"
-            tools:listitem="@layout/fragment_payment_item" />
+            tools:listitem="@layout/fragment_expandable_payment_item" />
     <TextView
-        android:id="@+id/payment_fragment_empty_view"
+        android:id="@+id/expandable_payment_list_empty_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"

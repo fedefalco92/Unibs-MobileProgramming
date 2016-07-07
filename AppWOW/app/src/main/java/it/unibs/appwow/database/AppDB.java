@@ -51,6 +51,7 @@ public final class AppDB {
         public static final String COLUMN_UPDATED_AT = "updated_at";
         public static final String COLUMN_IS_EXCHANGE = "isExchange";
         public static final String COLUMN_POSITION = "position";
+        public static final String COLUMN_POSITION_ID = "position_id";
         public static final String COLUMN_AMOUNT_DETAILS = "amount_details";
     }
 

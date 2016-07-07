@@ -24,7 +24,7 @@ import it.unibs.appwow.models.parc.LocalUser;
 public class DebtsAdapter extends BaseAdapter {
     private static final String TAG_LOG = AmountItemAdapter.class.getSimpleName();
     //private LocalUser mUser;
-    private List<DebtModel> mItems = new ArrayList<DebtModel>();
+    private List<Debt> mItems = new ArrayList<Debt>();
     private final LayoutInflater mInflater;
     private DebtDAO dao;
 
@@ -39,7 +39,7 @@ public class DebtsAdapter extends BaseAdapter {
         dao = new DebtDAO();
         dao.open();
         //mUser = LocalUser.load(MyApplication.getAppContext());
-        mItems = dao.getAllDebts(idGroup);
+        mItems = dao.getAllDebtsExtra(idGroup);
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
     }
@@ -75,11 +75,11 @@ public class DebtsAdapter extends BaseAdapter {
             holder = (Holder)view.getTag();
         }
 
-        final DebtModel item = (DebtModel) getItem(position);
+        final Debt item = (Debt) getItem(position);
         holder.amount.setText(String.valueOf(item.getAmount()));
         // FIXME: 30/06/2016 Aggiungere fullname di entrambi gli utenti
-        holder.fullNameFrom.setText("USER " + item.getIdFrom());
-        holder.fullNameTo.setText("USER " + item.getIdTo());
+        holder.fullNameFrom.setText(item.getFullNameFrom());
+        holder.fullNameTo.setText(item.getFullNameTo());
 
         return view;
     }

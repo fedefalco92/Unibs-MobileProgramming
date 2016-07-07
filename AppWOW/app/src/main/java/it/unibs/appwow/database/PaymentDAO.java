@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.PaymentModel;
 
 /**
@@ -30,7 +31,25 @@ public class PaymentDAO implements LocalDB_DAO {
             AppDB.Payments.COLUMN_UPDATED_AT,
             AppDB.Payments.COLUMN_IS_EXCHANGE,
             AppDB.Payments.COLUMN_POSITION,
+            AppDB.Payments.COLUMN_POSITION_ID,
             AppDB.Payments.COLUMN_AMOUNT_DETAILS
+    };
+
+    private String[] allColumnsExtra = {
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments._ID,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_GROUP,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_USER,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_AMOUNT,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_NAME,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_NOTES,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_CREATED_AT,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_UPDATED_AT,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_IS_EXCHANGE,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_POSITION,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_POSITION_ID,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_AMOUNT_DETAILS,
+            AppDB.Users.TABLE_USERS + "." + AppDB.Users.COLUMN_FULLNAME,
+            AppDB.Users.TABLE_USERS + "." + AppDB.Users.COLUMN_EMAIL
     };
 
     @Override
@@ -61,12 +80,14 @@ public class PaymentDAO implements LocalDB_DAO {
         // FIXME: 30/06/2016 VERIFICARE FUNZIONAMENTO BOOLEAN - INTEGER
         values.put(AppDB.Payments.COLUMN_IS_EXCHANGE, data.isExchange());
         values.put(AppDB.Payments.COLUMN_POSITION, data.getPosition());
+        values.put(AppDB.Payments.COLUMN_POSITION_ID, data.getPositionId());
         values.put(AppDB.Payments.COLUMN_AMOUNT_DETAILS, data.getAmountDetails());
         return values;
     }
 
     // from database to Object
-    private PaymentModel cursorToCost(Cursor cursor) {
+
+    private PaymentModel cursorToPaymentModel(Cursor cursor) {
         int id = cursor.getInt(0);
         int idGroup = cursor.getInt(1);
         int idUser = cursor.getInt(2);
@@ -77,12 +98,32 @@ public class PaymentDAO implements LocalDB_DAO {
         long updatedAt = cursor.getLong(7);
         boolean isExchange = cursor.getInt(8) != 0;
         String position = cursor.getString(9);
-        String amountDetails = cursor.getString(10);
+        String position_id = cursor.getColumnName(10);
+        String amountDetails = cursor.getString(11);
 
-        return new PaymentModel(id, idGroup, idUser, amount, name, notes,createdAt, updatedAt,position, amountDetails, isExchange);
+        return new PaymentModel(id, idGroup, idUser, amount, name, notes,createdAt, updatedAt,position, position_id, amountDetails, isExchange);
     }
 
-    public PaymentModel insertCost(PaymentModel data) {
+    private Payment cursorToPayment(Cursor cursor) {
+        int id = cursor.getInt(0);
+        int idGroup = cursor.getInt(1);
+        int idUser = cursor.getInt(2);
+        double amount = cursor.getDouble(3);
+        String name = cursor.getString(4);
+        String notes = cursor.getString(5);
+        long createdAt = cursor.getLong(6);
+        long updatedAt = cursor.getLong(7);
+        boolean isExchange = cursor.getInt(8) != 0;
+        String position = cursor.getString(9);
+        String position_id = cursor.getString(10);
+        String amountDetails = cursor.getString(11);
+        String fullName = cursor.getString(12);
+        String email  = cursor.getString(13);
+
+        return new Payment(id, idGroup, idUser, fullName, email, amount, name, notes, createdAt, updatedAt, position, position_id, amountDetails, isExchange);
+    }
+
+    public PaymentModel insertPayment(PaymentModel data) {
 
         database.replace(AppDB.Payments.TABLE_PAYMENTS, null,
                 costToValues(data));
@@ -91,7 +132,7 @@ public class PaymentDAO implements LocalDB_DAO {
                 AppDB.Users._ID + " = ?",
                 new String[] {"" + data.getId()},null,null,null);
         cursor.moveToFirst();
-        PaymentModel d = cursorToCost(cursor);
+        PaymentModel d = cursorToPaymentModel(cursor);
         cursor.close();
         return d;
 
@@ -101,13 +142,29 @@ public class PaymentDAO implements LocalDB_DAO {
         database.delete(AppDB.Payments.TABLE_PAYMENTS, AppDB.Payments.COLUMN_ID_GROUP + " = ?" , new String[]{"" + idGroup});
     }
 
+
     public List<PaymentModel> getAllCosts(int idGroup) {
         List<PaymentModel> data = new ArrayList<PaymentModel>();
         Cursor cursor = database.query(AppDB.Payments.TABLE_PAYMENTS,
                 allColumns, AppDB.Payments.COLUMN_ID_GROUP + " = " + idGroup,null,null,null,null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            PaymentModel d = cursorToCost(cursor);
+            PaymentModel d = cursorToPaymentModel(cursor);
+            data.add(d);
+            cursor.moveToNext();
+        }
+        cursor.close(); // remember to always close the cursor!
+        return data;
+    }
+
+    public List<Payment> getAllPayments(int idGroup) {
+        List<Payment> data = new ArrayList<Payment>();
+        Cursor cursor = database.query(AppDB.Payments.TABLE_PAYMENTS + " LEFT JOIN " + AppDB.Users.TABLE_USERS + " ON " +
+                AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_USER + "=" + AppDB.Users.TABLE_USERS + "." + AppDB.Users._ID,
+                allColumnsExtra, AppDB.Payments.COLUMN_ID_GROUP + " = " + idGroup,null,null,null,null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            Payment d = cursorToPayment(cursor);
             data.add(d);
             cursor.moveToNext();
         }

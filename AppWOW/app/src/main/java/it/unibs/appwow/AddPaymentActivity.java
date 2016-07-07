@@ -257,21 +257,28 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
 
     private void sendPostRequest() {
         showProgress(true);
-        String[] keys = {"idGroup", "idUser", "amount", "name", "notes", "position", "amount_details"};
+        String[] keys = {"idGroup", "idUser", "amount", "name", "notes", "position", "position_id", "amount_details"};
         String idGroup = String.valueOf(mGroup.getId());
         String idUser = String.valueOf(mUser.getId());
         double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
         String amount = String.valueOf(amountDouble);
         String name = mPaymentName.getText().toString();
         String notes = mPaymentNotes.getText().toString();
-        String position;
+        String position = mPaymentPositionText.getText().toString();
+        String position_id = "";
+        if(mPlace!=null){
+            position_id = mPlace.getId();
+        }
+        /*
         if(mPlace!= null){
             position = PositionUtils.encodePositionId(mPlace.getId());
         } else {
             position = mPaymentPositionText.getText().toString();
-        }
+        }*/
+
+
         String amount_details = computeAmountDetails(mUser.getId(), amountDouble);
-        String[] values = {idGroup, idUser, amount, name, notes, position, amount_details};
+        String[] values = {idGroup, idUser, amount, name, notes, position, position_id, amount_details};
 
         Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
         StringRequest postRequest = WebServiceRequest.

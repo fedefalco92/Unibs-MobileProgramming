@@ -12,7 +12,7 @@ import it.unibs.appwow.utils.DateUtils;
 /**
  * Created by Alessandro on 15/06/2016.
  */
-public class PaymentModel implements Parcelable {
+public class PaymentModel { //implements Parcelable {
 
     private static final byte PRESENT = 1;
 
@@ -27,13 +27,11 @@ public class PaymentModel implements Parcelable {
     private long mCreatedAt;
     private long mUpdatedAt;
     private boolean mIsExchange;
-    /**
-     * la stringa mPosition è una posizione fittizia tipo "casa mia" oppure un ID di google places preceduto da "###"
-     */
     private String mPosition;
+    private String mPositionId;
     private String mAmountDetails; // FIXME: 06/05/2016 da sostituire con un vector da riempire al momento dell'importazione dal DB
 
-    public PaymentModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, String position, String amountDetails) {
+    public PaymentModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails) {
         mId = id;
         mIdGroup = idGroup;
         mIdUser = idUser;
@@ -43,11 +41,12 @@ public class PaymentModel implements Parcelable {
         mCreatedAt = createdAt;
         mUpdatedAt = updatedAt;
         mPosition = position;
+        mPositionId = positionId;
         mAmountDetails = amountDetails;
         mIsExchange = false;
     }
 
-    public PaymentModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, String position, String amountDetails, boolean isExchange) {
+    public PaymentModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails, boolean isExchange) {
         mId = id;
         mIdGroup = idGroup;
         mIdUser = idUser;
@@ -57,6 +56,7 @@ public class PaymentModel implements Parcelable {
         mCreatedAt = createdAt;
         mUpdatedAt = updatedAt;
         mPosition = position;
+        mPositionId = positionId;
         mAmountDetails = amountDetails;
         mIsExchange = isExchange;
     }
@@ -149,6 +149,14 @@ public class PaymentModel implements Parcelable {
         mIsExchange = exchange;
     }
 
+    public String getPositionId() {
+        return mPositionId;
+    }
+
+    public void setPositionId(String positionId) {
+        mPositionId = positionId;
+    }
+
     public static PaymentModel create(JSONObject paymentJs) throws JSONException {
         int id = paymentJs.getInt("id");
         int idGroup = paymentJs.getInt("idGroup");
@@ -161,11 +169,13 @@ public class PaymentModel implements Parcelable {
         // FIXME: 30/06/2016 VERIFICARE FUNZIONAMENTO GETBOOLEAN
         boolean isExchange = paymentJs.getInt("isExchange")!= 0;
         String position = paymentJs.getString("position");
+        String positionId = paymentJs.getString("position_id");
         String amountDetails = paymentJs.getString("amount_details");
 
-        return new PaymentModel(id, idGroup, idUser, amount, name, notes, createdAt, updatedAt, position, amountDetails, isExchange);
+        return new PaymentModel(id, idGroup, idUser, amount, name, notes, createdAt, updatedAt, position, positionId, amountDetails, isExchange);
     }
 
+    /*
     public static final Parcelable.Creator<PaymentModel> CREATOR = new Parcelable.Creator<PaymentModel>()
     {
         public PaymentModel createFromParcel(Parcel in)
@@ -177,13 +187,14 @@ public class PaymentModel implements Parcelable {
         {
             return new PaymentModel[size];
         }
-    };
+    };*/
 
     /**
      * Read from the parcelized object.
      *
      * @param in
      */
+    /*
     public PaymentModel(Parcel in)
     {
         this.mId = in.readInt();
@@ -294,5 +305,5 @@ public class PaymentModel implements Parcelable {
             dest.writeByte(NOT_PRESENT);
         }
 
-    }
+    }*/
 }

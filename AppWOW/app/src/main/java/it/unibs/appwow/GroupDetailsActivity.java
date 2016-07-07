@@ -37,7 +37,8 @@ import it.unibs.appwow.database.DebtDAO;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.AmountsFragment;
-import it.unibs.appwow.fragments.PaymentsFragment;
+import it.unibs.appwow.fragments.ExpandablePaymentsFragment;
+//import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.DebtsFragment;
 import it.unibs.appwow.models.Debt;
@@ -51,7 +52,7 @@ import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.models.Amount;
 
-public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragment.OnListFragmentInteractionListener,
+public class GroupDetailsActivity extends AppCompatActivity implements ExpandablePaymentsFragment.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
         DebtsFragment.OnListFragmentInteractionListener,
         SwipeRefreshLayout.OnRefreshListener{
@@ -103,7 +104,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
                 final Intent i = new Intent(GroupDetailsActivity.this, AddPaymentActivity.class);
-                i.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
+                //i.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
+                i.putExtra(ExpandablePaymentsFragment.PASSING_GROUP_TAG, mGroup);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
             }
@@ -380,7 +382,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                                 try{
                                     JSONObject costJs = response.getJSONObject(i);
                                     PaymentModel cost = PaymentModel.create(costJs);
-                                    dao.insertCost(cost);
+                                    dao.insertPayment(cost);
                                 } catch(JSONException e){
                                     e.printStackTrace();
                                 }
@@ -482,7 +484,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             //return PlaceholderFragment.newInstance(position + 1)
             switch (position) {
                 case 0:
-                    return PaymentsFragment.newInstance(1, mGroup);
+                    //return PaymentsFragment.newInstance(1, mGroup);
+                    return ExpandablePaymentsFragment.newInstance(1, mGroup);
                 case 1:
                     return AmountsFragment.newInstance(1, mGroup, mLocalUser.getId());
                 case 2:

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.DebtModel;
 
 /**
@@ -24,6 +25,16 @@ public class DebtDAO implements LocalDB_DAO {
             AppDB.Debts.COLUMN_ID_FROM,
             AppDB.Debts.COLUMN_ID_TO,
             AppDB.Debts.COLUMN_AMOUNT,
+    };
+
+    private String[] allColumnsExtra = {
+            AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts._ID,
+            AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts.COLUMN_ID_GROUP,
+            AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts.COLUMN_ID_FROM,
+            AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts.COLUMN_ID_TO,
+            AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts.COLUMN_AMOUNT,
+            "users1.fullName as fullNameFrom",
+            "users2.fullName as fullNameTo"
     };
 
     @Override
@@ -73,6 +84,18 @@ public class DebtDAO implements LocalDB_DAO {
         return new Debt(id, idBalancing, idFrom, idTo, amount, fullName);
     }*/
 
+    private Debt cursorToDebtWithFullNames(Cursor cursor) {
+        int id = cursor.getInt(0);
+        int idBalancing = cursor.getInt(1);
+        int idFrom = cursor.getInt(2);
+        int idTo = cursor.getInt(3);
+        double amount = cursor.getDouble(4);
+        String fullNameFrom = cursor.getString(5);
+        String fullNameTo = cursor.getString(6);
+
+        return new Debt(id, idBalancing, idFrom, idTo, amount, fullNameFrom, fullNameTo);
+    }
+
     public DebtModel insertDebt(DebtModel data) {
 
         database.replace(AppDB.Debts.TABLE_DEBTS, null,
@@ -118,6 +141,20 @@ public class DebtDAO implements LocalDB_DAO {
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
             DebtModel d = cursorToDebt(cursor);
+            data.add(d);
+            cursor.moveToNext();
+        }
+        cursor.close(); // remember to always close the cursor!
+        return data;
+    }
+
+    public List<Debt> getAllDebtsExtra(int idGroup) {
+        List<Debt> data = new ArrayList<Debt>();
+        Cursor cursor = database.query("debts LEFT JOIN users  users1 ON debts.idFrom = users1._id LEFT JOIN users users2",
+                allColumnsExtra,AppDB.Debts.COLUMN_ID_GROUP + " = ? ;",new String[] {String.valueOf(idGroup)},null,null,null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            Debt d = cursorToDebtWithFullNames(cursor);
             data.add(d);
             cursor.moveToNext();
         }
