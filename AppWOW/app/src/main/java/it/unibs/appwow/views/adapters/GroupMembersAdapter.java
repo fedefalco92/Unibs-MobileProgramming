@@ -63,6 +63,10 @@ public class GroupMembersAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
+    public void remove(int position){
+        mItems.remove(position);
+    }
+
     public void remove(UserModel item){
         mItems.remove(item);
         this.notifyDataSetChanged();
@@ -98,6 +102,7 @@ public class GroupMembersAdapter extends BaseAdapter {
         if(view==null) {
             if(getItemViewType(position) == 0) {
                 view = mInflater.inflate(R.layout.listview_members_simpleitem_layout,null);
+
             } else {
                 view = mInflater.inflate(R.layout.listview_members_admin_layout,null);
                 view.setOnClickListener(null); //disabilita la selezione per l'utente admin

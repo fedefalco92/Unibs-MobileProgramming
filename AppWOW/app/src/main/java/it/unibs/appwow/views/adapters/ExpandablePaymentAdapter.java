@@ -32,7 +32,7 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
 
-    private List<Payment> mItems = new ArrayList<Payment>();
+    private List<Payment> mItems;
     private final LayoutInflater mInflater;
     private PaymentDAO dao = new PaymentDAO();
 
@@ -50,6 +50,11 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getGroup(int position) {
         return mItems.get(position);
+    }
+
+    public Payment getItem(int position){
+        Payment item = (Payment) getGroup(position);
+        return item;
     }
 
     @Override
@@ -153,7 +158,7 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
         holder.amountDetailContainer.removeAllViews();
         for(Amount a: amounts){
             TextView tv = new TextView(mContext, null);
-            tv.setText(a.toString());
+            tv.setText(a.getFormattedString());
             holder.amountDetailContainer.addView(tv);
         }
 
@@ -163,6 +168,7 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
 
         return view;
     }
+
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
@@ -186,7 +192,8 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
         LinearLayout amountDetailContainer;
     }
 
-    public ExpandablePaymentAdapter(Context context, int idGroup){
+    public ExpandablePaymentAdapter(Context context, int idGroup, List<Payment> items){
+        mItems = items;
         mContext = context;
         mInflater = LayoutInflater.from(context);
         dao.open();

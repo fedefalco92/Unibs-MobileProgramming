@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -117,6 +118,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         //adminUser.setIsGroupAdmin();
         //((GroupMembersAdapter)membersList.getAdapter()).add(adminUser);
 
+
         membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         membersList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -193,7 +195,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 mAdapter.notifyDataSetChanged();
             }
 
-            });
+        });
 
         mAddMemberButton = (Button) findViewById(R.id.button_add_member);
         mAddMemberButton.setOnClickListener(new View.OnClickListener() {
@@ -211,10 +213,11 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 }
             }
         });
-
+        //membersList.setSelector(R.drawable.add_group_member_list_item_background);
 
 
     }
+
 
     private boolean minMemberNumberReached() {
         //return mDisplayedUsers.size() >= 2;

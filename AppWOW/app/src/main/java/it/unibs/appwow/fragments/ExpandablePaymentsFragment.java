@@ -6,16 +6,26 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import it.unibs.appwow.PaymentDetailsActivity;
 import it.unibs.appwow.R;
+import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.views.adapters.ExpandablePaymentAdapter;
@@ -39,8 +49,10 @@ public class ExpandablePaymentsFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private ExpandablePaymentAdapter mAdapter;
     private GroupModel mGroup;
-    private ExpandableListView mPaymentsList;
-    //private List<PaymentModel> mPaymentsList; //da riempire
+    private ExpandableListView  mPaymentsListView;
+
+    private List<Payment> mPaymentsList; //da riempire
+    //private Set<Payment> mSelectedItems;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -69,6 +81,7 @@ public class ExpandablePaymentsFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
         }
+        mPaymentsList= new ArrayList<Payment>();
 
         //per poter popolare l'action bar dell'activity
         //setHasOptionsMenu(true);
@@ -93,10 +106,10 @@ public class ExpandablePaymentsFragment extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAdapter = new ExpandablePaymentAdapter(getContext(), mGroup.getId());
-        mPaymentsList = (ExpandableListView) view.findViewById(R.id.expandable_payment_list);
-        mPaymentsList.setEmptyView(view.findViewById(R.id.expandable_payment_list_empty_view));
-        mPaymentsList.setOnTouchListener(new OnSwipeTouchListener(getActivity(), mPaymentsList){
+        mAdapter = new ExpandablePaymentAdapter(getContext(), mGroup.getId(), mPaymentsList);
+         mPaymentsListView = (ExpandableListView) view.findViewById(R.id.expandable_payment_list);
+         mPaymentsListView.setEmptyView(view.findViewById(R.id.expandable_payment_list_empty_view));
+         mPaymentsListView.setOnTouchListener(new OnSwipeTouchListener(getActivity(),  mPaymentsListView){
 
             @Override
             public void onSwipeRight(int pos) {
@@ -110,7 +123,85 @@ public class ExpandablePaymentsFragment extends Fragment {
                 Toast.makeText(getActivity(), "left", Toast.LENGTH_LONG).show();
             }
         });
-        mPaymentsList.setAdapter(mAdapter);
+         mPaymentsListView.setAdapter(mAdapter);
+        /*
+         mPaymentsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+         mPaymentsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
+                // Here you can do something when items are selected/de-selected,
+                // such as update the title in the CAB
+
+                String title = "";
+                if(checked){
+                    mSelectedItems.add(mAdapter.getItem(position));
+                }
+                else{
+                    mSelectedItems.remove(mAdapter.getItem(position));
+                }
+
+                if(mSelectedItems.size() == 1){
+                    title = "1 selected item";
+                }
+                else{
+                    title = mSelectedItems.size()+" selected items";
+                }
+                mode.setTitle(title);
+            }
+
+            @Override
+            public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
+                // Inflate the menu for the CAB
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.context_menu_selection, menu);
+                // toolbar.setVisibility(View.GONE); // FIXME: 24/05/16 trovare soluzione piu' furba?
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+                // Here you can perform updates to the CAB due to
+                // an invalidate() request
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
+                // Respond to clicks on the actions in the CAB
+                switch (item.getItemId()){
+                    case R.id.context_delete:
+                        Iterator iterator = mSelectedItems.iterator();
+                        while(iterator.hasNext()){
+                            Payment toRemove = (Payment) iterator.next();
+                            //mDisplayedUsers.remove(toRemove);
+                            //mAdapter.remove(toRemove);
+                            mPaymentsList.remove(toRemove);
+                            //mGroup.removeUser(toRemove);
+                            //Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
+                            //AGGIORNO IL MENU
+                            getActivity().invalidateOptionsMenu();
+                        }
+                        mAdapter.notifyDataSetChanged();
+                        mode.finish();
+                        return true;
+                    default:
+                        mode.finish();
+                        return true;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(android.view.ActionMode mode) {
+                // Here you can make any necessary updates to the activity when
+                // the CAB is removed. By default, selected items are deselected/unchecked.
+                // toolbar.setVisibility(View.);
+                //GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
+                mSelectedItems.clear();
+                //adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
+            }
+
+        });*/
     }
 
     @Override

@@ -49,16 +49,6 @@ public class GroupAdapter extends BaseAdapter {
         mItems = dao.getAllGroups();
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
-        /*mItems.add(new GroupModel(1,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        mItems.add(new GroupModel(2,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
-        mItems.add(new GroupModel(3,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
-        mItems.add(new GroupModel(4,"priasdasdasmo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        mItems.add(new GroupModel(5,"primo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        mItems.add(new GroupModel(6,"asd gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
-        mItems.add(new GroupModel(7,"sdasda gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),2));
-        mItems.add(new GroupModel(8,"priasdasdasmo gruppo",R.drawable.ic_menu_camera,System.currentTimeMillis(),System.currentTimeMillis(),1));
-        */
-
     }
 
 

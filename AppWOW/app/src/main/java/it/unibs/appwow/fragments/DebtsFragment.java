@@ -8,11 +8,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.parc.GroupModel;
@@ -29,7 +27,7 @@ public class DebtsFragment extends Fragment {
     private static final String TAG_LOG = DebtsFragment.class.getSimpleName();
     private GroupModel mGroup;
     private DebtsAdapter mAdapter;
-    private ListView mTransactionList;
+    private ListView mYourDebtsList;
     // TODO: Customize parameters
     private int mColumnCount = 1;
 
@@ -99,9 +97,9 @@ public class DebtsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAdapter = new DebtsAdapter(getContext(), mGroup.getId());
-        mTransactionList = (ListView) view.findViewById(R.id.transaction_list);
-        mTransactionList.setEmptyView(view.findViewById(R.id.transaction_fragment_empty_view));
-        mTransactionList.setOnTouchListener(new OnSwipeTouchListener(getActivity(), mTransactionList){
+        mYourDebtsList = (ListView) view.findViewById(R.id.transaction_list);
+        mYourDebtsList.setEmptyView(view.findViewById(R.id.transaction_fragment_empty_view));
+        mYourDebtsList.setOnTouchListener(new OnSwipeTouchListener(getActivity(), mYourDebtsList){
 
             @Override
             public void onSwipeRight(int pos) {
@@ -116,10 +114,10 @@ public class DebtsFragment extends Fragment {
             }
         });
 
-        mTransactionList.setAdapter(mAdapter);
+        mYourDebtsList.setAdapter(mAdapter);
 
         // FIXME: 22/06/2016 e se facessimo un long click listener?
-     /*   mTransactionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+     /*   mYourDebtsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 // TODO: 20/06/2016  GESTIRE ON CLICK
