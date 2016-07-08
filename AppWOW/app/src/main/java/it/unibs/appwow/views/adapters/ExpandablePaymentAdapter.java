@@ -34,7 +34,7 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
 
     private List<Payment> mItems;
     private final LayoutInflater mInflater;
-    private PaymentDAO dao = new PaymentDAO();
+    private PaymentDAO dao;
 
     @Override
     public int getGroupCount() {
@@ -196,10 +196,12 @@ public class ExpandablePaymentAdapter extends BaseExpandableListAdapter {
         mItems = items;
         mContext = context;
         mInflater = LayoutInflater.from(context);
+        dao = new PaymentDAO();
         dao.open();
-        mItems = dao.getAllPayments(idGroup);
+        mItems.clear();
+        mItems.addAll(dao.getAllPayments(idGroup));
         dao.close();
-        Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
+        Log.d(TAG_LOG, "Size mItems dopo AddAll= "+ mItems.size());
     }
 
 }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.ActionMode;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,7 +39,7 @@ import it.unibs.appwow.views.adapters.PaymentAdapter;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class ExpandablePaymentsFragment extends Fragment {
+public class ExpandablePaymentsFragment extends Fragment implements AdapterView.OnItemLongClickListener /*,ActionMode.Callback */{
 
     private static final String TAG_LOG = ExpandablePaymentsFragment.class.getSimpleName();
     public static final String PASSING_GROUP_TAG = "group";
@@ -52,7 +54,9 @@ public class ExpandablePaymentsFragment extends Fragment {
     private ExpandableListView  mPaymentsListView;
 
     private List<Payment> mPaymentsList; //da riempire
-    //private Set<Payment> mSelectedItems;
+    private Payment mSelectedItem;
+
+    private ActionMode mActionMode;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -109,99 +113,12 @@ public class ExpandablePaymentsFragment extends Fragment {
         mAdapter = new ExpandablePaymentAdapter(getContext(), mGroup.getId(), mPaymentsList);
          mPaymentsListView = (ExpandableListView) view.findViewById(R.id.expandable_payment_list);
          mPaymentsListView.setEmptyView(view.findViewById(R.id.expandable_payment_list_empty_view));
-         mPaymentsListView.setOnTouchListener(new OnSwipeTouchListener(getActivity(),  mPaymentsListView){
-
-            @Override
-            public void onSwipeRight(int pos) {
-
-                Toast.makeText(getActivity(), "right", Toast.LENGTH_LONG).show();
-                //showDeleteButton(pos);
-            }
-
-            @Override
-            public void onSwipeLeft() {
-                Toast.makeText(getActivity(), "left", Toast.LENGTH_LONG).show();
-            }
-        });
          mPaymentsListView.setAdapter(mAdapter);
-        /*
-         mPaymentsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-         mPaymentsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
-                // Here you can do something when items are selected/de-selected,
-                // such as update the title in the CAB
 
-                String title = "";
-                if(checked){
-                    mSelectedItems.add(mAdapter.getItem(position));
-                }
-                else{
-                    mSelectedItems.remove(mAdapter.getItem(position));
-                }
+         mPaymentsListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        mPaymentsListView.setOnItemLongClickListener(this);
+        mPaymentsListView.setSelector(R.drawable.add_group_member_list_item_background);
 
-                if(mSelectedItems.size() == 1){
-                    title = "1 selected item";
-                }
-                else{
-                    title = mSelectedItems.size()+" selected items";
-                }
-                mode.setTitle(title);
-            }
-
-            @Override
-            public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
-                // Inflate the menu for the CAB
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.context_menu_selection, menu);
-                // toolbar.setVisibility(View.GONE); // FIXME: 24/05/16 trovare soluzione piu' furba?
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
-                // Here you can perform updates to the CAB due to
-                // an invalidate() request
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
-                // Respond to clicks on the actions in the CAB
-                switch (item.getItemId()){
-                    case R.id.context_delete:
-                        Iterator iterator = mSelectedItems.iterator();
-                        while(iterator.hasNext()){
-                            Payment toRemove = (Payment) iterator.next();
-                            //mDisplayedUsers.remove(toRemove);
-                            //mAdapter.remove(toRemove);
-                            mPaymentsList.remove(toRemove);
-                            //mGroup.removeUser(toRemove);
-                            //Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
-                            //AGGIORNO IL MENU
-                            getActivity().invalidateOptionsMenu();
-                        }
-                        mAdapter.notifyDataSetChanged();
-                        mode.finish();
-                        return true;
-                    default:
-                        mode.finish();
-                        return true;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(android.view.ActionMode mode) {
-                // Here you can make any necessary updates to the activity when
-                // the CAB is removed. By default, selected items are deselected/unchecked.
-                // toolbar.setVisibility(View.);
-                //GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
-                mSelectedItems.clear();
-                //adapter.notifyDataSetChanged();
-                mAdapter.notifyDataSetChanged();
-            }
-
-        });*/
     }
 
     @Override
@@ -221,6 +138,63 @@ public class ExpandablePaymentsFragment extends Fragment {
         mListener = null;
     }
 
+        /*
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.context_menu_selection, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        // Respond to clicks on the actions in the CAB
+        switch (item.getItemId()){
+            case R.id.context_delete:
+                Log.d(TAG_LOG, "mPaymentsList size before: " + mPaymentsList.size());
+                mPaymentsList.remove(mSelectedItem);
+                Log.d(TAG_LOG, "mPaymentsList size after: " + mPaymentsList.size());
+                getActivity().invalidateOptionsMenu();
+
+                //mAdapter.notifyDataSetChanged();
+                mode.finish();
+                return true;
+            default:
+                mode.finish();
+                return true;
+        }
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        mSelectedItem = null;
+        mActionMode = null;
+        mAdapter.notifyDataSetChanged();
+    }
+
+*/
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        /*
+        Log.d(TAG_LOG, "onItemLongClick eseguito");
+        // if actionmode is null "not started"
+        if (mActionMode != null) {
+            return false;
+        }
+
+        // Start the CAB
+        mActionMode = getActivity().startActionMode(this);*/
+        mSelectedItem = mAdapter.getItem(position);
+        view.setSelected(true);
+        return true;
+    }
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -236,63 +210,4 @@ public class ExpandablePaymentsFragment extends Fragment {
         void onListFragmentInteraction(PaymentModel item);
     }
 
-    public class OnSwipeTouchListener implements View.OnTouchListener {
-
-        ListView list;
-        private GestureDetector gestureDetector;
-        private Context context;
-
-        public OnSwipeTouchListener(Context ctx, ListView list) {
-            gestureDetector = new GestureDetector(ctx, new GestureListener());
-            context = ctx;
-            this.list = list;
-        }
-
-        public OnSwipeTouchListener() {
-            super();
-        }
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            return gestureDetector.onTouchEvent(event);
-        }
-
-        public void onSwipeRight(int pos) {
-
-        }
-
-        public void onSwipeLeft() {
-
-        }
-
-        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-            private static final int SWIPE_THRESHOLD = 100;
-            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
-
-            private int getPostion(MotionEvent e1) {
-                return list.pointToPosition((int) e1.getX(), (int) e1.getY());
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                float distanceX = e2.getX() - e1.getX();
-                float distanceY = e2.getY() - e1.getY();
-                if (Math.abs(distanceX)  > Math.abs(distanceY) && Math.abs(distanceX)  > SWIPE_THRESHOLD && Math.abs(velocityX)  > SWIPE_VELOCITY_THRESHOLD) {
-                    if (distanceX  > 0)
-                    onSwipeRight(getPostion(e1));
-                    else
-                    onSwipeLeft();
-                    return true;
-                }
-                return false;
-            }
-
-        }
-    }
 }

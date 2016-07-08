@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/activatedBackgroundIndicator">
+    android:background="@drawable/add_group_member_list_item_background"
+    >
 
 
     <TextView
