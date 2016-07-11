@@ -178,6 +178,7 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.POST, url.toString(), WebServiceRequest.createParametersMap(keys, values), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.d(TAG_LOG,"SettleRequest Response:" + response);
                 PaymentModel p = null;
                 try {
                     JSONObject obj = new JSONObject(response);

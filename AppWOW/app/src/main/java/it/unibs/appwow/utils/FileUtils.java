@@ -105,6 +105,9 @@ public class FileUtils {
 
     public static Bitmap readTemporaryBitmap(String fileName, Context context) {
         Bitmap immagine = null;
+        if(fileName == null)
+            return immagine;
+
         File toOpen = new File(context.getCacheDir(), fileName);
         if (toOpen.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();

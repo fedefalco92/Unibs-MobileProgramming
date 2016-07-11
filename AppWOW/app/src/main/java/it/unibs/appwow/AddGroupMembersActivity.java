@@ -54,6 +54,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
 
     private static final String TAG_LOG = AddGroupMembersActivity.class.getSimpleName();
 
+    // FIXME: 11/07/16 AGGIUSTARE IL FATTO CHE NON VIENE CARICATA NESSUNA IMMAGINE
     private ListView membersList;
     private GroupMembersAdapter mAdapter;
     //private TextView matchLabel;
