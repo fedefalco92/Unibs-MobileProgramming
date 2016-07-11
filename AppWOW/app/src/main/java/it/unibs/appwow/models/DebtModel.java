@@ -22,7 +22,6 @@ public class DebtModel {
     }
 
     public static DebtModel create(JSONObject djs) throws JSONException {
-        // FIXME: 15/06/2016  ASPETTARE CHE FEDE FACCIA LE API
         int id = djs.getInt("id");
         int idGroup = djs.getInt("idGroup");
         int idFrom = djs.getInt("idFrom");
