@@ -1,20 +1,35 @@
 package it.unibs.appwow.services;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
+import java.util.jar.Manifest;
+
+import it.unibs.appwow.MyApplication;
 
 /**
  * Created by Alessandro on 19/05/2016.
  */
 public final class WebServiceUri {
+    private static final String TAG_LOG = WebServiceUri.class.getSimpleName();
+
+    public static final int SERVER_ERROR = 1;
+    public static final int NETWORK_ERROR = 2;
+
     public final static Uri BASE_ADDRESS = Uri.parse("http://api.bresciawebproject.it");
     public final static Uri USERS_URI = Uri.withAppendedPath(BASE_ADDRESS, "users");
     public final static Uri LOGIN_URI = Uri.withAppendedPath(USERS_URI, "login");
     public final static Uri CHECK_USER_URI = Uri.withAppendedPath(USERS_URI, "check-user");
     public final static Uri GROUPS_URI = Uri.withAppendedPath(BASE_ADDRESS, "groups");
     public final static Uri PAYMENTS_URI = Uri.withAppendedPath(BASE_ADDRESS, "payments");
+    private final static String PLACES_DETAILS_BASE_URL = "https://maps.googleapis.com/maps/api/place/details/json?key=%s&placeid=%s&language=%s";
 
     public final static Uri getGroupUri (int idGroup){
         return Uri.withAppendedPath(GROUPS_URI, String.valueOf(idGroup));
@@ -58,4 +73,24 @@ public final class WebServiceUri {
     public static Uri getDeletePaymentUri(int id) {
         return Uri.withAppendedPath(PAYMENTS_URI, String.valueOf(id));
     }
+
+    public static String getPlaceDetailsUri(Context context, String placeId){
+        String myApiKey = "";
+        String language = "";
+        try {
+            ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = ai.metaData;
+            myApiKey = bundle.getString("com.google.android.geo.API_KEY");
+            language = Locale.getDefault().getLanguage();
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG_LOG, "Failed to load meta-data, NameNotFound: " + e.getMessage());
+        } catch (NullPointerException e) {
+            Log.e(TAG_LOG, "Failed to load meta-data, NullPointer: " + e.getMessage());
+        }
+
+        return String.format(PLACES_DETAILS_BASE_URL, myApiKey, placeId, language);
+
+    }
+
+
 }

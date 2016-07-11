@@ -1,17 +1,28 @@
 package it.unibs.appwow;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -27,11 +38,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
 import java.util.List;
 
 import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.models.Amount;
+import it.unibs.appwow.models.MyPlace;
 import it.unibs.appwow.models.Payment;
+import it.unibs.appwow.services.WebServiceRequest;
+import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.PositionUtils;
@@ -43,7 +61,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     private final String TAG_LOG = PaymentDetailsActivity.class.getSimpleName();
 
     private Payment mCost;
-
+    private View mRootLayout;
     private TextView mCostName;
     private TextView mFullName;
     private TextView mEmail;
@@ -53,7 +71,8 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     private TextView mNotesLabel;
     private TextView mPositionText;
     private TextView mPositionLabel;
-    private Place mPlace;
+    //private Place mPlace;
+    private MyPlace mPlace;
     private GoogleMap mMap;
     private MapFragment mMapFragment;
 
@@ -70,6 +89,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_details);
+        mRootLayout = findViewById(R.id.activity_payment_details_container);
         mCost = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
         setTitle(mCost.getName());
 
@@ -119,7 +139,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
         final String position_id = mCost.getPositionId();
         if(position_id!= null && !position_id.isEmpty()){
-            // FIXME: 11/07/2016 SOSTITUIRE CON JSON REQUEST?
+            /*
             Places.GeoDataApi.getPlaceById(mClient, position_id).setResultCallback(new ResultCallback<PlaceBuffer>() {
                 @Override
                 public void onResult(PlaceBuffer places) {
@@ -135,18 +155,8 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                     mMapFragment.getMapAsync(PaymentDetailsActivity.this);
                     places.release();
                 }
-            });
-            mMapButton.setVisibility(View.VISIBLE);
-            mMapButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // FIXME: 11/07/2016 SISTEMARE STORIA DEL CID
-                    Uri uri = Uri.parse("https://maps.google.com/?cid=" + position_id);
-                    Intent gmaps = new Intent(Intent.ACTION_VIEW, uri);
-                    gmaps.setPackage("com.google.android.apps.maps");
-                    startActivity(gmaps);
-                }
-            });
+            });*/
+            sendPlaceDetailRequest(position_id);
         } else {
             mMapButton.setVisibility(View.INVISIBLE);
             mMapFragment.getView().setVisibility(View.GONE);
@@ -165,6 +175,154 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         }
     }
 
+    private void sendPlaceDetailRequest(final String place_id) {
+        StringRequest req = new StringRequest(WebServiceUri.getPlaceDetailsUri(this, place_id),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        String place_url = "";
+                        String place_name = "";
+                        String place_address = "";
+                        LatLng latLng;
+                        try {
+                            JSONObject placejs = new JSONObject(response).getJSONObject("result");
+                            place_url = placejs.getString("url");
+                            place_name = placejs.getString("name");
+                            place_address = placejs.getString("formatted_address");
+                            JSONObject location = placejs.getJSONObject("geometry").getJSONObject("location");
+                            String lat = location.getString("lat");
+                            String lng = location.getString("lng");
+                            latLng = new LatLng(new Double(lat), new Double (lng));
+                            mPlace = new MyPlace(place_name, place_address, place_url, latLng);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                        //setto il fragment con la mappa
+                        mPositionText.setText(mPlace.getName());
+                        mMapFragment.getMapAsync(PaymentDetailsActivity.this);
+
+                        //setto il bottone di gmaps
+                        mMapButton.setVisibility(View.VISIBLE);
+                        mMapButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Uri uri = Uri.parse(mPlace.getUrl());
+                                Intent gmaps = new Intent(Intent.ACTION_VIEW, uri);
+                                gmaps.setPackage("com.google.android.apps.maps");
+                                startActivity(gmaps);
+                            }
+                        });
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        MyApplication.getInstance().addToRequestQueue(req);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_payment_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_payment_details_delete) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.payment_delete_title));
+            builder.setMessage(String.format(getString(R.string.payment_delete_message), mCost.getName()));
+            builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                   //progress dialog
+                    showProgressDialog();
+                }
+            });
+            builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showProgressDialog() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(getString(R.string.payment_deleting));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        sendDeleteRequest(progressDialog);
+
+    }
+
+    private void sendDeleteRequest(final ProgressDialog dialog) {
+        URL url = WebServiceUri.uriToUrl(WebServiceUri.getDeletePaymentUri(mCost.getId()));
+        StringRequest req = WebServiceRequest.stringRequest(Request.Method.DELETE, url.toString(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                boolean result = false;
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    String stringresult = obj.getString("success");
+                    result = Boolean.parseBoolean(stringresult);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(result){
+                    dialog.dismiss();
+                    finish();
+                } else {
+                    dialog.dismiss();
+                    showUnableToRemoveSnackbar(WebServiceUri.SERVER_ERROR);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG_LOG, "VOLLEY ERROR: " + error);
+                dialog.dismiss();
+                showUnableToRemoveSnackbar(WebServiceUri.NETWORK_ERROR);
+            }
+        });
+        MyApplication.getInstance().addToRequestQueue(req);
+    }
+
+    private void showUnableToRemoveSnackbar(int errorType){
+        String msg = "";
+        switch (errorType){
+            case WebServiceUri.SERVER_ERROR:
+                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_server_error), mCost.getName());
+                break;
+            case WebServiceUri.NETWORK_ERROR:
+                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_network_error), mCost.getName());
+        }
+        final Snackbar snackbar = Snackbar.make(mRootLayout, msg , Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.retry, new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                showProgressDialog();
+            }
+        });
+        snackbar.show();
+    }
 
 
     @Override
@@ -172,8 +330,8 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         mMap = map;
         setUpMap();
         LatLng position = mPlace.getLatLng();
-        String name = mPlace.getName().toString();
-        String snippet = mPlace.getAddress().toString();
+        String name = mPlace.getName();
+        String snippet = mPlace.getAddress();
 
         Marker marker = mMap.addMarker(
                 new MarkerOptions().position(position).title(name).snippet(snippet)

@@ -17,7 +17,10 @@ import java.util.List;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.PaymentDAO;
+import it.unibs.appwow.database.UserDAO;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Payment;
+import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.utils.DateUtils;
 
 /**
@@ -104,11 +107,25 @@ public class PaymentAdapter extends BaseAdapter {
             holder = (Holder)view.getTag();
         }
         final Payment itemCost = (Payment) getItem(position);
-        holder.costName.setText(itemCost.getName());
-        holder.costAmount.setText(String.valueOf(itemCost.getAmount()));
-        holder.costDate.setText(DateUtils.dateLongToString(itemCost.getUpdatedAt()));
-        holder.costUser.setText(itemCost.getFullName());
-        holder.costEmail.setText(itemCost.getEmail());
+        if(!itemCost.isExchange()) {
+            holder.costName.setText(itemCost.getName());
+            holder.costAmount.setText(String.valueOf(itemCost.getAmount()));
+            holder.costDate.setText(DateUtils.dateLongToString(itemCost.getUpdatedAt()));
+            holder.costUser.setText(itemCost.getFullName());
+            holder.costEmail.setText(itemCost.getEmail());
+        } else {
+            // FIXME: 11/07/2016 mettere altro layout
+            String userTo ="";
+            UserDAO dao = new UserDAO();
+            dao.open();
+            //UserModel u = dao.getSingleUserInfo(itemCost.getNotes())
+            dao.close();
+            holder.costName.setText(itemCost.getFullName() + " gave " + Amount.getAmountString(itemCost.getAmount()) + " eur to " );
+            holder.costAmount.setText("");
+            holder.costDate.setText(DateUtils.dateLongToString(itemCost.getUpdatedAt()));
+            holder.costUser.setText("");
+            holder.costEmail.setText("");
+        }
         return view;
     }
 

@@ -66,4 +66,14 @@
     <string name="payment_delete_unsuccess_server_error">Impossibile eliminare il pagamento %1$s a causa di un errore del server</string>
     <string name="retry">Riprova</string>
     <string name="payment_delete_unsuccess_network_error">Impossibile eliminare il pagamento %1$s a causa di un errore di rete</string>
+    <string name="payment_delete_title">Elimina il pagamento?</string>
+    <string name="payment_delete_message">Vuoi eliminare il pagamento %1$s?</string>
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
+    <string name="payment_deleting">Elimino il pagamento...</string>
+    <string name="debt_settle_title">Segna come pagato</string>
+    <string name="debt_settle_message">%1$s ti ha dato %2$s?</string>
+    <string name="debt_settling">Assolvo il debito...</string>
+    <string name="debt_settle_unsuccess_server_error">Impossibile saldare il debito di %1$s a causa di un errore del server</string>
+    <string name="debt_settle_unsuccess_network_error">Impossibile saldare il debito di %1$s a causa di un errore di rete</string>
 </resources>

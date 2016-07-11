@@ -1,19 +1,41 @@
 package it.unibs.appwow.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.view.GestureDetector;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
+
+import it.unibs.appwow.GroupDetailsActivity;
+import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Debt;
+import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.models.parc.PaymentModel;
+import it.unibs.appwow.services.WebServiceRequest;
+import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.views.adapters.DebtsAdapter;
 
 /**
@@ -22,7 +44,7 @@ import it.unibs.appwow.views.adapters.DebtsAdapter;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class DebtsFragment extends Fragment {
+public class DebtsFragment extends Fragment implements AdapterView.OnItemLongClickListener{
 
     private static final String TAG_LOG = DebtsFragment.class.getSimpleName();
     private GroupModel mGroup;
@@ -79,18 +101,6 @@ public class DebtsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_transaction_list, container, false);
-        /*
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new TransactionRecyclerViewAdapter(DummyTransactionContent.ITEMS, mListener));
-        }*/
         return view;
     }
 
@@ -99,37 +109,8 @@ public class DebtsFragment extends Fragment {
         mAdapter = new DebtsAdapter(getContext(), mGroup.getId());
         mYourDebtsList = (ListView) view.findViewById(R.id.transaction_list);
         mYourDebtsList.setEmptyView(view.findViewById(R.id.transaction_fragment_empty_view));
-        mYourDebtsList.setOnTouchListener(new OnSwipeTouchListener(getActivity(), mYourDebtsList){
-
-            @Override
-            public void onSwipeRight(int pos) {
-
-                Toast.makeText(getActivity(), "right", Toast.LENGTH_LONG).show();
-                //showDeleteButton(pos);
-            }
-
-            @Override
-            public void onSwipeLeft() {
-                Toast.makeText(getActivity(), "left", Toast.LENGTH_LONG).show();
-            }
-        });
-
+        mYourDebtsList.setOnItemLongClickListener(this);
         mYourDebtsList.setAdapter(mAdapter);
-
-        // FIXME: 22/06/2016 e se facessimo un long click listener?
-     /*   mYourDebtsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                // TODO: 20/06/2016  GESTIRE ON CLICK
-                Toast.makeText(MyApplication.getAppContext(), "Posizione " + position,Toast.LENGTH_SHORT).show();
-                final Intent i = new Intent(getContext(), PaymentDetailsActivity.class);
-                PaymentModel cost = (PaymentModel) mAdapter.getItem(position);
-
-                i.putExtra(PASSING_PAYMENT_TAG, cost);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-            }
-        });*/
     }
 
     @Override
@@ -149,6 +130,100 @@ public class DebtsFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+        final Debt selectedItem = (Debt) mAdapter.getItem(position);
+        final int pos = position;
+        view.setSelected(true);
+        Resources res = getResources();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(res.getString(R.string.debt_settle_title));
+        builder.setMessage(String.format(res.getString(R.string.debt_settle_message), selectedItem.getFullNameFrom(), Amount.getAmountString(selectedItem.getAmount())));
+        builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                showProgressDialog(selectedItem);
+            }
+        });
+        builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                view.setSelected(false);
+            }
+        });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                view.setSelected(false);
+            }
+        });
+        builder.show();
+        return true;
+    }
+
+    private void showProgressDialog(Debt selectedItem) {
+        ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle(getString(R.string.debt_settling));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        sendSettleRequest(selectedItem, progressDialog);
+    }
+
+    private void sendSettleRequest(final Debt selectedItem, final ProgressDialog dialog) {
+        URL url = WebServiceUri.uriToUrl(WebServiceUri.getGroupDebtsUri(mGroup.getId()));
+        String [] keys = {"id"};
+        String [] values = {String.valueOf(selectedItem.getId())};
+
+        StringRequest req = WebServiceRequest.stringRequest(Request.Method.POST, url.toString(), WebServiceRequest.createParametersMap(keys, values), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                PaymentModel p = null;
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    p = PaymentModel.create(obj);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if(p!=null){
+                    dialog.dismiss();
+                    ((GroupDetailsActivity) getActivity()).onRefresh();
+                } else {
+                    dialog.dismiss();
+                    showUnableToRemoveSnackbar(selectedItem, WebServiceUri.SERVER_ERROR);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG_LOG, "VOLLEY ERROR: " + error);
+                dialog.dismiss();
+                showUnableToRemoveSnackbar(selectedItem, WebServiceUri.NETWORK_ERROR);
+            }
+        });
+        MyApplication.getInstance().addToRequestQueue(req);
+    }
+
+    private void showUnableToRemoveSnackbar(final Debt selectedItem, int errorType){
+        String msg = "";
+        switch (errorType){
+            case WebServiceUri.SERVER_ERROR:
+                msg = String.format(getResources().getString(R.string.debt_settle_unsuccess_server_error), selectedItem.getFullNameFrom());
+                break;
+            case WebServiceUri.NETWORK_ERROR:
+                msg = String.format(getResources().getString(R.string.debt_settle_unsuccess_network_error), selectedItem.getFullNameFrom());
+        }
+        final Snackbar snackbar = Snackbar.make(getView(), msg , Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.retry, new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+               showProgressDialog(selectedItem);
+            }
+        });
+        snackbar.show();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -162,65 +237,5 @@ public class DebtsFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Debt item);
-    }
-
-    public class OnSwipeTouchListener implements View.OnTouchListener {
-
-        ListView list;
-        private GestureDetector gestureDetector;
-        private Context context;
-
-        public OnSwipeTouchListener(Context ctx, ListView list) {
-            gestureDetector = new GestureDetector(ctx, new GestureListener());
-            context = ctx;
-            this.list = list;
-        }
-
-        public OnSwipeTouchListener() {
-            super();
-        }
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            return gestureDetector.onTouchEvent(event);
-        }
-
-        public void onSwipeRight(int pos) {
-
-        }
-
-        public void onSwipeLeft() {
-
-        }
-
-        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-            private static final int SWIPE_THRESHOLD = 100;
-            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
-
-            private int getPostion(MotionEvent e1) {
-                return list.pointToPosition((int) e1.getX(), (int) e1.getY());
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                float distanceX = e2.getX() - e1.getX();
-                float distanceY = e2.getY() - e1.getY();
-                if (Math.abs(distanceX)  > Math.abs(distanceY) && Math.abs(distanceX)  > SWIPE_THRESHOLD && Math.abs(velocityX)  > SWIPE_VELOCITY_THRESHOLD) {
-                    if (distanceX  > 0)
-                        onSwipeRight(getPostion(e1));
-                    else
-                        onSwipeLeft();
-                    return true;
-                }
-                return false;
-            }
-
-        }
     }
 }

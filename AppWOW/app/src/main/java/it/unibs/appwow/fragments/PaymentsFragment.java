@@ -3,18 +3,17 @@ package it.unibs.appwow.fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -31,7 +30,6 @@ import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.PaymentDetailsActivity;
 import it.unibs.appwow.R;
-import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.models.parc.GroupModel;
@@ -48,8 +46,6 @@ import it.unibs.appwow.views.adapters.PaymentAdapter;
 public class PaymentsFragment extends Fragment implements AdapterView.OnItemLongClickListener {
 
     private static final String TAG_LOG = PaymentsFragment.class.getSimpleName();
-    private static final int SERVER_ERROR = 1;
-    private static final int NETWORK_ERROR = 2;
 
     public static final String PASSING_GROUP_TAG = "group";
     // TODO: Customize parameter argument names
@@ -174,20 +170,19 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
         final Payment selectedItem = (Payment) mAdapter.getItem(position);
         final int pos = position;
         view.setSelected(true);
+        Resources res = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Delete payment?");
-        builder.setMessage(String.format("Do you want to delete the payment %s?", selectedItem.getName()));
-        final String [] items  = {"Delete", "Cancel"};
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle(res.getString(R.string.payment_delete_title));
+        builder.setMessage(String.format(res.getString(R.string.payment_delete_message), selectedItem.getName()));
+        builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 mAdapter.remove(pos);
                 showUndoSnackbar(selectedItem);
-                Toast.makeText(getActivity(),"You clicked yes button",Toast.LENGTH_LONG).show();
                 view.setSelected(false);
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
@@ -245,7 +240,7 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
                     ((GroupDetailsActivity) getActivity()).onRefresh();
                 } else {
                     mAdapter.reload();
-                    showUnableToRemoveSnackbar(selectedItem, SERVER_ERROR);
+                    showUnableToRemoveSnackbar(selectedItem, WebServiceUri.SERVER_ERROR);
                 }
             }
         }, new Response.ErrorListener() {
@@ -253,7 +248,7 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG_LOG, "VOLLEY ERROR: " + error);
                 mAdapter.reload();
-                showUnableToRemoveSnackbar(selectedItem, NETWORK_ERROR);
+                showUnableToRemoveSnackbar(selectedItem, WebServiceUri.NETWORK_ERROR);
             }
         });
         MyApplication.getInstance().addToRequestQueue(req);
@@ -262,10 +257,10 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
     private void showUnableToRemoveSnackbar(final Payment selectedItem, int errorType){
         String msg = "";
         switch (errorType){
-            case SERVER_ERROR:
+            case WebServiceUri.SERVER_ERROR:
                 msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_server_error), selectedItem.getName());
                 break;
-            case NETWORK_ERROR:
+            case WebServiceUri.NETWORK_ERROR:
                 msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_network_error), selectedItem.getName());
         }
         final Snackbar snackbar = Snackbar.make(getView(), msg , Snackbar.LENGTH_LONG);
