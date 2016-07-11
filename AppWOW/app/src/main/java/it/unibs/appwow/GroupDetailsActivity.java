@@ -396,10 +396,10 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d(TAG_LOG, "DEBTS RESPONSE: " + response);
+                        DebtDAO dao = new DebtDAO();
+                        dao.open();
+                        dao.resetAllDebts(mGroup.getId()); //cancella anche tutte le transactions se funziona on delete cascade
                         if(response.length() > 0){
-                            DebtDAO dao = new DebtDAO();
-                            dao.open();
-                            dao.resetAllDebts(mGroup.getId()); //cancella anche tutte le transactions se funziona on delete cascade
                             for(int i = 0; i<response.length();i++){
                                 try{
                                     JSONObject debtsJs = response.getJSONObject(i);
@@ -410,18 +410,17 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                                     e.printStackTrace();
                                 }
                             }
-                            dao.close();
                         }
-
+                        dao.close();
 
                         //AGGIORNO LA DATA DI MODIFICA DEL GRUPPO IN LOCALE
-                        GroupDAO dao = new GroupDAO();
-                        dao.open();
+                        GroupDAO gdao = new GroupDAO();
+                        gdao.open();
                         /*
                         mGroup.setUpdatedAt(server_updated_at);
                         dao.insertGroup(mGroup);*/
-                        dao.touchGroup(mGroup.getId(),server_updated_at);
-                        dao.close();
+                        gdao.touchGroup(mGroup.getId(),server_updated_at);
+                        gdao.close();
 
                         // TODO: 29/06/2016  DA OTTIMIZZARE*/
                         setFragmentAdapter();
