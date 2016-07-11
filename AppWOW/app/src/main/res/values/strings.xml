@@ -99,8 +99,14 @@
     <string name="dialog_group_deleted_old">The group %1$s was deleted by %2$s! It will be also deleted from your device.</string>
     <string name="ok">OK</string>
     <string name="dialog_group_deleted_confirm">Group deleted</string>
+    <string name="details">Details</string>
+    <string name="payment_deleted">Payment %1$s deleted</string>
     <plurals name="dialog_group_deleted">
         <item quantity="one"> 1 group deleted</item>
         <item quantity="other"> %d groups deleted</item>
     </plurals>
+    <string name="undo">Undo</string>
+    <string name="payment_delete_unsuccess_server_error">Unable to delete payment %1$s due to a server error</string>
+    <string name="retry">Retry</string>
+    <string name="payment_delete_unsuccess_network_error">Unable to delete payment %1$s due to a network error</string>
 </resources>

@@ -1,19 +1,42 @@
 package it.unibs.appwow.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
+
+import it.unibs.appwow.GroupDetailsActivity;
+import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.PaymentDetailsActivity;
 import it.unibs.appwow.R;
+import it.unibs.appwow.database.PaymentDAO;
+import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.services.WebServiceRequest;
+import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.views.adapters.PaymentAdapter;
 
 /**
@@ -22,9 +45,12 @@ import it.unibs.appwow.views.adapters.PaymentAdapter;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class PaymentsFragment extends Fragment {
+public class PaymentsFragment extends Fragment implements AdapterView.OnItemLongClickListener {
 
     private static final String TAG_LOG = PaymentsFragment.class.getSimpleName();
+    private static final int SERVER_ERROR = 1;
+    private static final int NETWORK_ERROR = 2;
+
     public static final String PASSING_GROUP_TAG = "group";
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -35,6 +61,7 @@ public class PaymentsFragment extends Fragment {
     private PaymentAdapter mAdapter;
     private GroupModel mGroup;
     private ListView mCostList;
+    //private Payment mSelectedItem;
     //private List<PaymentModel> mCostList; //da riempire
 
     /**
@@ -64,7 +91,6 @@ public class PaymentsFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
         }
-
         //per poter popolare l'action bar dell'activity
         //setHasOptionsMenu(true);
 
@@ -129,20 +155,128 @@ public class PaymentsFragment extends Fragment {
         mCostList = (ListView) view.findViewById(R.id.payment_list);
         mCostList.setEmptyView(view.findViewById(R.id.payment_fragment_empty_view));
         mCostList.setAdapter(mAdapter);
-
-        /*
         mCostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
                 final Intent i = new Intent(getContext(), PaymentDetailsActivity.class);
-                PaymentModel payment = (PaymentModel) mAdapter.getItem(position);
-
+                Payment payment = (Payment) mAdapter.getItem(position);
                 i.putExtra(PASSING_PAYMENT_TAG, payment);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
             }
-        });*/
+        });
+        mCostList.setOnItemLongClickListener(this);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+        final Payment selectedItem = (Payment) mAdapter.getItem(position);
+        final int pos = position;
+        view.setSelected(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Delete payment?");
+        builder.setMessage(String.format("Do you want to delete the payment %s?", selectedItem.getName()));
+        final String [] items  = {"Delete", "Cancel"};
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                mAdapter.remove(pos);
+                showUndoSnackbar(selectedItem);
+                Toast.makeText(getActivity(),"You clicked yes button",Toast.LENGTH_LONG).show();
+                view.setSelected(false);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                view.setSelected(false);
+            }
+        });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                view.setSelected(false);
+            }
+        });
+        builder.show();
+        return true;
+    }
+
+    private void showUndoSnackbar(final Payment selectedItem){
+        final Snackbar snackbar = Snackbar.make(getView(), String.format(getResources().getString(R.string.payment_deleted), selectedItem.getName()) , Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.undo, new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mAdapter.reload();
+            }
+        });
+        snackbar.setCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE){
+                    sendDeleteRequest(selectedItem);
+                }
+            }
+        });
+        snackbar.show();
+    }
+
+    private void sendDeleteRequest(final Payment selectedItem) {
+        URL url = WebServiceUri.uriToUrl(WebServiceUri.getDeletePaymentUri(selectedItem.getId()));
+        StringRequest req = WebServiceRequest.stringRequest(Request.Method.DELETE, url.toString(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                boolean result = false;
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    String stringresult = obj.getString("success");
+                    result = Boolean.parseBoolean(stringresult);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(result){
+                    //eliminazione dal db locale
+                    /*PaymentDAO dao = new PaymentDAO();
+                    dao.open();
+                    dao.removeSinglePayment(selectedItem.getId());
+                    dao.close();*/
+                    ((GroupDetailsActivity) getActivity()).onRefresh();
+                } else {
+                    mAdapter.reload();
+                    showUnableToRemoveSnackbar(selectedItem, SERVER_ERROR);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG_LOG, "VOLLEY ERROR: " + error);
+                mAdapter.reload();
+                showUnableToRemoveSnackbar(selectedItem, NETWORK_ERROR);
+            }
+        });
+        MyApplication.getInstance().addToRequestQueue(req);
+    }
+
+    private void showUnableToRemoveSnackbar(final Payment selectedItem, int errorType){
+        String msg = "";
+        switch (errorType){
+            case SERVER_ERROR:
+                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_server_error), selectedItem.getName());
+                break;
+            case NETWORK_ERROR:
+                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_network_error), selectedItem.getName());
+        }
+        final Snackbar snackbar = Snackbar.make(getView(), msg , Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.retry, new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mAdapter.remove(selectedItem);
+                sendDeleteRequest(selectedItem);
+            }
+        });
+        snackbar.show();
     }
 
     @Override

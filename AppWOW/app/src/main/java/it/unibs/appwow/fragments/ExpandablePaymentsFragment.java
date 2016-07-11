@@ -1,37 +1,26 @@
 package it.unibs.appwow.fragments;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.ActionMode;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
-import it.unibs.appwow.PaymentDetailsActivity;
 import it.unibs.appwow.R;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.views.adapters.ExpandablePaymentAdapter;
-import it.unibs.appwow.views.adapters.PaymentAdapter;
 
 /**
  * A fragment representing a list of Items.
@@ -180,17 +169,26 @@ public class ExpandablePaymentsFragment extends Fragment implements AdapterView.
 */
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        /*
-        Log.d(TAG_LOG, "onItemLongClick eseguito");
-        // if actionmode is null "not started"
-        if (mActionMode != null) {
-            return false;
-        }
-
-        // Start the CAB
-        mActionMode = getActivity().startActionMode(this);*/
         mSelectedItem = mAdapter.getItem(position);
         view.setSelected(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Delete payment?");
+
+        builder.setMessage(String.format("Do you want to delete the payment %s?", mSelectedItem.getName()));
+        final String [] items  = {"Delete", "Cancel"};
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                Toast.makeText(getActivity(),"You clicked yes button",Toast.LENGTH_LONG).show();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
         return true;
     }
 

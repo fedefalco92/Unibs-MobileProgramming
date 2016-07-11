@@ -37,8 +37,7 @@ import it.unibs.appwow.database.DebtDAO;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.AmountsFragment;
-import it.unibs.appwow.fragments.ExpandablePaymentsFragment;
-//import it.unibs.appwow.fragments.PaymentsFragment;
+import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.DebtsFragment;
 import it.unibs.appwow.models.Debt;
@@ -52,7 +51,7 @@ import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.models.Amount;
 
-public class GroupDetailsActivity extends AppCompatActivity implements ExpandablePaymentsFragment.OnListFragmentInteractionListener,
+public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragment.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
         DebtsFragment.OnListFragmentInteractionListener,
         SwipeRefreshLayout.OnRefreshListener{
@@ -105,7 +104,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements Expandabl
                         .setAction("Action", null).show();*/
                 final Intent i = new Intent(GroupDetailsActivity.this, AddPaymentActivity.class);
                 //i.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
-                i.putExtra(ExpandablePaymentsFragment.PASSING_GROUP_TAG, mGroup);
+                i.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
             }
@@ -115,21 +114,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements Expandabl
         mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
         setTitle(mGroup.getGroupName());
 
-
-        /**
-         * Showing Swipe Refresh animation on activity create
-         * As animation won't start on onCreate, post runnable is used
-         */
-        // Il primo metodo chiamato e' onResume e viene eseguito lì.
-        // Resta comunque il problema di visualizzare una progress bar.
-        mSwipeRefreshLayout.post(new Runnable() {
-                                     @Override
-                                     public void run() {
-                                        Log.d(TAG_LOG,"onCreate post");
-                                        fetchGroupDetails();
-                                     }
-                                 }
-        );
 
     }
 
@@ -219,7 +203,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements Expandabl
      * Users
      * Payments
      * Debts
-     * Balancings
      */
     private void fetchGroupDetails(){
         Log.d(TAG_LOG,"Fetching group details");
@@ -374,10 +357,10 @@ public class GroupDetailsActivity extends AppCompatActivity implements Expandabl
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d(TAG_LOG, "COSTS response = " + response.toString());
+                        PaymentDAO dao = new PaymentDAO();
+                        dao.open();
+                        dao.resetAllCosts(mGroup.getId());
                         if(response.length() > 0){
-                            PaymentDAO dao = new PaymentDAO();
-                            dao.open();
-                            dao.resetAllCosts(mGroup.getId());
                             for(int i = 0; i<response.length();i++){
                                 try{
                                     JSONObject costJs = response.getJSONObject(i);
@@ -387,9 +370,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements Expandabl
                                     e.printStackTrace();
                                 }
                             }
-                            dao.close();
                         }
-
+                        dao.close();
                         fetchDebts(server_updated_at); //rimosso DEBUG
                     }
                 },
@@ -464,6 +446,20 @@ public class GroupDetailsActivity extends AppCompatActivity implements Expandabl
     protected void onResume() {
         super.onResume();
         Log.d(TAG_LOG,"onResume");
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        // Il primo metodo chiamato e' onResume e viene eseguito lì.
+        // Resta comunque il problema di visualizzare una progress bar.
+        mSwipeRefreshLayout.post(new Runnable() {
+                                     @Override
+                                     public void run() {
+                                         Log.d(TAG_LOG,"onCreate post");
+                                         fetchGroupDetails();
+                                     }
+                                 }
+        );
         //fetchGroupDetails();
     }
 
@@ -485,7 +481,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements Expandabl
             switch (position) {
                 case 0:
                     //return PaymentsFragment.newInstance(1, mGroup);
-                    return ExpandablePaymentsFragment.newInstance(1, mGroup);
+                    return PaymentsFragment.newInstance(1, mGroup);
                 case 1:
                     return AmountsFragment.newInstance(1, mGroup, mLocalUser.getId());
                 case 2:

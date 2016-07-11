@@ -1,10 +1,14 @@
 package it.unibs.appwow;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +27,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 import it.unibs.appwow.fragments.PaymentsFragment;
-import it.unibs.appwow.models.parc.PaymentModel;
+import it.unibs.appwow.models.Amount;
+import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.utils.DateUtils;
+import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.PositionUtils;
 
 public class PaymentDetailsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
@@ -34,9 +42,11 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
     private final String TAG_LOG = PaymentDetailsActivity.class.getSimpleName();
 
-    private PaymentModel mCost;
+    private Payment mCost;
 
-    private TextView mName;
+    private TextView mCostName;
+    private TextView mFullName;
+    private TextView mEmail;
     private TextView mAmount;
     private TextView mDate;
     private TextView mNotes;
@@ -46,6 +56,10 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     private Place mPlace;
     private GoogleMap mMap;
     private MapFragment mMapFragment;
+
+    private ImageButton mMapButton;
+    private LinearLayout mAmountDetailContainer;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -55,7 +69,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cost_details);
+        setContentView(R.layout.activity_payment_details);
         mCost = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
         setTitle(mCost.getName());
 
@@ -67,8 +81,13 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                 .enableAutoManage(this, this)
                 .build();
 
-        mName = (TextView) findViewById(R.id.cost_detail_name);
-        mName.setText(mCost.getName());
+        mCostName = (TextView) findViewById(R.id.cost_detail_name);
+        mCostName.setText(mCost.getName());
+
+        mFullName = (TextView) findViewById(R.id.cost_detail_user_fullName);
+        mFullName.setText(mCost.getFullName());
+        mEmail = (TextView) findViewById(R.id.cost_detail_email);
+        mEmail.setText("(" + mCost.getEmail() + ")");
 
         mAmount = (TextView) findViewById(R.id.cost_detail_amount);
         mAmount.setText("EUR " + mCost.getAmount());
@@ -76,8 +95,8 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         mNotes = (TextView) findViewById(R.id.cost_detail_notes_text);
         if(mCost.getNotes() == null || mCost.getNotes().isEmpty()){
             mNotesLabel = (TextView) findViewById(R.id.cost_detail_notes_label);
-            mNotesLabel.setVisibility(View.INVISIBLE);
-            mNotes.setVisibility(View.INVISIBLE);
+            mNotesLabel.setVisibility(View.GONE);
+            mNotes.setVisibility(View.GONE);
         } else {
             mNotes.setText(mCost.getNotes());
         }
@@ -89,26 +108,19 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         mPositionLabel = (TextView) findViewById(R.id.cost_detail_position_label);
         String stringaPosizione = mCost.getPosition();
         mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.cost_detail_position_map));
+        mMapButton = (ImageButton) findViewById(R.id.payment_detail_map_button);
 
-        /**
-         * la stringa mPosition è una posizione fittizia tipo "casa mia" oppure un ID di google places preceduto da "###"
-         */
-        if (PositionUtils.isPositionId(stringaPosizione)) {
-            String id = PositionUtils.decodePositionId(stringaPosizione);
-            //riempire la mappa
-            /*if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG_LOG, "NO PERMISSIONS");
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }*/
+        if(stringaPosizione!=null && !stringaPosizione.isEmpty()){
+           mPositionText.setText(stringaPosizione);
+        } else {
+            mPositionText.setVisibility(View.GONE);
+            mPositionLabel.setVisibility(View.GONE);
+        }
 
-            Places.GeoDataApi.getPlaceById(mClient, id).setResultCallback(new ResultCallback<PlaceBuffer>() {
+        final String position_id = mCost.getPositionId();
+        if(position_id!= null && !position_id.isEmpty()){
+            // FIXME: 11/07/2016 SOSTITUIRE CON JSON REQUEST?
+            Places.GeoDataApi.getPlaceById(mClient, position_id).setResultCallback(new ResultCallback<PlaceBuffer>() {
                 @Override
                 public void onResult(PlaceBuffer places) {
                     Log.d("RESUL CALLBACK", "sono entrato nel result callback di getPlaceById");
@@ -124,99 +136,33 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                     places.release();
                 }
             });
-
-            /* DUMMY PLACE FOR DEBUGGING
-            mPlace = new Place() {
+            mMapButton.setVisibility(View.VISIBLE);
+            mMapButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public String getUserId() {
-                    return "ChIJZ8FwH8p3gUcR1pI7zb0RMwc";
+                public void onClick(View v) {
+                    // FIXME: 11/07/2016 SISTEMARE STORIA DEL CID
+                    Uri uri = Uri.parse("https://maps.google.com/?cid=" + position_id);
+                    Intent gmaps = new Intent(Intent.ACTION_VIEW, uri);
+                    gmaps.setPackage("com.google.android.apps.maps");
+                    startActivity(gmaps);
                 }
-
-                @Override
-                public List<Integer> getPlaceTypes() {
-                    return null;
-                }
-
-                @Override
-                public CharSequence getAddress() {
-                    return "via branze";
-                }
-
-                @Override
-                public Locale getLocale() {
-                    return null;
-                }
-
-                @Override
-                public CharSequence getName() {
-                    return "unibs";
-                }
-
-                @Override
-                public LatLng getLatLng() {
-                    return new LatLng(45.0,10.0);
-                }
-
-                @Override
-                public LatLngBounds getViewport() {
-                    return null;
-                }
-
-                @Override
-                public Uri getWebsiteUri() {
-                    return null;
-                }
-
-                @Override
-                public CharSequence getPhoneNumber() {
-                    return null;
-                }
-
-                @Override
-                public float getRating() {
-                    return 0;
-                }
-
-                @Override
-                public int getPriceLevel() {
-                    return 0;
-                }
-
-                @Override
-                public CharSequence getAttributions() {
-                    return null;
-                }
-
-                @Override
-                public Place freeze() {
-                    return null;
-                }
-
-                @Override
-                public boolean isDataValid() {
-                    return false;
-                }
-            };
-            mPositionText.setText(mPlace.getName());
-            mMapFragment.getMapAsync(PaymentDetailsActivity.this);
-            Log.d("CALLING getMapAsync","method called...");*/
-
+            });
         } else {
-            mMapFragment.getView().setVisibility(View.INVISIBLE);
-            if(stringaPosizione == null || stringaPosizione.isEmpty()){
-                mPositionText.setVisibility(View.INVISIBLE);
-                mPositionLabel.setVisibility(View.INVISIBLE);
-            } else {
-                mPositionText.setText(stringaPosizione);
-            }
-        }
-
-        if (mMap != null) {
-            // Marker position = mMap.addMarker(new MarkerOptions())
-
+            mMapButton.setVisibility(View.INVISIBLE);
+            mMapFragment.getView().setVisibility(View.GONE);
         }
 
 
+        //details
+        mAmountDetailContainer = (LinearLayout) findViewById(R.id.payment_detail_amount_details_container);
+
+        String ad = mCost.getAmountDetails();
+        List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(ad, mCost.getIdUser(), mCost.getAmount());
+        for(Amount a: amounts){
+            TextView tv = new TextView(this, null);
+            tv.setText(a.getFormattedString());
+            mAmountDetailContainer.addView(tv);
+        }
     }
 
 

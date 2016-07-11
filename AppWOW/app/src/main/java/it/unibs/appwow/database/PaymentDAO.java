@@ -3,6 +3,7 @@ package it.unibs.appwow.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +140,8 @@ public class PaymentDAO implements LocalDB_DAO {
     }
 
     public void resetAllCosts(int idGroup) {
-        database.delete(AppDB.Payments.TABLE_PAYMENTS, AppDB.Payments.COLUMN_ID_GROUP + " = ?" , new String[]{"" + idGroup});
+        int affected_rows = database.delete(AppDB.Payments.TABLE_PAYMENTS, AppDB.Payments.COLUMN_ID_GROUP + " = ?" , new String[]{"" + idGroup});
+        Log.d(TAG_LOG, "RESET_ALL_COSTS_AFFECTED_ROWS: " + affected_rows);
     }
 
 
@@ -170,6 +172,10 @@ public class PaymentDAO implements LocalDB_DAO {
         }
         cursor.close(); // remember to always close the cursor!
         return data;
+    }
+
+    public void removeSinglePayment(int id) {
+        database.delete(AppDB.Payments.TABLE_PAYMENTS ,AppDB.Payments._ID + " = ? ;",new String[] {String.valueOf(id)});
     }
 /*
     public List<UserModel> getAllUsers(int idGroup) {

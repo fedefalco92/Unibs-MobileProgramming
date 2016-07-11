@@ -1,11 +1,15 @@
 package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -13,7 +17,7 @@ import java.util.List;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.PaymentDAO;
-import it.unibs.appwow.models.parc.PaymentModel;
+import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.utils.DateUtils;
 
 /**
@@ -22,21 +26,25 @@ import it.unibs.appwow.utils.DateUtils;
 public class PaymentAdapter extends BaseAdapter {
     private static final String TAG_LOG = PaymentAdapter.class.getSimpleName();
 
-    private List<PaymentModel> mItems = new ArrayList<PaymentModel>();
+    private List<Payment> mItems = new ArrayList<Payment>();
     private final LayoutInflater mInflater;
-    private PaymentDAO dao = new PaymentDAO();
+    private PaymentDAO dao;
+    private int mIdGroup;
 
     private class Holder {
         TextView costName;
         TextView costAmount;
         TextView costDate;
         TextView costUser;
+        TextView costEmail;
     }
 
     public PaymentAdapter(Context context, int idGroup){
+        mIdGroup = idGroup;
         mInflater = LayoutInflater.from(context);
+        dao = new PaymentDAO();
         dao.open();
-        mItems = dao.getAllCosts(idGroup);
+        mItems = dao.getAllPayments(idGroup);
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
     }
@@ -53,8 +61,31 @@ public class PaymentAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        final PaymentModel itemCost = (PaymentModel) getItem(position);
+        final Payment itemCost = (Payment) getItem(position);
         return itemCost.getId();
+    }
+
+    public void remove(int position){
+        mItems.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void remove(Payment item){
+        for(Payment p: mItems){
+            if(p.getId() == item.getId()){
+                mItems.remove(p);
+                break;
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void reload(){
+        mItems.clear();
+        dao.open();
+        mItems = dao.getAllPayments(mIdGroup);
+        dao.close();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -67,15 +98,17 @@ public class PaymentAdapter extends BaseAdapter {
             holder.costAmount = (TextView)view.findViewById(R.id.payment_fragment_item_value);
             holder.costDate = (TextView) view.findViewById(R.id.payment_fragment_item_date);
             holder.costUser = (TextView) view.findViewById(R.id.payment_fragment_item_username);
+            holder.costEmail = (TextView) view.findViewById(R.id.payment_fragment_item_email);
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();
         }
-        final PaymentModel itemCost = (PaymentModel) getItem(position);
+        final Payment itemCost = (Payment) getItem(position);
         holder.costName.setText(itemCost.getName());
-        holder.costAmount.setText(""+itemCost.getAmount());
-        holder.costDate.setText(""+ DateUtils.dateLongToString(itemCost.getUpdatedAt()));
-        holder.costUser.setText("ID_USER: " + itemCost.getIdUser());
+        holder.costAmount.setText(String.valueOf(itemCost.getAmount()));
+        holder.costDate.setText(DateUtils.dateLongToString(itemCost.getUpdatedAt()));
+        holder.costUser.setText(itemCost.getFullName());
+        holder.costEmail.setText(itemCost.getEmail());
         return view;
     }
 

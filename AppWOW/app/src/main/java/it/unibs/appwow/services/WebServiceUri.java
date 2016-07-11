@@ -54,4 +54,8 @@ public final class WebServiceUri {
         }
         return url;
     }
+
+    public static Uri getDeletePaymentUri(int id) {
+        return Uri.withAppendedPath(PAYMENTS_URI, String.valueOf(id));
+    }
 }

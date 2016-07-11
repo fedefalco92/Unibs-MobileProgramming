@@ -9,7 +9,7 @@
     <color name="green">@color/md_green_A400</color>
     <color name="black">@color/md_black_1000</color>
     <color name="white">@color/md_white_1000</color>
-    <color name="item_pressed_color">#4d90fe</color>
+    <color name="item_pressed_color">@color/colorAccent</color>
     <color name="item_default_color">#ffffff</color>
 
 <!-- google's material design colours from

@@ -12,11 +12,10 @@ import it.unibs.appwow.utils.DateUtils;
 /**
  * Created by Alessandro on 15/06/2016.
  */
-public class PaymentModel { //implements Parcelable {
+public class PaymentModel implements Parcelable {
 
-    private static final byte PRESENT = 1;
-
-    private static final byte NOT_PRESENT = 0;
+    protected static final byte PRESENT = 1;
+    protected static final byte NOT_PRESENT = 0;
 
     private int mId;
     private int mIdGroup;
@@ -175,7 +174,7 @@ public class PaymentModel { //implements Parcelable {
         return new PaymentModel(id, idGroup, idUser, amount, name, notes, createdAt, updatedAt, position, positionId, amountDetails, isExchange);
     }
 
-    /*
+
     public static final Parcelable.Creator<PaymentModel> CREATOR = new Parcelable.Creator<PaymentModel>()
     {
         public PaymentModel createFromParcel(Parcel in)
@@ -187,14 +186,14 @@ public class PaymentModel { //implements Parcelable {
         {
             return new PaymentModel[size];
         }
-    };*/
+    };
 
     /**
      * Read from the parcelized object.
      *
      * @param in
      */
-    /*
+
     public PaymentModel(Parcel in)
     {
         this.mId = in.readInt();
@@ -202,37 +201,30 @@ public class PaymentModel { //implements Parcelable {
         this.mIdUser = in.readInt();
         this.mAmount = in.readDouble();
         this.mIsExchange = in.readByte() != 0;
-        if(in.readByte() == PRESENT)
-        {
+        if (in.readByte() == PRESENT) {
             this.mName = in.readString();
         }
 
-        if(in.readByte() == PRESENT)
-        {
+        if (in.readByte() == PRESENT) {
             this.mNotes = in.readString();
         }
 
-        if(in.readByte() == PRESENT)
-        {
+        if (in.readByte() == PRESENT) {
             this.mCreatedAt = in.readLong();
         }
 
-        if(in.readByte() == PRESENT)
-        {
+        if (in.readByte() == PRESENT) {
             this.mUpdatedAt = in.readLong();
         }
-
-
-        if(in.readByte() == PRESENT)
-        {
+        if (in.readByte() == PRESENT) {
             this.mPosition = in.readString();
-        }
-        if(in.readByte() == PRESENT)
-        {
+        } else mPosition = "";
+        if (in.readByte() == PRESENT) {
+            this.mPositionId = in.readString();
+        } else mPosition = "";
+        if (in.readByte() == PRESENT) {
             this.mAmountDetails = in.readString();
         }
-        // FIXME: 26/05/2016 LA HashMap con gli utenti viene annullata quando si parcellizza il gruppo
-        //this.mUsers = new HashMap<Integer, LocalUser>();
     }
 
     @Override
@@ -296,6 +288,15 @@ public class PaymentModel { //implements Parcelable {
             dest.writeByte(NOT_PRESENT);
         }
 
+        if(!TextUtils.isEmpty(this.mPosition))
+        {
+            dest.writeByte(PRESENT);
+            dest.writeString(this.mPositionId);
+        } else
+        {
+            dest.writeByte(NOT_PRESENT);
+        }
+
         if(!TextUtils.isEmpty(this.mAmountDetails))
         {
             dest.writeByte(PRESENT);
@@ -304,6 +305,5 @@ public class PaymentModel { //implements Parcelable {
         {
             dest.writeByte(NOT_PRESENT);
         }
-
-    }*/
+    }
 }

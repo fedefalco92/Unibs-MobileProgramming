@@ -1,6 +1,8 @@
 package it.unibs.appwow.models;
 
 import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.TextUtils;
 
 import it.unibs.appwow.models.parc.PaymentModel;
 
@@ -26,6 +28,51 @@ public class Payment extends PaymentModel {
         this.mEmail = email;
     }
 
+    public static final Parcelable.Creator<Payment> CREATOR = new Parcelable.Creator<Payment>()
+    {
+        public Payment createFromParcel(Parcel in)
+        {
+            return new Payment(in);
+        }
+
+        public Payment[] newArray(int size)
+        {
+            return new Payment[size];
+        }
+    };
+
+    public Payment(Parcel in) {
+        super(in);
+        if(in.readByte() == super.PRESENT){
+            this.mFullName = in.readString();
+        }
+        if(in.readByte() == super.PRESENT){
+            this.mEmail = in.readString();
+        }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        if(!TextUtils.isEmpty(this.mFullName))
+        {
+            dest.writeByte(PRESENT);
+            dest.writeString(this.mFullName);
+        } else
+        {
+            dest.writeByte(NOT_PRESENT);
+        }
+
+        if(!TextUtils.isEmpty(this.mEmail))
+        {
+            dest.writeByte(PRESENT);
+            dest.writeString(this.mEmail);
+        } else
+        {
+            dest.writeByte(NOT_PRESENT);
+        }
+    }
+
     public String getFullName() {
         return mFullName;
     }
@@ -45,4 +92,7 @@ public class Payment extends PaymentModel {
     public boolean hasDetails(){
         if(!super.getNotes().isEmpty()||!super.getPosition().isEmpty()) return true; else return false;
     }
+
+
+
 }
