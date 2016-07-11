@@ -141,6 +141,11 @@ public class UserDAO implements LocalDB_DAO {
         database.update(AppDB.Groups.TABLE_GROUPS, groupToInsert, AppDB.Groups._ID + " = ?",new String[] {"" + id});
     }*/
 
+    /**
+     *
+     * @param idUser
+     * @return un array di due stringhe contenente fullname e email
+     */
     public String[] getSingleUserInfo(int idUser){
         String[] res = new String[2];
         String[] columns = {

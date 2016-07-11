@@ -31,7 +31,7 @@
     <string name="action_add_cost">Aggiungi</string>
     <string name="action_add_payment_add_position">Aggiungi posizione</string>
     <string name="action_add_cost_delete_position">Cancella posizione</string>
-    <string name="transaction_fragment_empty_message">Nessuna transazione</string>
+    <string name="transaction_fragment_empty_message">Nessun debito</string>
     <string name="delete">Cancella</string>
     <string name="email">email</string>
     <string name="payment_fragment_empty_message">Nessuna spesa</string>

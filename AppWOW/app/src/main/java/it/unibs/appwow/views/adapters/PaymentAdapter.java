@@ -115,12 +115,13 @@ public class PaymentAdapter extends BaseAdapter {
             holder.costEmail.setText(itemCost.getEmail());
         } else {
             // FIXME: 11/07/2016 mettere altro layout
+            //NOTA: in questo caso (il cost è un pagamento di debito) l'id del "ricevente" è nelle note
             String userTo ="";
             UserDAO dao = new UserDAO();
             dao.open();
-            //UserModel u = dao.getSingleUserInfo(itemCost.getNotes())
+            String [] info = dao.getSingleUserInfo(new Integer(itemCost.getNotes()));
             dao.close();
-            holder.costName.setText(itemCost.getFullName() + " gave " + Amount.getAmountString(itemCost.getAmount()) + " eur to " );
+            holder.costName.setText(itemCost.getFullName() + " gave " + Amount.getAmountString(itemCost.getAmount()) + " eur to " + info[0] );
             holder.costAmount.setText("");
             holder.costDate.setText(DateUtils.dateLongToString(itemCost.getUpdatedAt()));
             holder.costUser.setText("");
