@@ -165,7 +165,7 @@ public class PaymentModel implements Parcelable {
         String notes = paymentJs.getString("notes");
         long createdAt = DateUtils.dateStringToLong(paymentJs.getString("created_at"));
         long updatedAt = DateUtils.dateStringToLong(paymentJs.getString("updated_at"));
-        boolean isExchange = paymentJs.getBoolean("isExchange");
+        boolean isExchange = paymentJs.getInt("isExchange") != 0 ? true:false;
         String position = "";
         String positionId = "";
         if(!paymentJs.isNull("position")){
