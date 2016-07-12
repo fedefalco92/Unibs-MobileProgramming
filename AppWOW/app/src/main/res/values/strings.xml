@@ -74,16 +74,16 @@
     <string name="prompt_cost_amount">Amount</string>
     <string name="prompt_payment_notes">Notes</string>
     <string name="action_add_payment_add_position">Find place with google</string>
-    <string name="action_add_cost">Add cost</string>
+    <string name="action_add_cost">Add payment</string>
     <string name="prompt_payment_position">Place</string>
     <string name="action_add_cost_delete_position">Delete place</string>
     <string name="transaction_fragment_empty_message">Nothing to show</string>
     <string name="payment_fragment_empty_message">No payments to show</string>
-    <string name="add_cost_menu_item">Add cost</string>
+    <string name="add_cost_menu_item">Add payment</string>
     <string name="error_invalid_cost_name">Insert a valid name for the cost</string>
     <string name="error_invalid_amount">Insert an amount</string>
     <string name="you">You</string>
-    <string name="add_payment_activity_title">New cost</string>
+    <string name="add_payment_activity_title">New payment</string>
     <string name="add_group_activity_title">New group</string>
     <string name="add_group_members_activity_title">Add group members</string>
     <string name="add_group_members_user_already_added">User already added</string>
@@ -120,4 +120,9 @@
     <string name="debt_settle_unsuccess_server_error">Unable to settle %1$s\'s debt due to a server error</string>
     <string name="debt_settle_unsuccess_network_error">Unable to settle %1$s\'s debt due to a network error</string>
     <string name="action_edit_group">Edit group</string>
+    <string name="group_edit_activity_title">Edit group</string>
+    <string name="edit">Edit</string>
+    <string name="group_edit_dialog_title">Confirm changes?</string>
+    <string name="group_edit_saving_changes">Saving changes...</string>
+    <string name="server_internal_error">Server internal error. Try again later.</string>
 </resources>

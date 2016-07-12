@@ -14,8 +14,10 @@ import it.unibs.appwow.utils.DateUtils;
  */
 public class GroupModel implements Parcelable {
 
-    private static final byte PRESENT = 1;
+    public static int HIGHLIGHTED = 1;
+    public static int NOT_HIGHLIGHTED = 0;
 
+    private static final byte PRESENT = 1;
     private static final byte NOT_PRESENT = 0;
 
     private static final String ID_KEY = "id";
@@ -241,7 +243,7 @@ public class GroupModel implements Parcelable {
         this.mCreatedAt = 0;
         this.mUpdatedAt = 0;
         this.mIdAdmin = 0;
-        this.mHighlighted = 0;
+        this.mHighlighted = NOT_HIGHLIGHTED;
     }
 
     public static GroupModel create(String groupName){
@@ -304,14 +306,14 @@ public class GroupModel implements Parcelable {
     }
 
     public boolean isHighlighted(){
-        return mHighlighted > 0;
+        return mHighlighted == HIGHLIGHTED;
     }
 
     public void highlight(){
-        setHighlighted(1);
+        setHighlighted(HIGHLIGHTED);
     }
     public void unHighlight(){
-        setHighlighted(0);
+        setHighlighted(NOT_HIGHLIGHTED);
     }
 
     public String toString(){

@@ -116,7 +116,7 @@ public class UserGroupDAO implements LocalDB_DAO {
 
     public List<SliderAmount> getAllSliderAmounts(int idGroup){
         List<SliderAmount> data = new ArrayList<SliderAmount>();
-        String query = "SELECT users._id, users.fullName, users.email FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ?;";
+        String query = "SELECT users._id, users.fullName, users.email FROM user_group LEFT JOIN  users ON user_group.idUser = users._id WHERE user_group.idGroup = ? ORDER BY users.fullName;";
         Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
         cursor.moveToFirst();
         //int id = 0;

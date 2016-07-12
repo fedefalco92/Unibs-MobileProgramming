@@ -167,7 +167,12 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_edit_group) {
+            Intent editGroupIntent = new Intent (this, EditGroupActivity.class);
+            editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            editGroupIntent.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
+            startActivity(editGroupIntent);
+            // TODO: 12/07/2016  cosa fare dopo?
             return true;
         }
 
@@ -220,15 +225,29 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG_LOG, "GROUP response = " + response.toString());
                         GroupDAO dao = new GroupDAO();
                         dao.open();
                         try{
-                            String server_updated_at_string = response.getString("updated_at");
-                            long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
-                            long local_updated_at = dao.getUpdatedAt(mGroup.getId());
-                            dao.close();
+                            Log.d(TAG_LOG, "GROUP response = " + response.toString(1));
+                            GroupModel gserver = GroupModel.create(response);
+                            GroupModel glocal = dao.getSingleGroup(mGroup.getId()); //(sempre != null)
+                            long server_updated_at = gserver.getUpdatedAt();
+                            long local_updated_at = glocal.getUpdatedAt();
                             if (server_updated_at > local_updated_at) {
+                                //aggiorno il title dell'activity
+                                String newTitle = response.getString("name");
+                                setTitle(newTitle);
+                                //eseguo l'update
+                                int id = glocal.getId();
+                                int idAdmin = gserver.getIdAdmin();
+                                String groupName = gserver.getGroupName();
+                                String photoFileName = glocal.getPhotoFileName();
+                                long photoUpdatedAt = glocal.getPhotoUpdatedAt();
+                                long createdAt = gserver.getCreatedAt();
+                                long updatedAt = gserver.getUpdatedAt();
+                                int highlighted = GroupModel.NOT_HIGHLIGHTED;
+                                dao.updateSingleGroup(id,idAdmin, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, highlighted);
+
                                 fetchCosts(server_updated_at);
                                 /*
                                 fetchDebts(server_updated_at); // Aggiunto DEBUG
@@ -250,6 +269,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         } catch(JSONException e){
                             e.printStackTrace();
                         }
+                        dao.close();
                     }
                 },
                 new Response.ErrorListener() {

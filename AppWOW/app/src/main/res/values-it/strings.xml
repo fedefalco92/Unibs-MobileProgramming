@@ -28,7 +28,7 @@
     <string name="cost_detail_payed_by">Spesa effettuata da </string>
     <string name="cost_detail_date_preposition">Il</string>
     <string name="prompt_cost_name">Nome spesa</string>
-    <string name="action_add_cost">Aggiungi</string>
+    <string name="action_add_cost">Aggiungi spesa</string>
     <string name="action_add_payment_add_position">Aggiungi posizione</string>
     <string name="action_add_cost_delete_position">Cancella posizione</string>
     <string name="transaction_fragment_empty_message">Nessun debito</string>
@@ -77,4 +77,9 @@
     <string name="debt_settle_unsuccess_server_error">Impossibile saldare il debito di %1$s a causa di un errore del server</string>
     <string name="debt_settle_unsuccess_network_error">Impossibile saldare il debito di %1$s a causa di un errore di rete</string>
     <string name="action_edit_group">Modifica il gruppo</string>
+    <string name="group_edit_activity_title">Modifica gruppo</string>
+    <string name="edit">Modifica</string>
+    <string name="group_edit_dialog_title">Confermi i cambiamenti?</string>
+    <string name="group_edit_saving_changes">Salvataggio in corso...</string>
+    <string name="server_internal_error">Errore server. Riprova.</string>
 </resources>

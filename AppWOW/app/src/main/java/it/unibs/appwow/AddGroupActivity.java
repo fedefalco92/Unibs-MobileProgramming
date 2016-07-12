@@ -79,6 +79,20 @@ public class AddGroupActivity extends AppCompatActivity {
         //mPhotoUri = "";
     }
 
+    public GroupModel getGroup() {
+        return mGroup;
+    }
+
+    public void setGroup(GroupModel group) {
+        mGroup = group;
+    }
+
+    public TextView getGroupNameView() {
+        return mGroupNameView;
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -247,24 +261,37 @@ public class AddGroupActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.go_ahead:
-                if(Validator.isGroupNameValid(mGroupNameView.getText().toString())){
+                String insertedName = getInsertedName();
+                if(Validator.isGroupNameValid(insertedName)){
                     final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
                     //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
                     LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
                     mGroup.setIdAdmin(currentUser.getId());
-                    mGroup.setGroupName(mGroupNameView.getText().toString());
+                    mGroup.setGroupName(insertedName);
                     mGroup.setPhotoFileName(mFileName);
                     addMembersIntent.putExtra(PASSING_GROUP_EXTRA, mGroup);
                     startActivity(addMembersIntent);
                     return true;
                 } else {
-                    mGroupNameView.setError(getString(R.string.error_invalid_group_name));
-                    mGroupNameView.requestFocus();
+                    setNameError();
                 }
 
             default:
                 return true;
         }
+    }
+
+    protected String getInsertedName() {
+        return mGroupNameView.getText().toString();
+    }
+
+    protected String getPhotoFileName(){
+        return mGroup.getPhotoFileName();
+    }
+
+    public void setNameError(){
+        mGroupNameView.setError(getString(R.string.error_invalid_group_name));
+        mGroupNameView.requestFocus();
     }
 
     private String getPath(Uri uri){

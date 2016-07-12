@@ -10,7 +10,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatSeekBar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -19,12 +18,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +49,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,7 +63,6 @@ import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.DecimalDigitsInputFilter;
-import it.unibs.appwow.utils.PositionUtils;
 import it.unibs.appwow.utils.Validator;
 
 public class AddPaymentActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
@@ -183,24 +178,37 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         //mSliderListView = (ListView) findViewById(R.id.add_payment_slider_listview);
         mSliderListView = (LinearLayout) findViewById(R.id.add_payment_slider_listview);
 
+        SliderAmount first = null;
         for(final SliderAmount sa: mSliderAmountList){
-            mUnlockedAmount.add(sa);
-            View view = getLayoutInflater().inflate(R.layout.payment_slider_item, null, false);
-            TextView fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
-            TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
-            EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
-            amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
-            ProgressBar seekBar = (ProgressBar) view.findViewById(R.id.payment_slider_item_slider);
-
-            fullName.setText(sa.getFullName());
-            email.setText(sa.getEmail());
-            amount.setText(sa.getAmountString());
-            view.setTag(sa.getUserId());
-            mSliderListView.addView(view);
-            amount.setOnFocusChangeListener(new SliderAmountFocusChangeListener(sa));
-            sa.setAmountView(amount);
-            sa.setSeekBar(seekBar);
+            if(sa.getUserId() == mUser.getId()){
+                first = sa;
+                break;
+            }
         }
+
+        mSliderListView.addView(buildView(first));
+        for(final SliderAmount sa: mSliderAmountList){
+            if(sa.getUserId() !=  mUser.getId()) mSliderListView.addView(buildView(sa));
+        }
+    }
+
+    private View buildView(SliderAmount sa){
+        mUnlockedAmount.add(sa);
+        View view = getLayoutInflater().inflate(R.layout.payment_slider_item, null, false);
+        TextView fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
+        TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
+        EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
+        amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
+        ProgressBar seekBar = (ProgressBar) view.findViewById(R.id.payment_slider_item_slider);
+
+        fullName.setText(sa.getFullName() + ((mUser.getId() == sa.getUserId())?" (you) ":""));
+        email.setText(sa.getEmail());
+        amount.setText(sa.getAmountString());
+        view.setTag(sa.getUserId());
+        amount.setOnFocusChangeListener(new SliderAmountFocusChangeListener(sa));
+        sa.setAmountView(amount);
+        sa.setSeekBar(seekBar);
+        return view;
     }
 
     public void retrieveAmountFromEditText(){
@@ -230,7 +238,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_add_cost, menu);
+        inflater.inflate(R.menu.menu_add_payment, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -552,8 +560,16 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     public void initializeAmountAndSets() {
         final int size = mSliderAmountList.size();
         double each = mPaymentAmount/size;
+        //gestione arrotondamenti
+        each = Math.floor(each*100)/100;
+        //Log.d(TAG_LOG, "each: " +each);
+        double totalCalculated = each*size;
+        //Log.d(TAG_LOG, "totalCalculated " +  totalCalculated);
+        double delta = mPaymentAmount-totalCalculated;
+        //Log.d(TAG_LOG, "delta " +  delta);
         for(SliderAmount s:mSliderAmountList){
-            s.setAmount(each);
+            if(s.getUserId() == mUser.getId()) s.setAmount(each + delta);
+            else s.setAmount(each);
             s.setAmountText(s.getAmountString());
             s.setSeekBarProgress(each, mPaymentAmount);
             EditText et = s.getAmountView();

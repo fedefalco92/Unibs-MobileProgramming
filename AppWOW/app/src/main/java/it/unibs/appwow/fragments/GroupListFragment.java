@@ -269,7 +269,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                                 long photoUpdatedAt = glocal.getPhotoUpdatedAt();
                                                 long createdAt = gserver.getCreatedAt();
                                                 long updatedAt = glocal.getUpdatedAt();
-                                                int highlighted = 1;
+                                                int highlighted = GroupModel.HIGHLIGHTED;
 
                                                 dao.updateSingleGroup(id,idAdmin, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, highlighted);
 
@@ -284,6 +284,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                                 fetchPhoto(gserver.getId(),server_photo_updated_at);
                                             }
                                         } else {
+                                            gserver.setUpdatedAt(0L);
+                                            gserver.setHighlighted(GroupModel.HIGHLIGHTED);
                                             dao.insertGroup(gserver);
                                             fetchPhoto(gserver.getId(),server_photo_updated_at);
                                             // FIXME: 05/07/2016 la foto non si aggiorna subito

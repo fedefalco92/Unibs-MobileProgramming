@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="3"
-        android:textAlignment="textEnd"
+        android:textAlignment="center"
         android:id="@+id/payment_slider_item_amount"
         android:text="10.00"
         android:layout_alignParentTop="true"
