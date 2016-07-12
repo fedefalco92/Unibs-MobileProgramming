@@ -125,4 +125,6 @@
     <string name="group_edit_dialog_title">Confirm changes?</string>
     <string name="group_edit_saving_changes">Saving changes...</string>
     <string name="server_internal_error">Server internal error. Try again later.</string>
+    <string name="error_invalid_fullname">This name is too short</string>
+    <string name="error_email_not_available">This e-mail is already associated with an account</string>
 </resources>

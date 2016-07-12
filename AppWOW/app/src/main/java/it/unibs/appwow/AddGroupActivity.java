@@ -109,6 +109,10 @@ public class AddGroupActivity extends AppCompatActivity {
                 Bundle extras = data.getExtras();
                 if (extras != null) {
                     Bitmap photo = extras.getParcelable("data");
+                    //pulisco un eventuale file temporaneo precedente
+                    if(!mFileName.isEmpty()){
+                        FileUtils.deleteTemporaryFile(mFileName, this);
+                    }
                     mFileName = FileUtils.writeTemporaryBitmap(photo, this);
                     Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
                     //Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);

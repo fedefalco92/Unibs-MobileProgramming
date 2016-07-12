@@ -40,4 +40,12 @@ public class Validator {
             return false;
         }
     }
+
+    public static boolean isFullNameValid(String fullname){
+        if(!fullname.isEmpty()){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
