@@ -290,6 +290,7 @@ public class EditGroupActivity extends AppCompatActivity {
                 break;
             case SELECT_PICTURE_INTENT:
                 mPhotoUri = data.getData();
+                Log.d(TAG_LOG, "OnActivityResult (SELECT_PICTURE_INTENT): PHOTOURI=" + mPhotoUri);
                 doCrop();
                 break;
             case CROP_FROM_CAMERA:
@@ -311,11 +312,13 @@ public class EditGroupActivity extends AppCompatActivity {
     }
 
     private void doCrop() {
+        Log.d(TAG_LOG, "doCrop method");
         final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setType("image/*");
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
         int size = list.size();
+        Log.d(TAG_LOG, "method doCrop() list size: " + size);
         if (size == 0) {
             Toast.makeText(this, "Can not find image crop app", Toast.LENGTH_SHORT).show();
             return;

@@ -274,6 +274,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                                 dao.updateSingleGroup(id,idAdmin, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, highlighted);
 
                                                 UserGroupModel ugm = UserGroupModel.create(groupJs.getJSONObject("pivot"));
+
                                                 UserGroupDAO ugdao = new UserGroupDAO();
                                                 ugdao.open();
                                                 ugdao.insertUserGroup(ugm);

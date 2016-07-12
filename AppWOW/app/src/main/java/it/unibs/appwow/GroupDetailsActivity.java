@@ -169,7 +169,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_edit_group) {
             Intent editGroupIntent = new Intent (this, EditGroupActivity.class);
-            editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            //editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             editGroupIntent.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
             startActivity(editGroupIntent);
             // TODO: 12/07/2016  cosa fare dopo?

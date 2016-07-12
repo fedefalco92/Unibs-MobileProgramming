@@ -162,4 +162,12 @@ public class UserDAO implements LocalDB_DAO {
         cursor.close();
         return res;
     }
+
+    public boolean userExists(int idUser){
+        String query = "SELECT users._id FROM users WHERE users._id = ?";
+        Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idUser)});
+        boolean ok = cursor.moveToFirst(); // Ritorna falso se e' vuoto.
+        cursor.close();
+        return ok;
+    }
 }

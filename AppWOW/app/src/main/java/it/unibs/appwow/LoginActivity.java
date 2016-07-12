@@ -46,6 +46,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibs.appwow.database.UserDAO;
+import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -397,10 +399,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
                         Log.d(TAG_LOG, "Risposta String: "+ response);
 
-                        // TODO: 19/05/2016 SALVARE SHARED
-                        int id = mResjs.getInt("id");
-                        String fullname = mResjs.getString("fullName");
-                        mLocalUser = LocalUser.create(id).withEmail(mEmail).withFullName(fullname);
+                        UserModel user = UserModel.create(mResjs);
+                        UserDAO dao = new UserDAO();
+                        dao.open();
+                        dao.insertUser(user);
+                        dao.close();
+
+                        //int id = mResjs.getInt("id");
+                        //String fullname = mResjs.getString("fullName");
+                        //mLocalUser = LocalUser.create(id).withEmail(mEmail).withFullName(fullname);
+                        mLocalUser = LocalUser.create(user.getId()).withEmail(user.getEmail()).withFullName(user.getFullName());
                         mLocalUser.save(MyApplication.getAppContext());
 
                     } catch (MalformedURLException e){
