@@ -41,6 +41,7 @@ public class NavigationActivity extends AppCompatActivity
 
    // private String MENU_ONLINE = NavigationActivity.class.getSimpleName().concat(".MENU_ONLINE");
    // private String MENU_OFFLINE = NavigationActivity.class.getSimpleName().concat(".MENU_OFFLINE");
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class NavigationActivity extends AppCompatActivity
         //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
         navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,16 +175,19 @@ public class NavigationActivity extends AppCompatActivity
         if (id == R.id.nav_online_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser),TAG_ONLINE).commit();
+            fab.show();
 
             // Handle the camera action
         } else if (id == R.id.nav_offline_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.containerView,new OfflineGroupListFragment(),TAG_OFFLINE).commit();
+            fab.show();
 
         } else if (id == R.id.nav_settings) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             SettingsFragment prefs = new SettingsFragment();
             fragmentTransaction.replace(R.id.containerView,prefs,TAG_SETTINGS).commit();
+            fab.hide();
 
         } else if (id == R.id.nav_logout) {
             // TODO: 19/05/2016 PULIRE IL DATABASE QUANDO SI FA LOGOUT

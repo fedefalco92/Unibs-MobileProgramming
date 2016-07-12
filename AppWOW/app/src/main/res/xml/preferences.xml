@@ -17,5 +17,12 @@
         android:entries="@array/order_string"
         android:entryValues="@array/order_string_value"/>
 
+    <ListPreference
+        android:key="pref_key_round_payments"
+        android:title="Round payments"
+        android:dialogTitle="Round payments"
+        android:entries="@array/round_string"
+        android:entryValues="@array/round_string_value"
+        android:defaultValue="cent"/>
     </PreferenceCategory>
 </PreferenceScreen>

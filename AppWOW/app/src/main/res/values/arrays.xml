@@ -10,4 +10,15 @@
         <item>history_order</item>
     </string-array>
 
+    <string-array name="round_string">
+        <item>cent</item>
+        <item>decimal</item>
+        <item>unit</item>
+    </string-array>
+
+    <string-array name="round_string_value">
+        <item>cent</item>
+        <item>decimal</item>
+        <item>unit</item>
+    </string-array>
 </resources>

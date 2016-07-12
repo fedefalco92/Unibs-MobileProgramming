@@ -36,4 +36,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActivity().setTitle(getString(R.string.settings));
+    }
 }
