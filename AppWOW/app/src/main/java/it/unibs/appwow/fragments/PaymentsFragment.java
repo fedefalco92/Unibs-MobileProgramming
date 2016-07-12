@@ -12,9 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -43,7 +43,7 @@ import it.unibs.appwow.views.adapters.PaymentAdapter;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class PaymentsFragment extends Fragment implements AdapterView.OnItemLongClickListener {
+public class PaymentsFragment extends Fragment implements AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG_LOG = PaymentsFragment.class.getSimpleName();
 
@@ -56,9 +56,9 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
     private OnListFragmentInteractionListener mListener;
     private PaymentAdapter mAdapter;
     private GroupModel mGroup;
-    private ListView mCostList;
+    private ListView mPaymentsListView;
     //private Payment mSelectedItem;
-    //private List<PaymentModel> mCostList; //da riempire
+    //private List<PaymentModel> mPaymentsListView; //da riempire
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -148,10 +148,10 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAdapter = new PaymentAdapter(getContext(), mGroup.getId());
-        mCostList = (ListView) view.findViewById(R.id.payment_list);
-        mCostList.setEmptyView(view.findViewById(R.id.payment_fragment_empty_view));
-        mCostList.setAdapter(mAdapter);
-        mCostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mPaymentsListView = (ListView) view.findViewById(R.id.payment_list);
+        mPaymentsListView.setEmptyView(view.findViewById(R.id.payment_fragment_empty_view));
+        mPaymentsListView.setAdapter(mAdapter);
+        mPaymentsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
@@ -162,7 +162,9 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
                 startActivity(i);
             }
         });
-        mCostList.setOnItemLongClickListener(this);
+        mPaymentsListView.setOnItemLongClickListener(this);
+        mPaymentsListView.setOnScrollListener(this);
+
     }
 
     @Override
@@ -289,6 +291,18 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        int topRowVerticalPosition = (mPaymentsListView == null || mPaymentsListView.getChildCount() == 0) ?
+                        0 : mPaymentsListView.getChildAt(0).getTop();
+        ((GroupDetailsActivity) getActivity()).getSwipeRefreshLayout().setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
     }
 
     /**

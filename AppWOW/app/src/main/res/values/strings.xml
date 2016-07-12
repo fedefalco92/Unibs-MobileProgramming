@@ -119,4 +119,5 @@
     <string name="debt_settling">Settling debt...</string>
     <string name="debt_settle_unsuccess_server_error">Unable to settle %1$s\'s debt due to a server error</string>
     <string name="debt_settle_unsuccess_network_error">Unable to settle %1$s\'s debt due to a network error</string>
+    <string name="action_edit_group">Edit group</string>
 </resources>

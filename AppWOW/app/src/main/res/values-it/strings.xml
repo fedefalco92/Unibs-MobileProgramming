@@ -76,4 +76,5 @@
     <string name="debt_settling">Assolvo il debito...</string>
     <string name="debt_settle_unsuccess_server_error">Impossibile saldare il debito di %1$s a causa di un errore del server</string>
     <string name="debt_settle_unsuccess_network_error">Impossibile saldare il debito di %1$s a causa di un errore di rete</string>
+    <string name="action_edit_group">Modifica il gruppo</string>
 </resources>

@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -31,7 +30,6 @@ import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Debt;
-import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.services.WebServiceRequest;
@@ -100,7 +98,7 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_transaction_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_debts_list, container, false);
         return view;
     }
 

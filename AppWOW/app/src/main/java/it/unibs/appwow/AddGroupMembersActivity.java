@@ -325,10 +325,12 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 @Override
                 protected Map<String, DataPart> getByteData() {
                     Map<String, DataPart> params = new HashMap<>();
-                    // file name could found file base or direct access from real path
-                    // for now just get bitmap data from ImageView
-                    params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext())), "image/png"));
-
+                    String photoFileName = mGroup.getPhotoFileName();
+                    if(photoFileName!= null && !photoFileName.isEmpty()){
+                        // file name could found file base or direct access from real path
+                        // for now just get bitmap data from ImageView
+                        params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext())), "image/png"));
+                    }
                     return params;
                 }
         };

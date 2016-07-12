@@ -462,6 +462,10 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         //fetchGroupDetails();
     }
 
+    public View getSwipeRefreshLayout() {
+        return mSwipeRefreshLayout;
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
