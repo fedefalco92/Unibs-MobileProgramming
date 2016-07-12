@@ -12,8 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.models.Amount;
@@ -28,50 +30,50 @@ import it.unibs.appwow.utils.FileUtils;
 public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterRecyclerView.GroupViewHolder>{
 
     private static final String TAG_LOG = GroupAdapterRecyclerView.class.getSimpleName();
+    public static final String PASSING_GROUP_TAG = "group";
 
-    private List<GroupModel> mItems; //= new ArrayList<GroupModel>();
+    private List<GroupModel> mItems = Collections.emptyList();
     private GroupDAO dao = new GroupDAO();
+    private LayoutInflater mInflater;
     private Context mContext;
     private LocalUser mLocalUser;
 
-
-    public static class GroupViewHolder extends RecyclerView.ViewHolder {
-
-        public ImageView groupImageView;
-        public TextView groupName;
-        public TextView groupModified;
-        public TextView personalStatus;
-
-        public GroupViewHolder(View itemView) {
-            super(itemView);
-            groupImageView = (ImageView) itemView.findViewById(R.id.group_tile_imageView);
-            groupName = (TextView)itemView.findViewById(R.id.group_tile_groupName);
-            groupModified = (TextView) itemView.findViewById(R.id.group_tile_modified_indicator);
-            personalStatus = (TextView) itemView.findViewById(R.id.group_tile_personalStatus);
-        }
-
-    }
-
     public GroupAdapterRecyclerView(Context context){
-        mContext = context;
-        mLocalUser = LocalUser.load(mContext);
+        this.mContext = context;
+        mInflater = LayoutInflater.from(context);
+
+        this.mLocalUser = LocalUser.load(mContext);
         dao.open();
         mItems = dao.getAllGroups();
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
     }
 
+    public void removeItem(GroupModel item){
+        int position = mItems.indexOf(item);
+        if (position != -1) {
+            mItems.remove(item);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void removeItem(int position){
+        mItems.remove(position);
+        notifyItemRemoved(position);
+    }
+
+
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.tile_group_layout_recycler, parent, false);
-
+        // qui puo' esserce anche un if per alcuni viewType e usare inflater con diversi layout
+        View v = mInflater.inflate(R.layout.tile_group_layout_recycler, parent, false);
         GroupViewHolder vh = new GroupViewHolder(v);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(GroupViewHolder holder, int position) {
+        // anche qui
         GroupModel itemGroup = mItems.get(position);
         holder.groupName.setText(itemGroup.getGroupName());
 
@@ -130,6 +132,48 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
         // TODO: 26/05/2016 GROUP ADAPTER implementare la trasformazione da photo uri (string) a resource ID (int)
         return R.drawable.ic_group_black_24dp;
     }
+
+    public class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        public ImageView groupImageView;
+        public TextView groupName;
+        public TextView groupModified;
+        public TextView personalStatus;
+
+        public GroupViewHolder(View itemView) {
+            super(itemView);
+            groupImageView = (ImageView) itemView.findViewById(R.id.group_tile_imageView);
+            groupName = (TextView)itemView.findViewById(R.id.group_tile_groupName);
+            groupModified = (TextView) itemView.findViewById(R.id.group_tile_modified_indicator);
+            personalStatus = (TextView) itemView.findViewById(R.id.group_tile_personalStatus);
+            itemView.setOnClickListener(this);
+        }
+
+        // todo Da sistemare con implementazione piu' efficiente, anche se per ora funziona
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG_LOG, "click on " + getAdapterPosition());
+            GroupModel group = mItems.get(getAdapterPosition());
+            Log.d(TAG_LOG, "group: " + group.getGroupName());
+            final Intent i = new Intent(mContext, GroupDetailsActivity.class);
+
+            /**
+             * il gruppo che sto passando è highlighted.
+             * Userò questa informazione per aggiornare l'intero gruppo in GroupDetailsActivity
+             */
+            i.putExtra(PASSING_GROUP_TAG, group);
+
+            //tolgo l'highlight dal gruppo NEL DB LOCALE, non nell'oggetto passato
+            GroupDAO dao = new GroupDAO();
+            dao.open();
+            dao.unHighlightGroup(group.getId());
+            dao.close();
+
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mContext.startActivity(i);
+        }
+    }
+
 }
 
 
