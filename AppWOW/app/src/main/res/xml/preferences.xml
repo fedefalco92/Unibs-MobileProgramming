@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Group details">
+
+    <SwitchPreferenceCompat
+        android:key="pref_key_show_debts"
+        android:summary="Do you want to show only your debts?"
+        android:title="Show your debts only?"/>
+
+
+    <ListPreference
+        android:key="pref_key_order_payments"
+        android:title="Order payments"
+        android:dialogTitle="Order payments"
+        android:entries="@array/order_string"
+        android:entryValues="@array/order_string_value"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

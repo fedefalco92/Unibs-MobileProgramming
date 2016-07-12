@@ -22,6 +22,7 @@ import android.widget.TextView;
 import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.OfflineGroupListFragment;
+import it.unibs.appwow.fragments.SettingsFragment;
 import it.unibs.appwow.models.parc.LocalUser;
 
 public class NavigationActivity extends AppCompatActivity
@@ -36,6 +37,7 @@ public class NavigationActivity extends AppCompatActivity
 
     private String TAG_ONLINE = NavigationActivity.class.getSimpleName().concat("_ONLINE_FRAGMENT");
     private String TAG_OFFLINE = NavigationActivity.class.getSimpleName().concat("_OFFLINE_FRAGMENT");
+    private String TAG_SETTINGS = NavigationActivity.class.getSimpleName().concat("_SETTINGS_FRAGMENT");
 
    // private String MENU_ONLINE = NavigationActivity.class.getSimpleName().concat(".MENU_ONLINE");
    // private String MENU_OFFLINE = NavigationActivity.class.getSimpleName().concat(".MENU_OFFLINE");
@@ -179,6 +181,9 @@ public class NavigationActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.containerView,new OfflineGroupListFragment(),TAG_OFFLINE).commit();
 
         } else if (id == R.id.nav_settings) {
+            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+            SettingsFragment prefs = new SettingsFragment();
+            fragmentTransaction.replace(R.id.containerView,prefs,TAG_SETTINGS).commit();
 
         } else if (id == R.id.nav_logout) {
             // TODO: 19/05/2016 PULIRE IL DATABASE QUANDO SI FA LOGOUT
