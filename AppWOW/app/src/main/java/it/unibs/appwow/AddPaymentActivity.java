@@ -4,12 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -76,6 +78,11 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     private static final int DELETE_PLACE_TAG = 1;
     private static final int FIND_PLACE_TAG = 2;
 
+    //approssimazione importi
+    private static final String CENT = "CENT";
+    private static final String TENCENTS = "TENCENTS";
+    private String mApproxType;
+
     private LocalUser mUser;
     private GroupModel mGroup;
     private Place mPlace;
@@ -115,7 +122,9 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
 
         mUser = LocalUser.load(this);
         mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
-
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mApproxType = prefs.getString("pref_key_round_payments", CENT);
+        Log.d(TAG_LOG, " APPROX TYPE: " + mApproxType);
         UserGroupDAO dao = new UserGroupDAO();
         dao = new UserGroupDAO();
         dao.open();
@@ -131,7 +140,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         mPaymentName = (EditText) findViewById(R.id.add_payment_name);
 
         mPaymentAmountEditText = (EditText) findViewById(R.id.add_payment_amount);
-        mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
+        int maxDecimalDigits = getMaxDecimalDigits();
+        mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, maxDecimalDigits)});
         mPaymentAmountEditText.addTextChangedListener(
                 new TextWatcher() {
                     @Override
@@ -198,7 +208,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         TextView fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
         TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
         EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
-        amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
+        amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, getMaxDecimalDigits())});
         ProgressBar seekBar = (ProgressBar) view.findViewById(R.id.payment_slider_item_slider);
 
         fullName.setText(sa.getFullName() + ((mUser.getId() == sa.getUserId())?" (you) ":""));
@@ -560,8 +570,10 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     public void initializeAmountAndSets() {
         final int size = mSliderAmountList.size();
         double each = mPaymentAmount/size;
+        int approxMultiplier = getApproxMultiplier();
+
         //gestione arrotondamenti
-        each = Math.floor(each*100)/100;
+        each = Math.floor(each*approxMultiplier)/approxMultiplier;
         //Log.d(TAG_LOG, "each: " +each);
         double totalCalculated = each*size;
         //Log.d(TAG_LOG, "totalCalculated " +  totalCalculated);
@@ -577,9 +589,24 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             mUnlockedAmount.add(s);
             mLockedAmount.remove(s);
         }
+    }
 
+    private int getApproxMultiplier(){
+        int multiplier = 100;
+        switch (mApproxType){
+            case CENT: multiplier = 100; break;
+            case TENCENTS: multiplier = 10; break;
+        }
+        return multiplier;
+    }
 
-
+    private int getMaxDecimalDigits(){
+        int max = 2;
+        switch (mApproxType){
+            case CENT: max = 2; break;
+            case TENCENTS:  max = 1; break;
+        }
+        return max;
 
     }
 
@@ -616,7 +643,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
                     sa.getAmountView().setTextColor(ContextCompat.getColor(getBaseContext(), COLOR_LOCKED));
                     //cambio i valori di tutti gli unlocked
                     for (SliderAmount sa_local : mUnlockedAmount) {
-                        sa_local.setAmount((residualAmount - partialAmount) / mUnlockedAmount.size());
+                        double each = (residualAmount - partialAmount) / mUnlockedAmount.size();
+                        sa_local.setAmount(each);
                         sa_local.setAmountText(sa_local.getAmountString());
                         sa_local.setSeekBarProgress(sa_local.getAmount(), mPaymentAmount);
                     }

@@ -11,14 +11,12 @@
     </string-array>
 
     <string-array name="round_string">
-        <item>cent</item>
-        <item>decimal</item>
-        <item>unit</item>
+        <item>0.01 eur</item>
+        <item>0.10 eur</item>
     </string-array>
 
     <string-array name="round_string_value">
-        <item>cent</item>
-        <item>decimal</item>
-        <item>unit</item>
+        <item>CENT</item>
+        <item>TENCENTS</item>
     </string-array>
 </resources>
