@@ -18,6 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -73,7 +76,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
     // Nuove variabili per recycler view.
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
+    private GroupAdapterRecyclerView mAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -372,7 +375,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap bitmap) {
-                        boolean success = FileUtils.writeGroupImage(idGroup, bitmap, getActivity());
+                        boolean success = FileUtils.writeGroupImage(idGroup, bitmap, MyApplication.getAppContext());
                         if (success) {
                             GroupDAO dao = new GroupDAO();
                             dao.open();
@@ -380,7 +383,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                             dao.touchGroupPhoto(idGroup, server_photo_updated_at);
                             dao.close();
                         }
-                        mAdapter.notifyDataSetChanged();
+                        mAdapter.updateItem(idGroup);
                         Log.d(TAG_LOG, "FOTO SCARICATA!!");
                         // TODO: 04/07/2016 NOTIFICARE ALL'ADAPTER........COME?
                     }

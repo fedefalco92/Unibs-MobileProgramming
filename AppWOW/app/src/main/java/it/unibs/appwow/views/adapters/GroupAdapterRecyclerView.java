@@ -2,6 +2,7 @@ package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -84,12 +85,18 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
         GroupModel itemGroup = mItems.get(position);
         holder.groupName.setText(itemGroup.getGroupName());
 
+        /*
         if(itemGroup.getPhotoFileName().isEmpty()){
-            holder.groupImageView.setImageResource(getPhotoId(itemGroup.getPhotoFileName()));
-            // TODO: 04/07/2016 scommentare, commentato per debug
-            //holder.groupImageView.setImageBitmap(FileUtils.readBitmap("photo_1467633848847.png", mContext));
+            holder.groupImageView.setImageResource(R.drawable.ic_group_black_24dp);
         } else {
             holder.groupImageView.setImageBitmap(FileUtils.readGroupImage(itemGroup.getId(), mContext));
+        }*/
+
+        Bitmap bm = FileUtils.readGroupImage(itemGroup.getId(), mContext);
+        if(bm!=null){
+            holder.groupImageView.setImageBitmap(bm);
+        } else {
+            holder.groupImageView.setImageResource(R.drawable.ic_group_black_24dp);
         }
 
         if(itemGroup.isHighlighted()){
@@ -129,16 +136,15 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
      */
     public int getGroupPosition(int idGroup){
         for(GroupModel g:mItems){
+            Log.d(TAG_LOG, "getGroupPosition(): id:" + g.getId());
             if(g.getId()==idGroup)
                 return mItems.indexOf(g);
         }
         return -1;
     }
 
-    private int getPhotoId(String photoURI){
-        // TODO: 26/05/2016 GROUP ADAPTER implementare la trasformazione da photo uri (string) a resource ID (int)
-        return R.drawable.ic_group_black_24dp;
-    }
+
+
 
     public class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 

@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import it.unibs.appwow.NavigationActivity;
+
 /**
  * Created by Alessandro on 04/07/2016.
  */
@@ -128,8 +130,6 @@ public class FileUtils {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             immagine= BitmapFactory.decodeFile(toOpen.getPath(), options);
-        } else {
-            return null;
         }
         return immagine;
     }
@@ -141,14 +141,12 @@ public class FileUtils {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             immagine= BitmapFactory.decodeFile(toOpen.getPath(), options);
-        } else {
-            return null;
         }
         return immagine;
     }
 
     public static boolean deleteTemporaryFile(String fileName, Context context){
-        File file = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), fileName);
+        File file = new File(context.getCacheDir(), fileName);
         if(file.exists()){
             return file.delete();
         }
@@ -160,11 +158,31 @@ public class FileUtils {
     }
 
     public static boolean renameImageFile(String oldImageName, String newImageName, Context context){
-        File old = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), oldImageName);
+        File old = new File(context.getCacheDir(), oldImageName);
         File file = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), newImageName);
         if(old.exists()){
             return old.renameTo(file);
         }
         return false;
     }
+
+    public static void clearPhotoDir(Context context) {
+        File dir = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE).getPath());
+        if(dir.exists()){
+            deleteRecursive(dir);
+        }
+    }
+
+    public static void clearCache(Context context) {
+        deleteRecursive(context.getCacheDir());
+    }
+
+    private static void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+        fileOrDirectory.delete();
+    }
+
+
 }

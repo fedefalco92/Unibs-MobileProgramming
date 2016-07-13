@@ -25,6 +25,7 @@ import it.unibs.appwow.fragments.GroupListFragmentRecyclerView;
 import it.unibs.appwow.fragments.OfflineGroupListFragment;
 import it.unibs.appwow.fragments.SettingsFragment;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.utils.FileUtils;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,GroupListFragmentRecyclerView.OnFragmentInteractionListener, OfflineGroupListFragment.OnFragmentInteractionListener {
@@ -198,6 +199,8 @@ public class NavigationActivity extends AppCompatActivity
             LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
             currentUser.logout(MyApplication.getAppContext());
             deleteDatabase(AppDB.DATABASE_NAME); // Elimina il db
+            FileUtils.clearPhotoDir(this); //elimina le foto dei gruppi
+            FileUtils.clearCache(this);
             Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
             login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(login);
