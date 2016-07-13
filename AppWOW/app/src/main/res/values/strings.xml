@@ -127,4 +127,11 @@
     <string name="server_internal_error">Server internal error. Try again later.</string>
     <string name="error_invalid_fullname">This name is too short</string>
     <string name="error_email_not_available">This e-mail is already associated with an account</string>
+    <string name="group_info_members_number">Members: %1$s</string>
+    <string name="amministratore_gruppo">Group administrator</string>
+    <string name="group_info_group_deleted_successfully">Group deleted successfully</string>
+    <string name="group_info_group_not_present">Group doesn\'t exists any more</string>
+    <string name="group_info_dialog_delete_title">Delete group?</string>
+    <string name="group_info_dialog_delete_message">Do you really want to delete this group? This action CAN NOT BE UNDONE and will affect all members</string>
+    <string name="action_show_group_info">Group info</string>
 </resources>

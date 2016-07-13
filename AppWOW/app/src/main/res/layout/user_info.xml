@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_fullname"
+        android:layout_alignParentTop="true"
+        android:text="FULLNAME"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_email"
+        android:layout_below="@id/user_fullname"
+        android:text="email@email.it"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_is_admin"
+        android:gravity="right"
+        android:text="@string/amministratore_gruppo"
+        android:layout_above="@+id/user_email"
+        android:layout_alignBottom="@+id/user_fullname"
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"/>
+</RelativeLayout>

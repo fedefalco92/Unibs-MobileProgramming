@@ -88,4 +88,11 @@
     <string name="error_password_matching">Le password non corrispondono</string>
     <string name="group_details_string">Dettagli </string>
     <string name="error_email_not_available">L\'email è già associata a un account</string>
+    <string name="group_info_members_number">Partecipanti: %1$s</string>
+    <string name="amministratore_gruppo">Amministratore gruppo</string>
+    <string name="group_info_group_deleted_successfully">Gruppo eliminato con successo</string>
+    <string name="group_info_group_not_present">Il gruppo è già stato eliminato</string>
+    <string name="group_info_dialog_delete_title">Elimina il gruppo?</string>
+    <string name="group_info_dialog_delete_message">Vuoi davvero eliminare il gruppo? L\'operazione è IRREVERSIBILE e avrà effetto per tutti i partecipanti</string>
+    <string name="action_show_group_info">Info gruppo</string>
 </resources>

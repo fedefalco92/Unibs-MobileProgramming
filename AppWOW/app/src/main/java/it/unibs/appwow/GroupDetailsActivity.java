@@ -1,6 +1,9 @@
 package it.unibs.appwow;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -50,6 +53,7 @@ import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.models.Amount;
+import it.unibs.appwow.utils.FileUtils;
 
 public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragment.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
@@ -90,9 +94,17 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         
         setContentView(R.layout.activity_group_details);
 
+        mLocalUser = LocalUser.load(MyApplication.getAppContext());
+        mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
+        setTitle(mGroup.getGroupName());
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        /*
+        Bitmap bitmap = FileUtils.readGroupImage(mGroup.getId(), this);
+        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+        getSupportActionBar().setHomeAsUpIndicator(drawable);*/
 
         setFragmentAdapter();
 
@@ -110,9 +122,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             }
         });
 
-        mLocalUser = LocalUser.load(MyApplication.getAppContext());
-        mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
-        setTitle(mGroup.getGroupName());
+
 
 
     }
@@ -173,6 +183,14 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             editGroupIntent.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
             startActivity(editGroupIntent);
             // TODO: 12/07/2016  cosa fare dopo?
+            return true;
+        }
+
+        if(id == R.id.action_show_group_info){
+            Intent showGroupInfo = new Intent (this, GroupInfoActivity.class);
+            //editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            showGroupInfo.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
+            startActivity(showGroupInfo);
             return true;
         }
 

@@ -87,8 +87,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="22/06/2016 18:24"
         android:id="@+id/cost_detail_date"
-        android:layout_above="@+id/cost_detail_notes_label"
-        android:layout_alignEnd="@+id/cost_detail_amount"/>
+        android:layout_below="@+id/user_info_container"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:layout_width="wrap_content"

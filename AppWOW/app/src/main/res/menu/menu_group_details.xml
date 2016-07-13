@@ -4,7 +4,12 @@
     tools:context="it.unibs.appwow.GroupDetailsActivity">
     <item
         android:id="@+id/action_edit_group"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:title="@string/action_edit_group"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_show_group_info"
+        android:orderInCategory="2"
+        android:title="@string/action_show_group_info"
         app:showAsAction="never" />
 </menu>
