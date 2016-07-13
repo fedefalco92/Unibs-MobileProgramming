@@ -29,6 +29,7 @@ import it.unibs.appwow.utils.DateUtils;
 public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private static final String TAG_LOG = PaymentAdapterRecyclerView.class.getSimpleName();
+    private static final int PAYMENT_EMPTY_VIEW = 10;
 
     private List<Payment> mItems = new ArrayList<Payment>();
     private LayoutInflater mInflater;
@@ -101,6 +102,14 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
     @Override
     public int getItemCount() {
         return mItems.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mItems.size() == 0) {
+            return PAYMENT_EMPTY_VIEW;
+        }
+        return super.getItemViewType(position);
     }
 
     public Object getItem(int position) {

@@ -20,6 +20,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -89,7 +90,6 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
         args.putParcelable(PASSING_GROUP_TAG, group);
         fragment.setArguments(args);
         return fragment;
-
     }
 
     @Override
@@ -167,11 +167,15 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-
-
-        if(mAdapter.getItemCount() == 0){
-            //mLayoutManager.addView();
-            Log.d(TAG_LOG,"adapter empty");
+        TextView emptyTextView = (TextView) view.findViewById(R.id.payment_fragment_empty_view);
+        // If there is no payments
+        if (mAdapter.getItemCount() == 0) {
+            mRecyclerView.setVisibility(View.GONE);
+            emptyTextView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            emptyTextView.setVisibility(View.GONE);
         }
 
 

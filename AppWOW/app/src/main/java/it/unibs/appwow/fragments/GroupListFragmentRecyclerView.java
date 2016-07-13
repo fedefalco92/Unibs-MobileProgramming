@@ -13,13 +13,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +43,6 @@ import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.FileUtils;
-import it.unibs.appwow.views.adapters.GroupAdapter;
 import it.unibs.appwow.views.adapters.GroupAdapterRecyclerView;
 
 
@@ -67,6 +61,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER= "user";
     public static final String PASSING_GROUP_TAG = "group";
+    public static final int LAYOUT_MANAGER_GRID_NUMBER = 2;
 
     //parameters
     private LocalUser mLocalUser;
@@ -79,7 +74,6 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
     private GroupAdapterRecyclerView mAdapter;
 
     private OnFragmentInteractionListener mListener;
-
 
     public GroupListFragmentRecyclerView() {
         // Required empty public constructor
@@ -124,14 +118,14 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG_LOG,"onViewCreated");
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_groups);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.groups_recycler);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
         // use a grid layout manager
-        mLayoutManager = new GridLayoutManager(getContext(),2);
+        mLayoutManager = new GridLayoutManager(getContext(),LAYOUT_MANAGER_GRID_NUMBER);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
@@ -143,35 +137,6 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.groups_swipe_refresh_layout);
-
-
-        /* TODO implementare i listener
-        ...setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
-                final Intent i = new Intent(getContext(), GroupDetailsActivity.class);
-                GroupModel group = (GroupModel) mAdapter.getItem(position);
-
-                /**
-                 * il gruppo che sto passando è highlighted.
-                 * Userò questa informazione per aggiornare l'intero gruppo in GroupDetailsActivity
-                 */
-        /*
-                i.putExtra(PASSING_GROUP_TAG, group);
-
-                //tolgo l'highlight dal gruppo NEL DB LOCALE, non nell'oggetto passato
-                GroupDAO dao = new GroupDAO();
-                dao.open();
-                dao.unHighlightGroup(group.getId());
-                dao.close();
-
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-                //finish();
-            }
-        });*/
-
         mSwipeRefreshLayout.setOnRefreshListener(this);
         // Richiamo questo metodo per fare un refresh una volta aperta l'activity
         //fetchGroups();
