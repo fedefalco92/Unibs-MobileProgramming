@@ -84,7 +84,8 @@
 
         <activity android:name=".EditGroupActivity" >
         </activity>
-        <activity android:name=".GroupInfoActivity" >
+        <activity android:name=".GroupInfoActivity"
+                  android:theme="@style/AppTheme.NoActionBar.Scrolling">
         </activity>
     </application>
 

@@ -316,7 +316,7 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(res.getString(R.string.payment_delete_title));
         builder.setMessage(String.format(res.getString(R.string.payment_delete_message), selectedItem.getName()));
-        builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 mAdapter.remove(pos);
@@ -324,7 +324,7 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
                 v.setSelected(false);
             }
         });
-        builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();

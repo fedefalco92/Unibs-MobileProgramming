@@ -24,6 +24,16 @@ public class FileUtils {
     public static String getGroupImageFileName(int idGroup){
         return String.format(GROUP_IMAGE_FILE_NAME, idGroup);
     }
+
+    public static File getGroupImageFile(int idGroup, Context context){
+        File res = null;
+        String fileName = getGroupImageFileName(idGroup);
+        File file = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), fileName);
+        if(file.exists()){
+            res = file;
+        }
+        return res;
+    }
     public static boolean  writeGroupImage(int idGroup, Bitmap bitmap, Context context){
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);

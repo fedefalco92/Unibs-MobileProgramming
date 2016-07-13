@@ -134,5 +134,6 @@
     <string name="group_info_dialog_delete_title">Delete group?</string>
     <string name="group_info_dialog_delete_message">Do you really want to delete this group? This action CAN NOT BE UNDONE and will affect all members</string>
     <string name="action_show_group_info">Group info</string>
+    <string name="cancel">Cancel</string>
     <string name="group_fragment_empty_message">No groups to show</string>
 </resources>

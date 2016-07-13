@@ -32,7 +32,7 @@
     <string name="action_add_payment_add_position">Aggiungi posizione</string>
     <string name="action_add_cost_delete_position">Cancella posizione</string>
     <string name="transaction_fragment_empty_message">Nessun debito</string>
-    <string name="delete">Cancella</string>
+    <string name="delete">Elimina</string>
     <string name="email">email</string>
     <string name="payment_fragment_empty_message">Nessuna spesa</string>
     <string name="add_cost_menu_item">Aggiungi spesa</string>
@@ -95,4 +95,6 @@
     <string name="group_info_dialog_delete_title">Elimina il gruppo?</string>
     <string name="group_info_dialog_delete_message">Vuoi davvero eliminare il gruppo? L\'operazione è IRREVERSIBILE e avrà effetto per tutti i partecipanti</string>
     <string name="action_show_group_info">Info gruppo</string>
+    <string name="cancel">Annulla</string>
+    <string name="group_fragment_empty_message">Nessun gruppo</string>
 </resources>

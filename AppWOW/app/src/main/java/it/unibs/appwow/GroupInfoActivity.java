@@ -6,10 +6,21 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,8 +32,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Callback;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,8 +51,12 @@ import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.AmountComparator;
 import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.graphicTools.RoundedImageView;
+import it.unibs.appwow.utils.graphicTools.SquareImageView;
 
 public class GroupInfoActivity extends AppCompatActivity {
+
+    private static final String TAG_LOG = GroupInfoActivity.class.getSimpleName();
+
     private LocalUser mLocalUser;
     private GroupModel mGroup;
     private List<Amount> mMembers;
@@ -46,7 +64,11 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     private View mGroupInfoContainerView;
     private View mProgressView;
-    private RoundedImageView mGroupImageView;
+
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
+
+    //private RoundedImageView mGroupImageView;
+    private SquareImageView mGroupImageView;
     private TextView mGroupNameTextView;
 
     private TextView mMembersNumberTextView;
@@ -66,19 +88,53 @@ public class GroupInfoActivity extends AppCompatActivity {
         Collections.sort(mMembers, new AmountComparator(mLocalUser.getId()));
         Collections.reverse(mMembers);
 
+        initActivityTransitions();
+
         mGroupInfoContainerView = findViewById(R.id.group_info_container);
         mProgressView = findViewById(R.id.group_info_progress);
 
 
+        /*
         Bitmap imageGroup =FileUtils.readGroupImage(mGroup.getId(), this);
         if(imageGroup!= null){
             mGroupImageView = (RoundedImageView) findViewById(R.id.group_info_group_photo);
             mGroupImageView.setImageBitmap(imageGroup);
-        }
+        }*/
+
+        //mGroupNameTextView = (TextView) findViewById(R.id.group_info_group_name);
+        //mGroupNameTextView.setText(mGroup.getGroupName());
 
 
-        mGroupNameTextView = (TextView) findViewById(R.id.group_info_group_name);
-        mGroupNameTextView.setText(mGroup.getGroupName());
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        mCollapsingToolbarLayout.setTitle(mGroup.getGroupName());
+        mCollapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.transparent));
+
+        mGroupImageView = (SquareImageView) findViewById(R.id.group_info_group_photo);
+        String fileUri = "file://" + FileUtils.getGroupImageFile(mGroup.getId(), this).getPath();
+
+        Picasso.with(this).load(fileUri).into(mGroupImageView, new Callback() {
+            @Override public void onSuccess() {
+                Bitmap bitmap = ((BitmapDrawable) mGroupImageView.getDrawable()).getBitmap();
+                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                    public void onGenerated(Palette palette) {
+                        applyPalette(palette);
+                    }
+                });
+            }
+
+            @Override public void onError() {
+
+            }
+        });
+
+        TextView title = (TextView) findViewById(R.id.group_info_group_name);
+        title.setText(mGroup.getGroupName());
+
+
 
         mMembersNumberTextView = (TextView) findViewById(R.id.group_info_members_number);
         mMembersNumberTextView.setText(String.format(getString(R.string.group_info_members_number), mMembers.size()));
@@ -91,6 +147,32 @@ public class GroupInfoActivity extends AppCompatActivity {
         if(mLocalUser.getId() == mGroup.getIdAdmin()){
             Button deleteButton = (Button) findViewById(R.id.group_info_delete_button);
             deleteButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void initActivityTransitions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Slide transition = new Slide();
+            transition.excludeTarget(android.R.id.statusBarBackground, true);
+            getWindow().setEnterTransition(transition);
+            getWindow().setReturnTransition(transition);
+        }
+    }
+
+    private void applyPalette(Palette palette) {
+        int primaryDark = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+        int primary = ContextCompat.getColor(this, R.color.colorPrimary);
+        mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(primary));
+        mCollapsingToolbarLayout.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
+        supportStartPostponedEnterTransition();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent motionEvent) {
+        try {
+            return super.dispatchTouchEvent(motionEvent);
+        } catch (NullPointerException e) {
+            return false;
         }
     }
 
@@ -119,14 +201,14 @@ public class GroupInfoActivity extends AppCompatActivity {
         builder.setTitle(getString(R.string.group_info_dialog_delete_title));
         builder.setMessage(getString(R.string.group_info_dialog_delete_message));
         //builder.setMessage(String.format(getString(R.string.payment_delete_message), selectedItem.getName()));
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 showProgress(true);
                 sendDeleteRequest();
             }
         });
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
@@ -209,6 +291,14 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     public void startViewImageIntent(View v){
+        File file = FileUtils.getGroupImageFile(mGroup.getId(), this);
+        if(file!=null){
+            /*Log.d(TAG_LOG, "file path: " + file.getPath());
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse("file://" + file.getPath()),"image/*");
+            startActivity(intent);*/
+        }
+
         /*Bitmap image= mGroupImageView.getDrawingCache();
 
         Bundle extras = new Bundle();
@@ -218,4 +308,20 @@ public class GroupInfoActivity extends AppCompatActivity {
         showImage.putExtras(extras);
         startActivity(showImage);*/
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }
