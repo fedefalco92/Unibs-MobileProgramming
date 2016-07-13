@@ -175,6 +175,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
          * As animation won't start on onCreate, post runnable is used
          */
         // Viene chiamato onResume
+        /*
         mSwipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -182,7 +183,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                                         fetchGroups();
                                     }
                                 }
-        );
+        );*/
 
     }
 
@@ -446,8 +447,9 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
         super.onResume();
         Log.d(TAG_LOG,"onResume");
         //fetchGroups();
-        refreshGrid();
+        //refreshGrid();
         //Log.d(TAG_LOG, "on resume completed");
+        onRefresh();
     }
 
     private void refreshGrid() {

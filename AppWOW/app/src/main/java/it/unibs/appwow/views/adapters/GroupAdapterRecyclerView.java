@@ -176,7 +176,8 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
             dao.unHighlightGroup(group.getId());
             dao.close();
 
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(i);
         }
     }
