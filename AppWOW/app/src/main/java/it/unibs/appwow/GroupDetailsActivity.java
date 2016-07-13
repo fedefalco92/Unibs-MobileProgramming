@@ -43,6 +43,7 @@ import it.unibs.appwow.fragments.AmountsFragment;
 import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.DebtsFragment;
+import it.unibs.appwow.fragments.PaymentsFragmentRecyclerView;
 import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.models.DebtModel;
@@ -55,7 +56,7 @@ import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.utils.FileUtils;
 
-public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragment.OnListFragmentInteractionListener,
+public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragmentRecyclerView.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
         DebtsFragment.OnListFragmentInteractionListener,
         SwipeRefreshLayout.OnRefreshListener{
@@ -522,7 +523,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             switch (position) {
                 case 0:
                     //return PaymentsFragment.newInstance(1, mGroup);
-                    return PaymentsFragment.newInstance(1, mGroup);
+                    return PaymentsFragmentRecyclerView.newInstance(1, mGroup);
                 case 1:
                     return AmountsFragment.newInstance(1, mGroup, mLocalUser.getId());
                 case 2:

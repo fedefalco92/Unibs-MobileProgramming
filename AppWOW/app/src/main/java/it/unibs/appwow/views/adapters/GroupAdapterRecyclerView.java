@@ -39,9 +39,26 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
     private Context mContext;
     private LocalUser mLocalUser;
 
+    // Listeners
+    private OnItemClickListener mOnItemClickListener;
+    private OnItemLongClickListener mOnItemLongClickListener;
+
     public GroupAdapterRecyclerView(Context context){
         this.mContext = context;
         mInflater = LayoutInflater.from(context);
+
+        this.mLocalUser = LocalUser.load(mContext);
+        dao.open();
+        mItems = dao.getAllGroups();
+        dao.close();
+        Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
+    }
+
+    public GroupAdapterRecyclerView(Context context, OnItemClickListener onItemClickListener, OnItemLongClickListener onItemLongClickListener){
+        this.mContext = context;
+        mInflater = LayoutInflater.from(context);
+        mOnItemClickListener = onItemClickListener;
+        mOnItemLongClickListener = onItemLongClickListener;
 
         this.mLocalUser = LocalUser.load(mContext);
         dao.open();
@@ -69,7 +86,6 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
             notifyItemChanged(position);
         }
     }
-
 
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -143,10 +159,28 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
         return -1;
     }
 
+    public Object getItem(int position) {
+        return mItems.get(position);
+    }
 
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
 
-    public class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        mOnItemLongClickListener = onItemLongClickListener;
+    }
+
+    public interface OnItemClickListener {
+        public void onItemClicked(View v, int position);
+    }
+
+    public interface OnItemLongClickListener {
+        public boolean onItemLongClicked(View v, int position);
+    }
+
+    public class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public ImageView groupImageView;
         public TextView groupName;
@@ -155,16 +189,26 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
 
         public GroupViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
             groupImageView = (ImageView) itemView.findViewById(R.id.group_tile_imageView);
             groupName = (TextView)itemView.findViewById(R.id.group_tile_groupName);
             groupModified = (TextView) itemView.findViewById(R.id.group_tile_modified_indicator);
             personalStatus = (TextView) itemView.findViewById(R.id.group_tile_personalStatus);
-            itemView.setOnClickListener(this);
         }
 
         // todo Da sistemare con implementazione piu' efficiente, anche se per ora funziona
         @Override
         public void onClick(View v) {
+            Log.d(TAG_LOG, "onClick position: " + getAdapterPosition());
+            if(mOnItemClickListener != null){
+                mOnItemClickListener.onItemClicked(v,getAdapterPosition());
+            } else {
+                Log.d(TAG_LOG, "mOnItemClickListener is null");
+            }
+
+
+            /*
             Log.d(TAG_LOG, "click on " + getAdapterPosition());
             GroupModel group = mItems.get(getAdapterPosition());
             Log.d(TAG_LOG, "group: " + group.getGroupName());
@@ -173,7 +217,7 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
             /**
              * il gruppo che sto passando è highlighted.
              * Userò questa informazione per aggiornare l'intero gruppo in GroupDetailsActivity
-             */
+             *//*
             i.putExtra(PASSING_GROUP_TAG, group);
 
             //tolgo l'highlight dal gruppo NEL DB LOCALE, non nell'oggetto passato
@@ -184,7 +228,18 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
 
             //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(i);
+            mContext.startActivity(i);*/
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            Log.d(TAG_LOG, "onLongClick position: " + getAdapterPosition());
+            if(mOnItemLongClickListener != null){
+                mOnItemLongClickListener.onItemLongClicked(v,getAdapterPosition());
+            } else {
+                Log.d(TAG_LOG, "mOnItemLongClickListener is null");
+            }
+            return true;
         }
     }
 

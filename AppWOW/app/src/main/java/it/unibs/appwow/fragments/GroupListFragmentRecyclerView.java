@@ -60,7 +60,7 @@ import it.unibs.appwow.views.adapters.GroupAdapterRecyclerView;
  * Use the {@link GroupListFragmentRecyclerView#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefreshLayout.OnRefreshListener, GroupAdapterRecyclerView.OnItemClickListener, GroupAdapterRecyclerView.OnItemLongClickListener{
 
     private static final String TAG_LOG = GroupListFragmentRecyclerView.class.getSimpleName();
 
@@ -136,6 +136,8 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
 
         // specify an adapter
         mAdapter = new GroupAdapterRecyclerView(getContext());
+        mAdapter.setOnItemClickListener(this);
+        mAdapter.setOnItemLongClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -307,7 +309,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                                     }
                                 }
 
-                                mAdapter = new GroupAdapterRecyclerView(getActivity());
+                                mAdapter = new GroupAdapterRecyclerView(MyApplication.getAppContext(),GroupListFragmentRecyclerView.this,GroupListFragmentRecyclerView.this);
                                 mRecyclerView.setAdapter(mAdapter);
                                 mAdapter.notifyDataSetChanged();
 
@@ -404,6 +406,34 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
         MyApplication.getInstance().addToRequestQueue(request);
     }
 
+    @Override
+    public void onItemClicked(View v, int position) {
+        Log.d(TAG_LOG, "click on " + position);
+        GroupModel group = (GroupModel) mAdapter.getItem(position);
+        Log.d(TAG_LOG, "group: " + group.getGroupName());
+        final Intent i = new Intent(MyApplication.getAppContext(), GroupDetailsActivity.class);
+
+        /**
+         * il gruppo che sto passando è highlighted.
+         * Userò questa informazione per aggiornare l'intero gruppo in GroupDetailsActivity
+         */
+        i.putExtra(PASSING_GROUP_TAG, group);
+
+        //tolgo l'highlight dal gruppo NEL DB LOCALE, non nell'oggetto passato
+        GroupDAO dao = new GroupDAO();
+        dao.open();
+        dao.unHighlightGroup(group.getId());
+        dao.close();
+
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        MyApplication.getAppContext().startActivity(i);
+    }
+
+    @Override
+    public boolean onItemLongClicked(View v, int position) {
+        return false;
+    }
+
     /*
     private void alertGroupGone(int idGroup, GroupDAO dao) {
 
@@ -457,7 +487,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
 
     private void refreshGrid() {
         Log.d(TAG_LOG,"refreshGrid");
-        mAdapter = new GroupAdapterRecyclerView(MyApplication.getAppContext());
+        mAdapter = new GroupAdapterRecyclerView(MyApplication.getAppContext(),this,this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
