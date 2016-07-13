@@ -62,6 +62,13 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
         notifyItemRemoved(position);
     }
 
+    public void updateItem(int idGroup){
+        int position = getGroupPosition(idGroup);
+        if (position != -1) {
+            notifyItemChanged(position);
+        }
+    }
+
 
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
