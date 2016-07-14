@@ -140,7 +140,8 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
                 itemSpecialHolder.paymentName.setText(itemPayment.getFullName() + " gave " + Amount.getAmountString(itemPayment.getAmount()) + " eur to " + info[0] );
                 itemSpecialHolder.paymentAmount.setText("");
                 itemSpecialHolder.paymentDate.setText(DateUtils.dateLongToString(itemPayment.getUpdatedAt()));*/
-                itemSpecialHolder.paymentName.setText(itemPayment.getFullName() + " paid " + info[0]);
+                itemSpecialHolder.paymentNameFrom.setText(itemPayment.getFullName() + " (" + itemPayment.getEmail() + ")");
+                itemSpecialHolder.paymentNameTo.setText(info[0] + " (" + info[1] + ")");
                 itemSpecialHolder.paymentAmount.setText(Amount.getAmountString(itemPayment.getAmount()));
                 itemSpecialHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
                 break;
@@ -257,21 +258,19 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
     }
 
     public class PaymentSpecialViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
-        public TextView paymentName;
+        public TextView paymentNameFrom;
+        public TextView paymentNameTo;
         public TextView paymentAmount;
         public TextView paymentDate;
-        //public TextView paymentUser;
-        //public TextView paymentEmail;
 
         public PaymentSpecialViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-            paymentName = (TextView) itemView.findViewById(R.id.payment_fragment_item_costname);
+            paymentNameFrom = (TextView) itemView.findViewById(R.id.payment_fragment_item_from);
+            paymentNameTo = (TextView) itemView.findViewById(R.id.payment_fragment_item_to);
             paymentAmount = (TextView)itemView.findViewById(R.id.payment_fragment_item_value);
             paymentDate = (TextView) itemView.findViewById(R.id.payment_fragment_item_date);
-            //paymentUser = (TextView) itemView.findViewById(R.id.payment_fragment_item_username);
-            //paymentEmail = (TextView) itemView.findViewById(R.id.payment_fragment_item_email);
         }
 
         @Override

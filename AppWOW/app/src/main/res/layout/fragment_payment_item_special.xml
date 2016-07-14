@@ -18,15 +18,22 @@
         android:layout_weight="2">
 
         <TextView
-            android:id="@+id/payment_fragment_item_costname"
+            android:id="@+id/payment_fragment_item_from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceListItem"
-            android:text="Cost Name"
+            android:text="FullName from"
             android:ellipsize="end"
-            android:minLines="1"
-            android:maxLines="2"
-            android:singleLine="false"/>
+            android:singleLine="true"/>
+
+        <TextView
+            android:id="@+id/payment_fragment_item_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:text="FullName to"
+            android:ellipsize="end"
+            android:singleLine="true"/>
 
         <!--
         <TextView
@@ -48,11 +55,19 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="paid"
+        android:layout_gravity="center"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingRight="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:layout_gravity="center">
 
         <TextView
