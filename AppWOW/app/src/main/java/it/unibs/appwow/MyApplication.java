@@ -61,4 +61,10 @@ public class MyApplication extends Application {
             mRequestQueue.cancelAll(tag);
         }
     }
+
+    public void cancelPendingRequests() {
+        if (mRequestQueue != null) {
+            mRequestQueue.cancelAll(TAG);
+        }
+    }
 }

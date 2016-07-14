@@ -2,22 +2,23 @@ package it.unibs.appwow;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+
+import java.util.List;
 
 import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.fragments.GroupListFragment;
@@ -28,21 +29,22 @@ import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.FileUtils;
 
 public class NavigationActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,GroupListFragmentRecyclerView.OnFragmentInteractionListener, OfflineGroupListFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GroupListFragmentRecyclerView.OnFragmentInteractionListener, OfflineGroupListFragment.OnFragmentInteractionListener {
 
-    private final String TAG_LOG = NavigationActivity.class.getSimpleName();
+    private static final String TAG_LOG = NavigationActivity.class.getSimpleName();
 
     private FragmentManager mFragmentManager;
-    private FragmentTransaction mFragmentTransaction;
+    //private FragmentTransaction mFragmentTransaction;
     private NavigationView navigationView;
     private LocalUser mLocalUser;
 
-    private String TAG_ONLINE = NavigationActivity.class.getSimpleName().concat("_ONLINE_FRAGMENT");
-    private String TAG_OFFLINE = NavigationActivity.class.getSimpleName().concat("_OFFLINE_FRAGMENT");
-    private String TAG_SETTINGS = NavigationActivity.class.getSimpleName().concat("_SETTINGS_FRAGMENT");
+    private static final String TAG_ONLINE =  "_ONLINE_FRAGMENT";
+    private static final String TAG_OFFLINE = "_OFFLINE_FRAGMENT";
+    private static final String TAG_SETTINGS = "SETTINGS_FRAGMENT";
+    private static final String VISIBLE_FRAGMENT = "VISIBLE_FRAGMENT";
 
-   // private String MENU_ONLINE = NavigationActivity.class.getSimpleName().concat(".MENU_ONLINE");
-   // private String MENU_OFFLINE = NavigationActivity.class.getSimpleName().concat(".MENU_OFFLINE");
+    // private String MENU_ONLINE = NavigationActivity.class.getSimpleName().concat(".MENU_ONLINE");
+    // private String MENU_OFFLINE = NavigationActivity.class.getSimpleName().concat(".MENU_OFFLINE");
     private FloatingActionButton fab;
 
     @Override
@@ -65,7 +67,7 @@ public class NavigationActivity extends AppCompatActivity
 
         //controllo presenza utente per disabilitare eventualmente il logout
         mLocalUser = LocalUser.load(MyApplication.getAppContext());
-        if(mLocalUser == null){
+        if (mLocalUser == null) {
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
         } else {
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
@@ -77,8 +79,8 @@ public class NavigationActivity extends AppCompatActivity
 
 
         mFragmentManager = getSupportFragmentManager();
-        mFragmentTransaction = mFragmentManager.beginTransaction();
-        mFragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser),TAG_ONLINE).commit();
+        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser), TAG_ONLINE).commit();
 
         //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
         navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
@@ -91,33 +93,47 @@ public class NavigationActivity extends AppCompatActivity
                 Class destinationClass = null;
                 Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_ONLINE);
                 Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_OFFLINE);
-                if(onlineFragment!= null && onlineFragment.isVisible()){
+                if (onlineFragment != null && onlineFragment.isVisible()) {
                     destinationClass = AddGroupActivity.class;
-                    Log.d(TAG_LOG,"ONLINE fragment visible");
-                }
-                else if(offlineFragment!= null && offlineFragment.isVisible()){
+                    Log.d(TAG_LOG, "ONLINE fragment visible");
+                } else if (offlineFragment != null && offlineFragment.isVisible()) {
                     destinationClass = null;
-                    Log.d(TAG_LOG,"OFFLINE fragment visible");
+                    Log.d(TAG_LOG, "OFFLINE fragment visible");
                 }
-                Intent createIntent = new Intent(NavigationActivity.this,destinationClass);
+                Intent createIntent = new Intent(NavigationActivity.this, destinationClass);
                 startActivity(createIntent);
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG.setAction("Action", null).show();
             }
         });
 
 
-
-        
     }
-/**
- * UNCOMMENT THESE LINES IF YOU WANT TO MANAGE THE STATE: PRESERVE THE FRAGMENT VISUALIZED IF
- * THE SCREEN IS ROTATED
+
+    public Fragment getVisibleFragment() {
+        List<Fragment> fragments = mFragmentManager.getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * UNCOMMENT THESE LINES IF YOU WANT TO MANAGE THE STATE: PRESERVE THE FRAGMENT VISUALIZED IF
+     * THE SCREEN IS ROTATED
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        boolean onlineChecked = navigationView.getMenu().findItem(R.id.nav_online_groups).isChecked();
+        Fragment visible = getVisibleFragment();
+        String tag = visible.getTag();
+        /*boolean onlineChecked = navigationView.getMenu().findItem(R.id.nav_online_groups).isChecked();
         boolean offlineChecked = navigationView.getMenu().findItem(R.id.nav_offline_groups).isChecked();
         outState.putBoolean(MENU_ONLINE,onlineChecked);
-        outState.putBoolean(MENU_OFFLINE,offlineChecked);
+        outState.putBoolean(MENU_OFFLINE,offlineChecked);*/
+        outState.putString(VISIBLE_FRAGMENT, tag);
+        MyApplication.getInstance().cancelPendingRequests();
         super.onSaveInstanceState(outState);
     }
 
@@ -125,6 +141,7 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        /*
         boolean onlineChecked = savedInstanceState.getBoolean(MENU_ONLINE);
         if(onlineChecked){
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
@@ -133,9 +150,27 @@ public class NavigationActivity extends AppCompatActivity
         else{
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.containerView,new OfflineGroupListFragment(),TAG_OFFLINE).commit();
+        }*/
+        String visibleTag = savedInstanceState.getString(VISIBLE_FRAGMENT);
+        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+        switch (visibleTag) {
+            case TAG_ONLINE:
+                fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser), TAG_ONLINE).commit();
+                navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
+                break;
+            case TAG_SETTINGS:
+                fragmentTransaction.replace(R.id.containerView, new SettingsFragment(), TAG_SETTINGS).commit();
+                navigationView.getMenu().findItem(R.id.nav_settings).setChecked(true);
+                break;
+            default:
+                fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser), TAG_ONLINE).commit();
+                navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
+                break;
         }
+
     }
-*/
+
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -145,7 +180,7 @@ public class NavigationActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -166,7 +201,7 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -179,19 +214,19 @@ public class NavigationActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser),TAG_ONLINE).commit();
             fab.show();*/
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser),TAG_ONLINE).commit();
+            fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser), TAG_ONLINE).commit();
             fab.show();
 
             // Handle the camera action
         } else if (id == R.id.nav_offline_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView,new OfflineGroupListFragment(),TAG_OFFLINE).commit();
+            fragmentTransaction.replace(R.id.containerView, new OfflineGroupListFragment(), TAG_OFFLINE).commit();
             fab.show();
 
         } else if (id == R.id.nav_settings) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             SettingsFragment prefs = new SettingsFragment();
-            fragmentTransaction.replace(R.id.containerView,prefs,TAG_SETTINGS).commit();
+            fragmentTransaction.replace(R.id.containerView, prefs, TAG_SETTINGS).commit();
             fab.hide();
 
         } else if (id == R.id.nav_logout) {
@@ -205,7 +240,7 @@ public class NavigationActivity extends AppCompatActivity
             login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(login);
             finish();
-        } else if (id == R.id.nav_login){
+        } else if (id == R.id.nav_login) {
             Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
             login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(login);

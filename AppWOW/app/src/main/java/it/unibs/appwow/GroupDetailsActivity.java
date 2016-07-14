@@ -128,6 +128,12 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        MyApplication.getInstance().cancelPendingRequests();
+        super.onSaveInstanceState(outState);
+    }
+
     private void setFragmentAdapter() {
         Log.d(TAG_LOG,"setFragmentAdapter");
         // Create the adapter that will return a fragment for each of the three
@@ -282,7 +288,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                             } else {
                                 //se il gruppo locale è più aggiornato di quello del server?
                                 Log.d(TAG_LOG, "Group up to date");
-                                setFragmentAdapter();
+                                //setFragmentAdapter();
+                                mSectionsPagerAdapter.notifyDataSetChanged();
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
                         } catch(JSONException e){
@@ -462,7 +469,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         gdao.close();
 
                         // TODO: 29/06/2016  DA OTTIMIZZARE*/
-                        setFragmentAdapter();
+                        //setFragmentAdapter();
+                        mSectionsPagerAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
 
                     }

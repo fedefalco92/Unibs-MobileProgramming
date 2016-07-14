@@ -9,7 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +21,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,7 +68,10 @@ public class GroupInfoActivity extends AppCompatActivity {
     private View mGroupInfoContainerView;
     private View mProgressView;
 
+    private CoordinatorLayout mCoordinatorLayout;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    private AppBarLayout mAppBarLayout;
+    private Toolbar mToolbar;
 
     //private RoundedImageView mGroupImageView;
     private SquareImageView mGroupImageView;
@@ -73,6 +79,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     private TextView mMembersNumberTextView;
     private LinearLayout mMembersListView;
+
 
 
     @Override
@@ -114,22 +121,28 @@ public class GroupInfoActivity extends AppCompatActivity {
         mCollapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.transparent));
 
         mGroupImageView = (SquareImageView) findViewById(R.id.group_info_group_photo);
-        String fileUri = "file://" + FileUtils.getGroupImageFile(mGroup.getId(), this).getPath();
+        File file = FileUtils.getGroupImageFile(mGroup.getId(), this);
+        if(file!=null){
+            String fileUri = "file://" + file.getPath();
+            Picasso.with(this).load(fileUri).into(mGroupImageView, new Callback() {
+                @Override public void onSuccess() {
+                    Bitmap bitmap = ((BitmapDrawable) mGroupImageView.getDrawable()).getBitmap();
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        public void onGenerated(Palette palette) {
+                            applyPalette(palette);
+                        }
+                    });
+                }
 
-        Picasso.with(this).load(fileUri).into(mGroupImageView, new Callback() {
-            @Override public void onSuccess() {
-                Bitmap bitmap = ((BitmapDrawable) mGroupImageView.getDrawable()).getBitmap();
-                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                    public void onGenerated(Palette palette) {
-                        applyPalette(palette);
-                    }
-                });
-            }
+                @Override public void onError() {
 
-            @Override public void onError() {
+                }
+            });
+        } else {
+            disableScrolling();
+        }
 
-            }
-        });
+
 
         TextView title = (TextView) findViewById(R.id.group_info_group_name);
         title.setText(mGroup.getGroupName());
@@ -148,6 +161,29 @@ public class GroupInfoActivity extends AppCompatActivity {
             Button deleteButton = (Button) findViewById(R.id.group_info_delete_button);
             deleteButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void disableScrolling(){
+        /*mCollapsingToolbarLayout.setActivated(false);
+        mCollapsingToolbarLayout.setEnabled(false);
+        mCollapsingToolbarLayout.setNestedScrollingEnabled(false);*/
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        mAppBarLayout.setExpanded(false, false);
+        mAppBarLayout.setActivated(false);
+
+       // mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        //mCoordinatorLayout.setNestedScrollingEnabled(false);
+        //mGroupImageView.setVisibility(View.GONE);
+
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)mAppBarLayout.getLayoutParams();
+        lp.height = px;
+        mAppBarLayout.setLayoutParams(lp);
+        //mCollapsingToolbarLayout.setTitle(mGroup.getGroupName());
+        //mCollapsingToolbarLayout.setTitleEnabled(false);
+        //mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        //mToolbar.setTitle(mGroup.getGroupName());
     }
 
     private void initActivityTransitions() {
