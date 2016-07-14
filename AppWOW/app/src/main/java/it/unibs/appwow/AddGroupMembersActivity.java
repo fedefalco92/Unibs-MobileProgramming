@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.view.ActionMode;
@@ -15,11 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
@@ -33,7 +32,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +53,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     private static final String TAG_LOG = AddGroupMembersActivity.class.getSimpleName();
 
     // FIXME: 11/07/16 AGGIUSTARE IL FATTO CHE NON VIENE CARICATA NESSUNA IMMAGINE
-    private ListView membersList;
+    private ListView membersListView;
     private GroupMembersAdapter mAdapter;
     //private TextView matchLabel;
     //private TextView matchText;
@@ -91,25 +89,27 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        membersList = (ListView) findViewById(R.id.listView_members);
+        membersListView = (ListView) findViewById(R.id.listView_members);
         //matchLabel = (TextView) findViewById(R.id.match_label);
         //matchText = (TextView) findViewById(R.id.username_found);
         mAddMemberButton = (Button) findViewById(R.id.button_add_member);
+        mCreateGroupButton = (Button) findViewById(R.id.add_group_button);
+        toggleButtonAddGroupEnabled(false);
         mEmailTextView = (EditText) findViewById(R.id.email);
 
         mProgressView = findViewById(R.id.add_group_members_post_request_progress);
         mAddGroupFormView = findViewById(R.id.add_group_members_form_container);
 
-        membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        //membersList.setAdapter(new ArrayAdapter<LocalUser>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
+        membersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        //membersListView.setAdapter(new ArrayAdapter<LocalUser>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
         //mAdapter = new GroupMembersAdapter(this, mDisplayedUsers);
         mAdapter = new GroupMembersAdapter(this);
-        membersList.setAdapter(mAdapter);
+        membersListView.setAdapter(mAdapter);
         /*
         if(LocalUser.load(this) != null){
             LocalUser loggedUser = LocalUser.load(this);
             loggedUser.setmAdmin();
-            ((GroupMembersAdapter)membersList.getAdapter()).add(loggedUser);
+            ((GroupMembersAdapter)membersListView.getAdapter()).add(loggedUser);
         }*/
 
         //displaying the current user as the admin of group
@@ -118,17 +118,17 @@ public class AddGroupMembersActivity extends AppCompatActivity{
 
         //LocalUser adminUser = mGroup.getAdminUser();
         //adminUser.setIsGroupAdmin();
-        //((GroupMembersAdapter)membersList.getAdapter()).add(adminUser);
+        //((GroupMembersAdapter)membersListView.getAdapter()).add(adminUser);
 
 
-        membersList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        membersList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+        membersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        membersListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
                 // Here you can do something when items are selected/de-selected,
                 // such as update the title in the CAB
 
-                GroupMembersAdapter adapter = (GroupMembersAdapter) membersList.getAdapter();
+                GroupMembersAdapter adapter = (GroupMembersAdapter) membersListView.getAdapter();
                 String title = "";
                 if(checked){
                     mSelectedItems.add((UserModel)adapter.getItem(position));
@@ -175,9 +175,10 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                             //mGroup.removeUser(toRemove);
                             //Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
                             //AGGIORNO IL MENU
-                            invalidateOptionsMenu();
+                            //invalidateOptionsMenu();
                         }
-                        ((GroupMembersAdapter)membersList.getAdapter()).notifyDataSetChanged();
+                        refreshButtonAddGroupState();
+                        mAdapter.notifyDataSetChanged();
                         mode.finish();
                         return true;
                     default:
@@ -191,7 +192,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 // Here you can make any necessary updates to the activity when
                 // the CAB is removed. By default, selected items are deselected/unchecked.
                 // toolbar.setVisibility(View.);
-                //GroupMembersAdapter adapter = (GroupMembersAdapter)membersList.getAdapter();
+                //GroupMembersAdapter adapter = (GroupMembersAdapter)membersListView.getAdapter();
                 mSelectedItems.clear();
                 //adapter.notifyDataSetChanged();
                 mAdapter.notifyDataSetChanged();
@@ -215,8 +216,28 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 }
             }
         });
-        //membersList.setSelector(R.drawable.add_group_member_list_item_background);
+        //membersListView.setSelector(R.drawable.add_group_member_list_item_background);
 
+
+    }
+
+    private void toggleButtonAddGroupEnabled(boolean enabled){
+        if(enabled){
+            mCreateGroupButton.setEnabled(true);
+            mCreateGroupButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            mCreateGroupButton.setTextColor(ContextCompat.getColor(this, R.color.white));
+        } else {
+            mCreateGroupButton.setEnabled(false);
+            mCreateGroupButton.setBackgroundColor(ContextCompat.getColor(this, R.color.md_grey_300));
+            mCreateGroupButton.setTextColor(ContextCompat.getColor(this, R.color.md_grey_400));
+        }
+    }
+    private void refreshButtonAddGroupState(){
+        if(minMemberNumberReached()){
+           toggleButtonAddGroupEnabled(true);
+        } else {
+            toggleButtonAddGroupEnabled(false);
+        }
 
     }
 
@@ -398,8 +419,9 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         if(userAlreadyExists(retrievedUser)){
                             Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_members_user_already_added, Toast.LENGTH_SHORT).show();
                         } else {
-                            //((GroupMembersAdapter)membersList.getAdapter()).add(retrievedUser);
+                            //((GroupMembersAdapter)membersListView.getAdapter()).add(retrievedUser);
                             mAdapter.add(retrievedUser);
+                            mAdapter.notifyDataSetChanged();
                         }
 
 
@@ -408,7 +430,9 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         //mAddMemberButton.setVisibility(View.INVISIBLE);
                         mEmailTextView.setText("");
                         //AGGIORNO IL MENU
-                        invalidateOptionsMenu();
+                        //invalidateOptionsMenu();
+                        refreshButtonAddGroupState();
+                        mCreateGroupButton.requestFocus();
                         //   }
                        // });
                     } catch (JSONException e) {
