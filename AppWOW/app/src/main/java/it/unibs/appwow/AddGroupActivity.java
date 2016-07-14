@@ -125,82 +125,6 @@ public class AddGroupActivity extends AppCompatActivity {
                 break;
 
         }
-        /*if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_PICTURE_INTENT) {
-                onSelectFromGalleryResult(data);
-            }
-            else if (requestCode == PICK_FROM_CAMERA_INTENT){
-                onCaptureImageResult(data);
-            }
-        }*/
-        /*if (requestCode == SELECT_PICTURE_INTENT) {
-            if (resultCode == Activity.RESULT_OK) {
-                Uri selectedImage = data.getData();
-                Log.d(TAG_LOG, "URI PHOTO: " + selectedImage.toString());
-                String path = getPath(selectedImage);
-                Drawable image = Drawable.createFromPath(path);
-                mGroupImage.setImageDrawable(image);
-                mGroup.setPhotoFileName(selectedImage.toString());
-                Toast.makeText(AddGroupActivity.this, "Path: "+path, Toast.LENGTH_SHORT).show();
-            }
-        }*/
-    }
-
-    private void onSelectFromGalleryResult(Intent data) {
-        if (data != null) {
-            try {
-                Bitmap choosen = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
-
-                /*Bitmap resizedBitmap = getResizedBitmap(mThumbnail, 200);
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-                String fileName = "photo_" + System.currentTimeMillis() + ".png";
-                File destination = new File(getDir("group_images", MODE_PRIVATE), fileName);
-                FileOutputStream fos;
-                try {
-                    destination.createNewFile();
-                    fos = new FileOutputStream(destination);
-                    fos.write(bytes.toByteArray());
-                    fos.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                //FileInputStream fis = openFileInput(destination.getName());
-                //Log.d(TAG_LOG, "FILENAME: " + destination.getName());
-
-                mGroupImage.setImageBitmap(resizedBitmap);
-                mPhotoUri = data.getData().toString();
-                Log.d(TAG_LOG,"photo uri: " + mPhotoUri);*/
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    private void onCaptureImageResult(Intent data) {
-        /*mThumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        mThumbnail.compress(Bitmap.CompressFormat.PNG, 90, bytes);
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".png");
-
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mGroupImage.setImageBitmap(mThumbnail);
-        mPhotoUri = data.getData().toString();*/
     }
 
     private void selectImage() {
@@ -251,6 +175,7 @@ public class AddGroupActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_image_group)), SELECT_PICTURE_INTENT);
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -282,6 +207,22 @@ public class AddGroupActivity extends AppCompatActivity {
 
             default:
                 return true;
+        }
+    }*/
+
+    public void onGoAheadButtonClick(View v){
+        String insertedName = getInsertedName();
+        if(Validator.isGroupNameValid(insertedName)){
+            final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
+            //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
+            LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
+            mGroup.setIdAdmin(currentUser.getId());
+            mGroup.setGroupName(insertedName);
+            mGroup.setPhotoFileName(mFileName);
+            addMembersIntent.putExtra(PASSING_GROUP_EXTRA, mGroup);
+            startActivity(addMembersIntent);
+        } else {
+            setNameError();
         }
     }
 
@@ -327,21 +268,6 @@ public class AddGroupActivity extends AppCompatActivity {
                 break;
         }
     }
-    /*
-    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float)width / (float) height;
-        if (bitmapRatio > 0) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
-    }*/
 
     private void doCrop() {
         final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();

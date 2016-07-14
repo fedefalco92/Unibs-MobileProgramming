@@ -387,6 +387,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 public void onErrorResponse(VolleyError error) {
                     Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
                     Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    mSectionsPagerAdapter.notifyDataSetChanged();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
         });
         // Adding request to request queue
@@ -426,6 +428,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
                         Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        mSectionsPagerAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }
         );
@@ -480,6 +484,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
                         Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        mSectionsPagerAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }
         );

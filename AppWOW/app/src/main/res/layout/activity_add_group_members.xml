@@ -132,6 +132,17 @@
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/add_group_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:text="@string/go_ahead_menu"
+            android:onClick="onAddGroupButtonClick"
+            android:layout_below="@+id/textinputlayout"
+            android:layout_alignParentStart="true"/>
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

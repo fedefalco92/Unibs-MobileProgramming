@@ -60,7 +60,8 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     //private TextView matchLabel;
     //private TextView matchText;
     private Button mAddMemberButton;
-    private MenuItem mCreateGroupButton;
+    //private MenuItem mCreateGroupButton;
+    private Button mCreateGroupButton;
     private EditText mEmailTextView;
     private GroupModel mGroup;
     private LocalUser mLocalUser;
@@ -225,6 +226,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         return mAdapter.minMemberNumberReached();
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -232,15 +234,15 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         inflater.inflate(R.menu.menu_create_group, menu);
         mCreateGroupButton = (MenuItem) menu.findItem(R.id.create_group);
         return super.onCreateOptionsMenu(menu);
-    }
-
+    }*/
+    /*
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if(minMemberNumberReached()){
             mCreateGroupButton.setEnabled(true);
         }
         return super.onPrepareOptionsMenu(menu);
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -250,16 +252,21 @@ public class AddGroupMembersActivity extends AppCompatActivity{
             case android.R.id.home:
                 finish();
                 return true;
+            /*
             case R.id.create_group:
                 sendPostRequest();
-                return true;
+                return true;*/
             default:
                 return true;
         }
     }
 
-    private void sendPostRequest() {
+    public void onAddGroupButtonClick(View v){
         showProgress(true);
+        sendPostRequest();
+    }
+
+    private void sendPostRequest() {
         String[] keys = {"name", "idAdmin", "users"};
         String name = mGroup.getGroupName();
         String idAdmin = String.valueOf(mGroup.getIdAdmin());
