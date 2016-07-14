@@ -125,7 +125,7 @@ public class PaymentDAO implements LocalDB_DAO {
     }
 
     public PaymentModel insertPayment(PaymentModel data) {
-
+        Log.d(TAG_LOG,"insertPayment");
         database.replace(AppDB.Payments.TABLE_PAYMENTS, null,
                 costToValues(data));
         // now read from DB the inserted person and return it

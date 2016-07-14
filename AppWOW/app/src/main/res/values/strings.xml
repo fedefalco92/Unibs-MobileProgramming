@@ -136,4 +136,7 @@
     <string name="action_show_group_info">Group info</string>
     <string name="cancel">Cancel</string>
     <string name="group_fragment_empty_message">No groups to show</string>
+    <string name="payments">PAYMENTS</string>
+    <string name="summary">SUMMARY</string>
+    <string name="debts">DEBTS</string>
 </resources>

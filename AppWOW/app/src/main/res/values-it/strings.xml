@@ -97,4 +97,7 @@
     <string name="action_show_group_info">Info gruppo</string>
     <string name="cancel">Annulla</string>
     <string name="group_fragment_empty_message">Nessun gruppo</string>
+    <string name="payments">PAGAMENTI</string>
+    <string name="summary">RIASSUNTO</string>
+    <string name="debts">DEBITI</string>
 </resources>

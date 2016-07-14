@@ -88,6 +88,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     private LocalUser mLocalUser;
     //private int mRequestPending;
 
+    private int mCurrentPage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,11 +105,13 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         /*
         Bitmap bitmap = FileUtils.readGroupImage(mGroup.getId(), this);
         Drawable drawable = new BitmapDrawable(getResources(), bitmap);
         getSupportActionBar().setHomeAsUpIndicator(drawable);*/
 
+        mCurrentPage = 1;
         setFragmentAdapter();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -123,10 +127,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 startActivity(i);
             }
         });
-
-
-
-
     }
 
     @Override
@@ -140,6 +140,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.single_group_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
@@ -150,18 +151,21 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        mViewPager.setCurrentItem(1);
+        Log.d(TAG_LOG,"mViewPager.setCurrentItem");
+        mViewPager.setCurrentItem(mCurrentPage);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //Log.d(TAG_LOG,"Page Scrolled : "+position);
+                mCurrentPage = position;
             }
 
             @Override
             public void onPageSelected(int position) {
                 //Log.d(TAG_LOG,"Page Selected : "+position);
                 GroupDetailsActivity.this.invalidateOptionsMenu();
+                mCurrentPage = position;
             }
 
             @Override
@@ -209,7 +213,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     public void onListFragmentInteraction(PaymentModel item) {
         // TODO: 07/05/2016 Qui va implementato l'evento da gestire alla selezione dell'item
         Toast.makeText(GroupDetailsActivity.this, "Item: " + item.getId(), Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -289,7 +292,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                             } else {
                                 //se il gruppo locale è più aggiornato di quello del server?
                                 Log.d(TAG_LOG, "Group up to date");
-                                //setFragmentAdapter();
+                                setFragmentAdapter();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
@@ -474,7 +477,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         gdao.close();
 
                         // TODO: 29/06/2016  DA OTTIMIZZARE*/
-                        //setFragmentAdapter();
+                        setFragmentAdapter();
                         mSectionsPagerAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
 
@@ -567,11 +570,11 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             // TODO: 10/05/2016  STRINGHE
             switch (position) {
                 case 0:
-                    return "SPESE";
+                    return getString(R.string.payments);
                 case 1:
-                    return "RIASSUNTO";
+                    return getString(R.string.summary);
                 case 2:
-                    return "SCAMBI";
+                    return getString(R.string.debts);
             }
             return null;
         }
