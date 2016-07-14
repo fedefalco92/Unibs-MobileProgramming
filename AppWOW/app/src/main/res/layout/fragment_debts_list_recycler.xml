@@ -13,7 +13,7 @@
         tools:context=".fragments.DebtsFragment"
         tools:listitem="@layout/fragment_transaction_item"/>-->
 
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -31,7 +31,7 @@
         android:scrollbars="vertical"
         android:focusable="true"
         android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:foreground="?attr/selectableItemBackground"
         tools:context=".fragments.DebtsFragmentRecyclerView"/>
 
     <TextView
@@ -41,4 +41,4 @@
         android:gravity="center"
         android:text="@string/transaction_fragment_empty_message"
         android:visibility="gone"/>
-</LinearLayout>
+</FrameLayout>

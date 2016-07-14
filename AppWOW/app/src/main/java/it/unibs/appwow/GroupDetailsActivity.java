@@ -502,12 +502,15 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     protected void onResume() {
         super.onResume();
         Log.d(TAG_LOG,"onResume");
+
+        // QUESTA ROBA NON SAREBBE DOVUTA ESSERE QUI!!!!
         /**
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
         // Il primo metodo chiamato e' onResume e viene eseguito lì.
         // Resta comunque il problema di visualizzare una progress bar.
+        /*
         mSwipeRefreshLayout.post(new Runnable() {
                                      @Override
                                      public void run() {
@@ -515,8 +518,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                                          fetchGroupDetails();
                                      }
                                  }
-        );
-        //fetchGroupDetails();
+        );*/
+        fetchGroupDetails();
     }
 
     @Override

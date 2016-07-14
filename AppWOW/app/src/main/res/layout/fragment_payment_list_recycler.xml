@@ -11,7 +11,7 @@
     app:layoutManager="LinearLayoutManager"
     tools:context=".fragments.PaymentsFragment"
     tools:listitem="@layout/fragment_cost" />-->
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -29,7 +29,7 @@
         android:scrollbars="vertical"
         android:focusable="true"
         android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:foreground="?attr/selectableItemBackground"
         tools:context=".fragments.PaymentsFragmentRecyclerView"/>
 
     <TextView
@@ -40,4 +40,4 @@
         android:text="@string/payment_fragment_empty_message"
         android:visibility="gone"/>
 
-</LinearLayout>
+</FrameLayout>
