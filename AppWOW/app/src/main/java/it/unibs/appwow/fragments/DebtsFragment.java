@@ -3,11 +3,13 @@ package it.unibs.appwow.fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +50,7 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
     private GroupModel mGroup;
     private DebtsAdapter mAdapter;
     private ListView mYourDebtsList;
+    private boolean mShowOnlyYourDebts;
     // TODO: Customize parameters
     private int mColumnCount = 1;
 
@@ -83,6 +86,10 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
             mGroup = getArguments().getParcelable(GroupListFragment.PASSING_GROUP_TAG);
         }
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mShowOnlyYourDebts = prefs.getBoolean("pref_key_show_debts", false);
+        mAdapter = new DebtsAdapter(getContext(), mGroup.getId(), mShowOnlyYourDebts);
+
         //per poter popolare l'action bar dell'activity
         //setHasOptionsMenu(true);
     }
@@ -104,7 +111,6 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAdapter = new DebtsAdapter(getContext(), mGroup.getId());
         mYourDebtsList = (ListView) view.findViewById(R.id.transaction_list);
         mYourDebtsList.setEmptyView(view.findViewById(R.id.transaction_fragment_empty_view));
         mYourDebtsList.setOnItemLongClickListener(this);
@@ -237,4 +243,5 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
         // TODO: Update argument type and name
         void onListFragmentInteraction(Debt item);
     }
+
 }

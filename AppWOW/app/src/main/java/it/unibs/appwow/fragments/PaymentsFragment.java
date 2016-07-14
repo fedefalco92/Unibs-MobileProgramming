@@ -319,4 +319,5 @@ public class PaymentsFragment extends Fragment implements AdapterView.OnItemLong
         // TODO: Update argument type and name
         void onListFragmentInteraction(PaymentModel item);
     }
+
 }

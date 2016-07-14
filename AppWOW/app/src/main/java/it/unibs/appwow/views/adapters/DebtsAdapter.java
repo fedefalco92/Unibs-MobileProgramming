@@ -23,10 +23,12 @@ import it.unibs.appwow.models.parc.LocalUser;
  */
 public class DebtsAdapter extends BaseAdapter {
     private static final String TAG_LOG = AmountItemAdapter.class.getSimpleName();
-    //private LocalUser mUser;
+    private LocalUser mUser;
     private List<Debt> mItems = new ArrayList<Debt>();
     private final LayoutInflater mInflater;
     private DebtDAO dao;
+    private boolean mShowOnlyYourDebts;
+    private int mIdGroup;
 
     private class Holder {
         TextView amount;
@@ -36,12 +38,15 @@ public class DebtsAdapter extends BaseAdapter {
         TextView emailTo;
     }
 
-    public DebtsAdapter(Context context, int idGroup){
+    public DebtsAdapter(Context context, int idGroup, boolean showOnlyYourDebts){
         mInflater = LayoutInflater.from(context);
+        mUser = LocalUser.load(context);
+        mShowOnlyYourDebts = showOnlyYourDebts;
+        mIdGroup = idGroup;
         dao = new DebtDAO();
         dao.open();
         //mUser = LocalUser.load(MyApplication.getAppContext());
-        mItems = dao.getAllDebtsExtra(idGroup);
+        mItems = dao.getAllDebtsExtra(mIdGroup, mShowOnlyYourDebts, mUser.getId());
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
     }
@@ -88,5 +93,16 @@ public class DebtsAdapter extends BaseAdapter {
         return view;
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        reloadItems();
+        super.notifyDataSetChanged();
+    }
 
+    private void reloadItems(){
+        dao.open();
+        //mUser = LocalUser.load(MyApplication.getAppContext());
+        mItems = dao.getAllDebtsExtra(mIdGroup, mShowOnlyYourDebts, mUser.getId());
+        dao.close();
+    }
 }
