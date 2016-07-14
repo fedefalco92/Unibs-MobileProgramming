@@ -40,6 +40,7 @@ import it.unibs.appwow.database.DebtDAO;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.AmountsFragment;
+import it.unibs.appwow.fragments.DebtsFragmentRecyclerView;
 import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.DebtsFragment;
@@ -58,7 +59,7 @@ import it.unibs.appwow.utils.FileUtils;
 
 public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragmentRecyclerView.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
-        DebtsFragment.OnListFragmentInteractionListener,
+        DebtsFragmentRecyclerView.OnListFragmentInteractionListener,
         SwipeRefreshLayout.OnRefreshListener{
 
     private final String TAG_LOG = GroupDetailsActivity.class.getSimpleName();
@@ -515,6 +516,12 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         //fetchGroupDetails();
     }
 
+    @Override
+    protected void onDestroy() {
+        MyApplication.getInstance().cancelPendingRequests();
+        super.onDestroy();
+    }
+
     public View getSwipeRefreshLayout() {
         return mSwipeRefreshLayout;
     }
@@ -541,7 +548,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 case 1:
                     return AmountsFragment.newInstance(1, mGroup, mLocalUser.getId());
                 case 2:
-                    return DebtsFragment.newInstance(1, mGroup);
+                    return DebtsFragmentRecyclerView.newInstance(1, mGroup);
             }
             return null;
             //Log.d(TAG_LOG,"Position: "+position);

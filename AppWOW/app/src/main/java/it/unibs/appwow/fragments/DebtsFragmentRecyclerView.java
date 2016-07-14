@@ -10,12 +10,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -36,7 +38,8 @@ import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
-import it.unibs.appwow.views.adapters.DebtsAdapter;
+import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
+import it.unibs.appwow.views.adapters.DebtsAdapterRecyclerView;
 
 /**
  * A fragment representing a list of Items.
@@ -44,12 +47,10 @@ import it.unibs.appwow.views.adapters.DebtsAdapter;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class DebtsFragment extends Fragment implements AdapterView.OnItemLongClickListener{
+public class DebtsFragmentRecyclerView extends Fragment implements DebtsAdapterRecyclerView.OnItemClickListener, DebtsAdapterRecyclerView.OnItemLongClickListener{
 
-    private static final String TAG_LOG = DebtsFragment.class.getSimpleName();
+    private static final String TAG_LOG = DebtsFragmentRecyclerView.class.getSimpleName();
     private GroupModel mGroup;
-    private DebtsAdapter mAdapter;
-    private ListView mYourDebtsList;
     private boolean mShowOnlyYourDebts;
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -59,10 +60,15 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
 
     private OnListFragmentInteractionListener mListener;
 
+    // Nuove variabili per recycler view.
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private DebtsAdapterRecyclerView mAdapter;
+
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static DebtsFragment newInstance(int columnCount, GroupModel group) {
-        DebtsFragment fragment = new DebtsFragment();
+    public static DebtsFragmentRecyclerView newInstance(int columnCount, GroupModel group) {
+        DebtsFragmentRecyclerView fragment = new DebtsFragmentRecyclerView();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putParcelable(GroupListFragment.PASSING_GROUP_TAG, group);
@@ -74,7 +80,7 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public DebtsFragment() {
+    public DebtsFragmentRecyclerView() {
     }
 
     @Override
@@ -88,34 +94,63 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mShowOnlyYourDebts = prefs.getBoolean("pref_key_show_debts", false);
-        mAdapter = new DebtsAdapter(getContext(), mGroup.getId(), mShowOnlyYourDebts);
-
         //per poter popolare l'action bar dell'activity
         //setHasOptionsMenu(true);
     }
 
     @Override
     public void onResume() {
+        super.onResume();
         Log.d(TAG_LOG, "onResume()");
         if(mAdapter != null){
             mAdapter.notifyDataSetChanged();
+            //mAdapter.reloadItems();
         }
-        super.onResume();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_debts_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_debts_list_recycler, container, false);
         return view;
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mYourDebtsList = (ListView) view.findViewById(R.id.transaction_list);
-        mYourDebtsList.setEmptyView(view.findViewById(R.id.debt_fragment_empty_view));
-        mYourDebtsList.setOnItemLongClickListener(this);
-        mYourDebtsList.setAdapter(mAdapter);
+        Log.d(TAG_LOG,"onViewCreated");
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.debts_recycler);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        //mRecyclerView.setHasFixedSize(true);
+
+        // use a grid layout manager
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mLayoutManager.setSmoothScrollbarEnabled(true);
+
+        // specify an adapter
+        mAdapter = new DebtsAdapterRecyclerView(getContext(), mGroup.getId(), mShowOnlyYourDebts);
+        mAdapter.setOnItemClickListener(this);
+        mAdapter.setOnItemLongClickListener(this);
+        //mAdapter.reloadItems();
+        //mAdapter.notifyDataSetChanged();
+
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
+
+
+        TextView emptyTextView = (TextView) view.findViewById(R.id.debt_fragment_empty_view);
+        // If there is no payments
+        if (mAdapter.getItemCount() == 0) {
+            mRecyclerView.setVisibility(View.GONE);
+            emptyTextView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            emptyTextView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -135,9 +170,12 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
         mListener = null;
     }
 
+    /*
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+    public boolean onItemLongClick(final View view, int position) {
         final Debt selectedItem = (Debt) mAdapter.getItem(position);
+        Log.d(TAG_LOG, "onItemLongClick position: " + position);
+
         final int pos = position;
         view.setSelected(true);
         Resources res = getResources();
@@ -165,7 +203,7 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
         });
         builder.show();
         return true;
-    }
+    }*/
 
     private void showProgressDialog(Debt selectedItem) {
         ProgressDialog progressDialog = new ProgressDialog(getActivity());
@@ -228,6 +266,44 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
             }
         });
         snackbar.show();
+    }
+
+    @Override
+    public void onItemClicked(View v, int position) {
+        Log.d(TAG_LOG,"onItemClicked position: " + position);
+    }
+
+    @Override
+    public boolean onItemLongClicked(final View view, int position) {
+        final Debt selectedItem = (Debt) mAdapter.getItem(position);
+        Log.d(TAG_LOG, "onItemLongClick position: " + position);
+        final int pos = position;
+        view.setSelected(true);
+        Resources res = getResources();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(res.getString(R.string.debt_settle_title));
+        builder.setMessage(String.format(res.getString(R.string.debt_settle_message), selectedItem.getFullNameFrom(), Amount.getAmountString(selectedItem.getAmount())));
+        builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                showProgressDialog(selectedItem);
+            }
+        });
+        builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                view.setSelected(false);
+            }
+        });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                view.setSelected(false);
+            }
+        });
+        builder.show();
+        return true;
     }
 
     /**

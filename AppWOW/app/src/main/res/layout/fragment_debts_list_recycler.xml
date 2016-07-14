@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
-    android:name="it.unibs.appwow.CostListFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".fragments.PaymentsFragment"
-    tools:listitem="@layout/fragment_cost" />-->
+<!--<android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/cost_list"
+        android:name="it.unibs.appwow.DebtsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".fragments.DebtsFragment"
+        tools:listitem="@layout/fragment_transaction_item"/>-->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,21 +25,20 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/payment_recycler"
+        android:id="@+id/debts_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:focusable="true"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        tools:context=".fragments.PaymentsFragmentRecyclerView"/>
+        tools:context=".fragments.DebtsFragmentRecyclerView"/>
 
     <TextView
-        android:id="@+id/payment_fragment_empty_view"
+        android:id="@+id/debt_fragment_empty_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
-        android:text="@string/payment_fragment_empty_message"
+        android:text="@string/transaction_fragment_empty_message"
         android:visibility="gone"/>
-
 </LinearLayout>

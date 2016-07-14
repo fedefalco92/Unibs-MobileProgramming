@@ -7,6 +7,9 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/groups_recycler"
         android:scrollbars="vertical"
+        android:focusable="true"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

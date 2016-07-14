@@ -29,7 +29,7 @@
         tools:context=".fragments.DebtsFragment"
         tools:listitem="@layout/fragment_debt_item"/>
     <TextView
-        android:id="@+id/transaction_fragment_empty_view"
+        android:id="@+id/debt_fragment_empty_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"

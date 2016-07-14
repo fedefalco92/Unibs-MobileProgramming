@@ -22,9 +22,6 @@ import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.utils.DateUtils;
 
-/**
- * Created by Alessandro on 15/06/2016.
- */
 
 public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
