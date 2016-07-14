@@ -14,6 +14,8 @@ public class DateUtils {
     public static final String DATE_FORMAT ="yyyy-MM-dd HH:mm:ss";
     public static final String DATE_HOUR_FORMAT ="dd/MM/yyyy HH:mm";
 
+    public static final String DATE_READABLE_FORMAT = "MMM, dd";
+
     public static long dateStringToLong(String date){
         if(date.equalsIgnoreCase("null")) return 0L;
         SimpleDateFormat f = new SimpleDateFormat(DATE_FORMAT);
@@ -29,5 +31,9 @@ public class DateUtils {
 
     public static String dateLongToString(Long date){
         return new SimpleDateFormat(DATE_HOUR_FORMAT).format(date);
+    }
+
+    public static String dateReadableLongToString(Long date){
+        return new SimpleDateFormat(DATE_READABLE_FORMAT).format(date);
     }
 }

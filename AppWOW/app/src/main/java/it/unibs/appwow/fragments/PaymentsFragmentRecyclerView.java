@@ -41,6 +41,7 @@ import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
+import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
 import it.unibs.appwow.views.adapters.GroupAdapterRecyclerView;
 import it.unibs.appwow.views.adapters.PaymentAdapter;
 import it.unibs.appwow.views.adapters.PaymentAdapterRecyclerView;
@@ -146,18 +147,18 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         Log.d(TAG_LOG,"onViewCreated");
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.payment_recycler);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        //mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
 
         // use a grid layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mLayoutManager.setSmoothScrollbarEnabled(true);
 
         // specify an adapter
         mAdapter = new PaymentAdapterRecyclerView(getContext(),mGroup.getId());
@@ -166,6 +167,8 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
+
 
         TextView emptyTextView = (TextView) view.findViewById(R.id.payment_fragment_empty_view);
         // If there is no payments

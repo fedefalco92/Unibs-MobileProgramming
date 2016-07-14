@@ -101,7 +101,7 @@ public class PaymentAdapter extends BaseAdapter {
             holder.costAmount = (TextView)view.findViewById(R.id.payment_fragment_item_value);
             holder.costDate = (TextView) view.findViewById(R.id.payment_fragment_item_date);
             holder.costUser = (TextView) view.findViewById(R.id.payment_fragment_item_username);
-            holder.costEmail = (TextView) view.findViewById(R.id.payment_fragment_item_email);
+            //holder.costEmail = (TextView) view.findViewById(R.id.payment_fragment_item_email);
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();

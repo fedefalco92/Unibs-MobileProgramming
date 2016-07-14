@@ -29,7 +29,11 @@ import it.unibs.appwow.utils.DateUtils;
 public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private static final String TAG_LOG = PaymentAdapterRecyclerView.class.getSimpleName();
-    private static final int PAYMENT_EMPTY_VIEW = 10;
+
+    // View Type
+    private static final int PAYMENT_CLASSIC_VIEW = 1;
+    private static final int PAYMENT_SPECIAL_VIEW = 2;
+    private static final int PAYMENT_EMPTY_VIEW = 3;
 
     private List<Payment> mItems = new ArrayList<Payment>();
     private LayoutInflater mInflater;
@@ -64,15 +68,90 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
     }
 
     @Override
+    public int getItemViewType(int position) {
+        // Empty view
+        if (mItems.size() == 0) {
+            return PAYMENT_EMPTY_VIEW;
+        } else {
+            // Special payment
+            if (mItems.get(position).isExchange()) {
+                return PAYMENT_SPECIAL_VIEW;
+            } else {
+                return PAYMENT_CLASSIC_VIEW;
+            }
+        }
+    }
+
+    @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder vh = null;
+
+        switch (viewType) {
+            case PAYMENT_CLASSIC_VIEW:
+                View vClassic = mInflater.inflate(R.layout.fragment_payment_item, parent, false);
+                vh = new PaymentViewHolder(vClassic);
+                break;
+            case PAYMENT_SPECIAL_VIEW:
+                View vSpecial = mInflater.inflate(R.layout.fragment_payment_item_special, parent, false);
+                vh = new PaymentSpecialViewHolder(vSpecial);
+                break;
+            case PAYMENT_EMPTY_VIEW:
+                View vEmpty = mInflater.inflate(R.layout.fragment_payment_item,parent,false);
+                vh = new PaymentViewHolder(vEmpty);
+                break;
+            default:
+                break;
+        }
+        return vh;
+
+        /*
         // qui puo' esserce anche un if per alcuni viewType e usare inflater con diversi layout
         View v = mInflater.inflate(R.layout.fragment_payment_item, parent, false);
         PaymentViewHolder vh = new PaymentViewHolder(v);
-        return vh;
+        return vh;*/
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        Payment itemPayment = mItems.get(position);
+
+        switch (holder.getItemViewType()) {
+            case PAYMENT_CLASSIC_VIEW:
+                PaymentViewHolder itemClassicHolder = (PaymentViewHolder) holder;
+                itemClassicHolder.paymentName.setText(itemPayment.getName());
+                itemClassicHolder.paymentAmount.setText(String.valueOf(itemPayment.getAmount()));
+                itemClassicHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
+                /*
+                itemClassicHolder.paymentUser.setText(itemPayment.getFullName());
+                itemClassicHolder.paymentEmail.setText(itemPayment.getEmail());*/
+                itemClassicHolder.paymentUser.setText(itemPayment.getFullName() + " (" + itemPayment.getEmail() + ")");
+                break;
+
+            case PAYMENT_SPECIAL_VIEW:
+                PaymentSpecialViewHolder itemSpecialHolder = (PaymentSpecialViewHolder) holder;
+                //NOTA: in questo caso (il cost è un pagamento di debito) l'id del "ricevente" è nelle note
+                String userTo ="";
+                UserDAO dao = new UserDAO();
+                dao.open();
+                String [] info = dao.getSingleUserInfo(new Integer(itemPayment.getNotes()));
+                dao.close();
+                /*
+                itemSpecialHolder.paymentName.setText(itemPayment.getFullName() + " gave " + Amount.getAmountString(itemPayment.getAmount()) + " eur to " + info[0] );
+                itemSpecialHolder.paymentAmount.setText("");
+                itemSpecialHolder.paymentDate.setText(DateUtils.dateLongToString(itemPayment.getUpdatedAt()));*/
+                itemSpecialHolder.paymentName.setText(itemPayment.getFullName() + " paid " + info[0]);
+                itemSpecialHolder.paymentAmount.setText(Amount.getAmountString(itemPayment.getAmount()));
+                itemSpecialHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
+                break;
+            case PAYMENT_EMPTY_VIEW:
+                break;
+            default:
+                break;
+        }
+
+
+        /*
         if(holder instanceof PaymentViewHolder){
             Payment itemPayment = mItems.get(position);
             PaymentViewHolder itemHolder = (PaymentViewHolder) holder;
@@ -96,20 +175,12 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
                 itemHolder.paymentUser.setText("");
                 itemHolder.paymentEmail.setText("");
             }
-        }
+        }*/
     }
 
     @Override
     public int getItemCount() {
         return mItems.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (mItems.size() == 0) {
-            return PAYMENT_EMPTY_VIEW;
-        }
-        return super.getItemViewType(position);
     }
 
     public Object getItem(int position) {
@@ -158,7 +229,7 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
         public TextView paymentAmount;
         public TextView paymentDate;
         public TextView paymentUser;
-        public TextView paymentEmail;
+        //public TextView paymentEmail;
 
         public PaymentViewHolder(View itemView) {
             super(itemView);
@@ -168,7 +239,7 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
             paymentAmount = (TextView)itemView.findViewById(R.id.payment_fragment_item_value);
             paymentDate = (TextView) itemView.findViewById(R.id.payment_fragment_item_date);
             paymentUser = (TextView) itemView.findViewById(R.id.payment_fragment_item_username);
-            paymentEmail = (TextView) itemView.findViewById(R.id.payment_fragment_item_email);
+            //paymentEmail = (TextView) itemView.findViewById(R.id.payment_fragment_item_email);
         }
 
         @Override
@@ -181,6 +252,36 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
         public boolean onLongClick(View v) {
             Log.d(TAG_LOG, "onLongClick position: " + getAdapterPosition());
             mOnItemLongClickListener.onItemLongClicked(v,getAdapterPosition());
+            return true;
+        }
+    }
+
+    public class PaymentSpecialViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+        public TextView paymentName;
+        public TextView paymentAmount;
+        public TextView paymentDate;
+        //public TextView paymentUser;
+        //public TextView paymentEmail;
+
+        public PaymentSpecialViewHolder(View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+            paymentName = (TextView) itemView.findViewById(R.id.payment_fragment_item_costname);
+            paymentAmount = (TextView)itemView.findViewById(R.id.payment_fragment_item_value);
+            paymentDate = (TextView) itemView.findViewById(R.id.payment_fragment_item_date);
+            //paymentUser = (TextView) itemView.findViewById(R.id.payment_fragment_item_username);
+            //paymentEmail = (TextView) itemView.findViewById(R.id.payment_fragment_item_email);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG_LOG, "onClick position: " + getAdapterPosition());
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            Log.d(TAG_LOG, "onLongClick position: " + getAdapterPosition());
             return true;
         }
     }

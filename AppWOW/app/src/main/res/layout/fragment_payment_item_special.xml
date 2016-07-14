@@ -24,8 +24,11 @@
             android:textAppearance="?android:attr/textAppearanceListItem"
             android:text="Cost Name"
             android:ellipsize="end"
-            android:singleLine="true"/>
+            android:minLines="1"
+            android:maxLines="2"
+            android:singleLine="false"/>
 
+        <!--
         <TextView
             android:id="@+id/payment_fragment_item_username"
             android:layout_width="wrap_content"
@@ -35,7 +38,7 @@
             android:ellipsize="end"
             android:singleLine="true"/>
 
-        <!--
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
