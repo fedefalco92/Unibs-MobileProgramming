@@ -96,10 +96,11 @@ public class DebtsFragment extends Fragment implements AdapterView.OnItemLongCli
 
     @Override
     public void onResume() {
-        super.onResume();
+        Log.d(TAG_LOG, "onResume()");
         if(mAdapter != null){
             mAdapter.notifyDataSetChanged();
         }
+        super.onResume();
     }
 
     @Override

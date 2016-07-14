@@ -22,7 +22,7 @@ import it.unibs.appwow.models.parc.LocalUser;
  * Created by Alessandro on 20/06/2016.
  */
 public class DebtsAdapter extends BaseAdapter {
-    private static final String TAG_LOG = AmountItemAdapter.class.getSimpleName();
+    private static final String TAG_LOG = DebtsAdapter.class.getSimpleName();
     private LocalUser mUser;
     private List<Debt> mItems = new ArrayList<Debt>();
     private final LayoutInflater mInflater;
@@ -100,6 +100,7 @@ public class DebtsAdapter extends BaseAdapter {
     }
 
     private void reloadItems(){
+        Log.d(TAG_LOG, "RELOADING ITEMS...");
         dao.open();
         //mUser = LocalUser.load(MyApplication.getAppContext());
         mItems = dao.getAllDebtsExtra(mIdGroup, mShowOnlyYourDebts, mUser.getId());
