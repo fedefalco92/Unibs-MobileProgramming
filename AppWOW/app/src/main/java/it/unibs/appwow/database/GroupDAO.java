@@ -225,9 +225,7 @@ public class GroupDAO implements LocalDB_DAO {
         String groupName = "";
         String query = "SELECT " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups.COLUMN_NAME + " FROM " +
                 AppDB.Groups.TABLE_GROUPS + " WHERE " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups._ID + " = ? ;";
-        Log.d(TAG_LOG, "QUERY = " + query);
         Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup)});
-        Log.d(TAG_LOG, cursor.toString());
         cursor.moveToFirst();
         groupName = cursor.getString(0);
         cursor.close(); // remember to always close the cursor!
@@ -263,7 +261,6 @@ public class GroupDAO implements LocalDB_DAO {
                 " FROM " + AppDB.UserGroup.TABLE_USER_GROUP +
                 " WHERE " + AppDB.UserGroup.TABLE_USER_GROUP + "." + AppDB.UserGroup.COLUMN_ID_GROUP + " = ?" +
                 " AND " + AppDB.UserGroup.TABLE_USER_GROUP + "." + AppDB.UserGroup.COLUMN_ID_USER + " = ?;";
-        Log.d(TAG_LOG, "QUERY USER AMOUNT: " + query);
 
         Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(idGroup), String.valueOf(idUser)});
         cursor.moveToFirst();

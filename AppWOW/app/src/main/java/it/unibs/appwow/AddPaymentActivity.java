@@ -558,7 +558,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void setUpMap() {
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         try {
             mMap.setMyLocationEnabled(true);

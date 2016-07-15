@@ -198,6 +198,18 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
+    // Clean all elements of the recycler
+    public void clear() {
+        mItems.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items
+    public void addAll(List<Payment> list) {
+        mItems.addAll(list);
+        notifyDataSetChanged();
+    }
+
     public void reload(){
         mItems.clear();
         dao.open();
