@@ -19,7 +19,7 @@ import it.unibs.appwow.R;
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
 
-    private final String TAG_LOG = FirebaseInstanceIDService.class.getSimpleName();
+    private final String TAG_LOG = FirebaseMessagingService.class.getSimpleName();
 
     private static String KEY_GROUP = "key";
     private static int notificationID = 0;
@@ -50,7 +50,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         for(String str : keys){
             text += str + " -> " + remoteMessage.getData().get(str) + "--";
         }
-        Log.d("LOG", text);
+        Log.d(TAG_LOG, text);
         showNotification(text);
     }
 

@@ -6,6 +6,7 @@ import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.notifications.FirebaseInstanceIDService;
 
 /**
  * Created by Alessandro on 14/07/2016.
@@ -27,6 +28,7 @@ public class SplashActivity extends AppCompatActivity {
 
         final Intent intent = new Intent(this, destinationActivity);
         startActivity(intent);
+        //startService(new Intent(this, FirebaseInstanceIDService.class));
         finish();
     }
 

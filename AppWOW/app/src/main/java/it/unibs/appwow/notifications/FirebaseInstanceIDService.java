@@ -16,7 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
+import it.unibs.appwow.services.WebServiceUri;
 
 
 public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
@@ -36,18 +38,22 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
         Log.d(TAG_LOG,"Token generated: " + token);
        /* String token2 = FirebaseInstanceId.getInstance().getToken(); --> Sono uguali, fino al momento del delete instance
         Log.d(TAG_LOG,"Token generated 2: " + token2);*/
-        registerToken(token);
+        LocalUser localUser = LocalUser.load(MyApplication.getAppContext());
+        if(localUser != null){
+            registerToken(localUser.getId(),token);
+        }
+
     }
 
-    private void registerToken(String token) {
-        String[] keys = {"Token"};
-        String[] values = {token};
+    private void registerToken(int user_id, String token) {
+        String[] keys = {"id","msg_token"};
+        String[] values = {String.valueOf(user_id),token};
 
         Map<String,String> map = WebServiceRequest.createParametersMap(keys,values);
 
         //StringRequest request = WebServiceRequest.stringRequest(Request.Method.POST,"api.bresciawebproject.it/register.php",map,null,null);
 
-        StringRequest request = WebServiceRequest.stringRequest(Request.Method.POST, "http://charmed92.altervista.org/fcm/register.php", map,
+        StringRequest request = WebServiceRequest.stringRequest(Request.Method.POST, WebServiceUri.REGISTER_TOKEN_URI.toString(), map,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

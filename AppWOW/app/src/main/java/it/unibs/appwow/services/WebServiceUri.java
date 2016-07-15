@@ -29,6 +29,7 @@ public final class WebServiceUri {
     public final static Uri CHECK_USER_URI = Uri.withAppendedPath(USERS_URI, "check-user");
     public final static Uri GROUPS_URI = Uri.withAppendedPath(BASE_ADDRESS, "groups");
     public final static Uri PAYMENTS_URI = Uri.withAppendedPath(BASE_ADDRESS, "payments");
+    public final static Uri REGISTER_TOKEN_URI = Uri.withAppendedPath(USERS_URI, "register-token");
     private final static String PLACES_DETAILS_BASE_URL = "https://maps.googleapis.com/maps/api/place/details/json?key=%s&placeid=%s&language=%s";
 
     public final static Uri getGroupUri (int idGroup){
