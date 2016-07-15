@@ -8,8 +8,8 @@
           android:adjustViewBounds="true"
           android:scaleType="fitXY"
           android:width="100dp"
-            android:height="100dp"
-            android:gravity="center">
+          android:height="100dp"
+           android:gravity="center">
         <!--<bitmap
             android:gravity="center"
             android:src="@drawable/icon"/>-->

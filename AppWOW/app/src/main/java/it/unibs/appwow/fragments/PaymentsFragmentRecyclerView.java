@@ -1,11 +1,14 @@
 package it.unibs.appwow.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -45,6 +48,8 @@ import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
 import it.unibs.appwow.views.adapters.GroupAdapterRecyclerView;
 import it.unibs.appwow.views.adapters.PaymentAdapter;
 import it.unibs.appwow.views.adapters.PaymentAdapterRecyclerView;
+
+import static it.unibs.appwow.R.id.payment_fragment_item_costname;
 
 /**
  * A fragment representing a list of Items.
@@ -307,6 +312,12 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
         i.putExtra(PASSING_PAYMENT_TAG, payment);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyApplication.getAppContext().startActivity(i);
+
+        /*
+        TextView cname = (TextView) v.findViewById(payment_fragment_item_costname);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), cname, "payment_transaction");
+        ActivityCompat.startActivity(getActivity(),i, options.toBundle());*/
+
     }
 
     @Override

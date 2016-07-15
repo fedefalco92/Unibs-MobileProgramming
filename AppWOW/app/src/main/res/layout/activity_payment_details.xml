@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <include layout="@layout/include_toolbar"/>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_payment_details_container">
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".PaymentDetailsActivity"
     >
+
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,8 +35,11 @@
         android:text="Nome_spesa"
         android:id="@+id/cost_detail_name"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/cost_detail_amount"
+        android:transitionName="payment_transaction"
+        android:ellipsize="end"
+        android:singleLine="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,8 +47,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="+45"
         android:id="@+id/cost_detail_amount"
+        android:paddingStart="16dp"
         android:layout_alignTop="@+id/cost_detail_name"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
     <TextView
@@ -59,7 +74,8 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="fullName"
             android:id="@+id/cost_detail_user_fullName"
-            />
+            android:ellipsize="end"
+            android:singleLine="true"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -67,7 +83,8 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="(email)"
             android:id="@+id/cost_detail_email"
-            />
+            android:ellipsize="end"
+            android:singleLine="true"/>
     </LinearLayout>
 
     <!-- Text view con proprieta'  android:id="@+id/user_info_container"-->
@@ -78,17 +95,17 @@
         android:text="@string/cost_detail_date_preposition"
         android:id="@+id/payment_detail_date_preposition"
         android:layout_below="@+id/user_info_container"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="22/06/2016 18:24"
         android:id="@+id/cost_detail_date"
-        android:layout_below="@+id/user_info_container"
-        android:layout_alignParentEnd="true"/>
+        android:layout_below="@+id/payment_detail_date_preposition"
+        android:layout_alignParentStart="true"
+        android:paddingStart="8dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -96,7 +113,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/cost_detail_notes"
         android:id="@+id/cost_detail_notes_label"
-        android:layout_below="@+id/payment_detail_date_preposition"
+        android:layout_below="@+id/cost_detail_date"
         android:layout_alignParentStart="true"/>
 
     <TextView
@@ -104,8 +121,14 @@
         android:layout_height="wrap_content"
         android:text="Notes here"
         android:id="@+id/cost_detail_notes_text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_below="@+id/cost_detail_notes_label"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:ellipsize="end"
+        android:singleLine="false"
+        android:minLines="1"
+        android:maxLines="3"
+        android:paddingStart="8dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -121,15 +144,20 @@
         android:layout_height="wrap_content"
         android:text="Place here"
         android:id="@+id/cost_detail_position_text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_below="@+id/cost_detail_position_label"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:paddingStart="8dp"/>
 
     <fragment
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:name="com.google.android.gms.maps.MapFragment"
         android:id="@+id/cost_detail_position_map"
-        android:layout_below="@+id/cost_detail_position_text"/>
+        android:layout_below="@+id/cost_detail_position_text"
+        android:layout_marginTop="16dp"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -139,14 +167,15 @@
         android:layout_alignParentEnd="true"
         android:src="@drawable/ic_map_black_24dp"
         android:visibility="gone"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/details"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_below="@id/cost_detail_position_map"
-        android:paddingTop="16dp"
-        android:id="@+id/payment_details_label"/>
+        android:id="@+id/payment_details_label"
+        android:paddingTop="16dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -157,3 +186,4 @@
 </RelativeLayout>
 </ScrollView>
 
+</LinearLayout>

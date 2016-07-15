@@ -31,7 +31,7 @@
         android:scrollbars="vertical"
         android:focusable="true"
         android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackground"
         tools:context=".fragments.DebtsFragmentRecyclerView"/>
 
     <TextView

@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,6 +90,11 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_details);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mRootLayout = findViewById(R.id.activity_payment_details_container);
         mCost = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
         setTitle(mCost.getName());
@@ -198,10 +204,8 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                             e.printStackTrace();
                             return;
                         }
-                        //setto il fragment con la mappa
-                        mPositionText.setText(mPlace.getName());
-                        mMapFragment.getMapAsync(PaymentDetailsActivity.this);
 
+                        Log.d(TAG_LOG,"Setting map button on details");
                         //setto il bottone di gmaps
                         mMapButton.setVisibility(View.VISIBLE);
                         mMapButton.setOnClickListener(new View.OnClickListener() {
@@ -214,12 +218,16 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                             }
                         });
 
+                        //setto il fragment con la mappa
+                        mPositionText.setText(mPlace.getName());
+                        mMapFragment.getMapAsync(PaymentDetailsActivity.this);
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Toast.makeText(MyApplication.getAppContext(),error.toString(),Toast.LENGTH_SHORT);
                     }
                 });
         MyApplication.getInstance().addToRequestQueue(req);
@@ -239,6 +247,34 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        switch (id){
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.menu_payment_details_delete:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(getString(R.string.payment_delete_title));
+                builder.setMessage(String.format(getString(R.string.payment_delete_message), mCost.getName()));
+                builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        //progress dialog
+                        showProgressDialog();
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        /*
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_payment_details_delete) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -261,7 +297,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);*/
     }
 
     private void showProgressDialog() {
@@ -349,7 +385,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void setUpMap() {
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         try {
             mMap.setMyLocationEnabled(true);

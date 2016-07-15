@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:baselineAligned="false"
-    android:background="@drawable/add_group_member_list_item_background"
-    >
+    android:background="?android:attr/selectableItemBackground">
+    <!-- android:background="@drawable/add_group_member_list_item_background" -->
 
     <LinearLayout
         android:layout_width="0dp"

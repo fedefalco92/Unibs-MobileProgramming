@@ -111,8 +111,8 @@ public class GroupInfoActivity extends AppCompatActivity {
         //mGroupNameTextView = (TextView) findViewById(R.id.group_info_group_name);
         //mGroupNameTextView.setText(mGroup.getGroupName());
 
-
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
 

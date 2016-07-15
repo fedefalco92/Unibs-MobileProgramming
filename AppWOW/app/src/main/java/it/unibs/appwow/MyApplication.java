@@ -34,8 +34,6 @@ public class MyApplication extends Application {
 
     public static final String TAG = MyApplication.class.getSimpleName();
 
-
-
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -43,7 +41,6 @@ public class MyApplication extends Application {
 
         return mRequestQueue;
     }
-
 
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         // set the default tag if tag is empty
