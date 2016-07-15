@@ -142,4 +142,5 @@
     <string name="add_group_members_member_delete_title">Remove member?</string>
     <string name="add_group_members_member_delete_message">Do you want to remove %1$s?</string>
     <string name="remove">Remove</string>
+    <string name="title_add_group_members_activity">Add Group Members</string>
 </resources>

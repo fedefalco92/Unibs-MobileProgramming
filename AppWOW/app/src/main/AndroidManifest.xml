@@ -59,7 +59,7 @@
         <activity android:name=".AddGroupActivity"/>
         <activity
             android:name=".AddGroupMembersActivity"
-            android:label="Add Group Members"
+            android:label="@string/title_add_group_members_activity"
             android:parentActivityName=".AddGroupActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -90,7 +90,8 @@
             android:theme="@style/AppTheme.NoActionBar.Scrolling">
         </activity>
         <activity android:name=".AddGroupMembersActivityRecyclerView"
-                  android:theme="@style/AppTheme.NoActionBar">
+                  android:theme="@style/AppTheme.NoActionBar"
+                android:label="@string/title_add_group_members_activity">
 
         </activity>
     </application>
