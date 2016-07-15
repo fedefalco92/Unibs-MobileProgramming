@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -277,6 +278,9 @@ public class DebtsFragmentRecyclerView extends Fragment implements DebtsAdapterR
     public boolean onItemLongClicked(final View view, int position) {
         final Debt selectedItem = (Debt) mAdapter.getItem(position);
         Log.d(TAG_LOG, "onItemLongClick position: " + position);
+        Vibrator vib = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        if(vib.hasVibrator()) vib.vibrate(50);
+
         final int pos = position;
         view.setSelected(true);
         Resources res = getResources();

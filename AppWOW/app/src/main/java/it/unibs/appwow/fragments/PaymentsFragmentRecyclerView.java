@@ -1,27 +1,27 @@
 package it.unibs.appwow.fragments;
 
-import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,22 +34,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.PaymentDetailsActivity;
 import it.unibs.appwow.R;
+import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
-import it.unibs.appwow.views.adapters.GroupAdapterRecyclerView;
-import it.unibs.appwow.views.adapters.PaymentAdapter;
 import it.unibs.appwow.views.adapters.PaymentAdapterRecyclerView;
-
-import static it.unibs.appwow.R.id.payment_fragment_item_costname;
 
 /**
  * A fragment representing a list of Items.
@@ -57,7 +56,7 @@ import static it.unibs.appwow.R.id.payment_fragment_item_costname;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAdapterRecyclerView.OnItemClickListener, PaymentAdapterRecyclerView.OnItemLongClickListener{
+public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAdapterRecyclerView.OnItemClickListener, PaymentAdapterRecyclerView.OnItemLongClickListener, SearchView.OnQueryTextListener{
 
     private static final String TAG_LOG = PaymentsFragmentRecyclerView.class.getSimpleName();
 
@@ -78,6 +77,7 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
 
     //private Payment mSelectedItem;
     //private List<PaymentModel> mPaymentsListView; //da riempire
+    private List<Payment> mItems;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -106,17 +106,90 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
         }
+
         //per poter popolare l'action bar dell'activity
-        //setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
 
         //mAdapter =  new PaymentAdapter(getActivity(), mGroup.getId());
+        /*
+        PaymentDAO dao;
+        dao = new PaymentDAO();
+        dao.open();
+        mItems = dao.getAllPayments(mGroup.getId());
+        dao.close();*/
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        // Serve per allineare il filtraggio degli elementi
+        PaymentDAO dao;
+        dao = new PaymentDAO();
+        dao.open();
+        mItems = dao.getAllPayments(mGroup.getId());
+        dao.close();
+
         if(mAdapter != null){
             mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.dashboard, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = null;
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            searchView.setOnQueryTextListener(this);
+
+            /*
+            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    Log.d(TAG_LOG,"setOnCloseListener");
+                    mAdapter.getFilter().filter(null);
+                    mAdapter.reload();
+                    return true;
+                }
+            });*/
+        }
+
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.filter:
+
+                boolean isChecked = item.isChecked();
+                if(isChecked){
+                    Log.d(TAG_LOG,"isChecked");
+                    item.setChecked(false);
+                    item.setTitle("Hide solved debts");
+                    mAdapter.animateTo(mItems);
+                } else {
+                    Log.d(TAG_LOG,"isNotChecked");
+                    item.setChecked(true);
+                    item.setTitle("Show solved debts");
+                    final List<Payment> filteredModelList = filterIsNotExchange(mItems);
+                    mAdapter.animateTo(filteredModelList);
+                    mRecyclerView.scrollToPosition(0);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -186,7 +259,6 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
             emptyTextView.setVisibility(View.GONE);
         }
 
-
         /*
         mAdapter = new PaymentAdapter(getContext(), mGroup.getId());
         mPaymentsListView = (ListView) view.findViewById(R.id.payment_list);
@@ -249,6 +321,7 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
                     dao.open();
                     dao.removeSinglePayment(selectedItem.getId());
                     dao.close();*/
+                    mItems.remove(selectedItem);
                     ((GroupDetailsActivity) getActivity()).onRefresh();
                 } else {
                     mAdapter.reload();
@@ -279,7 +352,7 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
         snackbar.setAction(R.string.retry, new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                mAdapter.remove(selectedItem);
+                mAdapter.removeItem(selectedItem);
                 sendDeleteRequest(selectedItem);
             }
         });
@@ -323,6 +396,9 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
     @Override
     public boolean onItemLongClicked(final View v, int position) {
         Log.d(TAG_LOG, "onItemLongClick position: " + position);
+        Vibrator vib = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        if(vib.hasVibrator()) vib.vibrate(50);
+
         final Payment selectedItem = (Payment) mAdapter.getItem(position);
         final int pos = position;
         v.setSelected(true);
@@ -333,7 +409,7 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
         builder.setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                mAdapter.remove(pos);
+                mAdapter.removeItem(pos);
                 showUndoSnackbar(selectedItem);
                 v.setSelected(false);
             }
@@ -353,6 +429,42 @@ public class PaymentsFragmentRecyclerView extends Fragment implements PaymentAda
         });
         builder.show();
         return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        final List<Payment> filteredModelList = filter(mItems, newText);
+        mAdapter.animateTo(filteredModelList);
+        mRecyclerView.scrollToPosition(0);
+        return true;
+    }
+
+    private List<Payment> filter(List<Payment> models, String query) {
+        query = query.toLowerCase();
+
+        final List<Payment> filteredModelList = new ArrayList<>();
+        for (Payment model : models) {
+            final String text = model.getName().toLowerCase();
+            if (text.contains(query)) {
+                filteredModelList.add(model);
+            }
+        }
+        return filteredModelList;
+    }
+
+    private List<Payment> filterIsNotExchange(List<Payment> items){
+        final List<Payment> filteredItemList = new ArrayList<>();
+        for (Payment item: items){
+            if(!item.isExchange()){
+                filteredItemList.add(item);
+            }
+        }
+        return filteredItemList;
     }
 
 

@@ -1,20 +1,16 @@
 package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibs.appwow.MyApplication;
-import it.unibs.appwow.PaymentDetailsActivity;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.database.UserDAO;
@@ -185,18 +181,30 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
         return mItems.get(position);
     }
 
-    public void remove(int position){
+    public void removeItem(int position){
         mItems.remove(position);
         notifyItemRemoved(position);
     }
 
-    public void remove(Payment item){
+    public void removeItem(Payment item){
         int position = mItems.indexOf(item);
         if(position != -1){
             mItems.remove(item);
             notifyItemRemoved(position);
         }
     }
+
+    public void addItem(int position, Payment model) {
+        mItems.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final Payment model = mItems.remove(fromPosition);
+        mItems.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
 
     // Clean all elements of the recycler
     public void clear() {
@@ -216,6 +224,40 @@ public class PaymentAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
         mItems = dao.getAllPayments(mIdGroup);
         dao.close();
         notifyDataSetChanged();
+    }
+
+    public void animateTo(List<Payment> items) {
+        applyAndAnimateRemovals(items);
+        applyAndAnimateAdditions(items);
+        applyAndAnimateMovedItems(items);
+    }
+
+    private void applyAndAnimateRemovals(List<Payment> newItems) {
+        for (int i = mItems.size() - 1; i >= 0; i--) {
+            final Payment item = mItems.get(i);
+            if (!newItems.contains(item)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<Payment> newItems) {
+        for (int i = 0, count = newItems.size(); i < count; i++) {
+            final Payment item = newItems.get(i);
+            if (!mItems.contains(item)) {
+                addItem(i, item);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<Payment> newItems) {
+        for (int toPosition = newItems.size() - 1; toPosition >= 0; toPosition--) {
+            final Payment model = newItems.get(toPosition);
+            final int fromPosition = mItems.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
