@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -85,6 +86,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     private ViewPager mViewPager;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressBar mProgressBar;
     private LocalUser mLocalUser;
     //private int mRequestPending;
 
@@ -106,10 +108,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        /*
-        Bitmap bitmap = FileUtils.readGroupImage(mGroup.getId(), this);
-        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-        getSupportActionBar().setHomeAsUpIndicator(drawable);*/
+        mProgressBar = (ProgressBar) findViewById(R.id.self_reload_progress_bar);
 
         mCurrentPage = 1;
         setFragmentAdapter();
@@ -229,6 +228,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     @Override
     public void onRefresh() {
         Log.d(TAG_LOG,"onRefresh");
+            mSwipeRefreshLayout.setRefreshing(true);
         fetchGroupDetails();
     }
 
@@ -241,7 +241,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     private void fetchGroupDetails(){
         Log.d(TAG_LOG,"Fetching group details");
         // showing refresh animation before making http call
-        mSwipeRefreshLayout.setRefreshing(true);
         fetchUsers();
     }
 
@@ -295,6 +294,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                                 setFragmentAdapter();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
                                 mSwipeRefreshLayout.setRefreshing(false);
+                                showProgress(false);
                             }
                         } catch(JSONException e){
                             e.printStackTrace();
@@ -302,15 +302,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         dao.close();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-                        Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        // stopping swipe refresh
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                errorResponseListener());
         // Adding request to request queue
         MyApplication.getInstance().addToRequestQueue(groupRequest);
         //mRequestPending++;
@@ -341,22 +333,10 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                             try {
                                 JSONObject userJs = response.getJSONObject(i);
                                 UserModel user = UserModel.create(userJs);
-                                //int id = userJs.getInt("id");
-                                //String server_updated_at_string = userJs.getString("updated_at");
-                                //long server_updated_at = DateUtils.dateStringToLong(server_updated_at_string);
                                 long server_updated_at = user.getUpdatedAt();
                                 long local_updated_at = udao.getUpdatedAt(user.getId());
                                 //aggiorno lo user solo se subito modifiche
                                 if (server_updated_at > local_updated_at) {
-                                    /*String fullName = userJs.getString("fullName");
-                                    String email = userJs.getString("email");
-                                    String created_at_string = userJs.getString("created_at");
-                                    long created_at = DateUtils.dateStringToLong(created_at_string);
-                                    UserModel u = UserModel.create(id).withFullName(fullName)
-                                            .withEmail(email)
-                                            .withCreatedAt(created_at)
-                                            .withUpdatedAt(server_updated_at);
-                                    udao.insertUser(u);*/
                                     udao.insertUser(user);
                                     Log.d(TAG_LOG, "INSERTED USER -> " + user);
                                 } else {
@@ -380,21 +360,12 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         mGridView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();*/
                         fetchGroup();
-
                     } else {
                        // Toast.makeText(MyApplication.getAppContext(), "ERRORE SCONOSCIUTO", Toast.LENGTH_LONG).show();
                     }
                 }
             },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-                    Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                    mSectionsPagerAdapter.notifyDataSetChanged();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-        });
+                errorResponseListener());
         // Adding request to request queue
         MyApplication.getInstance().addToRequestQueue(usersRequest);
     }
@@ -427,15 +398,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         fetchDebts(server_updated_at); //rimosso DEBUG
                     }
                 },
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-                        Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        mSectionsPagerAdapter.notifyDataSetChanged();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                }
+                errorResponseListener()
         );
         MyApplication.getInstance().addToRequestQueue(costsRequest);
     }
@@ -480,27 +443,34 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         setFragmentAdapter();
                         mSectionsPagerAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
+                        showProgress(false);
 
                     }
                 },
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-                        Toast.makeText(MyApplication.getAppContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        mSectionsPagerAdapter.notifyDataSetChanged();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                }
+                errorResponseListener()
         );
         MyApplication.getInstance().addToRequestQueue(debtsRequest);
 
 
     }
 
+    private Response.ErrorListener errorResponseListener() {
+        return new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
+                Toast.makeText(MyApplication.getAppContext(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
+                mSectionsPagerAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
+                showProgress(false);
+            }
+        };
+    }
+
+
     @Override
     protected void onResume() {
-        super.onResume();
+
         Log.d(TAG_LOG,"onResume");
 
         // QUESTA ROBA NON SAREBBE DOVUTA ESSERE QUI!!!!
@@ -519,7 +489,9 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                                      }
                                  }
         );*/
+        showProgress(true);
         fetchGroupDetails();
+        super.onResume();
     }
 
     @Override
@@ -581,5 +553,10 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             }
             return null;
         }
+    }
+
+    private void showProgress(boolean show){
+        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        mViewPager.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 }

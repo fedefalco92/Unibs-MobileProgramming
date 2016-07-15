@@ -34,7 +34,7 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
     public static final String PASSING_GROUP_TAG = "group";
 
     private List<GroupModel> mItems = Collections.emptyList();
-    private GroupDAO dao = new GroupDAO();
+    private GroupDAO dao;
     private LayoutInflater mInflater;
     private Context mContext;
     private LocalUser mLocalUser;
@@ -48,6 +48,7 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
         mInflater = LayoutInflater.from(context);
 
         this.mLocalUser = LocalUser.load(mContext);
+        dao = new GroupDAO();
         dao.open();
         mItems = dao.getAllGroups();
         dao.close();
@@ -152,7 +153,7 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
      */
     public int getGroupPosition(int idGroup){
         for(GroupModel g:mItems){
-            Log.d(TAG_LOG, "getGroupPosition(): id:" + g.getId());
+            //Log.d(TAG_LOG, "getGroupPosition(): id:" + g.getId());
             if(g.getId()==idGroup)
                 return mItems.indexOf(g);
         }
@@ -163,6 +164,14 @@ public class GroupAdapterRecyclerView extends RecyclerView.Adapter<GroupAdapterR
         return mItems.get(position);
     }
 
+
+    public void reload(){
+        mItems.clear();
+        dao.open();
+        mItems = dao.getAllGroups();
+        dao.close();
+        notifyDataSetChanged();
+    }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;

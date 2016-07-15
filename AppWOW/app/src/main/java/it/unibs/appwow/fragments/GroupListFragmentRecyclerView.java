@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.FileUtils;
+import it.unibs.appwow.utils.PositionUtils;
 import it.unibs.appwow.views.adapters.GroupAdapterRecyclerView;
 
 
@@ -67,6 +69,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
     private LocalUser mLocalUser;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressBar mProgressBar;
 
     // Nuove variabili per recycler view.
     private RecyclerView mRecyclerView;
@@ -138,6 +141,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.groups_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.self_reload_progress_bar);
         // Richiamo questo metodo per fare un refresh una volta aperta l'activity
         //fetchGroups();
         /**
@@ -193,6 +197,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
     @Override
     public void onRefresh() {
         Log.d(TAG_LOG,"onRefresh");
+        mSwipeRefreshLayout.setRefreshing(true);
         fetchGroups();
     }
 
@@ -200,8 +205,6 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
     private void fetchGroups(){
         Log.d(TAG_LOG,"fetchGroups");
         // showing refresh animation before making http call
-        mSwipeRefreshLayout.setRefreshing(true);
-
         if(mLocalUser != null){
             Log.d(TAG_LOG,"mLocalUser is not null");
             Uri groups_uri = WebServiceUri.getGroupsUri(mLocalUser.getId());
@@ -252,7 +255,6 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                                                 dao.updateSingleGroup(id,idAdmin, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, highlighted);
 
                                                 UserGroupModel ugm = UserGroupModel.create(groupJs.getJSONObject("pivot"));
-
                                                 UserGroupDAO ugdao = new UserGroupDAO();
                                                 ugdao.open();
                                                 ugdao.insertUserGroup(ugm);
@@ -267,17 +269,13 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                                             gserver.setHighlighted(GroupModel.HIGHLIGHTED);
                                             dao.insertGroup(gserver);
                                             fetchPhoto(gserver.getId(),server_photo_updated_at);
-                                            // FIXME: 05/07/2016 la foto non si aggiorna subito
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                 }
 
-                                mAdapter = new GroupAdapterRecyclerView(MyApplication.getAppContext(),GroupListFragmentRecyclerView.this,GroupListFragmentRecyclerView.this);
-                                mRecyclerView.setAdapter(mAdapter);
-                                mAdapter.notifyDataSetChanged();
-
+                                mAdapter.reload();
                             } else {
                                 Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
                             }
@@ -300,7 +298,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                                     }
                                 });
                                 snackbar.show();
-                                refreshGrid();
+                                mAdapter.reload();
                             }
                             dao.close();
 
@@ -310,17 +308,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                             mSwipeRefreshLayout.setRefreshing(false);
 
                         }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-
-                            Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
-
-                            // stopping swipe refresh
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
+                    }, errorResponseListener());
 
             // Adding request to request queue
             MyApplication.getInstance().addToRequestQueue(req);
@@ -330,6 +318,21 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
             mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private Response.ErrorListener errorResponseListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
+
+                Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
+
+                // stopping swipe refresh
+                mSwipeRefreshLayout.setRefreshing(false);
+                showProgress(false);
+            }
+        };
     }
 
     private void fetchPhoto(final int idGroup, final long server_photo_updated_at) {
@@ -442,190 +445,20 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
     }
     @Override
     public void onResume() {
-        super.onResume();
         Log.d(TAG_LOG,"onResume");
         //fetchGroups();
         //refreshGrid();
         //Log.d(TAG_LOG, "on resume completed");
-        onRefresh();
+        showProgress(true);
+        fetchGroups();
+        super.onResume();
     }
 
-    private void refreshGrid() {
-        Log.d(TAG_LOG,"refreshGrid");
-        mAdapter = new GroupAdapterRecyclerView(MyApplication.getAppContext(),this,this);
-        mRecyclerView.setAdapter(mAdapter);
+
+    private void showProgress(boolean show){
+        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
-    /*
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private boolean noGroups = false;
-        private boolean mConnError = false;
-        private LocalUser mLocalUser = null;
-
-        UserLoginTask() {
-            mLocalUser = LocalUser.load(getActivity());
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            String response = "";
-            Uri groups_uri = WebServiceUri.getGroupsUri(mLocalUser.getId());
-            try {
-                URL url = new URL(groups_uri.toString());
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("GET");
-                conn.setDoOutput(true);
-                conn.connect();
-                int responseCode = conn.getResponseCode();
-                if(responseCode == HttpURLConnection.HTTP_OK){
-                    String line = "";
-                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line=br.readLine()) != null) {
-                        response+=line;
-                    }
-                } else {
-                    mConnError = true;
-                    return true;
-                }
-
-                if(!response.isEmpty()){
-                    //response = response.substring(1,response.length()-1);
-                    mResjs = new JSONObject(response);
-                    Log.d(TAG_LOG,"Risposta" + mResjs.toString(1));
-                } else {
-                    return false;
-                }
-                Log.d(TAG_LOG, "Risposta String: "+ response);
-
-                // TODO: 19/05/2016 SALVARE SHARED
-                int id = mResjs.getInt("id");
-                String fullname = mResjs.getString("fullName");
-                mLocalUser = LocalUser.create(id).withEmail(mEmail).withFullName(fullname);
-                mLocalUser.save(MyApplication.getAppContext());
-
-            } catch (MalformedURLException e){
-                return false;
-            } catch (IOException e){
-                return false;
-            } catch (JSONException e){
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                if(mNewUser){
-                    Intent ri = new Intent(LoginActivity.this, RegistrationActivity.class);
-                    ri.putExtra(PASSING_USER_EXTRA, mLocalUser);
-                    startActivity(ri);
-                } else {
-                    Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
-                    startActivity(i);
-                    finish();
-                }
-            } else {
-                if(!mConnError){
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-                    mPasswordView.requestFocus();
-                } else {
-                    Toast.makeText(getBaseContext(), getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            showProgress(false);
-        }
-
-        private int checkUser(String email){
-            String response = "";
-            Uri uri = WebServiceUri.CHECK_USER_URI;
-            try {
-                URL url = new URL(uri.toString());
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("email", mEmail);
-                String query = builder.build().getEncodedQuery();
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-
-                conn.connect();
-                int responseCode = conn.getResponseCode();
-                Log.i(TAG_LOG,"Response code = " + responseCode);
-                if(responseCode == HttpURLConnection.HTTP_OK){
-                    String line = "";
-                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line=br.readLine()) != null) {
-                        response+=line;
-                    }
-                } else {
-                    return CONN_ERROR;
-                }
-
-                if(!response.isEmpty()){
-                    Log.d(TAG_LOG,"RISPOSTA_CHECK_USER" + response);
-                    return USER_EXISTS;
-                } else {
-                    return USER_NOT_EXISTS;
-                }
-
-            } catch (MalformedURLException e){
-                return CONN_ERROR;
-            } catch (IOException e){
-                return CONN_ERROR;
-            }
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }*/
 }
