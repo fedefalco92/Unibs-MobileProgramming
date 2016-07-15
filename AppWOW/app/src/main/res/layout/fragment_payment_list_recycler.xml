@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
-    android:name="it.unibs.appwow.CostListFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".fragments.PaymentsFragment"
-    tools:listitem="@layout/fragment_cost" />-->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -30,7 +18,7 @@
         android:focusable="true"
         android:clickable="true"
         android:background="?android:attr/selectableItemBackground"
-        tools:context=".fragments.PaymentsFragmentRecyclerView"/>
+        tools:context=".fragments.PaymentsFragment"/>
 
     <TextView
         android:id="@+id/payment_fragment_empty_view"

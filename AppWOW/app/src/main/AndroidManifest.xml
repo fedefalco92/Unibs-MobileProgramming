@@ -57,18 +57,9 @@
                 android:value="it.unibs.appwow.LoginActivity"/>
         </activity>
         <activity android:name=".AddGroupActivity"/>
-        <activity
-            android:name=".AddGroupMembersActivity"
-            android:label="@string/title_add_group_members_activity"
-            android:parentActivityName=".AddGroupActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.unibs.appwow.AddGroupActivity"/>
-        </activity>
-        
+
         <activity android:name=".PaymentDetailsActivity"
-            android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">
+                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">
         </activity>
 
         <activity
@@ -92,7 +83,7 @@
             android:name=".GroupInfoActivity"
             android:theme="@style/AppTheme.NoActionBar.Scrolling">
         </activity>
-        <activity android:name=".AddGroupMembersActivityRecyclerView"
+        <activity android:name=".AddGroupMembersActivity"
                   android:theme="@style/AppTheme.NoActionBar"
                 android:label="@string/title_add_group_members_activity">
 

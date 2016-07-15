@@ -1,9 +1,6 @@
 package it.unibs.appwow;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -41,11 +38,9 @@ import it.unibs.appwow.database.DebtDAO;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.AmountsFragment;
-import it.unibs.appwow.fragments.DebtsFragmentRecyclerView;
-import it.unibs.appwow.fragments.PaymentsFragment;
-import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.DebtsFragment;
-import it.unibs.appwow.fragments.PaymentsFragmentRecyclerView;
+import it.unibs.appwow.fragments.GroupListFragment;
+import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.models.DebtModel;
@@ -54,13 +49,11 @@ import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceUri;
-import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.models.Amount;
-import it.unibs.appwow.utils.FileUtils;
 
-public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragmentRecyclerView.OnListFragmentInteractionListener,
+public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragment.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
-        DebtsFragmentRecyclerView.OnListFragmentInteractionListener,
+        DebtsFragment.OnListFragmentInteractionListener,
         SwipeRefreshLayout.OnRefreshListener{
 
     private final String TAG_LOG = GroupDetailsActivity.class.getSimpleName();
@@ -121,7 +114,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
                 final Intent i = new Intent(GroupDetailsActivity.this, AddPaymentActivity.class);
-                //i.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
                 i.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
@@ -356,10 +348,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         }
                         udao.close();
                         ugdao.close();
-                        /*// mAdapter.notifyDataSetChanged();
-                        mAdapter = new GroupAdapter(getActivity());
-                        mGridView.setAdapter(mAdapter);
-                        mAdapter.notifyDataSetChanged();*/
+
                         fetchGroup();
                     } else {
                        // Toast.makeText(MyApplication.getAppContext(), "ERRORE SCONOSCIUTO", Toast.LENGTH_LONG).show();
@@ -522,12 +511,11 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             //return PlaceholderFragment.newInstance(position + 1)
             switch (position) {
                 case 0:
-                    //return PaymentsFragment.newInstance(1, mGroup);
-                    return PaymentsFragmentRecyclerView.newInstance(1, mGroup);
+                    return PaymentsFragment.newInstance(1, mGroup);
                 case 1:
                     return AmountsFragment.newInstance(1, mGroup, mLocalUser.getId());
                 case 2:
-                    return DebtsFragmentRecyclerView.newInstance(1, mGroup);
+                    return DebtsFragment.newInstance(1, mGroup);
             }
             return null;
             //Log.d(TAG_LOG,"Position: "+position);

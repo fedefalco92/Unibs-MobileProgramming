@@ -1,25 +1,21 @@
 package it.unibs.appwow.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -31,16 +27,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.acl.Group;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -48,16 +36,14 @@ import java.util.Set;
 import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
-import it.unibs.appwow.database.UserDAO;
+import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.models.UserGroupModel;
-import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.utils.FileUtils;
-import it.unibs.appwow.views.adapters.GroupAdapter;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceUri;
+import it.unibs.appwow.utils.FileUtils;
+import it.unibs.appwow.views.adapters.GroupAdapter;
 
 
 /**
@@ -68,25 +54,28 @@ import it.unibs.appwow.services.WebServiceUri;
  * Use the {@link GroupListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GroupListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class GroupListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, GroupAdapter.OnItemClickListener, GroupAdapter.OnItemLongClickListener{
 
     private static final String TAG_LOG = GroupListFragment.class.getSimpleName();
-    // TODO: 07/07/2016 TOGLIERE ADAPTER!!!!! IN QUESTO MODO E' POSSIBILE TENERE I RIFERIMENTI ALLE VIEWS E QUINDI GESTIRE L'AGGIORNAMENTO FOTO
-
+    private final String TAG_REQUEST_GROUP_LIST = "GROUP_LIST";
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER= "user";
     public static final String PASSING_GROUP_TAG = "group";
+    public static final int LAYOUT_MANAGER_GRID_NUMBER = 2;
 
     //parameters
     private LocalUser mLocalUser;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private GridView mGridView;
+    private ProgressBar mProgressBar;
+
+    // Nuove variabili per recycler view.
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
     private GroupAdapter mAdapter;
 
     private OnFragmentInteractionListener mListener;
-
 
     public GroupListFragment() {
         // Required empty public constructor
@@ -122,7 +111,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                              Bundle savedInstanceState) {
         Log.d(TAG_LOG,"onCreateView");
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.content_group, container, false);
+        return inflater.inflate(R.layout.content_group_recycler, container, false);
     }
 
 
@@ -130,37 +119,28 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG_LOG,"onViewCreated");
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.groups_recycler);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a grid layout manager
+        mLayoutManager = new GridLayoutManager(getContext(),LAYOUT_MANAGER_GRID_NUMBER);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter
         mAdapter = new GroupAdapter(getContext());
+        mAdapter.setOnItemClickListener(this);
+        mAdapter.setOnItemLongClickListener(this);
+        mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.groups_swipe_refresh_layout);
-        mGridView = (GridView)view.findViewById(R.id.gridview_groups);
-        mGridView.setAdapter(mAdapter);
-
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                //Toast.makeText(GroupActivity.this, "Posizione" + position,Toast.LENGTH_SHORT).show();
-                final Intent i = new Intent(getContext(), GroupDetailsActivity.class);
-                GroupModel group = (GroupModel) mAdapter.getItem(position);
-
-                /**
-                 * il gruppo che sto passando è highlighted.
-                 * Userò questa informazione per aggiornare l'intero gruppo in GroupDetailsActivity
-                 */
-                i.putExtra(PASSING_GROUP_TAG, group);
-
-                //tolgo l'highlight dal gruppo NEL DB LOCALE, non nell'oggetto passato
-                GroupDAO dao = new GroupDAO();
-                dao.open();
-                dao.unHighlightGroup(group.getId());
-                dao.close();
-
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-                //finish();
-            }
-        });
-
         mSwipeRefreshLayout.setOnRefreshListener(this);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.self_reload_progress_bar);
         // Richiamo questo metodo per fare un refresh una volta aperta l'activity
         //fetchGroups();
         /**
@@ -168,6 +148,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
          * As animation won't start on onCreate, post runnable is used
          */
         // Viene chiamato onResume
+        /*
         mSwipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -175,7 +156,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                         fetchGroups();
                                     }
                                 }
-        );
+        );*/
 
     }
 
@@ -213,8 +194,15 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MyApplication.getInstance().cancelPendingRequests(TAG_REQUEST_GROUP_LIST);
+    }
+
+    @Override
     public void onRefresh() {
         Log.d(TAG_LOG,"onRefresh");
+        mSwipeRefreshLayout.setRefreshing(true);
         fetchGroups();
     }
 
@@ -222,8 +210,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     private void fetchGroups(){
         Log.d(TAG_LOG,"fetchGroups");
         // showing refresh animation before making http call
-        mSwipeRefreshLayout.setRefreshing(true);
-
         if(mLocalUser != null){
             Log.d(TAG_LOG,"mLocalUser is not null");
             Uri groups_uri = WebServiceUri.getGroupsUri(mLocalUser.getId());
@@ -274,7 +260,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                                 dao.updateSingleGroup(id,idAdmin, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, highlighted);
 
                                                 UserGroupModel ugm = UserGroupModel.create(groupJs.getJSONObject("pivot"));
-
                                                 UserGroupDAO ugdao = new UserGroupDAO();
                                                 ugdao.open();
                                                 ugdao.insertUserGroup(ugm);
@@ -289,17 +274,13 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                             gserver.setHighlighted(GroupModel.HIGHLIGHTED);
                                             dao.insertGroup(gserver);
                                             fetchPhoto(gserver.getId(),server_photo_updated_at);
-                                            // FIXME: 05/07/2016 la foto non si aggiorna subito
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                 }
 
-                                mAdapter = new GroupAdapter(getActivity());
-                                mGridView.setAdapter(mAdapter);
-                                mAdapter.notifyDataSetChanged();
-
+                                mAdapter.reload();
                             } else {
                                 Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
                             }
@@ -322,7 +303,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                     }
                                 });
                                 snackbar.show();
-                                refreshGrid();
+                                mAdapter.reload();
                             }
                             dao.close();
 
@@ -330,22 +311,13 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                             Log.d(TAG_LOG, "GRUPPI LOCALI: " + gruppiLocali);
                             // stopping swipe refresh
                             mSwipeRefreshLayout.setRefreshing(false);
+                            showProgress(false);
 
                         }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-
-                            Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
-
-                            // stopping swipe refresh
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
+                    }, errorResponseListener());
 
             // Adding request to request queue
-            MyApplication.getInstance().addToRequestQueue(req);
+            MyApplication.getInstance().addToRequestQueue(req,TAG_REQUEST_GROUP_LIST);
 
         } else {
             // stopping swipe refresh
@@ -354,8 +326,23 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
+    private Response.ErrorListener errorResponseListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
+
+                Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
+
+                // stopping swipe refresh
+                mSwipeRefreshLayout.setRefreshing(false);
+                showProgress(false);
+            }
+        };
+    }
+
     private void fetchPhoto(final int idGroup, final long server_photo_updated_at) {
-        Log.d(TAG_LOG,"fetchPhoto");
+        Log.d(TAG_LOG, "fetchPhoto");
         // FIXME: 04/07/2016 COMMENTED FOR DEBUG
         Uri photoUri = WebServiceUri.getGroupPhotosUri(idGroup);
         //String url = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Jessica_Chastain_by_Gage_Skidmore.jpg";
@@ -364,15 +351,15 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap bitmap) {
-                        boolean success = FileUtils.writeGroupImage(idGroup, bitmap, getActivity());
-                        if(success) {
+                        boolean success = FileUtils.writeGroupImage(idGroup, bitmap, MyApplication.getAppContext());
+                        if (success) {
                             GroupDAO dao = new GroupDAO();
                             dao.open();
                             dao.setPhotoFileName(idGroup, FileUtils.getGroupImageFileName(idGroup));
                             dao.touchGroupPhoto(idGroup, server_photo_updated_at);
                             dao.close();
                         }
-                        mAdapter.notifyDataSetChanged();
+                        mAdapter.updateItem(idGroup);
                         Log.d(TAG_LOG, "FOTO SCARICATA!!");
                         // TODO: 04/07/2016 NOTIFICARE ALL'ADAPTER........COME?
                     }
@@ -390,7 +377,35 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         iv.setImageResource(R.drawable.ic_menu_send);
 */
         request.setShouldCache(false);
-        MyApplication.getInstance().addToRequestQueue(request);
+        MyApplication.getInstance().addToRequestQueue(request,TAG_REQUEST_GROUP_LIST);
+    }
+
+    @Override
+    public void onItemClicked(View v, int position) {
+        Log.d(TAG_LOG, "click on " + position);
+        GroupModel group = (GroupModel) mAdapter.getItem(position);
+        Log.d(TAG_LOG, "group: " + group.getGroupName());
+        final Intent i = new Intent(MyApplication.getAppContext(), GroupDetailsActivity.class);
+
+        /**
+         * il gruppo che sto passando è highlighted.
+         * Userò questa informazione per aggiornare l'intero gruppo in GroupDetailsActivity
+         */
+        i.putExtra(PASSING_GROUP_TAG, group);
+
+        //tolgo l'highlight dal gruppo NEL DB LOCALE, non nell'oggetto passato
+        GroupDAO dao = new GroupDAO();
+        dao.open();
+        dao.unHighlightGroup(group.getId());
+        dao.close();
+
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        MyApplication.getAppContext().startActivity(i);
+    }
+
+    @Override
+    public boolean onItemLongClicked(View v, int position) {
+        return false;
     }
 
     /*
@@ -436,189 +451,20 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     }
     @Override
     public void onResume() {
-        super.onResume();
         Log.d(TAG_LOG,"onResume");
         //fetchGroups();
-        refreshGrid();
+        //refreshGrid();
         //Log.d(TAG_LOG, "on resume completed");
+        showProgress(true);
+        fetchGroups();
+        super.onResume();
     }
 
-    private void refreshGrid() {
-        Log.d(TAG_LOG,"refreshGrid");
-        mAdapter = new GroupAdapter(MyApplication.getAppContext());
-        mGridView.setAdapter(mAdapter);
+
+    private void showProgress(boolean show){
+        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
-    /*
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private boolean noGroups = false;
-        private boolean mConnError = false;
-        private LocalUser mLocalUser = null;
-
-        UserLoginTask() {
-            mLocalUser = LocalUser.load(getActivity());
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            String response = "";
-            Uri groups_uri = WebServiceUri.getGroupsUri(mLocalUser.getId());
-            try {
-                URL url = new URL(groups_uri.toString());
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("GET");
-                conn.setDoOutput(true);
-                conn.connect();
-                int responseCode = conn.getResponseCode();
-                if(responseCode == HttpURLConnection.HTTP_OK){
-                    String line = "";
-                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line=br.readLine()) != null) {
-                        response+=line;
-                    }
-                } else {
-                    mConnError = true;
-                    return true;
-                }
-
-                if(!response.isEmpty()){
-                    //response = response.substring(1,response.length()-1);
-                    mResjs = new JSONObject(response);
-                    Log.d(TAG_LOG,"Risposta" + mResjs.toString(1));
-                } else {
-                    return false;
-                }
-                Log.d(TAG_LOG, "Risposta String: "+ response);
-
-                // TODO: 19/05/2016 SALVARE SHARED
-                int id = mResjs.getInt("id");
-                String fullname = mResjs.getString("fullName");
-                mLocalUser = LocalUser.create(id).withEmail(mEmail).withFullName(fullname);
-                mLocalUser.save(MyApplication.getAppContext());
-
-            } catch (MalformedURLException e){
-                return false;
-            } catch (IOException e){
-                return false;
-            } catch (JSONException e){
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                if(mNewUser){
-                    Intent ri = new Intent(LoginActivity.this, RegistrationActivity.class);
-                    ri.putExtra(PASSING_USER_EXTRA, mLocalUser);
-                    startActivity(ri);
-                } else {
-                    Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
-                    startActivity(i);
-                    finish();
-                }
-            } else {
-                if(!mConnError){
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-                    mPasswordView.requestFocus();
-                } else {
-                    Toast.makeText(getBaseContext(), getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            showProgress(false);
-        }
-
-        private int checkUser(String email){
-            String response = "";
-            Uri uri = WebServiceUri.CHECK_USER_URI;
-            try {
-                URL url = new URL(uri.toString());
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("email", mEmail);
-                String query = builder.build().getEncodedQuery();
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-
-                conn.connect();
-                int responseCode = conn.getResponseCode();
-                Log.i(TAG_LOG,"Response code = " + responseCode);
-                if(responseCode == HttpURLConnection.HTTP_OK){
-                    String line = "";
-                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line=br.readLine()) != null) {
-                        response+=line;
-                    }
-                } else {
-                    return CONN_ERROR;
-                }
-
-                if(!response.isEmpty()){
-                    Log.d(TAG_LOG,"RISPOSTA_CHECK_USER" + response);
-                    return USER_EXISTS;
-                } else {
-                    return USER_NOT_EXISTS;
-                }
-
-            } catch (MalformedURLException e){
-                return CONN_ERROR;
-            } catch (IOException e){
-                return CONN_ERROR;
-            }
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }*/
 }

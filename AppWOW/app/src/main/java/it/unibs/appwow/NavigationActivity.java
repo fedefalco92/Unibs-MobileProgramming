@@ -22,14 +22,13 @@ import java.util.List;
 
 import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.fragments.GroupListFragment;
-import it.unibs.appwow.fragments.GroupListFragmentRecyclerView;
 import it.unibs.appwow.fragments.OfflineGroupListFragment;
 import it.unibs.appwow.fragments.SettingsFragment;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.FileUtils;
 
 public class NavigationActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GroupListFragmentRecyclerView.OnFragmentInteractionListener, OfflineGroupListFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GroupListFragment.OnFragmentInteractionListener, OfflineGroupListFragment.OnFragmentInteractionListener {
 
     private static final String TAG_LOG = NavigationActivity.class.getSimpleName();
 
@@ -80,7 +79,7 @@ public class NavigationActivity extends AppCompatActivity
 
         mFragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser), TAG_ONLINE).commit();
+        fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_ONLINE).commit();
 
         //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
         navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
@@ -141,21 +140,11 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        /*
-        boolean onlineChecked = savedInstanceState.getBoolean(MENU_ONLINE);
-        if(onlineChecked){
-            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView,new GroupListFragment(),TAG_ONLINE).commit();
-        }
-        else{
-            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView,new OfflineGroupListFragment(),TAG_OFFLINE).commit();
-        }*/
         String visibleTag = savedInstanceState.getString(VISIBLE_FRAGMENT);
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         switch (visibleTag) {
             case TAG_ONLINE:
-                fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser), TAG_ONLINE).commit();
+                fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_ONLINE).commit();
                 navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
                 break;
             case TAG_SETTINGS:
@@ -163,7 +152,7 @@ public class NavigationActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.nav_settings).setChecked(true);
                 break;
             default:
-                fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser), TAG_ONLINE).commit();
+                fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_ONLINE).commit();
                 navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
                 break;
         }
@@ -210,11 +199,8 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_online_groups) {
-            /*FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser),TAG_ONLINE).commit();
-            fab.show();*/
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView, GroupListFragmentRecyclerView.newInstance(mLocalUser), TAG_ONLINE).commit();
+            fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_ONLINE).commit();
             fab.show();
 
             // Handle the camera action

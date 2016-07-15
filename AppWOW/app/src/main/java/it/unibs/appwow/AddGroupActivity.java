@@ -16,9 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -214,7 +210,7 @@ public class AddGroupActivity extends AppCompatActivity {
         String insertedName = getInsertedName();
         if(Validator.isGroupNameValid(insertedName)){
             //final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
-            final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivityRecyclerView.class);
+            final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
             //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
             LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
             mGroup.setIdAdmin(currentUser.getId());

@@ -3,22 +3,25 @@ package it.unibs.appwow;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
@@ -31,10 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.models.UserModel;
@@ -43,30 +43,29 @@ import it.unibs.appwow.services.VolleyMultipartHelper;
 import it.unibs.appwow.services.VolleyMultipartRequest;
 import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.IdEncodingUtils;
-import it.unibs.appwow.views.adapters.GroupMembersAdapter;
+import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
+import it.unibs.appwow.views.adapters.GroupMembersAdapter;
 
-public class AddGroupMembersActivity extends AppCompatActivity{
+public class AddGroupMembersActivity extends AppCompatActivity implements GroupMembersAdapter.OnItemLongClickListener {
 
     private static final String TAG_LOG = AddGroupMembersActivity.class.getSimpleName();
 
-    // FIXME: 11/07/16 AGGIUSTARE IL FATTO CHE NON VIENE CARICATA NESSUNA IMMAGINE
-    private ListView membersListView;
+    private LinearLayoutManager mLayoutManager;
+    private RecyclerView mMembersListView;
     private GroupMembersAdapter mAdapter;
-    //private TextView matchLabel;
-    //private TextView matchText;
+
+
     private Button mAddMemberButton;
-    //private MenuItem mCreateGroupButton;
     private Button mCreateGroupButton;
     private EditText mEmailTextView;
     private GroupModel mGroup;
     private LocalUser mLocalUser;
-    //private ArrayList<UserModel> mDisplayedUsers;
-    private Set<UserModel> mSelectedItems;
 
     private View mProgressView;
+    private View mAddMemberProgressView;
     private View mAddGroupFormView;
 
     @Override
@@ -74,150 +73,46 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         //retrieving group from intent extras
         this.mGroup = getIntent().getExtras().getParcelable(AddGroupActivity.PASSING_GROUP_EXTRA);
-        //IMPORTANT: parceling does not save the HashMap mUsers which will be null after getParcelable(...)
         mLocalUser = LocalUser.load(MyApplication.getAppContext());
-        //mLocalUser.setIsGroupAdmin();
-        //mGroup.addUser(currentUser);
 
-        mSelectedItems = new HashSet<UserModel>();
-        //mDisplayedUsers = new ArrayList<UserModel>();
 
-        setContentView(R.layout.activity_add_group_members);
+        setContentView(R.layout.activity_add_group_members_activity_recycler_view);
         setTitle(getString(R.string.add_group_members_activity_title));
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        membersListView = (ListView) findViewById(R.id.listView_members);
-        //matchLabel = (TextView) findViewById(R.id.match_label);
-        //matchText = (TextView) findViewById(R.id.username_found);
+        mMembersListView = (RecyclerView) findViewById(R.id.listView_members);
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        //mRecyclerView.setHasFixedSize(true);
+
+        // use a grid layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mMembersListView.setLayoutManager(mLayoutManager);
+        mLayoutManager.setSmoothScrollbarEnabled(true);
+
+        mAdapter = new GroupMembersAdapter(this);
+        mAdapter.setOnItemLongClickListener(this);
+
+        mMembersListView.setAdapter(mAdapter);
+        mMembersListView.setItemAnimator(new DefaultItemAnimator());
+        mMembersListView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+
         mAddMemberButton = (Button) findViewById(R.id.button_add_member);
         mCreateGroupButton = (Button) findViewById(R.id.add_group_button);
         toggleButtonAddGroupEnabled(false);
+
         mEmailTextView = (EditText) findViewById(R.id.email);
 
         mProgressView = findViewById(R.id.add_group_members_post_request_progress);
+        mAddMemberProgressView = findViewById(R.id.add_group_members_add_member_pb);
         mAddGroupFormView = findViewById(R.id.add_group_members_form_container);
-
-        membersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        //membersListView.setAdapter(new ArrayAdapter<LocalUser>(this,android.R.layout.simple_list_item_multiple_choice,mDisplayedUsers));
-        //mAdapter = new GroupMembersAdapter(this, mDisplayedUsers);
-        mAdapter = new GroupMembersAdapter(this);
-        membersListView.setAdapter(mAdapter);
-        /*
-        if(LocalUser.load(this) != null){
-            LocalUser loggedUser = LocalUser.load(this);
-            loggedUser.setmAdmin();
-            ((GroupMembersAdapter)membersListView.getAdapter()).add(loggedUser);
-        }*/
 
         //displaying the current user as the admin of group
         UserModel u = UserModel.create(mLocalUser);
         mAdapter.add(u);
-
-        //LocalUser adminUser = mGroup.getAdminUser();
-        //adminUser.setIsGroupAdmin();
-        //((GroupMembersAdapter)membersListView.getAdapter()).add(adminUser);
-
-
-        membersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        membersListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
-                // Here you can do something when items are selected/de-selected,
-                // such as update the title in the CAB
-
-                GroupMembersAdapter adapter = (GroupMembersAdapter) membersListView.getAdapter();
-                String title = "";
-                if(checked){
-                    mSelectedItems.add((UserModel)adapter.getItem(position));
-                }
-                else{
-                    mSelectedItems.remove((UserModel)adapter.getItem(position));
-                }
-
-                if(mSelectedItems.size() == 1){
-                    title = "1 selected item";
-                }
-                else{
-                    title = mSelectedItems.size()+" selected items";
-                }
-                mode.setTitle(title);
-            }
-
-            @Override
-            public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
-                // Inflate the menu for the CAB
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.context_menu_selection, menu);
-                // toolbar.setVisibility(View.GONE); // FIXME: 24/05/16 trovare soluzione piu' furba?
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
-                // Here you can perform updates to the CAB due to
-                // an invalidate() request
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
-                // Respond to clicks on the actions in the CAB
-                switch (item.getItemId()){
-                    case R.id.context_delete:
-                        Iterator iterator = mSelectedItems.iterator();
-                        while(iterator.hasNext()){
-                            UserModel toRemove = (UserModel) iterator.next();
-                            //mDisplayedUsers.removeItem(toRemove);
-                            mAdapter.remove(toRemove);
-                            //mGroup.removeUser(toRemove);
-                            //Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
-                            //AGGIORNO IL MENU
-                            //invalidateOptionsMenu();
-                        }
-                        refreshButtonAddGroupState();
-                        mAdapter.notifyDataSetChanged();
-                        mode.finish();
-                        return true;
-                    default:
-                        mode.finish();
-                        return true;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(android.view.ActionMode mode) {
-                // Here you can make any necessary updates to the activity when
-                // the CAB is removed. By default, selected items are deselected/unchecked.
-                // toolbar.setVisibility(View.);
-                //GroupMembersAdapter adapter = (GroupMembersAdapter)membersListView.getAdapter();
-                mSelectedItems.clear();
-                //adapter.notifyDataSetChanged();
-                mAdapter.notifyDataSetChanged();
-            }
-
-        });
-
-        mAddMemberButton = (Button) findViewById(R.id.button_add_member);
-        mAddMemberButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(WebServiceRequest.checkNetwork()) {
-                    String[] keys = {"email"};
-                    String[] values = {mEmailTextView.getText().toString()};
-                    Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
-                    StringRequest userRequest = WebServiceRequest.
-                            stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
-                    MyApplication.getInstance().addToRequestQueue(userRequest);
-                } else {
-                    Toast.makeText(AddGroupMembersActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        //membersListView.setSelector(R.drawable.add_group_member_list_item_background);
-
 
     }
 
@@ -234,7 +129,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
     }
     private void refreshButtonAddGroupState(){
         if(minMemberNumberReached()){
-           toggleButtonAddGroupEnabled(true);
+            toggleButtonAddGroupEnabled(true);
         } else {
             toggleButtonAddGroupEnabled(false);
         }
@@ -247,23 +142,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         return mAdapter.minMemberNumberReached();
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_create_group, menu);
-        mCreateGroupButton = (MenuItem) menu.findItem(R.id.create_group);
-        return super.onCreateOptionsMenu(menu);
-    }*/
-    /*
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if(minMemberNumberReached()){
-            mCreateGroupButton.setEnabled(true);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }*/
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -273,10 +152,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
             case android.R.id.home:
                 finish();
                 return true;
-            /*
-            case R.id.create_group:
-                sendPostRequest();
-                return true;*/
+
             default:
                 return true;
         }
@@ -287,19 +163,22 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         sendPostRequest();
     }
 
+    public void onAddMemberButtonClick(View v){
+        if(WebServiceRequest.checkNetwork()) {
+            String[] keys = {"email"};
+            String[] values = {mEmailTextView.getText().toString()};
+            Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
+            StringRequest userRequest = WebServiceRequest.
+                    stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
+            showAddMemberProgress(true);
+            MyApplication.getInstance().addToRequestQueue(userRequest);
+        } else {
+            Toast.makeText(AddGroupMembersActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void sendPostRequest() {
-        String[] keys = {"name", "idAdmin", "users"};
-        String name = mGroup.getGroupName();
-        String idAdmin = String.valueOf(mGroup.getIdAdmin());
-        String users = IdEncodingUtils.encodeIds(mAdapter.getItems());
-        String[] values = {name, idAdmin, users,};
 
-
-        Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
-
-
-        /*StringRequest postRequest = WebServiceRequest.
-                stringRequest(Request.Method.POST, WebServiceUri.GROUPS_URI.toString(), requestParams, responseListenerAddGroup(), responseErrorListenerAddGroup());*/
         VolleyMultipartRequest postRequest = new VolleyMultipartRequest(Request.Method.POST, WebServiceUri.GROUPS_URI.toString(),
                 new Response.Listener<NetworkResponse>() {
                     @Override
@@ -339,28 +218,28 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                 Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
             }
         }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        String[] keys = {"name", "idAdmin", "users"};
-                        String name = mGroup.getGroupName();
-                        String idAdmin = String.valueOf(mGroup.getIdAdmin());
-                        String users = IdEncodingUtils.encodeIds(mAdapter.getItems());
-                        String[] values = {name, idAdmin, users,};
-                        Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
-                        return requestParams;
-                    }
+            @Override
+            protected Map<String, String> getParams() {
+                String[] keys = {"name", "idAdmin", "users"};
+                String name = mGroup.getGroupName();
+                String idAdmin = String.valueOf(mGroup.getIdAdmin());
+                String users = IdEncodingUtils.encodeIds(mAdapter.getItems());
+                String[] values = {name, idAdmin, users,};
+                Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
+                return requestParams;
+            }
 
-                @Override
-                protected Map<String, DataPart> getByteData() {
-                    Map<String, DataPart> params = new HashMap<>();
-                    String photoFileName = mGroup.getPhotoFileName();
-                    if(photoFileName!= null && !photoFileName.isEmpty()){
-                        // file name could found file base or direct access from real path
-                        // for now just get bitmap data from ImageView
-                        params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext())), "image/png"));
-                    }
-                    return params;
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                String photoFileName = mGroup.getPhotoFileName();
+                if(photoFileName!= null && !photoFileName.isEmpty()){
+                    // file name could found file base or direct access from real path
+                    // for now just get bitmap data from ImageView
+                    params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext())), "image/png"));
                 }
+                return params;
+            }
         };
 
 
@@ -419,22 +298,21 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         if(userAlreadyExists(retrievedUser)){
                             Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_members_user_already_added, Toast.LENGTH_SHORT).show();
                         } else {
-                            //((GroupMembersAdapter)membersListView.getAdapter()).add(retrievedUser);
+                            //((GroupMembersAdapter)mMembersListView.getAdapter()).add(retrievedUser);
                             mAdapter.add(retrievedUser);
-                            mAdapter.notifyDataSetChanged();
+                            showAddMemberProgress(false);
+                            //mAdapter.notifyDataSetChanged();
                         }
 
 
-                        //matchText.setVisibility(View.INVISIBLE);
-                        //matchLabel.setVisibility(View.INVISIBLE);
-                        //mAddMemberButton.setVisibility(View.INVISIBLE);
+
                         mEmailTextView.setText("");
                         //AGGIORNO IL MENU
                         //invalidateOptionsMenu();
                         refreshButtonAddGroupState();
                         mCreateGroupButton.requestFocus();
                         //   }
-                       // });
+                        // });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -442,9 +320,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                     //Toast.makeText(AddGroupMembersActivity.this, "LocalUser not found", Toast.LENGTH_SHORT).show();
                     mEmailTextView.requestFocus();
                     mEmailTextView.setError(getString(R.string.add_group_members_user_not_found));
-                    //matchText.setVisibility(View.INVISIBLE);
-                    //matchLabel.setVisibility(View.INVISIBLE);
-                    //mAddMemberButton.setVisibility(View.INVISIBLE);
+
                 }
             }
         };
@@ -495,9 +371,50 @@ public class AddGroupMembersActivity extends AppCompatActivity{
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                showAddMemberProgress(false);
                 //Log.e("Error",error.getMessage());
                 Toast.makeText(AddGroupMembersActivity.this, "Unable to process the request, try again!", Toast.LENGTH_SHORT).show();
             }
         };
+    }
+
+    @Override
+    public boolean onItemLongClicked(final View v, int position) {
+        Log.d(TAG_LOG, "onItemLongClick position: " + position);
+        Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if(vib.hasVibrator()) vib.vibrate(50);
+
+        final UserModel selectedItem = (UserModel) mAdapter.getItem(position);
+        final int pos = position;
+        v.setSelected(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.add_group_members_member_delete_title));
+        builder.setMessage(String.format(getString(R.string.add_group_members_member_delete_message), selectedItem.getFullName()));
+        builder.setPositiveButton(getString(R.string.remove), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                mAdapter.remove(pos);
+                v.setSelected(false);
+            }
+        });
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                v.setSelected(false);
+            }
+        });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                v.setSelected(false);
+            }
+        });
+        builder.show();
+        return true;
+    }
+
+    private void showAddMemberProgress(boolean show){
+            mAddMemberProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }

@@ -1,10 +1,11 @@
 package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -12,51 +13,53 @@ import java.util.List;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.models.UserModel;
+import it.unibs.appwow.models.parc.LocalUser;
 
 /**
- * Created by Massi on 24/05/2016.
+ * Created by Alessandro on 14/07/2016.
  */
-public class GroupMembersAdapter extends BaseAdapter {
+public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG_LOG = GroupMembersAdapter.class.getSimpleName();
 
+    private LocalUser mLocalUser;
     private final List<UserModel> mItems;
     private final LayoutInflater mInflater;
 
-    private int VIEW_TYPE_NUMBER = 2;
+    // Listeners
+    private OnItemLongClickListener mOnItemLongClickListener;
+
+    public interface OnItemClickListener {
+        public void onItemClicked(View v, int position);
+    }
+
+    public interface OnItemLongClickListener {
+        public boolean onItemLongClicked(View v, int position);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        mOnItemLongClickListener = onItemLongClickListener;
+    }
+
+    private static final int VIEW_TYPE_NUMBER = 2;
+    private static final int VIEW_TYPE_ADMIN = 1;
+    private static final int VIEW_TYPE_USER = 2;
 
     public boolean minMemberNumberReached() {
         return mItems.size() >= 2;
     }
 
-    private class Holder {
-        TextView fullnameUser;
-        TextView emailUser;
-    }
-
-    public GroupMembersAdapter(Context context,List<UserModel> users){
+    public GroupMembersAdapter(Context context, List<UserModel> users){
         mInflater = LayoutInflater.from(context);
         this.mItems = users;
+        mLocalUser = LocalUser.load(context);
     }
 
     public GroupMembersAdapter(Context context){
         mInflater = LayoutInflater.from(context);
         this.mItems = new ArrayList<UserModel>();
+        mLocalUser = LocalUser.load(context);
     }
 
-    @Override
-    public int getCount() {
-        return mItems.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return mItems.get(position);
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return VIEW_TYPE_NUMBER;
-    }
 
     public void add(UserModel item){
         mItems.add(item);
@@ -65,6 +68,7 @@ public class GroupMembersAdapter extends BaseAdapter {
 
     public void remove(int position){
         mItems.remove(position);
+        this.notifyDataSetChanged();
     }
 
     public void remove(UserModel item){
@@ -81,43 +85,98 @@ public class GroupMembersAdapter extends BaseAdapter {
     }
 
     @Override
+    public int getItemCount() {
+        return mItems.size();
+    }
+
+    public Object getItem(int position) {
+        return mItems.get(position);
+    }
+
+    @Override
     public int getItemViewType(int position) {
-        /*final UserModel itemUser = (UserModel) getItem(position);
-        if(itemUser.isGroupAdmin())
-            return 1;
-        else
-            return 0;*/
-        return (position>0)?0:1;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        final UserModel userItem = (UserModel) getItem(position);
-        return userItem.getId();
-    }
-
-    @Override
-    public View getView(final int position, View view, ViewGroup parent) {
-        Holder holder = null;
-        if(view==null) {
-            if(getItemViewType(position) == 0) {
-                view = mInflater.inflate(R.layout.listview_members_simpleitem_layout,null);
-
-            } else {
-                view = mInflater.inflate(R.layout.listview_members_admin_layout,null);
-                view.setOnClickListener(null); //disabilita la selezione per l'utente admin
-            }
-            holder = new Holder();
-            holder.fullnameUser = (TextView) view.findViewById(R.id.textView_userMember);
-            holder.emailUser = (TextView) view.findViewById(R.id.textView_email_member);
-            view.setTag(holder);
+        if (mItems.get(position).getId()==mLocalUser.getId() ) {
+            return VIEW_TYPE_ADMIN;
         } else {
-            holder = (Holder)view.getTag();
+            return VIEW_TYPE_USER;
         }
-        final UserModel itemUser = (UserModel) getItem(position);
-        holder.emailUser.setText(itemUser.getEmail());
-        holder.fullnameUser.setText(itemUser.getFullName());
+    }
 
-        return view;
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder vh = null;
+
+        switch (viewType) {
+            case VIEW_TYPE_USER:
+                View vClassic = mInflater.inflate(R.layout.listview_members_simpleitem_layout, parent, false);
+                vh = new MemberViewHolder(vClassic);
+                break;
+            case VIEW_TYPE_ADMIN:
+                View vSpecial = mInflater.inflate(R.layout.listview_members_admin_layout, parent, false);
+                vh = new AdminMemberViewHolder(vSpecial);
+                break;
+            default:
+                break;
+        }
+        return vh;
+    }
+
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        UserModel itemMember = mItems.get(position);
+
+        switch (holder.getItemViewType()) {
+            case VIEW_TYPE_USER:
+                MemberViewHolder itemClassicHolder = (MemberViewHolder) holder;
+                itemClassicHolder.fullnameUser.setText(itemMember.getFullName());
+                itemClassicHolder.emailUser.setText(itemMember.getEmail());
+                break;
+
+            case VIEW_TYPE_ADMIN:
+                AdminMemberViewHolder itemSpecialHolder = (AdminMemberViewHolder) holder;
+                itemSpecialHolder.fullnameUser.setText(itemMember.getFullName());
+                itemSpecialHolder.emailUser.setText(itemMember.getEmail());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public class MemberViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+
+        public TextView fullnameUser;
+        public TextView emailUser;
+
+        public MemberViewHolder(View itemView) {
+            super(itemView);
+            itemView.setOnLongClickListener(this);
+            fullnameUser = (TextView) itemView.findViewById(R.id.textView_userMember);
+            emailUser = (TextView) itemView.findViewById(R.id.textView_email_member);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            Log.d(TAG_LOG, "onLongClick position: " + getAdapterPosition());
+            if(mOnItemLongClickListener != null){
+                mOnItemLongClickListener.onItemLongClicked(v,getAdapterPosition());
+            } else {
+                Log.d(TAG_LOG, "mOnItemLongClickListener is null");
+            }
+            return true;
+        }
+    }
+
+    public class AdminMemberViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView fullnameUser;
+        public TextView emailUser;
+
+        public AdminMemberViewHolder(View itemView) {
+            super(itemView);
+            fullnameUser = (TextView) itemView.findViewById(R.id.textView_userMember);
+            emailUser = (TextView) itemView.findViewById(R.id.textView_email_member);
+        }
     }
 }

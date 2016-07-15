@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -38,11 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.fragments.GroupListFragment;
-import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.parc.GroupModel;
-import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.VolleyMultipartHelper;
 import it.unibs.appwow.services.VolleyMultipartRequest;
 import it.unibs.appwow.services.WebServiceRequest;
@@ -50,7 +46,6 @@ import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.CropOption;
 import it.unibs.appwow.utils.CropOptionAdapter;
 import it.unibs.appwow.utils.FileUtils;
-import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.Validator;
 import it.unibs.appwow.utils.graphicTools.PermissionUtils;
 
