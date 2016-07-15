@@ -64,6 +64,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         SwipeRefreshLayout.OnRefreshListener{
 
     private final String TAG_LOG = GroupDetailsActivity.class.getSimpleName();
+    private final String TAG_REQUEST_GROUP_DETAILS = "GROUP_DETAILS";
 
     /**
      * Gruppo ricevuto, già "pieno"
@@ -130,7 +131,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        MyApplication.getInstance().cancelPendingRequests();
+        MyApplication.getInstance().cancelPendingRequests(TAG_REQUEST_GROUP_DETAILS);
         super.onSaveInstanceState(outState);
     }
 
@@ -304,7 +305,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 },
                 errorResponseListener());
         // Adding request to request queue
-        MyApplication.getInstance().addToRequestQueue(groupRequest);
+        MyApplication.getInstance().addToRequestQueue(groupRequest,TAG_REQUEST_GROUP_DETAILS);
         //mRequestPending++;
 
         //mSwipeRefreshLayout.setRefreshing(false);
@@ -367,7 +368,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             },
                 errorResponseListener());
         // Adding request to request queue
-        MyApplication.getInstance().addToRequestQueue(usersRequest);
+        MyApplication.getInstance().addToRequestQueue(usersRequest,TAG_REQUEST_GROUP_DETAILS);
     }
 
     private void fetchCosts(final long server_updated_at){
@@ -400,7 +401,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 },
                 errorResponseListener()
         );
-        MyApplication.getInstance().addToRequestQueue(costsRequest);
+        MyApplication.getInstance().addToRequestQueue(costsRequest,TAG_REQUEST_GROUP_DETAILS);
     }
 
     private void fetchDebts(final long server_updated_at) {
@@ -449,7 +450,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 },
                 errorResponseListener()
         );
-        MyApplication.getInstance().addToRequestQueue(debtsRequest);
+        MyApplication.getInstance().addToRequestQueue(debtsRequest,TAG_REQUEST_GROUP_DETAILS);
 
 
     }
@@ -496,7 +497,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
     @Override
     protected void onDestroy() {
-        MyApplication.getInstance().cancelPendingRequests();
+        MyApplication.getInstance().cancelPendingRequests(TAG_REQUEST_GROUP_DETAILS);
         super.onDestroy();
     }
 

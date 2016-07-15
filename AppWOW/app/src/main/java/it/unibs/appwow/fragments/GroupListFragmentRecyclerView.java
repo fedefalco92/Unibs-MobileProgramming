@@ -59,6 +59,7 @@ import it.unibs.appwow.views.adapters.GroupAdapterRecyclerView;
 public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefreshLayout.OnRefreshListener, GroupAdapterRecyclerView.OnItemClickListener, GroupAdapterRecyclerView.OnItemLongClickListener{
 
     private static final String TAG_LOG = GroupListFragmentRecyclerView.class.getSimpleName();
+    private final String TAG_REQUEST_GROUP_LIST = "GROUP_LIST";
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER= "user";
@@ -195,6 +196,12 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MyApplication.getInstance().cancelPendingRequests(TAG_REQUEST_GROUP_LIST);
+    }
+
+    @Override
     public void onRefresh() {
         Log.d(TAG_LOG,"onRefresh");
         mSwipeRefreshLayout.setRefreshing(true);
@@ -312,7 +319,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                     }, errorResponseListener());
 
             // Adding request to request queue
-            MyApplication.getInstance().addToRequestQueue(req);
+            MyApplication.getInstance().addToRequestQueue(req,TAG_REQUEST_GROUP_LIST);
 
         } else {
             // stopping swipe refresh
@@ -372,7 +379,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
         iv.setImageResource(R.drawable.ic_menu_send);
 */
         request.setShouldCache(false);
-        MyApplication.getInstance().addToRequestQueue(request);
+        MyApplication.getInstance().addToRequestQueue(request,TAG_REQUEST_GROUP_LIST);
     }
 
     @Override

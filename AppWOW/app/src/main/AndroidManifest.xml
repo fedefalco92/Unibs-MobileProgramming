@@ -66,8 +66,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.unibs.appwow.AddGroupActivity"/>
         </activity>
-        <activity android:name=".PaymentDetailsActivity">
+        
+        <activity android:name=".PaymentDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">
         </activity>
+
         <activity
             android:name=".AddPaymentActivity"
             android:windowSoftInputMode="stateVisible|adjustResize">
