@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "33709423563",
+    "firebase_url": "https://appwow-1351.firebaseio.com",
+    "project_id": "appwow-1351",
+    "storage_bucket": "appwow-1351.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33709423563:android:d43505969bb3775d",
+        "android_client_info": {
+          "package_name": "it.unibs.appwow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "33709423563-ekqpn4rbsgedai1k9hlfjphbr37s8p3r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9NC5we-tCUqa-oACdKJQ8UuVo2Wwh6o4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
