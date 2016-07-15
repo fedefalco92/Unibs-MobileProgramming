@@ -306,6 +306,7 @@ public class GroupListFragmentRecyclerView extends Fragment implements SwipeRefr
                             Log.d(TAG_LOG, "GRUPPI LOCALI: " + gruppiLocali);
                             // stopping swipe refresh
                             mSwipeRefreshLayout.setRefreshing(false);
+                            showProgress(false);
 
                         }
                     }, errorResponseListener());
