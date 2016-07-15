@@ -278,7 +278,7 @@ public class GroupModel implements Parcelable {
     }
 
     public boolean removeUser(LocalUser toRemove) {
-        return (mUsers.remove(toRemove.getUserId())!= null);
+        return (mUsers.removeItem(toRemove.getUserId())!= null);
     }
 
     public LocalUser getUser(int id){

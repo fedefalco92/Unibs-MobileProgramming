@@ -146,7 +146,7 @@ public class ExpandablePaymentsFragment extends Fragment implements AdapterView.
         switch (item.getItemId()){
             case R.id.context_delete:
                 Log.d(TAG_LOG, "mPaymentsList size before: " + mPaymentsList.size());
-                mPaymentsList.remove(mSelectedItem);
+                mPaymentsList.removeItem(mSelectedItem);
                 Log.d(TAG_LOG, "mPaymentsList size after: " + mPaymentsList.size());
                 getActivity().invalidateOptionsMenu();
 

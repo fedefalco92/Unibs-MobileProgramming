@@ -170,7 +170,7 @@ public class AddGroupMembersActivity extends AppCompatActivity{
                         Iterator iterator = mSelectedItems.iterator();
                         while(iterator.hasNext()){
                             UserModel toRemove = (UserModel) iterator.next();
-                            //mDisplayedUsers.remove(toRemove);
+                            //mDisplayedUsers.removeItem(toRemove);
                             mAdapter.remove(toRemove);
                             //mGroup.removeUser(toRemove);
                             //Log.d(TAG_LOG,"UTENTE RIMOSSO: " + toRemove + "; mGroup.size = " + mGroup.getUsersCount());
