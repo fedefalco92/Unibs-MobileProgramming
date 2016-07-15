@@ -139,4 +139,7 @@
     <string name="payments">PAYMENTS</string>
     <string name="summary">SUMMARY</string>
     <string name="debts">DEBTS</string>
+    <string name="add_group_members_member_delete_title">Remove member?</string>
+    <string name="add_group_members_member_delete_message">Do you want to remove %1$s?</string>
+    <string name="remove">Remove</string>
 </resources>

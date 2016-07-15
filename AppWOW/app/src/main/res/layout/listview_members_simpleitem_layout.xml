@@ -8,7 +8,7 @@
     android:paddingEnd="@dimen/list_padding_right"
     android:paddingRight="@dimen/list_padding_right"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:background="?android:attr/activatedBackgroundIndicator">
+    android:background="@drawable/add_group_member_list_item_background">
     <!-- android:background="@drawable/add_group_member_list_item_background"-->
 
     <TextView

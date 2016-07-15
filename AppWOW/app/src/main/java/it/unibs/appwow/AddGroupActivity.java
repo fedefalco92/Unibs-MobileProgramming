@@ -213,7 +213,8 @@ public class AddGroupActivity extends AppCompatActivity {
     public void onGoAheadButtonClick(View v){
         String insertedName = getInsertedName();
         if(Validator.isGroupNameValid(insertedName)){
-            final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
+            //final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivity.class);
+            final Intent addMembersIntent = new Intent(AddGroupActivity.this, AddGroupMembersActivityRecyclerView.class);
             //startActivityForResult(registrationIntent, REGISTRATION_REQUEST_ID);
             LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
             mGroup.setIdAdmin(currentUser.getId());
