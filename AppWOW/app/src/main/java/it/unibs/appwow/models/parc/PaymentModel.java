@@ -21,6 +21,9 @@ public class PaymentModel implements Parcelable {
     private int mIdGroup;
     private int mIdUser;
     private double mAmount;
+    private String mCurrency;
+    private long mDate;
+    private boolean mForAll;
     private String mName;
     private String mNotes;
     private long mCreatedAt;
@@ -30,11 +33,14 @@ public class PaymentModel implements Parcelable {
     private String mPositionId;
     private String mAmountDetails; // FIXME: 06/05/2016 da sostituire con un vector da riempire al momento dell'importazione dal DB
 
-    public PaymentModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails) {
+    public PaymentModel(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails) {
         mId = id;
         mIdGroup = idGroup;
         mIdUser = idUser;
         mAmount = amount;
+        mCurrency = currency;
+        mDate = date;
+        mForAll = forAll;
         mName = name;
         mNotes = notes;
         mCreatedAt = createdAt;
@@ -45,11 +51,14 @@ public class PaymentModel implements Parcelable {
         mIsExchange = false;
     }
 
-    public PaymentModel(int id, int idGroup, int idUser, double amount, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails, boolean isExchange) {
+    public PaymentModel(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails, boolean isExchange) {
         mId = id;
         mIdGroup = idGroup;
         mIdUser = idUser;
         mAmount = amount;
+        mCurrency = currency;
+        mDate = date;
+        mForAll = forAll;
         mName = name;
         mNotes = notes;
         mCreatedAt = createdAt;
@@ -156,11 +165,38 @@ public class PaymentModel implements Parcelable {
         mPositionId = positionId;
     }
 
+    public String getCurrency() {
+        return mCurrency;
+    }
+
+    public void setCurrency(String currency) {
+        mCurrency = currency;
+    }
+
+    public long getDate() {
+        return mDate;
+    }
+
+    public void setDate(long date) {
+        mDate = date;
+    }
+
+    public boolean isForAll() {
+        return mForAll;
+    }
+
+    public void setForAll(boolean forAll) {
+        mForAll = forAll;
+    }
+
     public static PaymentModel create(JSONObject paymentJs) throws JSONException {
         int id = paymentJs.getInt("id");
         int idGroup = paymentJs.getInt("idGroup");
         int idUser = paymentJs.getInt("idUser");
         double amount = paymentJs.getDouble("amount");
+        String currency = paymentJs.getString("currency");
+        long date = DateUtils.dateStringToLong(paymentJs.getString("date"));
+        boolean forAll = paymentJs.getInt("forAll") != 0 ? true:false;
         String name = paymentJs.getString("name");
         String notes = paymentJs.getString("notes");
         long createdAt = DateUtils.dateStringToLong(paymentJs.getString("created_at"));
@@ -176,7 +212,7 @@ public class PaymentModel implements Parcelable {
         }
         String amountDetails = paymentJs.getString("amount_details");
 
-        return new PaymentModel(id, idGroup, idUser, amount, name, notes, createdAt, updatedAt, position, positionId, amountDetails, isExchange);
+        return new PaymentModel(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, positionId, amountDetails, isExchange);
     }
 
 
@@ -205,6 +241,9 @@ public class PaymentModel implements Parcelable {
         this.mIdGroup = in.readInt();
         this.mIdUser = in.readInt();
         this.mAmount = in.readDouble();
+        this.mCurrency = in.readString();
+        this.mDate = in.readLong();
+        this.mForAll = in.readByte() != 0;
         this.mIsExchange = in.readByte() != 0;
         if (in.readByte() == PRESENT) {
             this.mName = in.readString();
@@ -246,6 +285,9 @@ public class PaymentModel implements Parcelable {
         dest.writeInt(this.mIdGroup);
         dest.writeInt(this.mIdUser);
         dest.writeDouble(this.mAmount);
+        dest.writeString(this.mCurrency);
+        dest.writeLong(this.mDate);
+        dest.writeByte((byte) (isForAll() ? 1: 0));
         dest.writeByte((byte) (isExchange() ? 1 : 0));
         if(!TextUtils.isEmpty(this.mName))
         {

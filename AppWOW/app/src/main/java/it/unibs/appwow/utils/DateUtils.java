@@ -13,6 +13,8 @@ public class DateUtils {
 
     public static final String DATE_FORMAT ="yyyy-MM-dd HH:mm:ss";
     public static final String DATE_HOUR_FORMAT ="dd/MM/yyyy HH:mm";
+    public static final String SIMPLE_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String SIMPLE_TIME_FORMAT = "HH:mm";
 
     public static final String DATE_READABLE_FORMAT = "MMM, dd";
 
@@ -35,5 +37,25 @@ public class DateUtils {
 
     public static String dateReadableLongToString(Long date){
         return new SimpleDateFormat(DATE_READABLE_FORMAT).format(date);
+    }
+
+    public static String longToSimpleDateString(Long date){
+        return new SimpleDateFormat(SIMPLE_DATE_FORMAT).format(date);
+    }
+
+    public static String longToSimpleTimeString(Long date){
+        return new SimpleDateFormat(SIMPLE_TIME_FORMAT).format(date);
+    }
+
+    public static String formatSimpleDate(int year, int month, int day){
+        return padWithZeros(day) + "/" + padWithZeros(month) + "/" + year;
+    }
+
+    public static String formatSimpleTime(int hour, int minutes){
+        return padWithZeros(hour) + ":" + padWithZeros(minutes);
+    }
+
+    private static String padWithZeros(int num){
+        return String.format("%02d", num);
     }
 }

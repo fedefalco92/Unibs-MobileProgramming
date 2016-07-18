@@ -57,13 +57,12 @@
                 android:value="it.unibs.appwow.LoginActivity"/>
         </activity>
         <activity android:name=".AddGroupActivity"/>
-
-        <activity android:name=".PaymentDetailsActivity"
-                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">
-        </activity>
-
         <activity
-            android:name=".AddPaymentActivity"
+            android:name=".PaymentDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">
+        </activity>
+        <activity
+            android:name=".AddEditPaymentActivity"
             android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
         <!--
@@ -83,24 +82,19 @@
             android:name=".GroupInfoActivity"
             android:theme="@style/AppTheme.NoActionBar.Scrolling">
         </activity>
-        <activity android:name=".AddGroupMembersActivity"
-                  android:theme="@style/AppTheme.NoActionBar"
-                android:label="@string/title_add_group_members_activity">
-
+        <activity
+            android:name=".AddGroupMembersActivity"
+            android:label="@string/title_add_group_members_activity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-
         <!-- Services -->
-        <service
-            android:name=".notifications.FirebaseMessagingService">
+        <service android:name=".notifications.FirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-
-
-        <service
-            android:name=".notifications.FirebaseInstanceIDService">
+        <service android:name=".notifications.FirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>

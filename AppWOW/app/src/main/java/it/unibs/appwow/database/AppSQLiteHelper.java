@@ -41,6 +41,9 @@ public class AppSQLiteHelper extends SQLiteOpenHelper {
             Payments.COLUMN_ID_GROUP + " INTEGER NOT NULL, " +
             Payments.COLUMN_ID_USER + " INTEGER NOT NULL, " +
             Payments.COLUMN_AMOUNT + " REAL NOT NULL, " +
+            Payments.COLUMN_CURRENCY + " TEXT DEFAULT \"EUR\" , " +
+            Payments.COLUMN_DATE + " NUMERIC, " +
+            Payments.COLUMN_FORALL + " INTEGER DEFAULT 0, " +
             Payments.COLUMN_NAME + " TEXT, " +
             Payments.COLUMN_NOTES + " TEXT, " +
             Payments.COLUMN_CREATED_AT + " NUMERIC, " +

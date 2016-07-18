@@ -8,10 +8,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -19,11 +21,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +56,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.nio.charset.Charset;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -57,18 +66,26 @@ import java.util.Set;
 
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.PaymentsFragment;
+import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.SliderAmount;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
+import it.unibs.appwow.utils.DatePickerFragment;
+import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.DecimalDigitsInputFilter;
+import it.unibs.appwow.utils.TimePickerFragment;
 import it.unibs.appwow.utils.Validator;
 
-public class AddPaymentActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
-    private final String TAG_LOG = AddPaymentActivity.class.getSimpleName();
+/**
+ * permette di creare un nuovo payment o di modificarne uno esistente
+ * (in questo caso il payment da modificare viene passato come parcelable extra)
+ */
+public class AddEditPaymentActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
+    private final String TAG_LOG = AddEditPaymentActivity.class.getSimpleName();
 
     private final static int COLOR_LOCKED = R.color.colorAccent;
     private final static int COLOR_UNLOCKED = R.color.black;
@@ -78,6 +95,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     private static final int DELETE_PLACE_TAG = 1;
     private static final int FIND_PLACE_TAG = 2;
 
+    private boolean EDIT;
+
     //approssimazione importi
     private static final String CENT = "CENT";
     private static final String TENCENTS = "TENCENTS";
@@ -86,49 +105,55 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     private LocalUser mUser;
     private GroupModel mGroup;
     private Place mPlace;
-    private HashMap<Integer,UserModel> mGroupUsers; // FIXME: 06/07/2016 da eliminare
+    private HashMap<Integer,UserModel> mGroupUsers;
 
-    private EditText mPaymentName;
+    private Payment mToEditPayment;
+
+    private EditText mPaymentNameEditText;
     private EditText mPaymentAmountEditText;
-    private double mPaymentAmount;
-    private EditText mPaymentNotes;
-    private EditText mPaymentPositionText;
-    //private Button mAddPositionButton;
-    ImageButton mAddPositionButton;
+    private Spinner mPaymentCurrency;
+    private EditText mPaymentDateEditText;
+    private EditText mPaymentTimeEditText;
+    private EditText mPaymentNotesEditText;
+    private EditText mPaymentPositionEditText;
+    private Button mAddPaymentButton;
+    private ImageButton mAddPositionButton;
     private MapFragment mMapFragment;
     private GoogleMap mMap;
 
     private View mProgressView;
     private View mAddPaymentContainerView;
-    //private ListView mSliderListView;
     private LinearLayout mSliderListView;
     private List<SliderAmount> mSliderAmountList;
     private Set<SliderAmount> mLockedAmount;
     private Set<SliderAmount> mUnlockedAmount;
-    //private SliderAmountAdapter mAdapter;
 
-    //private Button mAddCostButton;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+    private double mPaymentAmount;
+
     private GoogleApiClient mClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_payment);
+        setContentView(R.layout.activity_add_edit_payment);
+        mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
+
+        EDIT = false;
+        mToEditPayment = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
+        if(mToEditPayment != null){
+            EDIT = true; // TODO: 18/07/2016 COMPLETARE L'ACTIVITY ANCHE PER LA MODIFICA
+        }
+
         setTitle(getString(R.string.add_payment_activity_title));
 
         mUser = LocalUser.load(this);
-        mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mApproxType = prefs.getString("pref_key_round_payments", CENT);
         Log.d(TAG_LOG, " APPROX TYPE: " + mApproxType);
         UserGroupDAO dao = new UserGroupDAO();
         dao = new UserGroupDAO();
         dao.open();
-        mGroupUsers = dao.getAllUsers(mGroup.getId()); // FIXME: 06/07/2016 da eliminare
+        mGroupUsers = dao.getAllUsers(mGroup.getId());
         mSliderAmountList = dao.getAllSliderAmounts(mGroup.getId());
         dao.close();
 
@@ -137,11 +162,9 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
 
         mPlace = null;
 
-        mPaymentName = (EditText) findViewById(R.id.add_payment_name);
-
+        mPaymentNameEditText = (EditText) findViewById(R.id.add_payment_name);
         mPaymentAmountEditText = (EditText) findViewById(R.id.add_payment_amount);
-        int maxDecimalDigits = getMaxDecimalDigits();
-        mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, maxDecimalDigits)});
+        mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, getMaxDecimalDigits())});
         mPaymentAmountEditText.addTextChangedListener(
                 new TextWatcher() {
                     @Override
@@ -163,9 +186,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
                 }
         );
 
-        mPaymentNotes = (EditText) findViewById(R.id.add_payment_notes);
-
-        mPaymentPositionText = (EditText) findViewById(R.id.add_payment_position_text);
+        mPaymentNotesEditText = (EditText) findViewById(R.id.add_payment_notes);
+        mPaymentPositionEditText = (EditText) findViewById(R.id.add_payment_position_text);
 
         mAddPositionButton = (ImageButton) findViewById(R.id.add_payment_add_position_button);
         mAddPositionButton.setTag(FIND_PLACE_TAG);
@@ -174,18 +196,11 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.add_payment_position_map_fragment));
         mMapFragment.getView().setVisibility(View.GONE);
 
-        //mAddCostButton = (Button) findViewById(R.id.add_cost_add_button);
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         mProgressView = findViewById(R.id.add_payment_post_request_progress);
-        //mAddCostFormView = findViewById(R.id.add_payment_form_container);
-        //mAddCostFormView = findViewById(R.id.add_payment_form);
         mAddPaymentContainerView = findViewById(R.id.add_payment_container);
 
-        //mSliderListView = (ListView) findViewById(R.id.add_payment_slider_listview);
         mSliderListView = (LinearLayout) findViewById(R.id.add_payment_slider_listview);
 
         SliderAmount first = null;
@@ -200,6 +215,61 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         for(final SliderAmount sa: mSliderAmountList){
             if(sa.getUserId() !=  mUser.getId()) mSliderListView.addView(buildView(sa));
         }
+
+        mAddPaymentButton = (Button) findViewById(R.id.add_payment_button);
+        if(EDIT) mAddPaymentButton.setVisibility(View.GONE);
+
+        mPaymentDateEditText = (EditText) findViewById(R.id.add_payment_date);
+        mPaymentTimeEditText = (EditText) findViewById(R.id.add_payment_time);
+        long now = System.currentTimeMillis();
+        mPaymentDateEditText.setText(DateUtils.longToSimpleDateString(now));
+        mPaymentTimeEditText.setText(DateUtils.longToSimpleTimeString(now));
+        mPaymentDateEditText.setKeyListener(null);
+        mPaymentTimeEditText.setKeyListener(null);
+
+        mPaymentCurrency = (Spinner) findViewById(R.id.add_payment_currency);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.currencies,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mPaymentCurrency.setAdapter(adapter);
+        mPaymentCurrency.setSelection(0);
+
+        if(EDIT){
+            mPaymentNameEditText.setText(mToEditPayment.getName());
+            mPaymentCurrency.setSelection(adapter.getPosition(mToEditPayment.getCurrency()));
+            mPaymentNotesEditText.setText(mToEditPayment.getNotes());
+            mPaymentPositionEditText.setText(mToEditPayment.getPosition());
+        }
+
+
+    }
+
+    public void onAddPaymentButtonClicked(View v){
+        boolean nomeOk = Validator.isCostNameValid(mPaymentNameEditText.getText().toString());
+        boolean amountOk = Validator.isAmountValid(mPaymentAmountEditText.getText().toString());
+        if(nomeOk && amountOk){
+            sendAddPostRequest();
+        } else {
+            if(!nomeOk){
+                mPaymentNameEditText.setError(getString(R.string.error_invalid_cost_name));
+                mPaymentNameEditText.requestFocus();
+            }
+            if(!amountOk){
+                mPaymentAmountEditText.setError(getString(R.string.error_invalid_amount));
+                mPaymentAmountEditText.requestFocus();
+            }
+        }
+    }
+
+    public void showDatePicker(View v){
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+        //mPaymentDateEditText.setClickable(false);
+    }
+
+    public void showTimePicker(View v){
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+        //mPaymentDateEditText.setClickable(false);
     }
 
     private View buildView(SliderAmount sa){
@@ -247,8 +317,10 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_add_payment, menu);
+        if(EDIT){
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_edit_payment, menu);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -256,50 +328,28 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.add_cost_menu_item:
-                boolean nomeOk = Validator.isCostNameValid(mPaymentName.getText().toString());
-                boolean amountOk = Validator.isAmountValid(mPaymentAmountEditText.getText().toString());
-                if(nomeOk && amountOk){
-                    sendPostRequest();
-                    return true;
-                } else {
-                    if(!nomeOk){
-                        mPaymentName.setError(getString(R.string.error_invalid_cost_name));
-                        mPaymentName.requestFocus();
-                    }
-                    if(!amountOk){
-                        mPaymentAmountEditText.setError(getString(R.string.error_invalid_amount));
-                        mPaymentAmountEditText.requestFocus();
-                    }
-                }
-
+            case R.id.edit_payment_save_item:
+                // TODO: 18/07/2016 RICHIESTA POST PER MODIFICARE IL PAYMENT
+                Toast.makeText(AddEditPaymentActivity.this, "DA IMPLEMENTARE", Toast.LENGTH_SHORT).show();
             default:
                 return true;
         }
     }
 
-    private void sendPostRequest() {
+    private void sendAddPostRequest() {
         showProgress(true);
         String[] keys = {"idGroup", "idUser", "amount", "name", "notes", "position", "position_id", "amount_details"};
         String idGroup = String.valueOf(mGroup.getId());
         String idUser = String.valueOf(mUser.getId());
         double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
         String amount = String.valueOf(amountDouble);
-        String name = mPaymentName.getText().toString();
-        String notes = mPaymentNotes.getText().toString();
-        String position = mPaymentPositionText.getText().toString();
+        String name = mPaymentNameEditText.getText().toString();
+        String notes = mPaymentNotesEditText.getText().toString();
+        String position = mPaymentPositionEditText.getText().toString();
         String position_id = "";
         if(mPlace!=null){
             position_id = mPlace.getId();
         }
-        /*
-        if(mPlace!= null){
-            position = PositionUtils.encodePositionId(mPlace.getId());
-        } else {
-            position = mPaymentPositionText.getText().toString();
-        }*/
-
-
         String amount_details = computeAmountDetails(mUser.getId(), amountDouble);
         String[] values = {idGroup, idUser, amount, name, notes, position, position_id, amount_details};
 
@@ -314,11 +364,11 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onResponse(String response) {
                 if (!response.isEmpty()) {
-                    Toast.makeText(AddPaymentActivity.this, R.string.add_cost_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddEditPaymentActivity.this, R.string.add_cost_success, Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     showProgress(false);
-                    Toast.makeText(AddPaymentActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddEditPaymentActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -330,7 +380,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
                 //Log.e("Error",error.getMessage());
-                Toast.makeText(AddPaymentActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddEditPaymentActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -393,18 +443,6 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             }
             amount_details.put(id,value);
         }
-        /*Set<Integer> userSet = mGroupUsers.keySet();
-        Iterator iterator = userSet.iterator();
-        while(iterator.hasNext()){
-            int id = (int) iterator.next();
-            double value = 0;
-            if(id == id_pagante){
-                value = (npartecipants-1)*perperson;
-            } else {
-                value = -perperson;
-            }
-            amount_details.put(id,value);
-        }*/
 
         return IdEncodingUtils.encodeAmountDetails(amount_details);
     }
@@ -476,10 +514,10 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
         } else */ if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 mPlace = PlaceAutocomplete.getPlace(this, data).freeze();
-                mPaymentPositionText.setEnabled(false);
-                mPaymentPositionText.setText(mPlace.getName());
+                mPaymentPositionEditText.setEnabled(false);
+                mPaymentPositionEditText.setText(mPlace.getName());
                 mMapFragment.getView().setVisibility(View.VISIBLE);
-                mMapFragment.getMapAsync(AddPaymentActivity.this);
+                mMapFragment.getMapAsync(AddEditPaymentActivity.this);
                 mAddPositionButton.setImageResource(R.drawable.ic_highlight_off_black_24dp);
                 mAddPositionButton.setTag(DELETE_PLACE_TAG);
                 //mAddPositionButton.setText(R.string.action_add_cost_delete_position);
@@ -499,7 +537,7 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
 /*
     public void onAddCostClick(View view){
         // TODO: 22/06/2016 IMPLEMENTARE CARICAMENTO SU SERVER con richiesta volley
-        Toast.makeText(AddPaymentActivity.this, "eheh pensavi che funzionasse...",
+        Toast.makeText(AddEditPaymentActivity.this, "eheh pensavi che funzionasse...",
                 Toast.LENGTH_LONG).show();
     }*/
 
@@ -525,8 +563,8 @@ public class AddPaymentActivity extends AppCompatActivity implements View.OnClic
             findPlace(v);
         } else if (buttonPosition.getTag().equals(DELETE_PLACE_TAG)){
             mPlace = null;
-            mPaymentPositionText.setEnabled(true);
-            mPaymentPositionText.setText("");
+            mPaymentPositionEditText.setEnabled(true);
+            mPaymentPositionEditText.setText("");
             //mAddPositionButton.setText(R.string.action_add_payment_add_position);
             mAddPositionButton.setImageResource(R.drawable.ic_add_location_black_24dp);
             mAddPositionButton.setTag(FIND_PLACE_TAG);

@@ -203,7 +203,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
         switch(item.getItemId()){
             case R.id.add_new_cost:
                 //Toast.makeText(getContext(), "Add item", Toast.LENGTH_SHORT).show();
-                final Intent i = new Intent(getContext(), AddPaymentActivity.class);
+                final Intent i = new Intent(getContext(), AddEditPaymentActivity.class);
                 i.putExtra(PASSING_GROUP_TAG, mGroup);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
@@ -358,6 +358,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
         final Intent i = new Intent(MyApplication.getAppContext(), PaymentDetailsActivity.class);
         Payment payment = (Payment) mAdapter.getItem(position);
         i.putExtra(PASSING_PAYMENT_TAG, payment);
+        i.putExtra(PASSING_GROUP_TAG, mGroup);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyApplication.getAppContext().startActivity(i);
 

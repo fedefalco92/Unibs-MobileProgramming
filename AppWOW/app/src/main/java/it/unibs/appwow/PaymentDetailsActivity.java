@@ -39,12 +39,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.util.Currency;
 import java.util.List;
 
 import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.MyPlace;
 import it.unibs.appwow.models.Payment;
+import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
@@ -56,9 +58,11 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
     private final String TAG_LOG = PaymentDetailsActivity.class.getSimpleName();
 
-    private Payment mCost;
+    private Payment mPayment;
+    private GroupModel mGroup;
+
     private View mRootLayout;
-    private TextView mCostName;
+    private TextView mPaymentName;
     private TextView mFullName;
     private TextView mEmail;
     private TextView mAmount;
@@ -91,8 +95,9 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mRootLayout = findViewById(R.id.activity_payment_details_container);
-        mCost = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
-        setTitle(mCost.getName());
+        mPayment = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
+        mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
+        setTitle(mPayment.getName());
 
 
         mClient = new GoogleApiClient
@@ -102,32 +107,34 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                 .enableAutoManage(this, this)
                 .build();
 
-        mCostName = (TextView) findViewById(R.id.cost_detail_name);
-        mCostName.setText(mCost.getName());
+        mPaymentName = (TextView) findViewById(R.id.cost_detail_name);
+        mPaymentName.setText(mPayment.getName());
 
         mFullName = (TextView) findViewById(R.id.cost_detail_user_fullName);
-        mFullName.setText(mCost.getFullName());
+        mFullName.setText(mPayment.getFullName());
         mEmail = (TextView) findViewById(R.id.cost_detail_email);
-        mEmail.setText("(" + mCost.getEmail() + ")");
+        mEmail.setText("(" + mPayment.getEmail() + ")");
 
         mAmount = (TextView) findViewById(R.id.cost_detail_amount);
-        mAmount.setText("EUR " + mCost.getAmount());
+        Currency curr = Currency.getInstance("EUR");
+
+        mAmount.setText(curr.getSymbol() + " " + mPayment.getAmount());
 
         mNotes = (TextView) findViewById(R.id.cost_detail_notes_text);
-        if(mCost.getNotes() == null || mCost.getNotes().isEmpty()){
+        if(mPayment.getNotes() == null || mPayment.getNotes().isEmpty()){
             mNotesLabel = (TextView) findViewById(R.id.cost_detail_notes_label);
             mNotesLabel.setVisibility(View.GONE);
             mNotes.setVisibility(View.GONE);
         } else {
-            mNotes.setText(mCost.getNotes());
+            mNotes.setText(mPayment.getNotes());
         }
 
         mDate = (TextView) findViewById(R.id.cost_detail_date);
-        mDate.setText(DateUtils.dateLongToString(mCost.getUpdatedAt()));
+        mDate.setText(DateUtils.dateLongToString(mPayment.getDate()));
 
         mPositionText = (TextView) findViewById(R.id.cost_detail_position_text);
         mPositionLabel = (TextView) findViewById(R.id.cost_detail_position_label);
-        String stringaPosizione = mCost.getPosition();
+        String stringaPosizione = mPayment.getPosition();
         mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.cost_detail_position_map));
         mMapButton = (ImageButton) findViewById(R.id.payment_detail_map_button);
 
@@ -138,7 +145,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
             mPositionLabel.setVisibility(View.GONE);
         }
 
-        final String position_id = mCost.getPositionId();
+        final String position_id = mPayment.getPositionId();
         if(position_id!= null && !position_id.isEmpty()){
             /*
             Places.GeoDataApi.getPlaceById(mClient, position_id).setResultCallback(new ResultCallback<PlaceBuffer>() {
@@ -167,8 +174,8 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         //details
         mAmountDetailContainer = (LinearLayout) findViewById(R.id.payment_detail_amount_details_container);
 
-        String ad = mCost.getAmountDetails();
-        List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(ad, mCost.getIdUser(), mCost.getAmount());
+        String ad = mPayment.getAmountDetails();
+        List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(ad, mPayment.getIdUser(), mPayment.getAmount());
         for(Amount a: amounts){
             TextView tv = new TextView(this, null);
             tv.setText(a.getFormattedString());
@@ -249,7 +256,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
             case R.id.menu_payment_details_delete:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(getString(R.string.payment_delete_title));
-                builder.setMessage(String.format(getString(R.string.payment_delete_message), mCost.getName()));
+                builder.setMessage(String.format(getString(R.string.payment_delete_message), mPayment.getName()));
                 builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
@@ -265,34 +272,15 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                 });
                 builder.show();
                 return true;
+            case R.id.menu_payment_details_edit:
+                Intent editPayment = new Intent(PaymentDetailsActivity.this, AddEditPaymentActivity.class);
+                editPayment.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
+                editPayment.putExtra(PaymentsFragment.PASSING_PAYMENT_TAG, mPayment);
+                startActivity(editPayment);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
-        /*
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_payment_details_delete) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(getString(R.string.payment_delete_title));
-            builder.setMessage(String.format(getString(R.string.payment_delete_message), mCost.getName()));
-            builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int item) {
-                   //progress dialog
-                    showProgressDialog();
-                }
-            });
-            builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int item) {
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);*/
     }
 
     private void showProgressDialog() {
@@ -305,7 +293,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void sendDeleteRequest(final ProgressDialog dialog) {
-        URL url = WebServiceUri.uriToUrl(WebServiceUri.getDeletePaymentUri(mCost.getId()));
+        URL url = WebServiceUri.uriToUrl(WebServiceUri.getDeletePaymentUri(mPayment.getId()));
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.DELETE, url.toString(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -340,10 +328,10 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         String msg = "";
         switch (errorType){
             case WebServiceUri.SERVER_ERROR:
-                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_server_error), mCost.getName());
+                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_server_error), mPayment.getName());
                 break;
             case WebServiceUri.NETWORK_ERROR:
-                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_network_error), mCost.getName());
+                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_network_error), mPayment.getName());
         }
         final Snackbar snackbar = Snackbar.make(mRootLayout, msg , Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.retry, new View.OnClickListener(){

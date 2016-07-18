@@ -115,7 +115,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             public void onClick(View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                final Intent i = new Intent(GroupDetailsActivity.this, AddPaymentActivity.class);
+                final Intent i = new Intent(GroupDetailsActivity.this, AddEditPaymentActivity.class);
                 i.putExtra(PaymentsFragment.PASSING_GROUP_TAG, mGroup);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);

@@ -27,8 +27,8 @@
     <string name="cost_detail_notes">Note</string>
     <string name="cost_detail_payed_by">Spesa effettuata da </string>
     <string name="cost_detail_date_preposition">Il</string>
-    <string name="prompt_cost_name">Nome spesa</string>
-    <string name="action_add_cost">Aggiungi spesa</string>
+    <string name="prompt_payment_name">Motivo della spesa</string>
+    <string name="action_add_payment">Aggiungi spesa</string>
     <string name="action_add_payment_add_position">Aggiungi posizione</string>
     <string name="action_add_cost_delete_position">Cancella posizione</string>
     <string name="transaction_fragment_empty_message">Nessun debito</string>
@@ -102,4 +102,5 @@
     <string name="debts">DEBITI</string>
     <string name="action_settings">Impostazioni</string>
     <string name="groups_string">Gruppi</string>
+    <string name="prompt_cost_amount">Importo</string>
 </resources>

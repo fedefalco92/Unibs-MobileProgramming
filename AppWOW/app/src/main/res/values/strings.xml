@@ -70,11 +70,11 @@
     <string name="cost_detail_notes">Notes</string>
     <string name="cost_detail_payed_by">Payed by </string>
     <string name="cost_detail_date_preposition">On</string>
-    <string name="prompt_cost_name">Cost name</string>
+    <string name="prompt_payment_name">Purpose</string>
     <string name="prompt_cost_amount">Amount</string>
     <string name="prompt_payment_notes">Notes</string>
     <string name="action_add_payment_add_position">Find place with google</string>
-    <string name="action_add_cost">Add payment</string>
+    <string name="action_add_payment">Add payment</string>
     <string name="prompt_payment_position">Place</string>
     <string name="action_add_cost_delete_position">Delete place</string>
     <string name="transaction_fragment_empty_message">Nothing to show</string>

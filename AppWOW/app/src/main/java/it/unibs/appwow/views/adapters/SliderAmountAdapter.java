@@ -1,7 +1,6 @@
 package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,11 +12,9 @@ import android.support.v7.widget.AppCompatSeekBar;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import it.unibs.appwow.AddPaymentActivity;
+import it.unibs.appwow.AddEditPaymentActivity;
 import it.unibs.appwow.R;
 import it.unibs.appwow.models.SliderAmount;
 
@@ -29,7 +26,7 @@ public class SliderAmountAdapter extends BaseAdapter {
 
     private List<SliderAmount> mItems;
     private final LayoutInflater mInflater;
-    private AddPaymentActivity mContext;
+    private AddEditPaymentActivity mContext;
 
     private class Holder {
         TextView fullName;
@@ -39,7 +36,7 @@ public class SliderAmountAdapter extends BaseAdapter {
     }
 
     public SliderAmountAdapter(Context context, List<SliderAmount> list){
-        mContext = (AddPaymentActivity) context;
+        mContext = (AddEditPaymentActivity) context;
         mInflater = LayoutInflater.from(context);
         mItems = list;
     }

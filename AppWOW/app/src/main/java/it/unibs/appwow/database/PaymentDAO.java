@@ -26,6 +26,9 @@ public class PaymentDAO implements LocalDB_DAO {
             AppDB.Payments.COLUMN_ID_GROUP,
             AppDB.Payments.COLUMN_ID_USER,
             AppDB.Payments.COLUMN_AMOUNT,
+            AppDB.Payments.COLUMN_CURRENCY,
+            AppDB.Payments.COLUMN_DATE,
+            AppDB.Payments.COLUMN_FORALL,
             AppDB.Payments.COLUMN_NAME,
             AppDB.Payments.COLUMN_NOTES,
             AppDB.Payments.COLUMN_CREATED_AT,
@@ -41,6 +44,9 @@ public class PaymentDAO implements LocalDB_DAO {
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_GROUP,
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_USER,
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_AMOUNT,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_CURRENCY,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_DATE,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_FORALL,
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_NAME,
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_NOTES,
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_CREATED_AT,
@@ -74,6 +80,9 @@ public class PaymentDAO implements LocalDB_DAO {
         values.put(AppDB.Payments.COLUMN_ID_GROUP, data.getIdGroup());
         values.put(AppDB.Payments.COLUMN_ID_USER, data.getIdUser());
         values.put(AppDB.Payments.COLUMN_AMOUNT, data.getAmount());
+        values.put(AppDB.Payments.COLUMN_CURRENCY, data.getCurrency());
+        values.put(AppDB.Payments.COLUMN_DATE, data.getDate());
+        values.put(AppDB.Payments.COLUMN_FORALL, data.isForAll());
         values.put(AppDB.Payments.COLUMN_NAME, data.getName());
         values.put(AppDB.Payments.COLUMN_NOTES,data.getNotes());
         values.put(AppDB.Payments.COLUMN_CREATED_AT, data.getCreatedAt());
@@ -93,16 +102,19 @@ public class PaymentDAO implements LocalDB_DAO {
         int idGroup = cursor.getInt(1);
         int idUser = cursor.getInt(2);
         double amount = cursor.getDouble(3);
-        String name = cursor.getString(4);
-        String notes = cursor.getString(5);
-        long createdAt = cursor.getLong(6);
-        long updatedAt = cursor.getLong(7);
-        boolean isExchange = cursor.getInt(8) != 0;
-        String position = cursor.getString(9);
-        String position_id = cursor.getColumnName(10);
-        String amountDetails = cursor.getString(11);
+        String currency = cursor.getString(4);
+        long date = cursor.getLong(5);
+        boolean forAll = cursor.getInt(6) != 0;
+        String name = cursor.getString(7);
+        String notes = cursor.getString(8);
+        long createdAt = cursor.getLong(9);
+        long updatedAt = cursor.getLong(10);
+        boolean isExchange = cursor.getInt(11) != 0;
+        String position = cursor.getString(12);
+        String position_id = cursor.getColumnName(13);
+        String amountDetails = cursor.getString(14);
 
-        return new PaymentModel(id, idGroup, idUser, amount, name, notes,createdAt, updatedAt,position, position_id, amountDetails, isExchange);
+        return new PaymentModel(id, idGroup, idUser, amount, currency, date, forAll, name, notes,createdAt, updatedAt,position, position_id, amountDetails, isExchange);
     }
 
     private Payment cursorToPayment(Cursor cursor) {
@@ -110,18 +122,21 @@ public class PaymentDAO implements LocalDB_DAO {
         int idGroup = cursor.getInt(1);
         int idUser = cursor.getInt(2);
         double amount = cursor.getDouble(3);
-        String name = cursor.getString(4);
-        String notes = cursor.getString(5);
-        long createdAt = cursor.getLong(6);
-        long updatedAt = cursor.getLong(7);
-        boolean isExchange = cursor.getInt(8) != 0;
-        String position = cursor.getString(9);
-        String position_id = cursor.getString(10);
-        String amountDetails = cursor.getString(11);
-        String fullName = cursor.getString(12);
-        String email  = cursor.getString(13);
+        String currency = cursor.getString(4);
+        long date = cursor.getLong(5);
+        boolean forAll = cursor.getInt(6) != 0;
+        String name = cursor.getString(7);
+        String notes = cursor.getString(8);
+        long createdAt = cursor.getLong(9);
+        long updatedAt = cursor.getLong(10);
+        boolean isExchange = cursor.getInt(11) != 0;
+        String position = cursor.getString(12);
+        String position_id = cursor.getColumnName(13);
+        String amountDetails = cursor.getString(14);
+        String fullName = cursor.getString(15);
+        String email  = cursor.getString(16);
 
-        return new Payment(id, idGroup, idUser, fullName, email, amount, name, notes, createdAt, updatedAt, position, position_id, amountDetails, isExchange);
+        return new Payment(id, idGroup, idUser, fullName, email, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails, isExchange);
     }
 
     public PaymentModel insertPayment(PaymentModel data) {
