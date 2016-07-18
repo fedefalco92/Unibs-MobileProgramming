@@ -49,6 +49,7 @@ import java.util.List;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.notifications.FirebaseInstanceIDService;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;
@@ -340,6 +341,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private final String mMsgToken;
         private JSONObject mResjs = null;
         private boolean mNewUser = false;
         private boolean mConnError = false;
@@ -348,6 +350,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
+            mMsgToken = FirebaseInstanceIDService.getToken();
         }
 
         @Override
@@ -368,9 +371,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         conn.setDoInput(true);
                         conn.setDoOutput(true);
 
-                        Uri.Builder builder = new Uri.Builder()
-                                .appendQueryParameter("email", mEmail)
-                                .appendQueryParameter("password", mPassword);
+                        Uri.Builder builder;
+                        if(mMsgToken != null){
+                            builder = new Uri.Builder()
+                                    .appendQueryParameter("email", mEmail)
+                                    .appendQueryParameter("password", mPassword)
+                                    .appendQueryParameter("msg_token", mMsgToken);
+                        } else {
+                            builder = new Uri.Builder()
+                                    .appendQueryParameter("email", mEmail)
+                                    .appendQueryParameter("password", mPassword);
+                        }
+
+
                         String query = builder.build().getEncodedQuery();
                         OutputStream os = conn.getOutputStream();
                         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));

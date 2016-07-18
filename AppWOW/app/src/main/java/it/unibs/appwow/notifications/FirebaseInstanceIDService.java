@@ -25,6 +25,8 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     private final String TAG_LOG = FirebaseInstanceIDService.class.getSimpleName();
 
+    private static String mToken;
+
     @Override
     public void onCreate() {
         Log.d(TAG_LOG,"ID service created");
@@ -34,13 +36,13 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         Log.d(TAG_LOG,"Token generated");
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG_LOG,"Token generated: " + token);
+        mToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG_LOG,"Token generated: " + mToken);
        /* String token2 = FirebaseInstanceId.getInstance().getToken(); --> Sono uguali, fino al momento del delete instance
         Log.d(TAG_LOG,"Token generated 2: " + token2);*/
         LocalUser localUser = LocalUser.load(MyApplication.getAppContext());
         if(localUser != null){
-            registerToken(localUser.getId(),token);
+            registerToken(localUser.getId(),mToken);
         }
 
     }
@@ -84,5 +86,9 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
     public void onDestroy() {
         super.onDestroy();
         Log.d("InstanceID", "Destroyed");
+    }
+
+    public static String getToken() {
+        return mToken;
     }
 }

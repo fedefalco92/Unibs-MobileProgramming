@@ -31,6 +31,7 @@ import java.util.Map;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.notifications.FirebaseInstanceIDService;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;
@@ -126,6 +127,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     JSONObject obj = new JSONObject(response);
                     if(obj.isNull("success")){
                         um = UserModel.create(obj);
+                        registerToken(um.getId(), FirebaseInstanceIDService.getToken());
                     } else {
                         //errore: utente già esistente
                         showProgress(false);
@@ -163,6 +165,28 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
         MyApplication.getInstance().addToRequestQueue(req);
+    }
+
+    private void registerToken(int id, String token) {
+        String[] keys = {"id","msg_token"};
+        String[] values = {String.valueOf(id),token};
+
+        Map<String,String> map = WebServiceRequest.createParametersMap(keys,values);
+
+        StringRequest request = WebServiceRequest.stringRequest(Request.Method.POST, WebServiceUri.REGISTER_TOKEN_URI.toString(), map,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG_LOG,"Token registrato correttamente");
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+
+        MyApplication.getInstance().addToRequestQueue(request);
     }
 
     private boolean checkForm(){

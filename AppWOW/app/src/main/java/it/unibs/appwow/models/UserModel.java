@@ -44,6 +44,7 @@ public class UserModel {
         int id = ujs.getInt("id");
         String fullName = ujs.getString("fullName");
         String email = ujs.getString("email");
+        String msgToken = ujs.getString("msg_token");
         long createdAt = DateUtils.dateStringToLong(ujs.getString("created_at"));
         long updatedAt = DateUtils.dateStringToLong(ujs.getString("updated_at"));
         return new UserModel(id, fullName,email,createdAt,updatedAt);
