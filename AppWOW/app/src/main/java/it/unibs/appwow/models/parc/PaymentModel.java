@@ -194,22 +194,45 @@ public class PaymentModel implements Parcelable {
         int idGroup = paymentJs.getInt("idGroup");
         int idUser = paymentJs.getInt("idUser");
         double amount = paymentJs.getDouble("amount");
-        String currency = paymentJs.getString("currency");
+
+        String currency = "EUR";
+        if(!paymentJs.isNull("currency")){
+            currency = paymentJs.getString("currency");
+        }
+
         long date = DateUtils.dateStringToLong(paymentJs.getString("date"));
-        boolean forAll = paymentJs.getInt("forAll") != 0 ? true:false;
+
+        boolean forAll = false;
+        if(!paymentJs.isNull("forAll")){
+            forAll = paymentJs.getInt("forAll") != 0 ? true:false;
+        }
+
         String name = paymentJs.getString("name");
-        String notes = paymentJs.getString("notes");
+
+        String notes = "";
+        if(!paymentJs.isNull("notes")){
+            notes = paymentJs.getString("notes");
+        }
+
         long createdAt = DateUtils.dateStringToLong(paymentJs.getString("created_at"));
+
         long updatedAt = DateUtils.dateStringToLong(paymentJs.getString("updated_at"));
-        boolean isExchange = paymentJs.getInt("isExchange") != 0 ? true:false;
+
+        boolean isExchange = false;
+        if(!paymentJs.isNull("isExchange")){
+            isExchange = paymentJs.getInt("isExchange") != 0 ? true:false;
+        }
+
         String position = "";
-        String positionId = "";
         if(!paymentJs.isNull("position")){
             position = paymentJs.getString("position");
         }
+
+        String positionId = "";
         if(!paymentJs.isNull("position_id")){
             positionId = paymentJs.getString("position_id");
         }
+
         String amountDetails = paymentJs.getString("amount_details");
 
         return new PaymentModel(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, positionId, amountDetails, isExchange);

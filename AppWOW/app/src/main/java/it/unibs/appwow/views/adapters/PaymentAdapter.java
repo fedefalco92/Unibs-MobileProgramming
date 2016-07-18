@@ -122,19 +122,23 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 break;
 
             case PAYMENT_SPECIAL_VIEW:
+                // TODO: 18/07/16 Sistemare Payment model con nuove aggiunte.
                 PaymentSpecialViewHolder itemSpecialHolder = (PaymentSpecialViewHolder) holder;
                 //NOTA: in questo caso (il cost è un pagamento di debito) l'id del "ricevente" è nelle note
+                /*
                 String userTo ="";
                 UserDAO dao = new UserDAO();
                 dao.open();
                 String [] info = dao.getSingleUserInfo(new Integer(itemPayment.getNotes()));
-                dao.close();
+                dao.close();*/
                 /*
                 itemSpecialHolder.paymentName.setText(itemPayment.getFullName() + " gave " + Amount.getAmountString(itemPayment.getAmount()) + " eur to " + info[0] );
                 itemSpecialHolder.paymentAmount.setText("");
                 itemSpecialHolder.paymentDate.setText(DateUtils.dateLongToString(itemPayment.getUpdatedAt()));*/
                 itemSpecialHolder.paymentNameFrom.setText(itemPayment.getFullName() + " (" + itemPayment.getEmail() + ")");
-                itemSpecialHolder.paymentNameTo.setText(info[0] + " (" + info[1] + ")");
+                // FIXME: 18/07/16 sistemare prendendo colonna idUserTo
+                //itemSpecialHolder.paymentNameTo.setText(info[0] + " (" + info[1] + ")");
+                itemSpecialHolder.paymentNameTo.setText("TO FIX");
                 itemSpecialHolder.paymentAmount.setText(Amount.getAmountString(itemPayment.getAmount()));
                 itemSpecialHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
                 break;
