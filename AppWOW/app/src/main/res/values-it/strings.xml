@@ -100,4 +100,6 @@
     <string name="payments">PAGAMENTI</string>
     <string name="summary">RIASSUNTO</string>
     <string name="debts">DEBITI</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="groups_string">Gruppi</string>
 </resources>

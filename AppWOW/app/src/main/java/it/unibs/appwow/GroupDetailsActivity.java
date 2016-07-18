@@ -84,6 +84,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     private LocalUser mLocalUser;
     //private int mRequestPending;
 
+    private FloatingActionButton mFab;
+
     private int mCurrentPage;
 
     @Override
@@ -107,8 +109,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         mCurrentPage = 1;
         setFragmentAdapter();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)

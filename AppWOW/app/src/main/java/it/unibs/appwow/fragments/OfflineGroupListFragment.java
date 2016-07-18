@@ -104,7 +104,7 @@ public class OfflineGroupListFragment extends Fragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle(R.string.offline_groups_string);
+        getActivity().setTitle(R.string.favorite_groups_string);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

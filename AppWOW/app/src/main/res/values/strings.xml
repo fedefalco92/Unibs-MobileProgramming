@@ -37,8 +37,8 @@
     <!-- String resources for fragments within the GroupDetailsActivity -->
     <string name="title_add_cost">Add new cost</string>
 
-    <string name="offline_groups_string">Offline groups</string>
-    <string name="online_groups_string">Online groups</string>
+    <string name="favorite_groups_string">Favorite groups</string>
+    <string name="groups_string">Groups</string>
     <string name="group_details_string">Group details</string>
     <string name="welcome_message">Welcome to AppWOW</string>
     <string name="request_for_fullname">Insert your name</string>

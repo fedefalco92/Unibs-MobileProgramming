@@ -164,7 +164,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG_LOG,"onActivityCreated");
-        getActivity().setTitle(R.string.online_groups_string);
+        getActivity().setTitle(R.string.groups_string);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
