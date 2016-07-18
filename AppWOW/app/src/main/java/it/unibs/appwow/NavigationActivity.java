@@ -37,8 +37,8 @@ public class NavigationActivity extends AppCompatActivity
     private NavigationView navigationView;
     private LocalUser mLocalUser;
 
-    private static final String TAG_ONLINE =  "_ONLINE_FRAGMENT";
-    private static final String TAG_OFFLINE = "_OFFLINE_FRAGMENT";
+    private static final String TAG_GROUPS =  "_GROUPS_FRAGMENT";
+    private static final String TAG_FAVORITE_GROUPS = "_FAVORITE_GROUPS_FRAGMENT";
     private static final String TAG_SETTINGS = "SETTINGS_FRAGMENT";
     private static final String VISIBLE_FRAGMENT = "VISIBLE_FRAGMENT";
 
@@ -79,10 +79,10 @@ public class NavigationActivity extends AppCompatActivity
 
         mFragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_ONLINE).commit();
+        fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_GROUPS).commit();
 
         //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
-        navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
+        navigationView.getMenu().findItem(R.id.nav_groups).setChecked(true);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -90,8 +90,8 @@ public class NavigationActivity extends AppCompatActivity
             public void onClick(View view) {
                 // TODO: 12/05/2016 Gestione aggiunta gruppo online oppure offline modificando la classe di destinazione
                 Class destinationClass = null;
-                Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_ONLINE);
-                Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_OFFLINE);
+                Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_GROUPS);
+                Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_FAVORITE_GROUPS);
                 if (onlineFragment != null && onlineFragment.isVisible()) {
                     destinationClass = AddGroupActivity.class;
                     Log.d(TAG_LOG, "ONLINE fragment visible");
@@ -128,7 +128,7 @@ public class NavigationActivity extends AppCompatActivity
         Fragment visible = getVisibleFragment();
         String tag = visible.getTag();
         /*boolean onlineChecked = navigationView.getMenu().findItem(R.id.nav_online_groups).isChecked();
-        boolean offlineChecked = navigationView.getMenu().findItem(R.id.nav_offline_groups).isChecked();
+        boolean offlineChecked = navigationView.getMenu().findItem(R.id.nav_favourite_groups).isChecked();
         outState.putBoolean(MENU_ONLINE,onlineChecked);
         outState.putBoolean(MENU_OFFLINE,offlineChecked);*/
         outState.putString(VISIBLE_FRAGMENT, tag);
@@ -143,17 +143,17 @@ public class NavigationActivity extends AppCompatActivity
         String visibleTag = savedInstanceState.getString(VISIBLE_FRAGMENT);
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         switch (visibleTag) {
-            case TAG_ONLINE:
-                fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_ONLINE).commit();
-                navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
+            case TAG_GROUPS:
+                fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_GROUPS).commit();
+                navigationView.getMenu().findItem(R.id.nav_groups).setChecked(true);
                 break;
             case TAG_SETTINGS:
                 fragmentTransaction.replace(R.id.containerView, new SettingsFragment(), TAG_SETTINGS).commit();
                 navigationView.getMenu().findItem(R.id.nav_settings).setChecked(true);
                 break;
             default:
-                fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_ONLINE).commit();
-                navigationView.getMenu().findItem(R.id.nav_online_groups).setChecked(true);
+                fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_GROUPS).commit();
+                navigationView.getMenu().findItem(R.id.nav_groups).setChecked(true);
                 break;
         }
 
@@ -198,15 +198,15 @@ public class NavigationActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_online_groups) {
+        if (id == R.id.nav_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_ONLINE).commit();
+            fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_GROUPS).commit();
             fab.show();
 
             // Handle the camera action
-        } else if (id == R.id.nav_offline_groups) {
+        } else if (id == R.id.nav_favourite_groups) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView, new OfflineGroupListFragment(), TAG_OFFLINE).commit();
+            fragmentTransaction.replace(R.id.containerView, new OfflineGroupListFragment(), TAG_FAVORITE_GROUPS).commit();
             fab.show();
 
         } else if (id == R.id.nav_settings) {
