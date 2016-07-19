@@ -88,8 +88,8 @@
     <string name="add_group_members_activity_title">Add group members</string>
     <string name="add_group_members_user_already_added">User already added</string>
     <string name="add_member_button">Add</string>
-    <string name="add_cost_success">Cost inserted successfully</string>
-    <string name="add_cost_error">Unable to process the request, try again!</string>
+    <string name="add_payment_success">Payment inserted successfully</string>
+    <string name="add_payment_error">Unable to process the request, try again!</string>
     <string name="add_group_success">Group created successfully</string>
     <string name="add_group_error">Unable to process the request, try again!</string>
     <string name="add_group_take_photo">Take Photo</string>
@@ -100,7 +100,7 @@
     <string name="ok">OK</string>
     <string name="dialog_group_deleted_confirm">Group deleted</string>
     <string name="details">Details</string>
-    <string name="payment_deleted">Payment %1$s deleted</string>
+    <string name="payment_deleting_param">Deleting payment %1$s...</string>
     <plurals name="dialog_group_deleted">
         <item quantity="one"> 1 group deleted</item>
         <item quantity="other"> %d groups deleted</item>
@@ -161,5 +161,6 @@
     <string name="notification_debt_solved">Debt solved</string>
     <!-- <string name="notification_debt_solved_msg">%1$s gave %2$d %3$d to %4$d</string> -->
     <string name="notification_debt_solved_msg">A debt is solved.</string>
+    <string name="edit_payment_success">Payment edited successfully!</string>
 
 </resources>

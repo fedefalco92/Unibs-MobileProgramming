@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -12,8 +11,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -21,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,7 +26,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,8 +51,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.nio.charset.Charset;
-import java.util.Currency;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -65,7 +61,9 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unibs.appwow.database.UserGroupDAO;
+import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.PaymentsFragment;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.SliderAmount;
 import it.unibs.appwow.models.UserModel;
@@ -95,12 +93,13 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private static final int DELETE_PLACE_TAG = 1;
     private static final int FIND_PLACE_TAG = 2;
 
-    private boolean EDIT;
+    private boolean EDIT_MODE;
 
     //approssimazione importi
+    /*
     private static final String CENT = "CENT";
     private static final String TENCENTS = "TENCENTS";
-    private String mApproxType;
+    private String mApproxType;*/
 
     private LocalUser mUser;
     private GroupModel mGroup;
@@ -137,19 +136,22 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_payment);
         mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
-
-        EDIT = false;
-        mToEditPayment = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
-        if(mToEditPayment != null){
-            EDIT = true; // TODO: 18/07/2016 COMPLETARE L'ACTIVITY ANCHE PER LA MODIFICA
-        }
-
         setTitle(getString(R.string.add_payment_activity_title));
 
+        EDIT_MODE = false;
+        mToEditPayment = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
+        if(mToEditPayment != null){
+            EDIT_MODE = true;
+            setTitle(mToEditPayment.getName());
+            mPaymentAmount = mToEditPayment.getAmount();
+        }
+
         mUser = LocalUser.load(this);
+        /*
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mApproxType = prefs.getString("pref_key_round_payments", CENT);
-        Log.d(TAG_LOG, " APPROX TYPE: " + mApproxType);
+        Log.d(TAG_LOG, " APPROX TYPE: " + mApproxType);*/
+
         UserGroupDAO dao = new UserGroupDAO();
         dao = new UserGroupDAO();
         dao.open();
@@ -165,6 +167,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         mPaymentNameEditText = (EditText) findViewById(R.id.add_payment_name);
         mPaymentAmountEditText = (EditText) findViewById(R.id.add_payment_amount);
         mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, getMaxDecimalDigits())});
+        if(EDIT_MODE) mPaymentAmountEditText.setText(String.valueOf(mToEditPayment.getAmount()));
         mPaymentAmountEditText.addTextChangedListener(
                 new TextWatcher() {
                     @Override
@@ -192,6 +195,11 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         mAddPositionButton = (ImageButton) findViewById(R.id.add_payment_add_position_button);
         mAddPositionButton.setTag(FIND_PLACE_TAG);
         mAddPositionButton.setOnClickListener(this);
+        if(EDIT_MODE){
+            mAddPositionButton.setTag(DELETE_PLACE_TAG);
+            mPaymentPositionEditText.setEnabled(false);
+            mAddPositionButton.setImageResource(R.drawable.ic_highlight_off_black_24dp);
+        }
 
         mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.add_payment_position_map_fragment));
         mMapFragment.getView().setVisibility(View.GONE);
@@ -217,7 +225,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         }
 
         mAddPaymentButton = (Button) findViewById(R.id.add_payment_button);
-        if(EDIT) mAddPaymentButton.setVisibility(View.GONE);
+        if(EDIT_MODE) mAddPaymentButton.setVisibility(View.GONE);
 
         mPaymentDateEditText = (EditText) findViewById(R.id.add_payment_date);
         mPaymentTimeEditText = (EditText) findViewById(R.id.add_payment_time);
@@ -233,21 +241,40 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         mPaymentCurrency.setAdapter(adapter);
         mPaymentCurrency.setSelection(0);
 
-        if(EDIT){
+        if(EDIT_MODE) {
             mPaymentNameEditText.setText(mToEditPayment.getName());
             mPaymentCurrency.setSelection(adapter.getPosition(mToEditPayment.getCurrency()));
             mPaymentNotesEditText.setText(mToEditPayment.getNotes());
             mPaymentPositionEditText.setText(mToEditPayment.getPosition());
+
+            List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(mToEditPayment.getAmountDetails(), mToEditPayment.getIdUser(), mToEditPayment.getAmount());
+            for (Amount a : amounts) {
+                for (SliderAmount s : mSliderAmountList) {
+                    if (s.getUserId() == a.getUserId()) {
+                        s.setAmount(a.getAmount());
+                        s.setAmountText(a.getAmountString());
+                        s.setSeekBarProgress(a.getAmount(), mToEditPayment.getAmount());
+                        break;
+                    }
+                }
+            }
+
+            mPaymentDateEditText.setText(DateUtils.longToSimpleDateString(mToEditPayment.getDate()));
+            mPaymentTimeEditText.setText(DateUtils.longToSimpleTimeString(mToEditPayment.getDate()));
         }
 
 
     }
 
     public void onAddPaymentButtonClicked(View v){
+        checkErrors();
+    }
+
+    private void checkErrors(){
         boolean nomeOk = Validator.isCostNameValid(mPaymentNameEditText.getText().toString());
         boolean amountOk = Validator.isAmountValid(mPaymentAmountEditText.getText().toString());
         if(nomeOk && amountOk){
-            sendAddPostRequest();
+            sendPostRequest();
         } else {
             if(!nomeOk){
                 mPaymentNameEditText.setError(getString(R.string.error_invalid_cost_name));
@@ -317,7 +344,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
-        if(EDIT){
+        if(EDIT_MODE){
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.menu_edit_payment, menu);
         }
@@ -329,46 +356,124 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         int id = item.getItemId();
         switch (id) {
             case R.id.edit_payment_save_item:
-                // TODO: 18/07/2016 RICHIESTA POST PER MODIFICARE IL PAYMENT
-                Toast.makeText(AddEditPaymentActivity.this, "DA IMPLEMENTARE", Toast.LENGTH_SHORT).show();
+               checkErrors();
             default:
                 return true;
         }
     }
 
-    private void sendAddPostRequest() {
+    private void sendPostRequest() {
         showProgress(true);
-        String[] keys = {"idGroup", "idUser", "amount", "name", "notes", "position", "position_id", "amount_details"};
-        String idGroup = String.valueOf(mGroup.getId());
-        String idUser = String.valueOf(mUser.getId());
-        double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
-        String amount = String.valueOf(amountDouble);
+        Map<String, String> requestParams = new HashMap<String, String>();
         String name = mPaymentNameEditText.getText().toString();
         String notes = mPaymentNotesEditText.getText().toString();
         String position = mPaymentPositionEditText.getText().toString();
         String position_id = "";
-        if(mPlace!=null){
-            position_id = mPlace.getId();
-        }
-        String amount_details = computeAmountDetails(mUser.getId(), amountDouble);
-        String[] values = {idGroup, idUser, amount, name, notes, position, position_id, amount_details};
 
-        Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
+        if(!EDIT_MODE){
+            //creazione payment
+            String[] keys = {"idGroup", "idUser", "amount", "currency", "date", "name", "notes", "position", "position_id", "amount_details", "forAll"};
+            String idGroup = String.valueOf(mGroup.getId());
+            String idUser = String.valueOf(mUser.getId());
+            double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
+            String amount = String.valueOf(amountDouble);
+
+            if(mPlace!=null){
+                position_id = mPlace.getId();
+            }
+
+            String amount_details = computeAmountDetails();
+            String dateLong = buildDate();
+            String currency = (String) mPaymentCurrency.getSelectedItem();
+
+            boolean forAll = isForAll();
+
+            String[] values = {idGroup, idUser, amount, currency, dateLong, name, notes, position, position_id, amount_details, String.valueOf(forAll?1:0)};
+            requestParams = WebServiceRequest.createParametersMap(keys, values);
+
+            int idUserTo = -1;
+            if(idUserTo >= 0){
+                requestParams.put("idUserTo", String.valueOf(idUserTo));
+            }
+
+        } else {
+            String[] keys = {"date", "name", "notes", "position", "position_id"};
+
+            position_id = mToEditPayment.getPositionId();
+            if(position_id == null)
+                position_id = "";
+            if(mPlace!=null){
+                position_id = mPlace.getId();
+            }
+
+            String dateLong = buildDate();
+
+            String[] values = {dateLong, name, notes, position, position_id};
+            requestParams = WebServiceRequest.createParametersMap(keys, values);
+
+
+            if(mToEditPayment.getAmount() != mPaymentAmount){
+                requestParams.put("amount",String.valueOf(mPaymentAmount));
+            }
+
+            double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
+            String amount = String.valueOf(amountDouble);
+            String amount_details = computeAmountDetails();
+            if(!mToEditPayment.getAmountDetails().equals(amount_details)){
+                requestParams.put("amount_details", amount_details);
+            }
+
+            String currency = (String) mPaymentCurrency.getSelectedItem();
+            Log.d(TAG_LOG, "CURRENCY" + currency);
+            if(!currency.equals(mToEditPayment.getCurrency())){
+                requestParams.put("currency", currency);
+            }
+
+            boolean forAll = isForAll();
+            requestParams.put("forAll", String.valueOf(forAll?1:0));
+        }
+
+
+        String uri = WebServiceUri.PAYMENTS_URI.toString();
+        if(EDIT_MODE) uri = WebServiceUri.getPaymentUri(mToEditPayment.getId()).toString();
+        Log.d(TAG_LOG, "uri: " + uri);
+        Log.d(TAG_LOG, "MAP " + requestParams.toString());
         StringRequest postRequest = WebServiceRequest.
-                stringRequest(Request.Method.POST, WebServiceUri.PAYMENTS_URI.toString(), requestParams, responseListener(), responseErrorListener());
+                stringRequest(EDIT_MODE? Request.Method.PUT:Request.Method.POST, uri, requestParams, responseListener(), responseErrorListener());
+        Log.d(TAG_LOG, "POSTREQUEST: " + postRequest.toString());
         MyApplication.getInstance().addToRequestQueue(postRequest);
+    }
+
+    private String buildDate(){
+        String date_string = mPaymentDateEditText.getText().toString();
+        return "";
     }
 
     private Response.Listener<String> responseListener() {
         return new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                boolean success = false;
                 if (!response.isEmpty()) {
-                    Toast.makeText(AddEditPaymentActivity.this, R.string.add_cost_success, Toast.LENGTH_SHORT).show();
-                    finish();
+                    Log.d(TAG_LOG, "RISPOSTA: " + response);
+                    try {
+                        JSONObject resjs = new JSONObject(response);
+                        String status = resjs.getString("status");
+                        success = status.equalsIgnoreCase("success");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(success){
+                    Toast.makeText(AddEditPaymentActivity.this, EDIT_MODE? R.string.edit_payment_success: R.string.add_payment_success, Toast.LENGTH_SHORT).show();
+                    Intent toGroupDetails = new Intent(MyApplication.getAppContext(),GroupDetailsActivity.class);
+                    toGroupDetails.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    toGroupDetails.putExtra(GroupListFragment.PASSING_GROUP_TAG,mGroup);
+                    startActivity(toGroupDetails);
                 } else {
                     showProgress(false);
-                    Toast.makeText(AddEditPaymentActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddEditPaymentActivity.this, R.string.server_internal_error, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -379,8 +484,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
-                //Log.e("Error",error.getMessage());
-                Toast.makeText(AddEditPaymentActivity.this, R.string.add_cost_error, Toast.LENGTH_SHORT).show();
+                Log.e("Error",error.getMessage());
+                Toast.makeText(AddEditPaymentActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -424,27 +529,46 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     /**
      * versione base
-     * @param amount
      * @return
      */
-    private String computeAmountDetails(int id_pagante, double amount){
+    //private String computeAmountDetails(int id_pagante, double amount){
+    private String computeAmountDetails(){
         int npartecipants = mGroupUsers.size();
-        double perperson = amount/npartecipants;
         HashMap<Integer, Double> amount_details = new HashMap<Integer, Double>();
 
         List<SliderAmount> list = mSliderAmountList;
         for(SliderAmount s: list){
             int id = s.getUserId();
             double value = 0;
-            if(id == id_pagante){
-                value = amount-s.getAmount();
+            //if(id == id_pagante){
+            if(id == mUser.getId()){
+                //value = amount-s.getAmount();
+                value = mPaymentAmount-s.getAmount();
             } else {
                 value = -s.getAmount();
             }
             amount_details.put(id,value);
         }
-
         return IdEncodingUtils.encodeAmountDetails(amount_details);
+    }
+
+    private boolean isForAll(){
+        boolean forAll = true;
+        int size = mSliderAmountList.size();
+        double each = mPaymentAmount/size;
+        int approxMultiplier = getApproxMultiplier();
+        each = Math.floor(each*approxMultiplier)/approxMultiplier;
+
+        for(SliderAmount s:mSliderAmountList){
+            if(s.getUserId()!=mUser.getId()){
+                if(s.getAmount()!= each) {
+                    forAll = false;
+                    break;
+                }
+            }
+        }
+        Log.d(TAG_LOG, "FORALL: " + forAll);
+        return forAll;
     }
 
 
@@ -534,12 +658,6 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-/*
-    public void onAddCostClick(View view){
-        // TODO: 22/06/2016 IMPLEMENTARE CARICAMENTO SU SERVER con richiesta volley
-        Toast.makeText(AddEditPaymentActivity.this, "eheh pensavi che funzionasse...",
-                Toast.LENGTH_LONG).show();
-    }*/
 
     @Override
     public void onStart() {
@@ -563,6 +681,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             findPlace(v);
         } else if (buttonPosition.getTag().equals(DELETE_PLACE_TAG)){
             mPlace = null;
+            if(EDIT_MODE) mToEditPayment.setPositionId("");
             mPaymentPositionEditText.setEnabled(true);
             mPaymentPositionEditText.setText("");
             //mAddPositionButton.setText(R.string.action_add_payment_add_position);
@@ -631,19 +750,19 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     private int getApproxMultiplier(){
         int multiplier = 100;
-        switch (mApproxType){
+        /*switch (mApproxType){
             case CENT: multiplier = 100; break;
             case TENCENTS: multiplier = 10; break;
-        }
+        }*/
         return multiplier;
     }
 
     private int getMaxDecimalDigits(){
         int max = 2;
-        switch (mApproxType){
+        /*switch (mApproxType){
             case CENT: max = 2; break;
             case TENCENTS:  max = 1; break;
-        }
+        }*/
         return max;
 
     }

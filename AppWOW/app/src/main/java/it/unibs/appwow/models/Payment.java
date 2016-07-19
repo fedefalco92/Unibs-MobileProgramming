@@ -14,16 +14,16 @@ public class Payment extends PaymentModel {
     private String mFullName;
     private String mEmail;
 
-    public Payment(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String position_id, String amountDetails) {
-        super(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails);
+    public Payment(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String position_id, String amountDetails, int idUserTo) {
+        super(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails, idUserTo);
     }
 
-    public Payment(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String position_id, String amountDetails, boolean isExchange) {
-        super(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails, isExchange);
+    public Payment(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String position_id, String amountDetails, int idUserTo, boolean isExchange) {
+        super(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails, idUserTo, isExchange);
     }
 
-    public Payment(int id, int idGroup, int idUser, String fullName, String email, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String position_id, String amountDetails, boolean isExchange) {
-        super(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails, isExchange);
+    public Payment(int id, int idGroup, int idUser, String fullName, String email, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String position_id, String amountDetails, int idUserTo, boolean isExchange) {
+        super(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails, idUserTo, isExchange);
         this.mFullName = fullName;
         this.mEmail = email;
     }

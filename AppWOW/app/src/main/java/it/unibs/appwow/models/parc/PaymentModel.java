@@ -31,9 +31,10 @@ public class PaymentModel implements Parcelable {
     private boolean mIsExchange;
     private String mPosition;
     private String mPositionId;
-    private String mAmountDetails; // FIXME: 06/05/2016 da sostituire con un vector da riempire al momento dell'importazione dal DB
+    private String mAmountDetails;
+    private int mIdUserTo;
 
-    public PaymentModel(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails) {
+    public PaymentModel(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails, int idUserTo) {
         mId = id;
         mIdGroup = idGroup;
         mIdUser = idUser;
@@ -48,10 +49,11 @@ public class PaymentModel implements Parcelable {
         mPosition = position;
         mPositionId = positionId;
         mAmountDetails = amountDetails;
+        mIdUserTo = idUserTo;
         mIsExchange = false;
     }
 
-    public PaymentModel(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails, boolean isExchange) {
+    public PaymentModel(int id, int idGroup, int idUser, double amount, String currency, long date, boolean forAll, String name, String notes, long createdAt, long updatedAt, String position, String positionId, String amountDetails, int idUserTo, boolean isExchange) {
         mId = id;
         mIdGroup = idGroup;
         mIdUser = idUser;
@@ -66,6 +68,7 @@ public class PaymentModel implements Parcelable {
         mPosition = position;
         mPositionId = positionId;
         mAmountDetails = amountDetails;
+        mIdUserTo = idUserTo;
         mIsExchange = isExchange;
     }
 
@@ -189,6 +192,14 @@ public class PaymentModel implements Parcelable {
         mForAll = forAll;
     }
 
+    public int getIdUserTo() {
+        return mIdUserTo;
+    }
+
+    public void setIdUserTo(int idUserTo) {
+        mIdUserTo = idUserTo;
+    }
+
     public static PaymentModel create(JSONObject paymentJs) throws JSONException {
         int id = paymentJs.getInt("id");
         int idGroup = paymentJs.getInt("idGroup");
@@ -234,8 +245,12 @@ public class PaymentModel implements Parcelable {
         }
 
         String amountDetails = paymentJs.getString("amount_details");
+        int idUserTo = -1;
+        if(!paymentJs.isNull("idUserTo")){
+            idUserTo = paymentJs.getInt("idUserTo");
+        }
 
-        return new PaymentModel(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, positionId, amountDetails, isExchange);
+        return new PaymentModel(id, idGroup, idUser, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, positionId, amountDetails, idUserTo, isExchange);
     }
 
 
@@ -263,6 +278,7 @@ public class PaymentModel implements Parcelable {
         this.mId = in.readInt();
         this.mIdGroup = in.readInt();
         this.mIdUser = in.readInt();
+        this.mIdUserTo = in.readInt();
         this.mAmount = in.readDouble();
         this.mCurrency = in.readString();
         this.mDate = in.readLong();
@@ -285,10 +301,10 @@ public class PaymentModel implements Parcelable {
         }
         if (in.readByte() == PRESENT) {
             this.mPosition = in.readString();
-        } else mPosition = "";
+        }
         if (in.readByte() == PRESENT) {
             this.mPositionId = in.readString();
-        } else mPosition = "";
+        }
         if (in.readByte() == PRESENT) {
             this.mAmountDetails = in.readString();
         }
@@ -307,72 +323,59 @@ public class PaymentModel implements Parcelable {
         dest.writeInt(this.mId);
         dest.writeInt(this.mIdGroup);
         dest.writeInt(this.mIdUser);
+        dest.writeInt(this.mIdUserTo);
         dest.writeDouble(this.mAmount);
         dest.writeString(this.mCurrency);
         dest.writeLong(this.mDate);
         dest.writeByte((byte) (isForAll() ? 1: 0));
         dest.writeByte((byte) (isExchange() ? 1 : 0));
-        if(!TextUtils.isEmpty(this.mName))
-        {
+        if (!TextUtils.isEmpty(this.mName)) {
             dest.writeByte(PRESENT);
             dest.writeString(this.mName);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(!TextUtils.isEmpty(this.mNotes))
-        {
+        if (!TextUtils.isEmpty(this.mNotes)) {
             dest.writeByte(PRESENT);
             dest.writeString(this.mNotes);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(this.mCreatedAt!=0)
-        {
+        if (this.mCreatedAt != 0) {
             dest.writeByte(PRESENT);
             dest.writeLong(this.mCreatedAt);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(this.mUpdatedAt!=0)
-        {
+        if (this.mUpdatedAt != 0) {
             dest.writeByte(PRESENT);
             dest.writeLong(this.mUpdatedAt);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
 
-        if(!TextUtils.isEmpty(this.mPosition))
-        {
+        if (!TextUtils.isEmpty(this.mPosition)) {
             dest.writeByte(PRESENT);
             dest.writeString(this.mPosition);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(!TextUtils.isEmpty(this.mPosition))
-        {
+        if (!TextUtils.isEmpty(this.mPositionId)) {
             dest.writeByte(PRESENT);
             dest.writeString(this.mPositionId);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
 
-        if(!TextUtils.isEmpty(this.mAmountDetails))
-        {
+        if (!TextUtils.isEmpty(this.mAmountDetails)) {
             dest.writeByte(PRESENT);
             dest.writeString(this.mAmountDetails);
-        } else
-        {
+        } else {
             dest.writeByte(NOT_PRESENT);
         }
     }

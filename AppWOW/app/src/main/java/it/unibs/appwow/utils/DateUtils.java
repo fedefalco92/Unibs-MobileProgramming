@@ -1,8 +1,11 @@
 package it.unibs.appwow.utils;
 
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import it.unibs.appwow.MyApplication;
 
 /**
  * Created by Alessandro on 03/06/2016.
@@ -11,12 +14,17 @@ public class DateUtils {
 
     private static final String TAG_LOG = DateUtils.class.getSimpleName();
 
+    // TODO: 19/07/2016 SISTEMARE QUESTIONE FORMATI
+
     public static final String DATE_FORMAT ="yyyy-MM-dd HH:mm:ss";
     public static final String DATE_HOUR_FORMAT ="dd/MM/yyyy HH:mm";
+    public static final String DATE_HOUR_FORMAT_ENG ="MM/dd/yyyy HH:mm";
     public static final String SIMPLE_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String SIMPLE_DATE_FORMAT_ENG = "MM/dd/yyyy";
     public static final String SIMPLE_TIME_FORMAT = "HH:mm";
 
-    public static final String DATE_READABLE_FORMAT = "MMM, dd";
+    public static final String DATE_READABLE_FORMAT = "dd MMM";
+    public static final String DATE_READABLE_FORMAT_ENG = "MMM dd";
 
     public static long dateStringToLong(String date){
         if(date.equalsIgnoreCase("null")) return 0L;
@@ -32,11 +40,14 @@ public class DateUtils {
     }
 
     public static String dateLongToString(Long date){
-        return new SimpleDateFormat(DATE_HOUR_FORMAT).format(date);
+        SimpleDateFormat dateformat = (SimpleDateFormat) android.text.format.DateFormat.getDateFormat(MyApplication.getAppContext());
+        SimpleDateFormat timeformat = (SimpleDateFormat) android.text.format.DateFormat.getTimeFormat(MyApplication.getAppContext());
+        //return new SimpleDateFormat(DATE_HOUR_FORMAT).format(date);
+        return  dateformat.format(date) + " " + timeformat.format(date);
     }
 
     public static String dateReadableLongToString(Long date){
-        return new SimpleDateFormat(DATE_READABLE_FORMAT).format(date);
+        return new SimpleDateFormat(DATE_READABLE_FORMAT_ENG).format(date);
     }
 
     public static String longToSimpleDateString(Long date){

@@ -1,10 +1,17 @@
 package it.unibs.appwow.utils;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+import android.util.Log;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import it.unibs.appwow.database.UserDAO;
@@ -19,8 +26,31 @@ public class IdEncodingUtils {
     private static final String AMOUNT_SEPARATOR = "&";
     private static final String INNER_SEPARATOR = "=";
     public static String encodeAmountDetails(HashMap<Integer,Double> amount_details){
-        StringBuffer res = new StringBuffer();
+        List<Map.Entry<Integer,Double>> entries = new ArrayList<Map.Entry<Integer,Double>>(
+                amount_details.entrySet()
+        );
+
+        Collections.sort(
+                entries
+                ,   new Comparator<Map.Entry<Integer,Double>>() {
+                    @TargetApi(Build.VERSION_CODES.KITKAT)
+                    public int compare(Map.Entry<Integer,Double> a, Map.Entry<Integer,Double> b) {
+                        return Integer.compare(b.getKey(), a.getKey());
+                    }
+                }
+        );
+
+        StringBuffer sb = new StringBuffer();
         DecimalFormat numberFormat = new DecimalFormat("#.00");
+
+        for (Map.Entry<Integer,Double> e : entries) {
+
+            sb.append(e.getKey() + "=" + numberFormat.format(e.getValue()) + AMOUNT_SEPARATOR );
+        }
+
+        String res = sb.toString();
+
+        /*
         Set<Integer> ids = amount_details.keySet();
         Iterator it = ids.iterator();
         while(it.hasNext()){
@@ -32,8 +62,10 @@ public class IdEncodingUtils {
             if(it.hasNext()){
                 res.append(AMOUNT_SEPARATOR);
             }
-        }
-        return res.toString();
+        }*/
+        res = res.substring(0, res.length()-1);
+        Log.d("IDENCODINGUTILS", "AMOUNT DETAILS: " + res);
+        return res;
     }
 
     private static HashMap<Integer,Double> decodeAmountDetailsFromString(String ad){

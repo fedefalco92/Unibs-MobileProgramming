@@ -43,8 +43,8 @@
     <string name="add_group_activity_title">Nuovo gruppo</string>
     <string name="add_group_members_activity_title">Aggiungi i membri del gruppo</string>
     <string name="add_group_members_user_already_added">Utente già inserito</string>
-    <string name="add_cost_success">Spesa inserita!</string>
-    <string name="add_cost_error">Errore nel processare la richiesta, riprova!</string>
+    <string name="add_payment_success">Spesa inserita con successo!</string>
+    <string name="add_payment_error">Errore nel processare la richiesta, riprova!</string>
     <string name="add_group_error">Errore nel processare la richiesta, riprova!</string>
     <string name="add_group_success">Gruppo creato!</string>
     <string name="add_group_cancel">Annulla</string>
@@ -61,7 +61,7 @@
         <item quantity="other"> %d gruppi eleminati</item>
     </plurals>
     <string name="details">Dettagli</string>
-    <string name="payment_deleted">Pagamento %1$s eliminato</string>
+    <string name="payment_deleting_param">Elimino il pagamento %1$s...</string>
     <string name="undo">Annulla</string>
     <string name="payment_delete_unsuccess_server_error">Impossibile eliminare il pagamento %1$s a causa di un errore del server</string>
     <string name="retry">Riprova</string>
@@ -103,4 +103,5 @@
     <string name="action_settings">Impostazioni</string>
     <string name="groups_string">Gruppi</string>
     <string name="prompt_cost_amount">Importo</string>
+    <string name="edit_payment_success">Spesa modificata con successo!</string>
 </resources>

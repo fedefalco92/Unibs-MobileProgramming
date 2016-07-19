@@ -44,6 +44,7 @@ public final class AppDB {
         public static final String TABLE_PAYMENTS = "payments";
         public static final String COLUMN_ID_GROUP = "idGroup";
         public static final String COLUMN_ID_USER = "idUser";
+        public static final String COLUMN_ID_USER_TO = "idUserTo";
         public static final String COLUMN_AMOUNT = "amount";
         public static final String COLUMN_CURRENCY = "currency";
         public static final String COLUMN_FORALL = "forAll";

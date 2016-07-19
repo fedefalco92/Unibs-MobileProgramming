@@ -259,7 +259,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     }
 
     private void showUndoSnackbar(final Payment selectedItem){
-        final Snackbar snackbar = Snackbar.make(getView(), String.format(getResources().getString(R.string.payment_deleted), selectedItem.getName()) , Snackbar.LENGTH_LONG);
+        final Snackbar snackbar = Snackbar.make(getView(), String.format(getResources().getString(R.string.payment_deleting_param), selectedItem.getName()) , Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.undo, new View.OnClickListener(){
             @Override
             public void onClick(View v) {

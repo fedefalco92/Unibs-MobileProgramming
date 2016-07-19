@@ -36,7 +36,8 @@ public class PaymentDAO implements LocalDB_DAO {
             AppDB.Payments.COLUMN_IS_EXCHANGE,
             AppDB.Payments.COLUMN_POSITION,
             AppDB.Payments.COLUMN_POSITION_ID,
-            AppDB.Payments.COLUMN_AMOUNT_DETAILS
+            AppDB.Payments.COLUMN_AMOUNT_DETAILS,
+            AppDB.Payments.COLUMN_ID_USER_TO
     };
 
     private String[] allColumnsExtra = {
@@ -56,7 +57,8 @@ public class PaymentDAO implements LocalDB_DAO {
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_POSITION_ID,
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_AMOUNT_DETAILS,
             AppDB.Users.TABLE_USERS + "." + AppDB.Users.COLUMN_FULLNAME,
-            AppDB.Users.TABLE_USERS + "." + AppDB.Users.COLUMN_EMAIL
+            AppDB.Users.TABLE_USERS + "." + AppDB.Users.COLUMN_EMAIL,
+            AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_USER_TO
     };
 
     @Override
@@ -92,6 +94,7 @@ public class PaymentDAO implements LocalDB_DAO {
         values.put(AppDB.Payments.COLUMN_POSITION, data.getPosition());
         values.put(AppDB.Payments.COLUMN_POSITION_ID, data.getPositionId());
         values.put(AppDB.Payments.COLUMN_AMOUNT_DETAILS, data.getAmountDetails());
+        values.put(AppDB.Payments.COLUMN_ID_USER_TO, data.getIdUserTo());
         return values;
     }
 
@@ -111,10 +114,11 @@ public class PaymentDAO implements LocalDB_DAO {
         long updatedAt = cursor.getLong(10);
         boolean isExchange = cursor.getInt(11) != 0;
         String position = cursor.getString(12);
-        String position_id = cursor.getColumnName(13);
+        String position_id = cursor.getString(13);
         String amountDetails = cursor.getString(14);
+        int idUserTo = cursor.getInt(15);
 
-        return new PaymentModel(id, idGroup, idUser, amount, currency, date, forAll, name, notes,createdAt, updatedAt,position, position_id, amountDetails, isExchange);
+        return new PaymentModel(id, idGroup, idUser, amount, currency, date, forAll, name, notes,createdAt, updatedAt,position, position_id, amountDetails, idUserTo, isExchange);
     }
 
     private Payment cursorToPayment(Cursor cursor) {
@@ -131,12 +135,13 @@ public class PaymentDAO implements LocalDB_DAO {
         long updatedAt = cursor.getLong(10);
         boolean isExchange = cursor.getInt(11) != 0;
         String position = cursor.getString(12);
-        String position_id = cursor.getColumnName(13);
+        String position_id = cursor.getString(13);
         String amountDetails = cursor.getString(14);
         String fullName = cursor.getString(15);
         String email  = cursor.getString(16);
+        int idUserTo = cursor.getInt(17);
 
-        return new Payment(id, idGroup, idUser, fullName, email, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails, isExchange);
+        return new Payment(id, idGroup, idUser, fullName, email, amount, currency, date, forAll, name, notes, createdAt, updatedAt, position, position_id, amountDetails, idUserTo, isExchange);
     }
 
     public PaymentModel insertPayment(PaymentModel data) {

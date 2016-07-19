@@ -10,12 +10,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +52,7 @@ import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.MyPlace;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
@@ -60,6 +66,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
     private Payment mPayment;
     private GroupModel mGroup;
+    private LocalUser mUser;
 
     private View mRootLayout;
     private TextView mPaymentName;
@@ -90,9 +97,13 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_details);
 
+        mUser = LocalUser.load(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mRootLayout = findViewById(R.id.activity_payment_details_container);
         mPayment = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
@@ -164,6 +175,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                     places.release();
                 }
             });*/
+            Log.d(TAG_LOG, "POSITION ID: " + position_id);
             sendPlaceDetailRequest(position_id);
         } else {
             mMapButton.setVisibility(View.INVISIBLE);
@@ -176,53 +188,99 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
         String ad = mPayment.getAmountDetails();
         List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(ad, mPayment.getIdUser(), mPayment.getAmount());
-        for(Amount a: amounts){
+
+        /*for(Amount a: amounts){
+
             TextView tv = new TextView(this, null);
             tv.setText(a.getFormattedString());
             mAmountDetailContainer.addView(tv);
+        }*/
+
+        Amount first = null;
+        for(Amount a: amounts){
+            if(a.getUserId() == mUser.getId()){
+                first = a;
+                break;
+            }
+        }
+
+        mAmountDetailContainer.addView(buildView(first));
+        for(Amount a: amounts){
+            if(a.getUserId() !=  mUser.getId()) mAmountDetailContainer.addView(buildView(a));
         }
     }
 
+    private View buildView(Amount a){
+        View view = getLayoutInflater().inflate(R.layout.payment_slider_item, null, false);
+        TextView fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
+        TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
+        EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
+        amount.setEnabled(false);
+        ProgressBar seekBar = (ProgressBar) view.findViewById(R.id.payment_slider_item_slider);
+        fullName.setText(a.getFullName() + ((mUser.getId() == a.getUserId())?" (you) ":""));
+        email.setText(a.getEmail());
+        amount.setText(a.getAmountString());
+        seekBar.setProgress(computeSeekBarLevel(a.getAmount(),mPayment.getAmount()));
+        return view;
+    }
+
+    public int computeSeekBarLevel(double amount, double total){
+        return (int) Math.round((amount/total)*100);
+    }
+
     private void sendPlaceDetailRequest(final String place_id) {
-        StringRequest req = new StringRequest(WebServiceUri.getPlaceDetailsUri(this, place_id),
+        String uri = WebServiceUri.getPlaceDetailsUri(this, place_id);
+        Log.d(TAG_LOG, "URI: " + uri);
+        StringRequest req = new StringRequest(uri,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+
                         String place_url = "";
                         String place_name = "";
                         String place_address = "";
+                        String status = "";
                         LatLng latLng;
                         try {
-                            JSONObject placejs = new JSONObject(response).getJSONObject("result");
-                            place_url = placejs.getString("url");
-                            place_name = placejs.getString("name");
-                            place_address = placejs.getString("formatted_address");
-                            JSONObject location = placejs.getJSONObject("geometry").getJSONObject("location");
-                            String lat = location.getString("lat");
-                            String lng = location.getString("lng");
-                            latLng = new LatLng(new Double(lat), new Double (lng));
-                            mPlace = new MyPlace(place_name, place_address, place_url, latLng);
+                            JSONObject rispostajs = new JSONObject(response);
+                            status = rispostajs.getString("status");
+                            Log.d(TAG_LOG, "RISPOSTA:" +  rispostajs.toString(1));
+                            if(status.equalsIgnoreCase("OK")){
+                                JSONObject placejs = new JSONObject(response).getJSONObject("result");
+                                place_url = placejs.getString("url");
+                                place_name = placejs.getString("name");
+                                place_address = placejs.getString("formatted_address");
+                                JSONObject location = placejs.getJSONObject("geometry").getJSONObject("location");
+                                String lat = location.getString("lat");
+                                String lng = location.getString("lng");
+                                latLng = new LatLng(new Double(lat), new Double (lng));
+                                mPlace = new MyPlace(place_name, place_address, place_url, latLng);
+
+                                Log.d(TAG_LOG,"Setting map button on details");
+                                //setto il bottone di gmaps
+                                mMapButton.setVisibility(View.VISIBLE);
+                                mMapButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Uri uri = Uri.parse(mPlace.getUrl());
+                                        Intent gmaps = new Intent(Intent.ACTION_VIEW, uri);
+                                        gmaps.setPackage("com.google.android.apps.maps");
+                                        startActivity(gmaps);
+                                    }
+                                });
+
+                                //setto il fragment con la mappa
+                                mPositionText.setText(mPlace.getName());
+                                mMapFragment.getMapAsync(PaymentDetailsActivity.this);
+                            } else {
+                                mMapButton.setVisibility(View.INVISIBLE);
+                                mMapFragment.getView().setVisibility(View.GONE);
+
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                             return;
                         }
-
-                        Log.d(TAG_LOG,"Setting map button on details");
-                        //setto il bottone di gmaps
-                        mMapButton.setVisibility(View.VISIBLE);
-                        mMapButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Uri uri = Uri.parse(mPlace.getUrl());
-                                Intent gmaps = new Intent(Intent.ACTION_VIEW, uri);
-                                gmaps.setPackage("com.google.android.apps.maps");
-                                startActivity(gmaps);
-                            }
-                        });
-
-                        //setto il fragment con la mappa
-                        mPositionText.setText(mPlace.getName());
-                        mMapFragment.getMapAsync(PaymentDetailsActivity.this);
 
                     }
                 },
@@ -239,6 +297,11 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_payment_details, menu);
+        if(mPayment.getIdUser() != mUser.getId()){
+            menu.findItem(R.id.menu_payment_details_edit).setVisible(false);
+
+        }
+
         return true;
     }
 
@@ -370,11 +433,11 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     private void setUpMap() {
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        try {
+        /*try {
             mMap.setMyLocationEnabled(true);
         } catch (SecurityException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
