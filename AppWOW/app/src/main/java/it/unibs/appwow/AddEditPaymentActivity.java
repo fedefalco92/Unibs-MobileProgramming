@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -54,8 +56,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -119,6 +123,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private ImageButton mAddPositionButton;
     private MapFragment mMapFragment;
     private GoogleMap mMap;
+    private CheckBox mIsTransferCheckBox;
+    private Spinner mUserToSpinner;
 
     private View mProgressView;
     private View mAddPaymentContainerView;
@@ -264,6 +270,54 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         }
 
 
+        mUserToSpinner = (Spinner) findViewById(R.id.add_payment_user_to_spinner);
+        //seleziono gli utenti da mostrare nello spinner
+        List<SliderAmount> spinnerItems = new ArrayList<SliderAmount>();
+        int localUserId = mUser.getId();
+        for(SliderAmount s: mSliderAmountList){
+            if(s.getUserId() != localUserId){
+                spinnerItems.add(s);
+            }
+        }
+        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(this,
+                android.R.layout.simple_spinner_item, spinnerItems);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mUserToSpinner.setAdapter(spinnerArrayAdapter);
+
+        mIsTransferCheckBox = (CheckBox) findViewById(R.id.add_payment_is_transfer_checkbox);
+        if(!EDIT_MODE){
+            mIsTransferCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        mSliderListView.setVisibility(View.GONE);
+                        mUserToSpinner.setVisibility(View.VISIBLE);
+                    } else {
+                        mSliderListView.setVisibility(View.VISIBLE);
+                        mUserToSpinner.setVisibility(View.GONE);
+                    }
+                }
+            });
+        } else {
+            mIsTransferCheckBox.setEnabled(false);
+            if(mToEditPayment.isExchange()){
+                mIsTransferCheckBox.setChecked(true);
+                mSliderListView.setVisibility(View.GONE);
+                mUserToSpinner.setVisibility(View.VISIBLE);
+                int idUserTo = mToEditPayment.getIdUserTo();
+                SliderAmount userTo = null;
+                for(SliderAmount s: mSliderAmountList){
+                    if(s.getUserId() == idUserTo){
+                        userTo = s;
+                    }
+                }
+                mUserToSpinner.setSelection(spinnerArrayAdapter.getPosition(userTo));
+            }
+        }
+
+
+
+
     }
 
     public void onAddPaymentButtonClicked(View v){
@@ -372,7 +426,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
         if(!EDIT_MODE){
             //creazione payment
-            String[] keys = {"idGroup", "idUser", "amount", "currency", "date", "name", "notes", "position", "position_id", "amount_details", "forAll"};
+            String[] keys = {"idGroup", "idUser", "amount", "currency", "date", "name", "notes", "position", "position_id", "amount_details", "forAll", "isExchange"};
             String idGroup = String.valueOf(mGroup.getId());
             String idUser = String.valueOf(mUser.getId());
             double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
@@ -388,10 +442,16 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
             boolean forAll = isForAll();
 
-            String[] values = {idGroup, idUser, amount, currency, dateLong, name, notes, position, position_id, amount_details, String.valueOf(forAll?1:0)};
+            boolean isExchange = mIsTransferCheckBox.isChecked();
+
+            String[] values = {idGroup, idUser, amount, currency, dateLong, name, notes, position, position_id, amount_details, String.valueOf(forAll?1:0), String.valueOf(isExchange?1:0)};
             requestParams = WebServiceRequest.createParametersMap(keys, values);
 
             int idUserTo = -1;
+            if(mIsTransferCheckBox.isChecked()){
+                SliderAmount userTo = (SliderAmount) mUserToSpinner.getSelectedItem();
+                idUserTo = userTo.getUserId();
+            }
             if(idUserTo >= 0){
                 requestParams.put("idUserTo", String.valueOf(idUserTo));
             }
@@ -431,6 +491,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
             boolean forAll = isForAll();
             requestParams.put("forAll", String.valueOf(forAll?1:0));
+
+
         }
 
 
@@ -535,20 +597,34 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private String computeAmountDetails(){
         int npartecipants = mGroupUsers.size();
         HashMap<Integer, Double> amount_details = new HashMap<Integer, Double>();
-
         List<SliderAmount> list = mSliderAmountList;
-        for(SliderAmount s: list){
-            int id = s.getUserId();
-            double value = 0;
-            //if(id == id_pagante){
-            if(id == mUser.getId()){
-                //value = amount-s.getAmount();
-                value = mPaymentAmount-s.getAmount();
-            } else {
-                value = -s.getAmount();
+        if(!mIsTransferCheckBox.isChecked()){
+            for(SliderAmount s: list){
+                int id = s.getUserId();
+                double value = 0;
+                //if(id == id_pagante){
+                if(id == mUser.getId()){
+                    //value = amount-s.getAmount();
+                    value = mPaymentAmount-s.getAmount();
+                } else {
+                    value = -s.getAmount();
+                }
+                if(value!=0) amount_details.put(id,value);
             }
-            amount_details.put(id,value);
+        } else {
+            int idTo = ((SliderAmount) mUserToSpinner.getSelectedItem()).getUserId();
+            for(SliderAmount s: list){
+                int id = s.getUserId();
+                double value = 0;
+                if(id == mUser.getId()){
+                    value = mPaymentAmount;
+                } else if(id == idTo){
+                    value = -mPaymentAmount;
+                }
+                if(value!=0) amount_details.put(id,value);
+            }
         }
+
         return IdEncodingUtils.encodeAmountDetails(amount_details);
     }
 

@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.unibs.appwow.MyApplication;
+import it.unibs.appwow.R;
 import it.unibs.appwow.utils.DateUtils;
 
 /**
@@ -105,7 +107,9 @@ public class PaymentModel implements Parcelable {
     }
 
     public String getName() {
-        return mName;
+        if(mName.equals("#"))
+            return MyApplication.getAppContext().getResources().getString(R.string.debt_settlement);
+        else return mName;
     }
 
     public void setName(String name) {

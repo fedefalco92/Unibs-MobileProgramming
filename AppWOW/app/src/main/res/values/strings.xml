@@ -162,5 +162,6 @@
     <!-- <string name="notification_debt_solved_msg">%1$s gave %2$d %3$d to %4$d</string> -->
     <string name="notification_debt_solved_msg">A debt is solved.</string>
     <string name="edit_payment_success">Payment edited successfully!</string>
+    <string name="debt_settlement">Debt settlement</string>
 
 </resources>

@@ -104,4 +104,5 @@
     <string name="groups_string">Gruppi</string>
     <string name="prompt_cost_amount">Importo</string>
     <string name="edit_payment_success">Spesa modificata con successo!</string>
+    <string name="debt_settlement">Saldo debito</string>
 </resources>

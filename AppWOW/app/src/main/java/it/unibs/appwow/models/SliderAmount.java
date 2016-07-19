@@ -110,4 +110,9 @@ public class SliderAmount {
         SliderAmount os = (SliderAmount) o;
         return(os.hashCode() == hashCode());
     }
+
+    @Override
+    public String toString() {
+        return mFullName + " (" + mEmail + ")";
+    }
 }

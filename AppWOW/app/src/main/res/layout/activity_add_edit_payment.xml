@@ -115,7 +115,6 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 >
                 <EditText
                     android:id="@+id/add_payment_position_text"
@@ -143,7 +142,24 @@
             android:id="@+id/add_payment_position_map_fragment"
             />
     
-        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Payment or transfer?"
+                />
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="This is a transfer between 2 people"
+                android:id="@+id/add_payment_is_transfer_checkbox"/>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -151,6 +167,12 @@
             android:orientation="vertical"
             android:paddingTop="20dp"
             />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/add_payment_user_to_spinner"
+            android:visibility="gone"
+            android:paddingBottom="8dp"/>
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

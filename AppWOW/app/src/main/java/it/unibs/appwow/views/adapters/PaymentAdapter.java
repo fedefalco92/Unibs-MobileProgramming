@@ -125,20 +125,19 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 // TODO: 18/07/16 Sistemare Payment model con nuove aggiunte.
                 PaymentSpecialViewHolder itemSpecialHolder = (PaymentSpecialViewHolder) holder;
                 //NOTA: in questo caso (il cost è un pagamento di debito) l'id del "ricevente" è nelle note
-                /*
-                String userTo ="";
+
                 UserDAO dao = new UserDAO();
                 dao.open();
-                String [] info = dao.getSingleUserInfo(new Integer(itemPayment.getNotes()));
-                dao.close();*/
-                /*
-                itemSpecialHolder.paymentName.setText(itemPayment.getFullName() + " gave " + Amount.getAmountString(itemPayment.getAmount()) + " eur to " + info[0] );
+                String [] info = dao.getSingleUserInfo(new Integer(itemPayment.getIdUserTo()));
+                dao.close();
+
+                /*itemSpecialHolder.paymentName.setText(itemPayment.getFullName() + " gave " + Amount.getAmountString(itemPayment.getAmount()) + " eur to " + info[0] );
                 itemSpecialHolder.paymentAmount.setText("");
                 itemSpecialHolder.paymentDate.setText(DateUtils.dateLongToString(itemPayment.getUpdatedAt()));*/
                 itemSpecialHolder.paymentNameFrom.setText(itemPayment.getFullName() + " (" + itemPayment.getEmail() + ")");
                 // FIXME: 18/07/16 sistemare prendendo colonna idUserTo
-                //itemSpecialHolder.paymentNameTo.setText(info[0] + " (" + info[1] + ")");
-                itemSpecialHolder.paymentNameTo.setText("TO FIX");
+                itemSpecialHolder.paymentNameTo.setText(info[0] + " (" + info[1] + ")");
+                //itemSpecialHolder.paymentNameTo.setText("TO FIX");
                 itemSpecialHolder.paymentAmount.setText(Amount.getAmountString(itemPayment.getAmount()));
                 itemSpecialHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
                 break;
@@ -147,33 +146,6 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             default:
                 break;
         }
-
-
-        /*
-        if(holder instanceof PaymentViewHolder){
-            Payment itemPayment = mItems.get(position);
-            PaymentViewHolder itemHolder = (PaymentViewHolder) holder;
-            if(!itemPayment.isExchange()){
-                itemHolder.paymentName.setText(itemPayment.getName());
-                itemHolder.paymentAmount.setText(String.valueOf(itemPayment.getAmount()));
-                itemHolder.paymentDate.setText(DateUtils.dateLongToString(itemPayment.getUpdatedAt()));
-                itemHolder.paymentUser.setText(itemPayment.getFullName());
-                itemHolder.paymentEmail.setText(itemPayment.getEmail());
-            } else {
-                // FIXME: 11/07/2016 mettere altro layout, ovvero un viewType diverso...
-                //NOTA: in questo caso (il cost è un pagamento di debito) l'id del "ricevente" è nelle note
-                String userTo ="";
-                UserDAO dao = new UserDAO();
-                dao.open();
-                String [] info = dao.getSingleUserInfo(new Integer(itemPayment.getNotes()));
-                dao.close();
-                itemHolder.paymentName.setText(itemPayment.getFullName() + " gave " + Amount.getAmountString(itemPayment.getAmount()) + " eur to " + info[0] );
-                itemHolder.paymentAmount.setText("");
-                itemHolder.paymentDate.setText(DateUtils.dateLongToString(itemPayment.getUpdatedAt()));
-                itemHolder.paymentUser.setText("");
-                itemHolder.paymentEmail.setText("");
-            }
-        }*/
     }
 
     @Override
@@ -331,11 +303,13 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public void onClick(View v) {
             Log.d(TAG_LOG, "onClick position: " + getAdapterPosition());
+            mOnItemClickListener.onItemClicked(v,getAdapterPosition());
         }
 
         @Override
         public boolean onLongClick(View v) {
             Log.d(TAG_LOG, "onLongClick position: " + getAdapterPosition());
+            mOnItemLongClickListener.onItemLongClicked(v,getAdapterPosition());
             return true;
         }
     }
