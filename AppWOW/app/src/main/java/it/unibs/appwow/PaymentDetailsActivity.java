@@ -318,7 +318,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         getMenuInflater().inflate(R.menu.menu_payment_details, menu);
         //la modifica può essere effettuata da chi ha pagato o, nel caso di un debito, dal creditore
 
-        boolean isPayer = (mPayment.getIdUser() != mUser.getId());
+        boolean isPayer = (mPayment.getIdUser() == mUser.getId());
         Integer idUserTo = mPayment.getIdUserTo();
         boolean isUserTo = false;
         if(idUserTo != null){
