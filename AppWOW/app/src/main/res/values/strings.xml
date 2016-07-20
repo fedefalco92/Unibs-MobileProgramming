@@ -68,7 +68,7 @@
 
     <string name="toast_message_nothing_to_show">Nothing to show</string>
     <string name="cost_detail_notes">Notes</string>
-    <string name="cost_detail_payed_by">Payed by </string>
+    <string name="payment_detail_payed_by">Payed by </string>
     <string name="cost_detail_date_preposition">On</string>
     <string name="prompt_payment_name">Purpose</string>
     <string name="prompt_cost_amount">Amount</string>
@@ -165,5 +165,7 @@
     <string name="debt_settlement">Debt settlement</string>
     <string name="to">To</string>
     <string name="for_string">For</string>
+    <string name="payment_or_transfer">Payment or transfer?</string>
+    <string name="add_payment_transfer_checkbox_text">This is a transfer between two people</string>
 
 </resources>

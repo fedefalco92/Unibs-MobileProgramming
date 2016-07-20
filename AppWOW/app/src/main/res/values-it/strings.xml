@@ -25,7 +25,7 @@
     <string name="server_connection_error">Errore di connessione al server. Riprova.</string>
     <string name="error_invalid_group_name">Inserisci un nome valido per il gruppo</string>
     <string name="cost_detail_notes">Note</string>
-    <string name="cost_detail_payed_by">Spesa effettuata da </string>
+    <string name="payment_detail_payed_by">Pagato da </string>
     <string name="cost_detail_date_preposition">Il</string>
     <string name="prompt_payment_name">Motivo della spesa</string>
     <string name="action_add_payment">Aggiungi spesa</string>
@@ -107,4 +107,11 @@
     <string name="debt_settlement">Saldo debito</string>
     <string name="to">A</string>
     <string name="for_string">per</string>
+    <string name="prompt_payment_notes">Note</string>
+    <string name="prompt_payment_position">Luogo</string>
+    <string name="remove">Rimuovi</string>
+    <string name="add_group_members_member_delete_message">Vuoi rimuovere %1$s?</string>
+    <string name="add_group_members_member_delete_title">Rimuovi membro</string>
+    <string name="payment_or_transfer">Pagamento o scambio?</string>
+    <string name="add_payment_transfer_checkbox_text">Questo è uno scambio di denaro tra due persone</string>
 </resources>

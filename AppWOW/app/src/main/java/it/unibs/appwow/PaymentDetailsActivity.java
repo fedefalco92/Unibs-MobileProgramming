@@ -316,9 +316,23 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_payment_details, menu);
-        if(mPayment.getIdUser() != mUser.getId()){
-            menu.findItem(R.id.menu_payment_details_edit).setVisible(false);
+        //la modifica può essere effettuata da chi ha pagato o, nel caso di un debito, dal creditore
 
+        boolean isPayer = (mPayment.getIdUser() != mUser.getId());
+        Integer idUserTo = mPayment.getIdUserTo();
+        boolean isUserTo = false;
+        if(idUserTo != null){
+            if(idUserTo == mUser.getId()){
+                isUserTo = true;
+            }
+        }
+
+        boolean isAdmin = (mUser.getId() == mGroup.getIdAdmin());
+
+        Log.d(TAG_LOG, "ispayer: " + isPayer + ", isUserTo: " + isUserTo + "isAdmin: " + isAdmin);
+        if(isPayer || isUserTo || isAdmin){
+            menu.findItem(R.id.menu_payment_details_edit).setVisible(true);
+            menu.findItem(R.id.menu_payment_details_delete).setVisible(true);
         }
 
         return true;

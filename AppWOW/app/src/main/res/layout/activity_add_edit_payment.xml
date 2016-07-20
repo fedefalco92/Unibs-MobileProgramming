@@ -166,12 +166,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Payment or transfer?"
+                        android:text="@string/payment_or_transfer"
                         />
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="This is a transfer between 2 people"
+                        android:text="@string/add_payment_transfer_checkbox_text"
                         android:id="@+id/add_payment_is_transfer_checkbox"/>
                 </LinearLayout>
                 <LinearLayout
