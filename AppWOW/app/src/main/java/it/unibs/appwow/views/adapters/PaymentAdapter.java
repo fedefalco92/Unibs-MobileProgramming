@@ -113,7 +113,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case PAYMENT_CLASSIC_VIEW:
                 PaymentViewHolder itemClassicHolder = (PaymentViewHolder) holder;
                 itemClassicHolder.paymentName.setText(itemPayment.getName());
-                itemClassicHolder.paymentAmount.setText(String.valueOf(itemPayment.getAmount()));
+                itemClassicHolder.paymentAmount.setText(Amount.getAmountString(itemPayment.getAmount()));
                 itemClassicHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
                 /*
                 itemClassicHolder.paymentUser.setText(itemPayment.getFullName());

@@ -158,7 +158,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             @Override
             public void onPageSelected(int position) {
                 //Log.d(TAG_LOG,"Page Selected : "+position);
-                GroupDetailsActivity.this.invalidateOptionsMenu();
+                //GroupDetailsActivity.this.invalidateOptionsMenu();
                 mCurrentPage = position;
             }
 
@@ -223,7 +223,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     @Override
     public void onRefresh() {
         Log.d(TAG_LOG,"onRefresh");
-            mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setRefreshing(true);
         fetchGroupDetails();
     }
 
@@ -464,23 +464,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     protected void onResume() {
 
         Log.d(TAG_LOG,"onResume");
-
-        // QUESTA ROBA NON SAREBBE DOVUTA ESSERE QUI!!!!
-        /**
-         * Showing Swipe Refresh animation on activity create
-         * As animation won't start on onCreate, post runnable is used
-         */
-        // Il primo metodo chiamato e' onResume e viene eseguito lì.
-        // Resta comunque il problema di visualizzare una progress bar.
-        /*
-        mSwipeRefreshLayout.post(new Runnable() {
-                                     @Override
-                                     public void run() {
-                                         Log.d(TAG_LOG,"onCreate post");
-                                         fetchGroupDetails();
-                                     }
-                                 }
-        );*/
         showProgress(true);
         fetchGroupDetails();
         super.onResume();

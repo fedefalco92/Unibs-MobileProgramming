@@ -59,6 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceListItem"
+            android:inputType="numberDecimal"
             android:text="+30"
             android:layout_gravity="right"/>
 

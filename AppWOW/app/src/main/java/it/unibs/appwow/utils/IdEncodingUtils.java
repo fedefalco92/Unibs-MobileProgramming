@@ -64,6 +64,7 @@ public class IdEncodingUtils {
             }
         }*/
         res = res.substring(0, res.length()-1);
+        res = res.replace(',','.');
         Log.d("IDENCODINGUTILS", "AMOUNT DETAILS: " + res);
         return res;
     }

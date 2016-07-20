@@ -6,10 +6,10 @@
 
     <item android:drawable="@drawable/icon"
           android:adjustViewBounds="true"
-          android:scaleType="fitXY"
+          android:scaleType="fitCenter"
           android:width="100dp"
           android:height="100dp"
-           android:gravity="center">
+          android:gravity="center">
         <!--<bitmap
             android:gravity="center"
             android:src="@drawable/icon"/>-->

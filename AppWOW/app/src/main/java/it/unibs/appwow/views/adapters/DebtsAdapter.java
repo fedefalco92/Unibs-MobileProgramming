@@ -13,6 +13,7 @@ import java.util.List;
 
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.DebtDAO;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.parc.LocalUser;
 
@@ -83,7 +84,7 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         itemHolder.debtNameUserTo.setText(itemDebt.getFullNameTo());
         itemHolder.debtNameMailFrom.setText(itemDebt.getEmailFrom());
         itemHolder.debtNameMailTo.setText(itemDebt.getEmailTo());
-        itemHolder.debtAmount.setText(String.valueOf(itemDebt.getAmount()));
+        itemHolder.debtAmount.setText(Amount.getAmountString(itemDebt.getAmount()));
     }
 
     @Override
