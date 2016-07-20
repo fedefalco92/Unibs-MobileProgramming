@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 import it.unibs.appwow.R;
@@ -108,12 +109,13 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         Payment itemPayment = mItems.get(position);
-
+        Currency curr = Currency.getInstance(itemPayment.getCurrency());
         switch (holder.getItemViewType()) {
             case PAYMENT_CLASSIC_VIEW:
                 PaymentViewHolder itemClassicHolder = (PaymentViewHolder) holder;
                 itemClassicHolder.paymentName.setText(itemPayment.getName());
-                itemClassicHolder.paymentAmount.setText(Amount.getAmountString(itemPayment.getAmount()));
+
+                itemClassicHolder.paymentAmount.setText(curr.getSymbol() + " " + Amount.getAmountString(itemPayment.getAmount()));
                 itemClassicHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
                 /*
                 itemClassicHolder.paymentUser.setText(itemPayment.getFullName());
@@ -138,7 +140,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 // FIXME: 18/07/16 sistemare prendendo colonna idUserTo
                 itemSpecialHolder.paymentNameTo.setText(info[0] + " (" + info[1] + ")");
                 //itemSpecialHolder.paymentNameTo.setText("TO FIX");
-                itemSpecialHolder.paymentAmount.setText(Amount.getAmountString(itemPayment.getAmount()));
+                itemSpecialHolder.paymentAmount.setText(curr.getSymbol() + " " + Amount.getAmountString(itemPayment.getAmount()));
                 itemSpecialHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
                 break;
             case PAYMENT_EMPTY_VIEW:

@@ -9,147 +9,202 @@
     <include layout="@layout/include_toolbar"/>
 
 <ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_payment_details_container">
-
-<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/activity_payment_details_container"
+    tools:context=".PaymentDetailsActivity">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".PaymentDetailsActivity"
+    android:orientation="vertical"
     >
-
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Nome_spesa"
-        android:id="@+id/cost_detail_name"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/cost_detail_amount"
-        android:transitionName="payment_transaction"
-        android:ellipsize="end"
-        android:singleLine="true"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="+45"
-        android:id="@+id/cost_detail_amount"
-        android:paddingStart="16dp"
-        android:layout_alignTop="@+id/cost_detail_name"
-        android:layout_alignParentEnd="true"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/cost_detail_payed_by"
-        android:id="@+id/textView"
-        android:layout_below="@+id/cost_detail_name"
-        android:layout_alignParentStart="true"/>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_toEndOf="@id/textView"
-        android:layout_alignTop="@id/textView"
-        android:paddingLeft="16dp"
-        android:id="@+id/user_info_container">
-
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="fullName"
-            android:id="@+id/cost_detail_user_fullName"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Nome_spesa"
+            android:id="@+id/cost_detail_name"
+            android:transitionName="payment_transaction"
             android:ellipsize="end"
-            android:singleLine="true"/>
-
+            android:singleLine="true"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="eur"
+            android:id="@+id/payment_detail_currency"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:inputType="numberDecimal"
+            android:text="45"
+            android:id="@+id/cost_detail_amount"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="(email)"
-            android:id="@+id/cost_detail_email"
-            android:ellipsize="end"
-            android:singleLine="true"/>
+            android:text="22/06/2016 18:24"
+            android:id="@+id/cost_detail_date"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/cost_detail_payed_by"
+            android:id="@+id/textView"
+            android:layout_weight="1"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/user_info_container"
+            android:paddingStart="8dp"
+            android:layout_weight="3">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="fullName"
+                android:id="@+id/cost_detail_user_fullName"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="(email)"
+                android:id="@+id/cost_detail_email"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/payment_detail_user_to_container"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/to"
+            android:id="@+id/textView2"
+            android:layout_weight="1"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/user_to_info_container"
+            android:paddingStart="8dp"
+            android:layout_weight="3">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="fullName"
+                android:id="@+id/payment_detail_user_to_fullName"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="(email)"
+                android:id="@+id/payment_detail_user_to_email"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+        </LinearLayout>
     </LinearLayout>
 
+
     <!-- Text view con proprieta'  android:id="@+id/user_info_container"-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/cost_detail_date_preposition"
-        android:id="@+id/payment_detail_date_preposition"
-        android:layout_below="@+id/user_info_container"
-        android:layout_alignParentStart="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="22/06/2016 18:24"
-        android:id="@+id/cost_detail_date"
-        android:layout_below="@+id/payment_detail_date_preposition"
-        android:layout_alignParentStart="true"
-        android:paddingStart="8dp"/>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/cost_detail_notes"
+            android:id="@+id/cost_detail_notes_label"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notes here"
+            android:id="@+id/cost_detail_notes_text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:singleLine="false"
+            android:paddingStart="8dp"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/cost_detail_notes"
-        android:id="@+id/cost_detail_notes_label"
-        android:layout_below="@+id/cost_detail_date"
-        android:layout_alignParentStart="true"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Notes here"
-        android:id="@+id/cost_detail_notes_text"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_below="@+id/cost_detail_notes_label"
-        android:layout_alignParentStart="true"
-        android:ellipsize="end"
-        android:singleLine="false"
-        android:minLines="1"
-        android:maxLines="3"
-        android:paddingStart="8dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Place"
-        android:id="@+id/cost_detail_position_label"
-        android:layout_below="@+id/cost_detail_notes_text"
-        android:layout_alignParentStart="true"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Place here"
-        android:id="@+id/cost_detail_position_text"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_below="@+id/cost_detail_position_label"
-        android:layout_alignParentStart="true"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:paddingStart="8dp"/>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Place"
+            android:id="@+id/cost_detail_position_label"
+            android:layout_below="@+id/cost_detail_notes_text"
+            android:layout_alignParentStart="true"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Place here"
+                android:id="@+id/cost_detail_position_text"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_below="@+id/cost_detail_position_label"
+                android:layout_alignParentStart="true"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:paddingStart="8dp"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/payment_detail_map_button"
+                android:src="@drawable/ic_map_black_24dp"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <fragment
         android:layout_width="match_parent"
@@ -159,14 +214,6 @@
         android:layout_below="@+id/cost_detail_position_text"
         android:layout_marginTop="16dp"/>
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/payment_detail_map_button"
-        android:layout_above="@+id/cost_detail_position_map"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_map_black_24dp"
-        android:visibility="gone"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -183,7 +230,7 @@
         android:id="@+id/payment_detail_amount_details_container"
         android:layout_below="@id/payment_details_label"/>
 
-</RelativeLayout>
+</LinearLayout>
 </ScrollView>
 
 </LinearLayout>

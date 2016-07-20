@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -57,6 +58,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -114,7 +116,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     private EditText mPaymentNameEditText;
     private EditText mPaymentAmountEditText;
-    private Spinner mPaymentCurrency;
+    //private Spinner mPaymentCurrency;
+    private TextView mPaymentCurrency;
     private EditText mPaymentDateEditText;
     private EditText mPaymentTimeEditText;
     private EditText mPaymentNotesEditText;
@@ -142,6 +145,11 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_payment);
         mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         setTitle(getString(R.string.add_payment_activity_title));
 
         EDIT_MODE = false;
@@ -172,7 +180,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
         mPaymentNameEditText = (EditText) findViewById(R.id.add_payment_name);
         mPaymentAmountEditText = (EditText) findViewById(R.id.add_payment_amount);
-        mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, getMaxDecimalDigits())});
+        mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(getMaxDecimalDigits())});
         if(EDIT_MODE) mPaymentAmountEditText.setText(String.valueOf(mToEditPayment.getAmount()));
         mPaymentAmountEditText.addTextChangedListener(
                 new TextWatcher() {
@@ -241,15 +249,20 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         mPaymentDateEditText.setKeyListener(null);
         mPaymentTimeEditText.setKeyListener(null);
 
+        /*
         mPaymentCurrency = (Spinner) findViewById(R.id.add_payment_currency);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.currencies,android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mPaymentCurrency.setAdapter(adapter);
-        mPaymentCurrency.setSelection(0);
+        mPaymentCurrency.setSelection(0);*/
+
+        mPaymentCurrency = (TextView) findViewById(R.id.add_payment_currency);
+        mPaymentCurrency.setText("EUR");
 
         if(EDIT_MODE) {
             mPaymentNameEditText.setText(mToEditPayment.getName());
-            mPaymentCurrency.setSelection(adapter.getPosition(mToEditPayment.getCurrency()));
+            //mPaymentCurrency.setSelection(adapter.getPosition(mToEditPayment.getCurrency()));
+            mPaymentCurrency.setText(mToEditPayment.getCurrency());
             mPaymentNotesEditText.setText(mToEditPayment.getNotes());
             mPaymentPositionEditText.setText(mToEditPayment.getPosition());
 
@@ -359,7 +372,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         TextView fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
         TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
         EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
-        amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, getMaxDecimalDigits())});
+        amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(getMaxDecimalDigits())});
         ProgressBar seekBar = (ProgressBar) view.findViewById(R.id.payment_slider_item_slider);
 
         fullName.setText(sa.getFullName() + ((mUser.getId() == sa.getUserId())?" (you) ":""));
@@ -374,7 +387,9 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     public void retrieveAmountFromEditText(){
         String text = mPaymentAmountEditText.getText().toString();
-        if(!text.isEmpty()) mPaymentAmount = new Double(text);
+        //if(!text.isEmpty()) mPaymentAmount = new Double(text);
+
+        if(!text.isEmpty()) mPaymentAmount = Double.parseDouble(text.replace(',','.'));
         else mPaymentAmount = 0;
     }
 
@@ -409,6 +424,9 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.edit_payment_save_item:
                checkErrors();
             default:
@@ -423,13 +441,15 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         String notes = mPaymentNotesEditText.getText().toString();
         String position = mPaymentPositionEditText.getText().toString();
         String position_id = "";
+        String currency = mPaymentCurrency.getText().toString();
 
         if(!EDIT_MODE){
             //creazione payment
             String[] keys = {"idGroup", "idUser", "amount", "currency", "date", "name", "notes", "position", "position_id", "amount_details", "forAll", "isExchange"};
             String idGroup = String.valueOf(mGroup.getId());
             String idUser = String.valueOf(mUser.getId());
-            double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
+            //double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
+            double amountDouble = Double.parseDouble(mPaymentAmountEditText.getText().toString().replace(',','.'));
             String amount = String.valueOf(amountDouble);
 
             if(mPlace!=null){
@@ -438,7 +458,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
             String amount_details = computeAmountDetails();
             String dateLong = buildDate();
-            String currency = (String) mPaymentCurrency.getSelectedItem();
+            //String currency = (String) mPaymentCurrency.getSelectedItem();
+
 
             boolean forAll = isForAll();
 
@@ -476,14 +497,17 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                 requestParams.put("amount",String.valueOf(mPaymentAmount));
             }
 
-            double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
+            //double amountDouble = new Double(mPaymentAmountEditText.getText().toString());
+            double amountDouble = Double.parseDouble(mPaymentAmountEditText.getText().toString().replace(',','.'));
+
             String amount = String.valueOf(amountDouble);
             String amount_details = computeAmountDetails();
             if(!mToEditPayment.getAmountDetails().equals(amount_details)){
                 requestParams.put("amount_details", amount_details);
             }
 
-            String currency = (String) mPaymentCurrency.getSelectedItem();
+            //String currency = (String) mPaymentCurrency.getSelectedItem();
+
             Log.d(TAG_LOG, "CURRENCY" + currency);
             if(!currency.equals(mToEditPayment.getCurrency())){
                 requestParams.put("currency", currency);
@@ -856,7 +880,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             if (!hasFocus) {
                 String str = ((EditText) v).getText().toString();
                 double partialAmount = 0;
-                if (!str.isEmpty()) partialAmount = new Double(str);
+                //if (!str.isEmpty()) partialAmount = new Double(str);
+                if (!str.isEmpty()) partialAmount = Double.parseDouble(str.replace(',','.'));
                 double residualAmount = getResidualAmount();
                 if (sa.getAmount() == partialAmount) {
                     return;

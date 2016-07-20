@@ -46,7 +46,9 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
+import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.fragments.PaymentsFragment;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.MyPlace;
@@ -73,6 +75,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     private TextView mFullName;
     private TextView mEmail;
     private TextView mAmount;
+    private TextView mCurrency;
     private TextView mDate;
     private TextView mNotes;
     private TextView mNotesLabel;
@@ -127,9 +130,11 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         mEmail.setText("(" + mPayment.getEmail() + ")");
 
         mAmount = (TextView) findViewById(R.id.cost_detail_amount);
-        Currency curr = Currency.getInstance("EUR");
-
-        mAmount.setText(curr.getSymbol() + " " + mPayment.getAmount());
+        mAmount.setText(String.format(Locale.ROOT, "%.2f", mPayment.getAmount()));
+        mAmount.setText(Amount.getAmountString(mPayment.getAmount()));
+        mCurrency = (TextView) findViewById(R.id.payment_detail_currency);
+        Currency curr = Currency.getInstance(mPayment.getCurrency());
+        mCurrency.setText(curr.getSymbol());
 
         mNotes = (TextView) findViewById(R.id.cost_detail_notes_text);
         if(mPayment.getNotes() == null || mPayment.getNotes().isEmpty()){
@@ -183,30 +188,44 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         }
 
 
-        //details
-        mAmountDetailContainer = (LinearLayout) findViewById(R.id.payment_detail_amount_details_container);
 
-        String ad = mPayment.getAmountDetails();
-        List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(ad, mPayment.getIdUser(), mPayment.getAmount());
 
-        /*for(Amount a: amounts){
+        if(mPayment.isExchange()){
+            LinearLayout userToContainer = (LinearLayout) findViewById(R.id.payment_detail_user_to_container);
+            userToContainer.setVisibility(View.VISIBLE);
 
-            TextView tv = new TextView(this, null);
-            tv.setText(a.getFormattedString());
-            mAmountDetailContainer.addView(tv);
-        }*/
+            UserDAO dao = new UserDAO();
+            dao.open();
+            String [] user_to_info = dao.getSingleUserInfo(mPayment.getIdUserTo());
+            dao.close();
 
-        Amount first = null;
-        for(Amount a: amounts){
-            if(a.getUserId() == mUser.getId()){
-                first = a;
-                break;
+            String fullname = user_to_info[0];
+            String email = user_to_info[1];
+
+            TextView fullNameTV = (TextView) userToContainer.findViewById(R.id.payment_detail_user_to_fullName);
+            TextView emailTV = (TextView) userToContainer.findViewById(R.id.payment_detail_user_to_email);
+
+            fullNameTV.setText(fullname);
+            emailTV.setText("(" + email+ ")");
+        } else {
+            //details
+            mAmountDetailContainer = (LinearLayout) findViewById(R.id.payment_detail_amount_details_container);
+
+            String ad = mPayment.getAmountDetails();
+            List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(ad, mPayment.getIdUser(), mPayment.getAmount());
+
+            Amount first = null;
+            for(Amount a: amounts){
+                if(a.getUserId() == mUser.getId()){
+                    first = a;
+                    break;
+                }
             }
-        }
 
-        mAmountDetailContainer.addView(buildView(first));
-        for(Amount a: amounts){
-            if(a.getUserId() !=  mUser.getId()) mAmountDetailContainer.addView(buildView(a));
+            mAmountDetailContainer.addView(buildView(first));
+            for(Amount a: amounts){
+                if(a.getUserId() !=  mUser.getId()) mAmountDetailContainer.addView(buildView(a));
+            }
         }
     }
 

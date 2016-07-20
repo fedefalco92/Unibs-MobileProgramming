@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.List;
 
 import it.unibs.appwow.MyApplication;
@@ -92,7 +93,8 @@ public class AmountItemAdapter extends BaseAdapter {
             holder.fullName.setText(item.getFullName());
             holder.email.setText(item.getEmail());
         }
-        holder.amount.setText(item.getAmountString());
+        Currency curr = Currency.getInstance("EUR");
+        holder.amount.setText(curr.getSymbol() + " " + item.getAmountString());
 
         //colore
         if(item.getAmount() >0){
