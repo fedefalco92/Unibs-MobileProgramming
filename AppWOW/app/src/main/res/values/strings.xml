@@ -167,5 +167,10 @@
     <string name="for_string">For</string>
     <string name="payment_or_transfer">Payment or transfer?</string>
     <string name="add_payment_transfer_checkbox_text">This is a transfer between two people</string>
+    <string name="paid_by_colon">Paid by:</string>
+    <string name="for_string_colon">For:</string>
+    <string name="to_string_colon">To:</string>
+    <string name="given_by_string_colon">Given by:</string>
+    <string name="all">All</string>
 
 </resources>

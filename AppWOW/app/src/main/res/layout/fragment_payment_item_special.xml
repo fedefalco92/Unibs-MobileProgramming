@@ -4,10 +4,131 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeightLarge"
+    android:baselineAligned="false"
+    android:background="?android:attr/selectableItemBackground">
+    <!-- android:background="@drawable/add_group_member_list_item_background" -->
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+        android:layout_gravity="center"
+        android:layout_weight="2">
+
+        <TextView
+            android:id="@+id/payment_fragment_item_costname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:textColor="?android:attr/textColorPrimary"
+            android:text="Cost Name"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:transitionName="payment_transaction"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/given_by_string_colon"
+                android:paddingEnd="8dp"
+                android:paddingRight="8dp"/>
+
+            <TextView
+                android:id="@+id/payment_fragment_item_from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?android:attr/textColorSecondary"
+                android:text="fullName"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/to_string_colon"
+                android:paddingEnd="8dp"
+                android:paddingRight="8dp"/>
+
+            <TextView
+                android:id="@+id/payment_fragment_item_to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?android:attr/textColorSecondary"
+                android:text="fullName"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+
+        </LinearLayout>
+
+
+        <!--
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="email"
+            android:id="@+id/payment_fragment_item_email"/> -->
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingRight="16dp"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/payment_fragment_item_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:inputType="numberDecimal"
+            android:text="+30"
+            android:layout_gravity="right"/>
+
+        <TextView
+            android:id="@+id/payment_fragment_item_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="15/17/2016"
+            android:layout_gravity="right"/>
+
+    </LinearLayout>
+</LinearLayout>
+
+<!--
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:baselineAligned="false"
     android:background="?android:attr/selectableItemBackground">
-    <!-- android:background="@drawable/add_group_member_list_item_background"-->
+    android:background="@drawable/add_group_member_list_item_background"
 
     <LinearLayout
         android:layout_width="0dp"
@@ -36,23 +157,6 @@
             android:ellipsize="end"
             android:singleLine="true"/>
 
-        <!--
-        <TextView
-            android:id="@+id/payment_fragment_item_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="nome_utente"
-            android:ellipsize="end"
-            android:singleLine="true"/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="email"
-            android:id="@+id/payment_fragment_item_email"/> -->
 
     </LinearLayout>
 
@@ -88,66 +192,4 @@
             android:layout_gravity="right"/>
 
     </LinearLayout>
-</LinearLayout>
-
-    <!-- <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="?android:attr/listPreferredItemHeight"
-                    android:background="@drawable/add_group_member_list_item_background"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-        >
-        <TextView
-            android:id="@+id/payment_fragment_item_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="nome_utente"
-            android:layout_below="@+id/payment_fragment_item_costname"
-            android:layout_alignParentLeft="true"/>
-
-        <TextView
-            android:id="@+id/payment_fragment_item_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="+30"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-
-        <TextView
-
-            android:id="@+id/payment_fragment_item_costname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Cost Name"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:layout_alignParentStart="true"
-            android:layout_toEndOf="@+id/payment_fragment_item_email"/>
-
-
-
-        <TextView
-            android:id="@+id/payment_fragment_item_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="15/17/2016"
-            android:layout_below="@+id/payment_fragment_item_value"
-            android:layout_alignRight="@+id/payment_fragment_item_value"
-            android:layout_alignEnd="@+id/payment_fragment_item_value" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="email"
-            android:id="@+id/payment_fragment_item_email"
-            android:layout_alignStart="@+id/payment_fragment_item_username"
-            android:layout_below="@+id/payment_fragment_item_username"/>
-    </RelativeLayout> -->
+</LinearLayout> -->

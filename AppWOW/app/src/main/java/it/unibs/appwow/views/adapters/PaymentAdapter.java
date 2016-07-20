@@ -12,12 +12,14 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
+import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.utils.DateUtils;
+import it.unibs.appwow.utils.IdEncodingUtils;
 
 
 public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -114,34 +116,35 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case PAYMENT_CLASSIC_VIEW:
                 PaymentViewHolder itemClassicHolder = (PaymentViewHolder) holder;
                 itemClassicHolder.paymentName.setText(itemPayment.getName());
-
                 itemClassicHolder.paymentAmount.setText(curr.getSymbol() + " " + Amount.getAmountString(itemPayment.getAmount()));
-                itemClassicHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
-                /*
-                itemClassicHolder.paymentUser.setText(itemPayment.getFullName());
-                itemClassicHolder.paymentEmail.setText(itemPayment.getEmail());*/
-                itemClassicHolder.paymentUser.setText(itemPayment.getFullName() + " (" + itemPayment.getEmail() + ")");
+                itemClassicHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getDate()));
+                itemClassicHolder.paymentUsername.setText(itemPayment.getFullName() + " (" + itemPayment.getEmail() + ")");
+                if(itemPayment.isForAll()){
+                    itemClassicHolder.paymentUsersFor.setText(MyApplication.getAppContext().getResources().getString(R.string.all));
+                } else {
+                    String amountDetails = itemPayment.getAmountDetails();
+                    List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(amountDetails, itemPayment.getIdUser(), itemPayment.getAmount());
+                    String forString = "";
+                    for (Amount a : amounts) {
+                        forString = forString + a.getFullName() + ", ";
+                    }
+                    itemClassicHolder.paymentUsersFor.setText(forString.substring(0,forString.length()-2));
+                }
+
                 break;
 
             case PAYMENT_SPECIAL_VIEW:
-                // TODO: 18/07/16 Sistemare Payment model con nuove aggiunte.
                 PaymentSpecialViewHolder itemSpecialHolder = (PaymentSpecialViewHolder) holder;
-                //NOTA: in questo caso (il cost è un pagamento di debito) l'id del "ricevente" è nelle note
-
                 UserDAO dao = new UserDAO();
                 dao.open();
-                String [] info = dao.getSingleUserInfo(new Integer(itemPayment.getIdUserTo()));
+                String [] infoUserTo = dao.getSingleUserInfo(new Integer(itemPayment.getIdUserTo()));
                 dao.close();
 
-                /*itemSpecialHolder.paymentName.setText(itemPayment.getFullName() + " gave " + Amount.getAmountString(itemPayment.getAmount()) + " eur to " + info[0] );
-                itemSpecialHolder.paymentAmount.setText("");
-                itemSpecialHolder.paymentDate.setText(DateUtils.dateLongToString(itemPayment.getUpdatedAt()));*/
+                itemSpecialHolder.paymentName.setText(itemPayment.getName());
                 itemSpecialHolder.paymentNameFrom.setText(itemPayment.getFullName() + " (" + itemPayment.getEmail() + ")");
-                // FIXME: 18/07/16 sistemare prendendo colonna idUserTo
-                itemSpecialHolder.paymentNameTo.setText(info[0] + " (" + info[1] + ")");
-                //itemSpecialHolder.paymentNameTo.setText("TO FIX");
+                itemSpecialHolder.paymentNameTo.setText(infoUserTo[0] + " (" + infoUserTo[1] + ")");
                 itemSpecialHolder.paymentAmount.setText(curr.getSymbol() + " " + Amount.getAmountString(itemPayment.getAmount()));
-                itemSpecialHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getUpdatedAt()));
+                itemSpecialHolder.paymentDate.setText(DateUtils.dateReadableLongToString(itemPayment.getDate()));
                 break;
             case PAYMENT_EMPTY_VIEW:
                 break;
@@ -258,8 +261,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public TextView paymentName;
         public TextView paymentAmount;
         public TextView paymentDate;
-        public TextView paymentUser;
-        //public TextView paymentEmail;
+        public TextView paymentUsername;
+        public TextView paymentUsersFor;
 
         public PaymentViewHolder(View itemView) {
             super(itemView);
@@ -268,8 +271,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             paymentName = (TextView) itemView.findViewById(R.id.payment_fragment_item_costname);
             paymentAmount = (TextView)itemView.findViewById(R.id.payment_fragment_item_value);
             paymentDate = (TextView) itemView.findViewById(R.id.payment_fragment_item_date);
-            paymentUser = (TextView) itemView.findViewById(R.id.payment_fragment_item_username);
-            //paymentEmail = (TextView) itemView.findViewById(R.id.payment_fragment_item_email);
+            paymentUsername = (TextView) itemView.findViewById(R.id.payment_fragment_item_username);
+            paymentUsersFor = (TextView) itemView.findViewById(R.id.payment_fragment_item_for);
         }
 
         @Override
@@ -287,6 +290,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public class PaymentSpecialViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+        public TextView paymentName;
         public TextView paymentNameFrom;
         public TextView paymentNameTo;
         public TextView paymentAmount;
@@ -296,6 +300,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+            paymentName = (TextView) itemView.findViewById(R.id.payment_fragment_item_costname);
             paymentNameFrom = (TextView) itemView.findViewById(R.id.payment_fragment_item_from);
             paymentNameTo = (TextView) itemView.findViewById(R.id.payment_fragment_item_to);
             paymentAmount = (TextView)itemView.findViewById(R.id.payment_fragment_item_value);

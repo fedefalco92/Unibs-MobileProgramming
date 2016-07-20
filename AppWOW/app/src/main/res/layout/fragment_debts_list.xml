@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager">
-    <ListView
+
+    <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/transaction_list"
-        android:name="it.unibs.appwow.TransactionsFragment"
+        android:id="@+id/debts_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".fragments.DebtsFragment"
-        tools:listitem="@layout/fragment_debt_item"/>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="?android:attr/colorBackground"
+        tools:context=".fragments.DebtsFragment"/>
+
     <TextView
         android:id="@+id/debt_fragment_empty_view"
         android:layout_width="fill_parent"
@@ -22,4 +27,4 @@
         android:gravity="center"
         android:text="@string/transaction_fragment_empty_message"
         android:visibility="gone"/>
-</LinearLayout>
+</FrameLayout>

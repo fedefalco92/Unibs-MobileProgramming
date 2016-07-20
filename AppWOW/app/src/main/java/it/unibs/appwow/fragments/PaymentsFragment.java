@@ -217,7 +217,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_payment_list_recycler, container, false);
+        View view = inflater.inflate(R.layout.fragment_payment_list, container, false);
         return view;
     }
 

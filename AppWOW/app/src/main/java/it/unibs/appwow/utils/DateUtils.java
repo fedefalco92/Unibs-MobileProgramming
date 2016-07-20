@@ -1,9 +1,9 @@
 package it.unibs.appwow.utils;
 
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import it.unibs.appwow.MyApplication;
 
@@ -23,8 +23,8 @@ public class DateUtils {
     public static final String SIMPLE_DATE_FORMAT_ENG = "MM/dd/yyyy";
     public static final String SIMPLE_TIME_FORMAT = "HH:mm";
 
-    public static final String DATE_READABLE_FORMAT = "dd MMM";
-    public static final String DATE_READABLE_FORMAT_ENG = "MMM dd";
+    public static final String DATE_READABLE_FORMAT = "MMM dd";
+    public static final String DATE_READABLE_FORMAT_IT = "dd MMM";
 
     public static long dateStringToLong(String date){
         if(date.equalsIgnoreCase("null")) return 0L;
@@ -47,7 +47,10 @@ public class DateUtils {
     }
 
     public static String dateReadableLongToString(Long date){
-        return new SimpleDateFormat(DATE_READABLE_FORMAT_ENG).format(date);
+        if(Locale.getDefault().getLanguage().equalsIgnoreCase("it")){
+            return new SimpleDateFormat(DATE_READABLE_FORMAT_IT).format(date);
+        }
+        return new SimpleDateFormat(DATE_READABLE_FORMAT).format(date);
     }
 
     public static String longToSimpleDateString(Long date){

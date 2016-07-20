@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager">
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:app="http://schemas.android.com/apk/res-auto"
-          xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/payment_list"
-            android:name="it.unibs.appwow.CostListFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
 
-            tools:context=".fragments.PaymentsFragment"
-            tools:listitem="@layout/fragment_payment_item" />
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/payment_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="?android:attr/colorBackground"
+        tools:context=".fragments.PaymentsFragment"/>
+
     <TextView
         android:id="@+id/payment_fragment_empty_view"
         android:layout_width="fill_parent"
@@ -24,4 +28,4 @@
         android:text="@string/payment_fragment_empty_message"
         android:visibility="gone"/>
 
-</LinearLayout>
+</FrameLayout>

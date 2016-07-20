@@ -114,4 +114,9 @@
     <string name="add_group_members_member_delete_title">Rimuovi membro</string>
     <string name="payment_or_transfer">Pagamento o scambio?</string>
     <string name="add_payment_transfer_checkbox_text">Questo è uno scambio di denaro tra due persone</string>
+    <string name="paid_by_colon">Pagato da:</string>
+    <string name="for_string_colon">Per:</string>
+    <string name="to_string_colon">A:</string>
+    <string name="given_by_string_colon">Dato da:</string>
+    <string name="all">Tutti</string>
 </resources>
