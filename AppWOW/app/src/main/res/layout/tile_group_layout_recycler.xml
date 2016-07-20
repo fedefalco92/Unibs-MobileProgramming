@@ -13,6 +13,113 @@
     card_view:cardCornerRadius="2dp"
     card_view:cardBackgroundColor="@color/white">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <it.unibs.appwow.utils.graphicTools.SquareImageView
+            android:id="@+id/group_tile_imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:id="@+id/group_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingStart="8dp"
+            android:paddingBottom="8dp"
+            android:paddingEnd="8dp"
+            android:background="@color/md_grey_700"
+            android:layout_gravity="bottom">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:baselineAligned="true"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/group_tile_groupName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorPrimaryInverse"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold"
+                    android:text="Lorem Ipsum"
+                    android:ellipsize="end"
+                    android:singleLine="true"/>
+
+                <TextView
+                    android:id="@+id/group_tile_personalStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorPrimaryInverse"
+                    android:textAppearance="?android:attr/textAppearance"
+                    android:text="123456789"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="true"
+                android:layout_gravity="center">
+
+                <!-- <TextView
+                    android:id="@+id/group_tile_modified_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="modified"
+                    android:textColor="?android:attr/textColorPrimaryInverse"/> -->
+
+                <ImageView
+                    android:id="@+id/group_tile_image_new"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_new_releases_white_24dp"
+                    android:padding="4dp"
+                    android:visibility="visible"/>
+
+                <ImageView
+                    android:id="@+id/group_tile_image_favorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_favorite_border_white_24dp"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+
+
+</android.support.v7.widget.CardView>
+<!--
+
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="5dp"
+    card_view:cardElevation="2dp"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardBackgroundColor="@color/white">
+
     <it.unibs.appwow.utils.graphicTools.SquareImageView
         android:id="@+id/group_tile_imageView"
         android:layout_width="match_parent"
@@ -74,11 +181,12 @@
 
     </RelativeLayout>
 
-</android.support.v7.widget.CardView>
+</android.support.v7.widget.CardView> -->
 
 
 
-<!-- COMMENTATO
+
+<!-- COMMENTATO VECCHISSIMA VERSIONE
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container_group"
     android:layout_width="match_parent"

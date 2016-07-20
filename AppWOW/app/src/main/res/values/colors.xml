@@ -13,8 +13,8 @@
     <color name="green">@color/md_green_A400</color>
     <color name="black">@color/md_black_1000</color>
     <color name="white">@color/md_white_1000</color>
-    <color name="item_pressed_color">@color/colorAccent</color>
-    <color name="item_default_color">#ffffff</color>
+    <color name="item_pressed_color">@color/md_grey_300</color>
+    <color name="item_default_color">@color/md_white_1000</color>
 
 
 <!-- google's material design colours from

@@ -3,17 +3,24 @@ package it.unibs.appwow.views.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Collections;
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Locale;
+
+import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.models.Amount;
@@ -94,7 +101,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     }
 
     @Override
-    public void onBindViewHolder(GroupViewHolder holder, int position) {
+    public void onBindViewHolder(final GroupViewHolder holder, int position) {
         // anche qui
         GroupModel itemGroup = mItems.get(position);
         holder.groupName.setText(itemGroup.getGroupName());
@@ -110,13 +117,23 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         if(bm!=null){
             holder.groupImageView.setImageBitmap(bm);
         } else {
-            holder.groupImageView.setImageResource(R.drawable.ic_group_black_24dp);
+            holder.groupImageView.setImageResource(R.drawable.ic_group_black_48dp);
         }
 
+        // FIXME: 20/07/16 Sistemare PAlette
+        /*Palette.from(bm).generate(new Palette.PaletteAsyncListener() {
+            public void onGenerated(Palette p) {
+                holder.layout.setBackgroundColor(p.getVibrantColor(mContext.getResources().getColor(R.color.md_grey_700)));
+            }
+        });*/
+
+
         if(itemGroup.isHighlighted()){
-            holder.groupModified.setText("NEW");
+            //holder.groupModified.setText("N");
+            holder.groupImageNew.setVisibility(View.VISIBLE);
         } else {
-            holder.groupModified.setText("UP TO DATE");
+            //holder.groupModified.setText("U");
+            holder.groupImageNew.setVisibility(View.INVISIBLE);
         }
 
         GroupDAO dao = new GroupDAO();
@@ -124,7 +141,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         Double userAmount = dao.getAmount(itemGroup.getId(), mLocalUser.getId());
         dao.close();
         if (userAmount!=null){
-            holder.personalStatus.setText(Amount.getAmountString(userAmount));
+            //// FIXME: 20/07/16 Da sistemare currency...
+            Currency curr = Currency.getInstance(Locale.getDefault());
+            holder.personalStatus.setText(curr.getSymbol() + " " + Amount.getAmountString(userAmount));
             if(userAmount>0){
                 holder.personalStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green));
             } else if(userAmount <0){
@@ -188,10 +207,15 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
     public class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        public ImageView groupImageView;
-        public TextView groupName;
-        public TextView groupModified;
-        public TextView personalStatus;
+        private ImageView groupImageView;
+        private TextView groupName;
+        //private TextView groupModified;
+        private TextView personalStatus;
+        private ImageView groupImageNew;
+        private ImageView groupImageFavorite;
+
+        private LinearLayout layout;
+
 
         public GroupViewHolder(View itemView) {
             super(itemView);
@@ -199,8 +223,20 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             itemView.setOnLongClickListener(this);
             groupImageView = (ImageView) itemView.findViewById(R.id.group_tile_imageView);
             groupName = (TextView)itemView.findViewById(R.id.group_tile_groupName);
-            groupModified = (TextView) itemView.findViewById(R.id.group_tile_modified_indicator);
             personalStatus = (TextView) itemView.findViewById(R.id.group_tile_personalStatus);
+
+            //groupModified = (TextView) itemView.findViewById(R.id.group_tile_modified_indicator);
+            groupImageNew = (ImageView) itemView.findViewById(R.id.group_tile_image_new);
+            layout = (LinearLayout) itemView.findViewById(R.id.group_details);
+
+            groupImageFavorite = (ImageView) itemView.findViewById(R.id.group_tile_image_favorite);
+            groupImageFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: 20/07/16 completare
+                    groupImageFavorite.setImageResource(R.drawable.ic_favorite_white_24dp);
+                }
+            });
         }
 
         // todo Da sistemare con implementazione piu' efficiente, anche se per ora funziona

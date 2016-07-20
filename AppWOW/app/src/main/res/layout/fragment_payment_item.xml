@@ -2,12 +2,22 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeightLarge"
     android:baselineAligned="false"
-    android:background="?android:attr/selectableItemBackground">
-    <!-- android:background="@drawable/add_group_member_list_item_background" -->
+    android:background="?attr/selectableItemBackground">
+    <!-- android:background="@drawable/list_item_background" -->
+
+
+    <!--
+    app:headerLayout="@layout/drawer_header"
+    app:itemIconTint="@color/drawer_item"  // notice here
+    app:itemTextColor="@color/drawer_item" // and here
+    app:itemBackground="@color/drawer_item"// and here for changing the background color of the item which is checked
+    app:menu="@menu/menu_drawer" -->
 
     <LinearLayout
         android:layout_width="0dp"
