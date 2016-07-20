@@ -1,7 +1,10 @@
 package it.unibs.appwow.utils;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -71,5 +74,33 @@ public class DateUtils {
 
     private static String padWithZeros(int num){
         return String.format("%02d", num);
+    }
+
+
+    public static long buildDateLong(String date_string, String time_string) {
+        long date = 0L;
+        try {
+            String[] date_splitted = date_string.split("/");
+            String[] time_splitted = time_string.split(":");
+
+            int day = Integer.parseInt(date_splitted[0]);
+            int month = Integer.parseInt(date_splitted[1]);
+            int year = Integer.parseInt(date_splitted[2]);
+            int hourOfDay = Integer.parseInt(time_splitted[0]);
+            int minOfDay = Integer.parseInt(time_splitted[1]);
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR,year);
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+            cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            cal.set(Calendar.MINUTE, minOfDay);
+            date =  cal.getTimeInMillis();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG_LOG, "error in building date");
+        }
+        Log.d(TAG_LOG, "BUILDED DATE: " + DateUtils.dateLongToString(date));
+        return date;
     }
 }

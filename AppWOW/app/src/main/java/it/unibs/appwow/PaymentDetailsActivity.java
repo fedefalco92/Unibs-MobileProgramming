@@ -194,6 +194,9 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
             LinearLayout userToContainer = (LinearLayout) findViewById(R.id.payment_detail_user_to_container);
             userToContainer.setVisibility(View.VISIBLE);
 
+            TextView detailsLabel = (TextView) findViewById(R.id.payment_details_label);
+            detailsLabel.setVisibility(View.GONE);
+
             UserDAO dao = new UserDAO();
             dao.open();
             String [] user_to_info = dao.getSingleUserInfo(mPayment.getIdUserTo());
@@ -207,6 +210,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
             fullNameTV.setText(fullname);
             emailTV.setText("(" + email+ ")");
+
         } else {
             //details
             mAmountDetailContainer = (LinearLayout) findViewById(R.id.payment_detail_amount_details_container);

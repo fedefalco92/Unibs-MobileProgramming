@@ -174,13 +174,11 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
                 boolean isChecked = item.isChecked();
                 if(isChecked){
                     Log.d(TAG_LOG,"isChecked");
-                    item.setChecked(false);
-                    item.setTitle("Hide solved debts");
+                    item.setChecked(false);;
                     mAdapter.animateTo(mItems);
                 } else {
                     Log.d(TAG_LOG,"isNotChecked");
                     item.setChecked(true);
-                    item.setTitle("Show solved debts");
                     final List<Payment> filteredModelList = filterIsNotExchange(mItems);
                     mAdapter.animateTo(filteredModelList);
                     mRecyclerView.scrollToPosition(0);

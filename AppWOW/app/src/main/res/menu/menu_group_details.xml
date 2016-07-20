@@ -2,14 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="it.unibs.appwow.GroupDetailsActivity">
-    <item
+    <!--<item
         android:id="@+id/action_edit_group"
         android:orderInCategory="1"
         android:title="@string/action_edit_group"
-        app:showAsAction="never" />
+        app:showAsAction="never" />-->
     <item
         android:id="@+id/action_show_group_info"
         android:orderInCategory="2"
         android:title="@string/action_show_group_info"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_info_white_24dp"/>
 </menu>

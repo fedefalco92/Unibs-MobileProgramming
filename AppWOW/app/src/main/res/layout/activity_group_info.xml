@@ -131,4 +131,10 @@
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        app:layout_anchor="@id/app_bar_layout"
+        app:layout_anchorGravity="bottom|right|end"
+        android:src="@drawable/ic_mode_edit_white_24dp"
+        style="@style/FabStyle"/>
 </android.support.design.widget.CoordinatorLayout>

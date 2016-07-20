@@ -5,12 +5,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +21,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,6 +68,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
+    private boolean mScrollingDisabled;
 
     //private RoundedImageView mGroupImageView;
     private SquareImageView mGroupImageView;
@@ -89,6 +93,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         Collections.reverse(mMembers);
 
         initActivityTransitions();
+        mScrollingDisabled = false;
 
         mGroupInfoContainerView = findViewById(R.id.group_info_container);
         mProgressView = findViewById(R.id.group_info_progress);
@@ -133,6 +138,7 @@ public class GroupInfoActivity extends AppCompatActivity {
             });
         } else {
             disableScrolling();
+            mScrollingDisabled = true;
         }
 
 
@@ -194,6 +200,16 @@ public class GroupInfoActivity extends AppCompatActivity {
         mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(primary));
         mCollapsingToolbarLayout.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
         supportStartPostponedEnterTransition();
+        updateBackground((FloatingActionButton) findViewById(R.id.fab), palette);
+        supportStartPostponedEnterTransition();
+    }
+
+    private void updateBackground(FloatingActionButton fab, Palette palette) {
+        int lightVibrantColor = palette.getLightVibrantColor(ContextCompat.getColor(this,android.R.color.white));
+        int vibrantColor = palette.getVibrantColor(ContextCompat.getColor(this, R.color.colorAccent));
+
+        fab.setRippleColor(lightVibrantColor);
+        fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
     }
 
     @Override
@@ -350,7 +366,23 @@ public class GroupInfoActivity extends AppCompatActivity {
             return true;
         }
 
+        if(id == R.id.edit){
+            Intent editGroupIntent = new Intent (this, EditGroupActivity.class);
+            //editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            editGroupIntent.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
+            startActivity(editGroupIntent);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_group_edit, menu);
+
+        if(mScrollingDisabled)
+        menu.findItem(R.id.edit).setVisible(true);
+
+        return super.onCreateOptionsMenu(menu);
+    }
 }

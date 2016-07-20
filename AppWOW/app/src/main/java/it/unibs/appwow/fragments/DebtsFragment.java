@@ -36,6 +36,7 @@ import it.unibs.appwow.R;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -52,6 +53,7 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
 
     private static final String TAG_LOG = DebtsFragment.class.getSimpleName();
     private GroupModel mGroup;
+    private LocalUser mLocalUser;
     private boolean mShowOnlyYourDebts;
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -87,6 +89,7 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLocalUser = LocalUser.load(getContext());
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -276,37 +279,40 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
 
     @Override
     public boolean onItemLongClicked(final View view, int position) {
-        final Debt selectedItem = (Debt) mAdapter.getItem(position);
-        Log.d(TAG_LOG, "onItemLongClick position: " + position);
-        Vibrator vib = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-        if(vib.hasVibrator()) vib.vibrate(50);
 
-        final int pos = position;
-        view.setSelected(true);
-        Resources res = getResources();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(res.getString(R.string.debt_settle_title));
-        builder.setMessage(String.format(res.getString(R.string.debt_settle_message), selectedItem.getFullNameFrom(), Amount.getAmountString(selectedItem.getAmount())));
-        builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                showProgressDialog(selectedItem);
-            }
-        });
-        builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                view.setSelected(false);
-            }
-        });
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                view.setSelected(false);
-            }
-        });
-        builder.show();
+        final Debt selectedItem = (Debt) mAdapter.getItem(position);
+        if(selectedItem.getIdTo() == mLocalUser.getId()){
+            Log.d(TAG_LOG, "onItemLongClick position: " + position);
+            Vibrator vib = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+            if(vib.hasVibrator()) vib.vibrate(50);
+
+            final int pos = position;
+            view.setSelected(true);
+            Resources res = getResources();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(res.getString(R.string.debt_settle_title));
+            builder.setMessage(String.format(res.getString(R.string.debt_settle_message), selectedItem.getFullNameFrom(), Amount.getAmountString(selectedItem.getAmount())));
+            builder.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    showProgressDialog(selectedItem);
+                }
+            });
+            builder.setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    dialog.dismiss();
+                    view.setSelected(false);
+                }
+            });
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    view.setSelected(false);
+                }
+            });
+            builder.show();
+        }
         return true;
     }
 

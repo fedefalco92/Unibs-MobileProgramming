@@ -183,14 +183,14 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        /*
         if (id == R.id.action_edit_group) {
             Intent editGroupIntent = new Intent (this, EditGroupActivity.class);
             //editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             editGroupIntent.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
             startActivity(editGroupIntent);
-            // TODO: 12/07/2016  cosa fare dopo?
             return true;
-        }
+        }*/
 
         if(id == R.id.action_show_group_info){
             Intent showGroupInfo = new Intent (this, GroupInfoActivity.class);
@@ -340,9 +340,9 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
                                 JSONObject pivot = userJs.getJSONObject("pivot");
                                 UserGroupModel piv = UserGroupModel.create(pivot);
-                                if(!piv.isUpdated()){
+                                //if(!piv.isUpdated()){
                                     ugdao.insertUserGroup(piv);
-                                }
+                                //}
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

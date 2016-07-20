@@ -58,10 +58,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -182,7 +180,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         mPaymentNameEditText = (EditText) findViewById(R.id.add_payment_name);
         mPaymentAmountEditText = (EditText) findViewById(R.id.add_payment_amount);
         mPaymentAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(getMaxDecimalDigits())});
-        if(EDIT_MODE) mPaymentAmountEditText.setText(String.valueOf(mToEditPayment.getAmount()));
+        if(EDIT_MODE) mPaymentAmountEditText.setText(Amount.getAmountString(mToEditPayment.getAmount()));
         mPaymentAmountEditText.addTextChangedListener(
                 new TextWatcher() {
                     @Override
@@ -288,11 +286,22 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         //seleziono gli utenti da mostrare nello spinner
         List<SliderAmount> spinnerItems = new ArrayList<SliderAmount>();
         int localUserId = mUser.getId();
-        for(SliderAmount s: mSliderAmountList){
-            if(s.getUserId() != localUserId){
-                spinnerItems.add(s);
+        if(EDIT_MODE && mToEditPayment.isExchange()){
+            int idUserTo = mToEditPayment.getIdUserTo();
+            for(SliderAmount s: mSliderAmountList){
+                if(s.getUserId() == idUserTo){
+                    spinnerItems.add(s);
+                    break;
+                }
+            }
+        } else{
+            for(SliderAmount s: mSliderAmountList){
+                if(s.getUserId() != localUserId){
+                    spinnerItems.add(s);
+                }
             }
         }
+
         ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(this,
                 android.R.layout.simple_spinner_item, spinnerItems);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -319,13 +328,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                 mSliderListView.setVisibility(View.GONE);
                 mUserToSpinner.setVisibility(View.VISIBLE);
                 int idUserTo = mToEditPayment.getIdUserTo();
-                SliderAmount userTo = null;
-                for(SliderAmount s: mSliderAmountList){
-                    if(s.getUserId() == idUserTo){
-                        userTo = s;
-                    }
-                }
-                mUserToSpinner.setSelection(spinnerArrayAdapter.getPosition(userTo));
+                mUserToSpinner.setEnabled(false);
+                mUserToSpinner.setSelection(0);
             }
         }
 
@@ -474,7 +478,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             }
 
             String amount_details = computeAmountDetails();
-            String dateLong = buildDate();
+            String dateLong = buildDateLongToString();
             //String currency = (String) mPaymentCurrency.getSelectedItem();
 
 
@@ -504,7 +508,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                 position_id = mPlace.getId();
             }
 
-            String dateLong = buildDate();
+            String dateLong = buildDateLongToString();
 
             String[] values = {dateLong, name, notes, position, position_id};
             requestParams = WebServiceRequest.createParametersMap(keys, values);
@@ -547,9 +551,11 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         MyApplication.getInstance().addToRequestQueue(postRequest);
     }
 
-    private String buildDate(){
+    private String buildDateLongToString(){
         String date_string = mPaymentDateEditText.getText().toString();
-        return "";
+        String time_string = mPaymentTimeEditText.getText().toString();
+        long date = DateUtils.buildDateLong(date_string, time_string);
+        return (date!=0L)?String.valueOf(date):"";
     }
 
     private Response.Listener<String> responseListener() {

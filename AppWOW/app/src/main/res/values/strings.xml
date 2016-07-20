@@ -4,7 +4,7 @@
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
+    <string name="prompt_email">E-mail</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -158,7 +158,7 @@
     <string name="notification_payment_modified_msg">%1$s was modified.</string>
     <string name="notification_payment_deleted">Payment deleted!</string>
     <string name="notification_payment_deleted_msg">%1$s was deleted.</string>
-    <string name="notification_debt_solved">Debt solved</string>
+    <string name="notification_debt_solved">Debt settled</string>
     <!-- <string name="notification_debt_solved_msg">%1$s gave %2$d %3$d to %4$d</string> -->
     <string name="notification_debt_solved_msg">A debt is solved.</string>
     <string name="edit_payment_success">Payment edited successfully!</string>
@@ -172,6 +172,7 @@
     <string name="to_string_colon">To:</string>
     <string name="given_by_string_colon">Given by:</string>
     <string name="all">All</string>
+    <string name="hide_show_transfers_hint">Show/hide transfers</string>
     <string name="error_invalid_amount_user">Cannot add a payment just for you!</string>
 
 </resources>

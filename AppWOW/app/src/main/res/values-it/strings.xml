@@ -3,7 +3,7 @@
     <string name="app_name">AppWOW</string>
     <string name="gallery">Galleria</string>
     <string name="send">Invia</string>
-    <string name="prompt_password"></string>
+    <string name="prompt_password">Password</string>
     <string name="share">Condividi</string>
     <string name="action_offline_mode">Continua senza registrazione</string>
     <string name="welcome_message">Benvenuto in AppWOW</string>
@@ -114,6 +114,16 @@
     <string name="add_group_members_member_delete_title">Rimuovi membro</string>
     <string name="payment_or_transfer">Pagamento o scambio?</string>
     <string name="add_payment_transfer_checkbox_text">Questo è uno scambio di denaro tra due persone</string>
+    <string name="action_sign_in">Accedi o registrati</string>
+    <string name="action_sign_in_short">Accedi</string>
+    <string name="favorite_groups_string">Gruppi preferiti</string>
+    <string name="prompt_email">E-mail</string>
+    <string name="prompt_fullname">Nome</string>
+    <string name="prompt_password_confirm">Conferma password</string>
+    <string name="search">Cerca</string>
+    <string name="select_image_group">Scegli un\'immagine per il gruppo</string>
+    <string name="hide_show_transfers_hint">Mostra/nascondi scambi</string>
+    <string name="hello_blank_fragment"></string>
     <string name="paid_by_colon">Pagato da:</string>
     <string name="for_string_colon">Per:</string>
     <string name="to_string_colon">A:</string>
