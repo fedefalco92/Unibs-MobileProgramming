@@ -121,7 +121,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 itemClassicHolder.paymentUsername.setText(itemPayment.getFullName() + " (" + itemPayment.getEmail() + ")");
                 if(itemPayment.isForAll()){
                     itemClassicHolder.paymentUsersFor.setText(MyApplication.getAppContext().getResources().getString(R.string.all));
-                } else {
+                } else{
                     String amountDetails = itemPayment.getAmountDetails();
                     List<Amount> amounts = IdEncodingUtils.decodeAmountDetails(amountDetails, itemPayment.getIdUser(), itemPayment.getAmount());
                     String forString = "";

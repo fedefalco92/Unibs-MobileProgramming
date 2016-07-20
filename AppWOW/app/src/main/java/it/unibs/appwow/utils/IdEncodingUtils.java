@@ -63,9 +63,12 @@ public class IdEncodingUtils {
                 res.append(AMOUNT_SEPARATOR);
             }
         }*/
-        res = res.substring(0, res.length()-1);
-        res = res.replace(',','.');
-        Log.d("IDENCODINGUTILS", "AMOUNT DETAILS: " + res);
+        if(!res.isEmpty()){
+            res = res.substring(0, res.length()-1);
+            res = res.replace(',','.');
+            Log.d("IDENCODINGUTILS", "AMOUNT DETAILS: " + res);
+        }
+
         return res;
     }
 

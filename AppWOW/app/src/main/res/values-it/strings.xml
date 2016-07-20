@@ -119,4 +119,5 @@
     <string name="to_string_colon">A:</string>
     <string name="given_by_string_colon">Dato da:</string>
     <string name="all">Tutti</string>
+    <string name="error_invalid_amount_user">Non puoi aggiungere un pagamento solo per te!</string>
 </resources>

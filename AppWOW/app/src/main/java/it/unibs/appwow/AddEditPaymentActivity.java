@@ -135,6 +135,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private List<SliderAmount> mSliderAmountList;
     private Set<SliderAmount> mLockedAmount;
     private Set<SliderAmount> mUnlockedAmount;
+    private SliderAmount mLocalUserSliderAmount;
 
     private double mPaymentAmount;
 
@@ -225,15 +226,15 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
         mSliderListView = (LinearLayout) findViewById(R.id.add_payment_slider_listview);
 
-        SliderAmount first = null;
+        mLocalUserSliderAmount = null;
         for(final SliderAmount sa: mSliderAmountList){
             if(sa.getUserId() == mUser.getId()){
-                first = sa;
+                mLocalUserSliderAmount = sa;
                 break;
             }
         }
 
-        mSliderListView.addView(buildView(first));
+        mSliderListView.addView(buildView(mLocalUserSliderAmount));
         for(final SliderAmount sa: mSliderAmountList){
             if(sa.getUserId() !=  mUser.getId()) mSliderListView.addView(buildView(sa));
         }
@@ -340,7 +341,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private void checkErrors(){
         boolean nomeOk = Validator.isCostNameValid(mPaymentNameEditText.getText().toString());
         boolean amountOk = Validator.isAmountValid(mPaymentAmountEditText.getText().toString());
-        if(nomeOk && amountOk){
+        boolean paymentOk = verifyAmounts();
+        if(nomeOk && amountOk && paymentOk){
             sendPostRequest();
         } else {
             if(!nomeOk){
@@ -351,7 +353,22 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                 mPaymentAmountEditText.setError(getString(R.string.error_invalid_amount));
                 mPaymentAmountEditText.requestFocus();
             }
+            if(!paymentOk){
+                mLocalUserSliderAmount.getAmountView().setError(getString(R.string.error_invalid_amount_user));
+                mLocalUserSliderAmount.getAmountView().requestFocus();
+            }
         }
+    }
+
+    private boolean verifyAmounts(){
+        Log.d(TAG_LOG,"verifyAmounts");
+        boolean res = true;
+        Log.d(TAG_LOG,"mPayment Amount" + mPaymentAmount);
+        Log.d(TAG_LOG,"mLocalUserSliderAmount" + mLocalUserSliderAmount.getAmount());
+        if(mPaymentAmount == mLocalUserSliderAmount.getAmount()){
+            res = false;
+        }
+        return res;
     }
 
     public void showDatePicker(View v){
