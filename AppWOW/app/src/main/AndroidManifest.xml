@@ -33,7 +33,8 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login"/>
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"/>
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
