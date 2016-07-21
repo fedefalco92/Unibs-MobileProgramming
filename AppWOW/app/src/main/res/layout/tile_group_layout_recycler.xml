@@ -4,6 +4,7 @@
 <android.support.v7.widget.CardView
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,7 +14,9 @@
     card_view:cardCornerRadius="2dp"
     card_view:cardBackgroundColor="@color/white">
 
+
     <LinearLayout
+        android:id="@+id/anchor_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -39,28 +42,44 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:baselineAligned="true"
                 android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/group_tile_groupName"
+                <!-- <ImageView
+                    android:id="@+id/group_tile_image_new"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold"
-                    android:text="Lorem Ipsum"
-                    android:ellipsize="end"
-                    android:singleLine="true"/>
+                    android:src="@drawable/circle"
+                    android:layout_gravity="center"
+                    android:paddingRight="8dp"
+                    android:visibility="gone"></ImageView> -->
 
-                <TextView
-                    android:id="@+id/group_tile_personalStatus"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
-                    android:textAppearance="?android:attr/textAppearance"
-                    android:text="123456789"/>
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/group_tile_groupName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?android:attr/textColorPrimaryInverse"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Lorem Ipsum"
+                        android:textStyle="bold"
+                        android:ellipsize="end"
+                        android:singleLine="true"/>
+
+                    <TextView
+                        android:id="@+id/group_tile_personalStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?android:attr/textColorPrimaryInverse"
+                        android:textAppearance="?android:attr/textAppearance"
+                        android:text="123456789"/>
+
+                </LinearLayout>
 
 
             </LinearLayout>
@@ -79,13 +98,13 @@
                     android:text="modified"
                     android:textColor="?android:attr/textColorPrimaryInverse"/> -->
 
-                <ImageView
+               <ImageView
                     android:id="@+id/group_tile_image_new"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_new_releases_white_24dp"
                     android:padding="4dp"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>
 
                 <ImageView
                     android:id="@+id/group_tile_image_trending"
