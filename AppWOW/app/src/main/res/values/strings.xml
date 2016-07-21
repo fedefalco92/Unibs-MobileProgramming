@@ -133,7 +133,7 @@
     <string name="group_info_group_deleted_successfully">Group deleted successfully</string>
     <string name="group_info_group_not_present">Group doesn\'t exists any more</string>
     <string name="group_info_dialog_delete_title">Delete group?</string>
-    <string name="group_info_dialog_delete_message">Do you really want to delete this group? This action CAN NOT BE UNDONE and will affect all members</string>
+    <string name="group_info_dialog_delete_message">Do you really want to delete this group? This action CAN NOT BE UNDONE and the group will be deleted also on the device of any member</string>
     <string name="action_show_group_info">Group info</string>
     <string name="cancel">Cancel</string>
     <string name="group_fragment_empty_message">No groups to show</string>
@@ -266,6 +266,16 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="add_member">Add member</string>
+    <string name="reset_group">Clear all payments</string>
+    <string name="group_info_dialog_reset_title">Clear all payments?</string>
+    <string name="group_info_dialog_reset_message">Do you really want to clear all payments? This action CAN NOT BE UNDONE and will affect all members</string>
+    <string name="group_info_group_reset_successfully">All payments have been successfully deleted</string>
+    <string name="delete_group">Delete group</string>
+    <string name="edit_group_name_title">Edit name</string>
+    <string name="add_single_group_member_user_already_exists">User already belongs to the group</string>
+    <string name="user_found">User found</string>
+    <string name="add_single_member_dialog_message">Do you want to add %1$s (%2$s) to this group?</string>
+    <string name="add_single_member_include">Add member in all previous \"for all\" payments</string>
     <string name="prompt_password_old">Old password</string>
     <string name="prompt_password_new">New password</string>
     <string name="prompt_password_new_confirm">Confirm new password</string>

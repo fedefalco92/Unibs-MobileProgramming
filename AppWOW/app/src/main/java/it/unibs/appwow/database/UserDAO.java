@@ -91,20 +91,8 @@ public class UserDAO implements LocalDB_DAO {
         return success;
         */
     }
-/*
-    public List<UserModel> getAllUsers(int idGroup) {
-        List<UserModel> data = new ArrayList<UserModel>();
-        Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
-                allColumns,null,null,null,null,null);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
-            GroupModel d = cursorToGroup(cursor);
-            data.add(d);
-            cursor.moveToNext();
-        }
-        cursor.close(); // remember to always close the cursor!
-        return data;
-    }*/
+
+
 
     public long getUpdatedAt(int userId){
         List<UserModel> data = new ArrayList<UserModel>();

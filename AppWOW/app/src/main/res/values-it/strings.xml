@@ -93,7 +93,7 @@
     <string name="group_info_group_deleted_successfully">Gruppo eliminato con successo</string>
     <string name="group_info_group_not_present">Il gruppo è già stato eliminato</string>
     <string name="group_info_dialog_delete_title">Elimina il gruppo?</string>
-    <string name="group_info_dialog_delete_message">Vuoi davvero eliminare il gruppo? L\'operazione è IRREVERSIBILE e avrà effetto per tutti i partecipanti</string>
+    <string name="group_info_dialog_delete_message">Vuoi davvero eliminare il gruppo? L\'operazione sarà IRREVERSIBILE e il gruppo sarà eliminato anche dai dispositivi degli altri membri</string>
     <string name="action_show_group_info">Info gruppo</string>
     <string name="cancel">Annulla</string>
     <string name="group_fragment_empty_message">Nessun gruppo</string>
@@ -132,4 +132,14 @@
     <string name="error_invalid_amount_user">Non puoi aggiungere un pagamento solo per te!</string>
     <string name="add_member">Aggiungi membro</string>
     <string name="debt_settle_message_debtor">Hai dato %2$s a %1$s?</string>
+    <string name="reset_group">Azzera i pagamenti</string>
+    <string name="group_info_dialog_reset_title">Azzera i pagamenti?</string>
+    <string name="group_info_dialog_reset_message">Vuoi davvero eliminare tutti i pagamenti? L\'operazione sarà IRREVERSIBILE e avrà effetto per tutti i partecipanti</string>
+    <string name="group_info_group_reset_successfully">Tutti i pagamenti sono stati eliminati con successo</string>
+    <string name="delete_group">Elimina gruppo</string>
+    <string name="edit_group_name_title">Modifica nome</string>
+    <string name="add_single_group_member_user_already_exists">L\'utente fa già parte del gruppo</string>
+    <string name="user_found">Utente trovato</string>
+    <string name="add_single_member_dialog_message">Vuoi aggiungere %1$s (%2$s) al gruppo?</string>
+    <string name="add_single_member_include">Aggiungi membro in tutti i precedenti pagamenti \"per tutti\"</string>
 </resources>

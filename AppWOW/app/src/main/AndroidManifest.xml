@@ -107,6 +107,16 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+
+        <activity android:name=".AddSingleMemberActivity"
+                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"
+                  android:windowSoftInputMode="stateVisible|adjustResize">
+        </activity>
+        <activity android:name=".EditGroupNameActivity"
+                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"
+                  android:windowSoftInputMode="stateVisible|adjustResize">
+
+        </activity>
     </application>
 
 </manifest>

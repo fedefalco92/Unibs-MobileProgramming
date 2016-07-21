@@ -65,6 +65,14 @@ public final class WebServiceUri {
         return Uri.withAppendedPath(PAYMENTS_URI, String.valueOf(idPayment));
     }
 
+    public final static Uri getGroupResetUri(int idGroup){
+        return Uri.withAppendedPath(getGroupUri(idGroup), "reset");
+    }
+
+    public final static Uri getAddGroupMemberUri(int idGroup){
+        return Uri.withAppendedPath(getGroupUri(idGroup), "add-user");
+    }
+
     public final static Uri getUserUri(int idUser){
         return Uri.withAppendedPath(USERS_URI,String.valueOf(idUser));
     }

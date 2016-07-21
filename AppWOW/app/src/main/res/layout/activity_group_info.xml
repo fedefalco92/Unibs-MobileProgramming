@@ -109,13 +109,15 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:id="@+id/group_info_container_partecipanti"
-                    android:paddingTop="24dp">
+                    android:paddingTop="24dp"
+                    android:paddingBottom="24dp">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/group_info_members_number"
                         android:text="@string/group_info_members_number"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"/>
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingBottom="8dp"/>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -143,16 +145,26 @@
                         />
                 </LinearLayout>
                 <Button
+                    android:id="@+id/group_info_reset_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reset_group"
+                    android:visibility="gone"
+                    android:textColor="@color/colorAccent"
+                    android:background="@android:color/white"
+                    android:onClick="resetGroup"
+                    android:layout_marginBottom="8dp"
+                    android:layout_below="@id/group_info_container_partecipanti"/>
+                <Button
                     android:id="@+id/group_info_delete_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/delete"
+                    android:text="@string/delete_group"
                     android:visibility="gone"
                     android:background="@color/colorAccent"
                     android:textColor="@android:color/white"
                     android:onClick="deleteGroup"
-                    android:layout_marginTop="30dp"
-                    android:layout_below="@id/group_info_container_partecipanti"/>
+                    android:layout_below="@id/group_info_reset_button"/>
 
             </RelativeLayout>
         </RelativeLayout>

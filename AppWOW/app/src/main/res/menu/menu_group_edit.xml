@@ -10,6 +10,6 @@
           android:title="@string/add_member"
           android:icon="@drawable/ic_person_add_white_24dp"
           app:showAsAction="ifRoom"
-          android:visible="true"/>
+          android:visible="false"/>
 
 </menu>
