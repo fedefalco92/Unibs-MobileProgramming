@@ -87,10 +87,55 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         notifyItemRemoved(position);
     }
 
+    public void addItem(int position, GroupModel model) {
+        mItems.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final GroupModel model = mItems.remove(fromPosition);
+        mItems.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
     public void updateItem(int idGroup){
         int position = getGroupPosition(idGroup);
         if (position != -1) {
             notifyItemChanged(position);
+        }
+    }
+
+    public void animateTo(List<GroupModel> items) {
+        applyAndAnimateRemovals(items);
+        applyAndAnimateAdditions(items);
+        applyAndAnimateMovedItems(items);
+    }
+
+    private void applyAndAnimateRemovals(List<GroupModel> newItems) {
+        for (int i = mItems.size() - 1; i >= 0; i--) {
+            final GroupModel item = mItems.get(i);
+            if (!newItems.contains(item)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<GroupModel> newItems) {
+        for (int i = 0, count = newItems.size(); i < count; i++) {
+            final GroupModel item = newItems.get(i);
+            if (!mItems.contains(item)) {
+                addItem(i, item);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<GroupModel> newItems) {
+        for (int toPosition = newItems.size() - 1; toPosition >= 0; toPosition--) {
+            final GroupModel model = newItems.get(toPosition);
+            final int fromPosition = mItems.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
         }
     }
 

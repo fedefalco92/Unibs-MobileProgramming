@@ -1,8 +1,10 @@
 package it.unibs.appwow.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
@@ -24,7 +26,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG_LOG,"onCreate");
-
     }
 
     @Override
@@ -41,4 +42,5 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         super.onActivityCreated(savedInstanceState);
         getActivity().setTitle(getString(R.string.settings));
     }
+
 }

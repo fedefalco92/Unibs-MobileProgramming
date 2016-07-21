@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:title="Group details">
 
-    <SwitchPreferenceCompat
-        android:key="pref_key_show_debts"
-        android:summary="Do you want to show only your debts?"
-        android:title="Show your debts only?"/>
+        <SwitchPreferenceCompat
+            android:key="pref_key_show_debts"
+            android:summary="Do you want to show only your debts?"
+            android:title="Show your debts only?"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="User Info">
+        <Preference
+            android:title="Modify user info">
+            <intent android:targetPackage="it.unibs.appwow"
+                android:targetClass="it.unibs.appwow.EditUserActivity">
+            </intent>
+        </Preference>
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="App">
 
-    <SwitchPreferenceCompat
-        android:key="pref_key_notification"
-        android:title="Notification"/>
+        <SwitchPreferenceCompat
+            android:key="pref_key_notification"
+            android:title="Notification"
+            android:defaultValue="true"/>
 
     </PreferenceCategory>
 </PreferenceScreen>

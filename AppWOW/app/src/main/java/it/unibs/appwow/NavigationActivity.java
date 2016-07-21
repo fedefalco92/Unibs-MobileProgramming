@@ -58,8 +58,31 @@ public class NavigationActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        //drawer.setDrawerListener(toggle);
         toggle.syncState();
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                //Log.d(TAG_LOG,"onDrawerStateChanged");
+                mLocalUser = LocalUser.load(getApplicationContext());
+                TextView fullname = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_fullname);
+                fullname.setText(mLocalUser.getFullName());
+            }
+        });
+
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -136,7 +159,6 @@ public class NavigationActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
     }
 
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -158,7 +180,6 @@ public class NavigationActivity extends AppCompatActivity
         }
 
     }
-
 
     @Override
     public void onBackPressed() {
@@ -237,7 +258,6 @@ public class NavigationActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     @Override
     public void onFragmentInteraction(Uri uri) {

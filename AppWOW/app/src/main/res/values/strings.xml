@@ -266,5 +266,10 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="add_member">Add member</string>
+    <string name="prompt_password_old">Old password</string>
+    <string name="prompt_password_new">New password</string>
+    <string name="prompt_password_new_confirm">Confirm new password</string>
+    <string name="title_activity_edit_user">Edit user</string>
+    <string name="app_internal_error">App internal error</string>
 
 </resources>

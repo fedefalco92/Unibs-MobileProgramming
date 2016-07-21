@@ -65,6 +65,10 @@ public final class WebServiceUri {
         return Uri.withAppendedPath(PAYMENTS_URI, String.valueOf(idPayment));
     }
 
+    public final static Uri getUserUri(int idUser){
+        return Uri.withAppendedPath(USERS_URI,String.valueOf(idUser));
+    }
+
     public static URL uriToUrl(Uri uri){
         URL url = null;
         try {

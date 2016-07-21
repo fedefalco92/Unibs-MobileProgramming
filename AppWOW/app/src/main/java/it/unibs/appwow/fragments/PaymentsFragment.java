@@ -141,7 +141,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.dashboard, menu);
+        inflater.inflate(R.menu.menu_payments, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
 

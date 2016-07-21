@@ -129,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        Button goUnreg = (Button) findViewById(R.id.offilne_mode);
+       /* Button goUnreg = (Button) findViewById(R.id.offilne_mode);
         goUnreg.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,7 +137,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivity(intent);
                 finish();
             }
-        });
+        });*/
     }
 
     private void populateAutoComplete() {

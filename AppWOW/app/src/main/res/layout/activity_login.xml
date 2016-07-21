@@ -34,12 +34,12 @@
             android:orientation="vertical"
             android:layout_gravity="center">
 
-            <!-- <ImageView
+            <ImageView
                 android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_height="140dp"
+                android:paddingBottom="40dp"
                 android:src="@drawable/icon"
-                android:layout_gravity="center_horizontal"/> -->
-
+                android:layout_gravity="center_horizontal"/>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -92,7 +92,7 @@
                     android:textColor="@color/white"
                     android:backgroundTint="@color/colorAccent"/>
 
-                <Button
+                <!-- <Button
                     android:id="@+id/offilne_mode"
                     style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
@@ -101,7 +101,8 @@
                     android:text="@string/action_offline_mode"
                     android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:backgroundTint="@color/colorAccent"/>
+                    android:backgroundTint="@color/colorAccent"/> -->
+
 
         </LinearLayout>
     </ScrollView>

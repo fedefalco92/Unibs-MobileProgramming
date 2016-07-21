@@ -1,5 +1,6 @@
 package it.unibs.appwow.fragments;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,8 +12,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -29,14 +34,17 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
+import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.parc.GroupModel;
@@ -54,7 +62,7 @@ import it.unibs.appwow.views.adapters.GroupAdapter;
  * Use the {@link GroupListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GroupListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, GroupAdapter.OnItemClickListener, GroupAdapter.OnItemLongClickListener{
+public class GroupListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, GroupAdapter.OnItemClickListener, GroupAdapter.OnItemLongClickListener, SearchView.OnQueryTextListener{
 
     private static final String TAG_LOG = GroupListFragment.class.getSimpleName();
     private final String TAG_REQUEST_GROUP_LIST = "GROUP_LIST";
@@ -66,6 +74,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
     //parameters
     private LocalUser mLocalUser;
+    private List<GroupModel> mItems;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
@@ -100,6 +109,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
         Log.d(TAG_LOG,"onCreate");
         if (getArguments() != null) {
             mLocalUser = getArguments().getParcelable(ARG_USER);
@@ -197,6 +208,27 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onDestroy() {
         super.onDestroy();
         MyApplication.getInstance().cancelPendingRequests(TAG_REQUEST_GROUP_LIST);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_groups, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = null;
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            searchView.setOnQueryTextListener(this);
+        }
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -408,6 +440,32 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         return false;
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        final List<GroupModel> filteredModelList = filter(mItems, newText);
+        mAdapter.animateTo(filteredModelList);
+        mRecyclerView.scrollToPosition(0);
+        return true;
+    }
+
+    private List<GroupModel> filter(List<GroupModel> models, String query) {
+        query = query.toLowerCase();
+
+        final List<GroupModel> filteredModelList = new ArrayList<>();
+        for (GroupModel model : models) {
+            final String text = model.getGroupName().toLowerCase();
+            if (text.contains(query)) {
+                filteredModelList.add(model);
+            }
+        }
+        return filteredModelList;
+    }
+
     /*
     private void alertGroupGone(int idGroup, GroupDAO dao) {
 
@@ -452,6 +510,14 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onResume() {
         Log.d(TAG_LOG,"onResume");
+
+        // Serve per allineare il filtraggio degli elementi
+        GroupDAO dao;
+        dao = new GroupDAO();
+        dao.open();
+        mItems = dao.getAllGroups();
+        dao.close();
+
         //fetchGroups();
         //refreshGrid();
         //Log.d(TAG_LOG, "on resume completed");
