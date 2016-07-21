@@ -116,7 +116,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         mCollapsingToolbarLayout.setTitle(mGroup.getGroupName());
-        mCollapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.transparent));
+        mCollapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.white));
 
         mGroupImageView = (SquareImageView) findViewById(R.id.group_info_group_photo);
         File file = FileUtils.getGroupImageFile(mGroup.getId(), this);
@@ -143,8 +143,8 @@ public class GroupInfoActivity extends AppCompatActivity {
 
 
 
-        TextView title = (TextView) findViewById(R.id.group_info_group_name);
-        title.setText(mGroup.getGroupName());
+        //TextView title = (TextView) findViewById(R.id.group_info_group_name);
+        //title.setText(mGroup.getGroupName());
 
 
 
@@ -200,8 +200,14 @@ public class GroupInfoActivity extends AppCompatActivity {
         mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(primary));
         mCollapsingToolbarLayout.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
         supportStartPostponedEnterTransition();
-        updateBackground((FloatingActionButton) findViewById(R.id.fab), palette);
+        updateBackground((FloatingActionButton) findViewById(R.id.fab_edit), palette);
         supportStartPostponedEnterTransition();
+        /*
+        Palette.Swatch swatch = palette.getVibrantSwatch();
+        if(swatch != null){
+            mCollapsingToolbarLayout.setExpandedTitleColor(swatch.getTitleTextColor());
+
+        }*/
     }
 
     private void updateBackground(FloatingActionButton fab, Palette palette) {

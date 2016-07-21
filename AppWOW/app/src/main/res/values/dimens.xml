@@ -11,4 +11,5 @@
     <dimen name="status_bar">24dp</dimen>
     <dimen name="list_padding_left">16dp</dimen>
     <dimen name="list_padding_right">16dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
 </resources>

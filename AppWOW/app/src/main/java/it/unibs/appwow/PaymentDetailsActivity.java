@@ -323,7 +323,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         //la modifica può essere effettuata da chi ha pagato o, nel caso di un debito, dal creditore
 
         boolean isPayer = (mPayment.getIdUser() == mUser.getId());
-        Integer idUserTo = mPayment.getIdUserTo();
+        /*Integer idUserTo = mPayment.getIdUserTo();
         boolean isUserTo = false;
         if(idUserTo != null){
             if(idUserTo == mUser.getId()){
@@ -333,8 +333,8 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
         boolean isAdmin = (mUser.getId() == mGroup.getIdAdmin());
 
-        Log.d(TAG_LOG, "ispayer: " + isPayer + ", isUserTo: " + isUserTo + "isAdmin: " + isAdmin);
-        if(isPayer || isUserTo || isAdmin){
+        Log.d(TAG_LOG, "ispayer: " + isPayer + ", isUserTo: " + isUserTo + "isAdmin: " + isAdmin);*/
+        if(isPayer){
             menu.findItem(R.id.menu_payment_details_edit).setVisible(true);
             menu.findItem(R.id.menu_payment_details_delete).setVisible(true);
         }

@@ -84,7 +84,7 @@ public class NavigationActivity extends AppCompatActivity
         //Per impostare selezionato il tab dei gruppi online (nella barra laterale)
         navigationView.getMenu().findItem(R.id.nav_groups).setChecked(true);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab_edit);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

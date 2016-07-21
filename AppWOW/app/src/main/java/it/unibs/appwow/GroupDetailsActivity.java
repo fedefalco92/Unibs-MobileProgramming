@@ -109,7 +109,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         mCurrentPage = 1;
         setFragmentAdapter();
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab = (FloatingActionButton) findViewById(R.id.fab_edit);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
