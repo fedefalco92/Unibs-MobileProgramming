@@ -155,17 +155,6 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
             searchView.setOnQueryTextListener(this);
-
-            /*
-            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-                @Override
-                public boolean onClose() {
-                    Log.d(TAG_LOG,"setOnCloseListener");
-                    mAdapter.getFilter().filter(null);
-                    mAdapter.reload();
-                    return true;
-                }
-            });*/
         }
 
         super.onCreateOptionsMenu(menu,inflater);
@@ -175,7 +164,6 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.filter:
-
                 boolean isChecked = item.isChecked();
                 if(isChecked){
                     Log.d(TAG_LOG,"isChecked");

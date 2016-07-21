@@ -173,7 +173,7 @@
     <string name="to_string_colon">To:</string>
     <string name="given_by_string_colon">Given by:</string>
     <string name="all">All</string>
-    <string name="hide_show_transfers_hint">Show/hide transfers</string>
+    <string name="hide_show_my_payments_hint">Show/hide my payments</string>
     <string name="error_invalid_amount_user">Cannot add a payment just for you!</string>
     <string name="title_activity_group_info_activity_scrolling">GroupInfoActivityScrolling</string>
     <string name="large_text">

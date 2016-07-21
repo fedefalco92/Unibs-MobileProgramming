@@ -122,7 +122,7 @@
     <string name="prompt_password_confirm">Conferma password</string>
     <string name="search">Cerca</string>
     <string name="select_image_group">Scegli un\'immagine per il gruppo</string>
-    <string name="hide_show_transfers_hint">Mostra/nascondi scambi</string>
+    <string name="hide_show_my_payments_hint">Mostra/nascondi i miei pagamenti</string>
     <string name="hello_blank_fragment"></string>
     <string name="paid_by_colon">Pagato da:</string>
     <string name="for_string_colon">Per:</string>

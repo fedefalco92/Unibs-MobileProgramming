@@ -126,6 +126,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private GoogleMap mMap;
     private CheckBox mIsTransferCheckBox;
     private Spinner mUserToSpinner;
+    private Toolbar mToolbar;
 
     private View mProgressView;
     private View mAddPaymentContainerView;
@@ -144,9 +145,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_payment);
         mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setTitle(getString(R.string.add_payment_activity_title));
@@ -457,6 +457,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     private void sendPostRequest() {
         showProgress(true);
+        //mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setEnabled(false);
+        mToolbar.getMenu().clear();
         Map<String, String> requestParams = new HashMap<String, String>();
         String name = mPaymentNameEditText.getText().toString();
         String notes = mPaymentNotesEditText.getText().toString();
