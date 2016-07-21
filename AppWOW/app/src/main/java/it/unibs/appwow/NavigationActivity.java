@@ -56,14 +56,13 @@ public class NavigationActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //drawer.setDrawerListener(toggle);
         toggle.syncState();
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-
+                toggle.onDrawerSlide(drawerView,slideOffset);
             }
 
             @Override
