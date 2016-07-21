@@ -9,20 +9,19 @@
         android:summary="Do you want to show only your debts?"
         android:title="Show your debts only?"/>
 
+    </PreferenceCategory>
 
-    <ListPreference
-        android:key="pref_key_order_payments"
-        android:title="Order payments"
-        android:dialogTitle="Order payments"
-        android:entries="@array/order_string"
-        android:entryValues="@array/order_string_value"/>
+    <PreferenceCategory
+        android:title="User Info">
 
-    <ListPreference
-        android:key="pref_key_round_payments"
-        android:title="Round off amounts"
-        android:dialogTitle="Round off amounts to"
-        android:entries="@array/round_string"
-        android:entryValues="@array/round_string_value"
-        android:defaultValue="cent"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="App">
+
+    <SwitchPreferenceCompat
+        android:key="pref_key_notification"
+        android:title="Notification"/>
+
     </PreferenceCategory>
 </PreferenceScreen>

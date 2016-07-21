@@ -115,7 +115,8 @@
     <string name="no">No</string>
     <string name="payment_deleting">Deleting payment...</string>
     <string name="debt_settle_title">Mark as settled</string>
-    <string name="debt_settle_message">Did %1$s give you %2$s?</string>
+    <string name="debt_settle_message_creditor">Did %1$s give you %2$s?</string>
+    <string name="debt_settle_message_debtor">Did you give %2$s to %1$s?</string>
     <string name="debt_settling">Settling debt...</string>
     <string name="debt_settle_unsuccess_server_error">Unable to settle %1$s\'s debt due to a server error</string>
     <string name="debt_settle_unsuccess_network_error">Unable to settle %1$s\'s debt due to a network error</string>

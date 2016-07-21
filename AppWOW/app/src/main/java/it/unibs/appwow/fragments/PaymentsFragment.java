@@ -43,6 +43,7 @@ import it.unibs.appwow.R;
 import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -67,6 +68,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private GroupModel mGroup;
+    private LocalUser mLocalUser;
     private ListView mPaymentsListView;
 
     // Nuove variabili per recycler view.
@@ -100,14 +102,17 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //per poter popolare l'action bar dell'activity
+        setHasOptionsMenu(true);
+
+        mLocalUser = LocalUser.load(getActivity());
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
         }
 
-        //per poter popolare l'action bar dell'activity
-        setHasOptionsMenu(true);
+
 
         /*
         PaymentDAO dao;
@@ -179,7 +184,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
                 } else {
                     Log.d(TAG_LOG,"isNotChecked");
                     item.setChecked(true);
-                    final List<Payment> filteredModelList = filterIsNotExchange(mItems);
+                    final List<Payment> filteredModelList = filterMyPayments(mItems);
                     mAdapter.animateTo(filteredModelList);
                     mRecyclerView.scrollToPosition(0);
                 }
@@ -370,39 +375,43 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     @Override
     public boolean onItemLongClicked(final View v, int position) {
         Log.d(TAG_LOG, "onItemLongClick position: " + position);
-        Vibrator vib = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-        if(vib.hasVibrator()) vib.vibrate(50);
-
         final Payment selectedItem = (Payment) mAdapter.getItem(position);
-        final int pos = position;
-        v.setSelected(true);
-        Resources res = getResources();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(res.getString(R.string.payment_delete_title));
-        builder.setMessage(String.format(res.getString(R.string.payment_delete_message), selectedItem.getName()));
-        builder.setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                mAdapter.removeItem(pos);
-                showUndoSnackbar(selectedItem);
-                v.setSelected(false);
-            }
-        });
-        builder.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                v.setSelected(false);
-            }
-        });
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                v.setSelected(false);
-            }
-        });
-        builder.show();
+
+        if(mLocalUser.getId() == selectedItem.getIdUser()){
+            Vibrator vib = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+            if(vib.hasVibrator()) vib.vibrate(50);
+
+            final int pos = position;
+            v.setSelected(true);
+            Resources res = getResources();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(res.getString(R.string.payment_delete_title));
+            builder.setMessage(String.format(res.getString(R.string.payment_delete_message), selectedItem.getName()));
+            builder.setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    mAdapter.removeItem(pos);
+                    showUndoSnackbar(selectedItem);
+                    v.setSelected(false);
+                }
+            });
+            builder.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    dialog.dismiss();
+                    v.setSelected(false);
+                }
+            });
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    v.setSelected(false);
+                }
+            });
+            builder.show();
+        }
         return true;
+
     }
 
     @Override
@@ -435,6 +444,16 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
         final List<Payment> filteredItemList = new ArrayList<>();
         for (Payment item: items){
             if(!item.isExchange()){
+                filteredItemList.add(item);
+            }
+        }
+        return filteredItemList;
+    }
+
+    private List<Payment> filterMyPayments(List<Payment> items){
+        final List<Payment> filteredItemList = new ArrayList<>();
+        for (Payment item: items){
+            if(item.getIdUser() == mLocalUser.getId()){
                 filteredItemList.add(item);
             }
         }

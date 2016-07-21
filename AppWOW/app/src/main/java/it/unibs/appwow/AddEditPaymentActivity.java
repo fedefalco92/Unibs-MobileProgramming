@@ -464,6 +464,12 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         String position_id = "";
         String currency = mPaymentCurrency.getText().toString();
 
+        if(EDIT_MODE){
+            if(mToEditPayment.getId() == -1){
+                EDIT_MODE = false;
+            }
+        }
+
         if(!EDIT_MODE){
             //creazione payment
             String[] keys = {"idGroup", "idUser", "amount", "currency", "date", "name", "notes", "position", "position_id", "amount_details", "forAll", "isExchange"};

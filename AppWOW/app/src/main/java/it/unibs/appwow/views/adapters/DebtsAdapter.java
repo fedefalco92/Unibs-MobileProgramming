@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 import it.unibs.appwow.R;
@@ -26,6 +27,7 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private static final int PAYMENT_SPECIAL_VIEW = 2;
     private static final int PAYMENT_EMPTY_VIEW = 3;
 
+    private Context mContext;
     private LocalUser mUser;
     private List<Debt> mItems = new ArrayList<Debt>();
     private DebtDAO dao;
@@ -38,6 +40,7 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private OnItemLongClickListener mOnItemLongClickListener;
 
     public DebtsAdapter(Context context, int idGroup, boolean showOnlyYourDebts){
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         mUser = LocalUser.load(context);
         mShowOnlyYourDebts = showOnlyYourDebts;
@@ -80,11 +83,24 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Debt itemDebt = mItems.get(position);
         DebtViewHolder itemHolder = (DebtViewHolder) holder;
-        itemHolder.debtNameUserFrom.setText(itemDebt.getFullNameFrom());
-        itemHolder.debtNameUserTo.setText(itemDebt.getFullNameTo());
+        LocalUser user = LocalUser.load(mContext);
+        if(itemDebt.getFullNameFrom().equals(user.getFullName())){
+            itemHolder.debtNameUserFrom.setText(mContext.getResources().getString(R.string.you));
+        } else {
+            itemHolder.debtNameUserFrom.setText(itemDebt.getFullNameFrom());
+        }
+
+        if(itemDebt.getFullNameTo().equals(user.getFullName())){
+            itemHolder.debtNameUserTo.setText(mContext.getResources().getString(R.string.you));
+        } else {
+            itemHolder.debtNameUserTo.setText(itemDebt.getFullNameTo());
+        }
+
         itemHolder.debtNameMailFrom.setText(itemDebt.getEmailFrom());
         itemHolder.debtNameMailTo.setText(itemDebt.getEmailTo());
-        itemHolder.debtAmount.setText(Amount.getAmountString(itemDebt.getAmount()));
+
+        Currency curr = Currency.getInstance("EUR");
+        itemHolder.debtAmount.setText(curr.getSymbol() + " " + Amount.getAmountString(itemDebt.getAmount()));
     }
 
     @Override

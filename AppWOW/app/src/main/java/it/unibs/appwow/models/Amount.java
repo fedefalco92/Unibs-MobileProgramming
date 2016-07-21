@@ -2,6 +2,7 @@ package it.unibs.appwow.models;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Currency;
 
 /**
  * Created by Massi on 10/05/2016.
@@ -57,6 +58,12 @@ public class Amount {
     public static String getAmountString(double amount){
         NumberFormat formatter = new DecimalFormat("#0.00");
         return formatter.format(amount);
+    }
+
+    public static String getAmountStringCurrency(double amount, String currency){
+        Currency cur = Currency.getInstance(currency);
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        return cur.getSymbol() + " " + formatter.format(amount);
     }
 
     public void setAmount(double amount) {

@@ -150,7 +150,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         dao.close();
         if (userAmount!=null){
             //// FIXME: 20/07/16 Da sistemare currency...
-            Currency curr = Currency.getInstance(Locale.getDefault());
+            //Currency curr = Currency.getInstance(Locale.getDefault());
+            Currency curr = Currency.getInstance("EUR");
             holder.personalStatus.setText(curr.getSymbol() + " " + Amount.getAmountString(userAmount));
             if(userAmount>0){
                 //holder.personalStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green));

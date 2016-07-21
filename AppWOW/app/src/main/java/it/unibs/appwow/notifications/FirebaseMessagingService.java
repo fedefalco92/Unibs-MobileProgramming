@@ -4,12 +4,14 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
@@ -187,11 +189,14 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
-        notificationManager.notify(notificationID++, notification);
 
-
-        // vibration for 800 milliseconds
-        ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(100);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean switchOn = sp.getBoolean("pref_key_notification",true);
+        if(switchOn){
+            notificationManager.notify(notificationID++, notification);
+            // vibration for 800 milliseconds
+            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(100);
+        }
 
     }
 

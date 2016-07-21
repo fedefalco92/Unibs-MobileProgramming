@@ -72,7 +72,7 @@
     <string name="no">No</string>
     <string name="payment_deleting">Elimino il pagamento...</string>
     <string name="debt_settle_title">Segna come pagato</string>
-    <string name="debt_settle_message">%1$s ti ha dato %2$s?</string>
+    <string name="debt_settle_message_creditor">%1$s ti ha dato %2$s?</string>
     <string name="debt_settling">Assolvo il debito...</string>
     <string name="debt_settle_unsuccess_server_error">Impossibile saldare il debito di %1$s a causa di un errore del server</string>
     <string name="debt_settle_unsuccess_network_error">Impossibile saldare il debito di %1$s a causa di un errore di rete</string>
@@ -130,4 +130,5 @@
     <string name="given_by_string_colon">Dato da:</string>
     <string name="all">Tutti</string>
     <string name="error_invalid_amount_user">Non puoi aggiungere un pagamento solo per te!</string>
+    <string name="debt_settle_message_debtor">Hai dato %2$s a %1$s?</string>
 </resources>
