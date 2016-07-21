@@ -109,13 +109,32 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:id="@+id/group_info_container_partecipanti"
-                    android:paddingTop="8dp">
+                    android:paddingTop="24dp">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/group_info_members_number"
                         android:text="@string/group_info_members_number"
                         android:paddingLeft="@dimen/activity_horizontal_margin"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorPrimary"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:id="@+id/group_info_add_member_row">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_person_add_white_24dp"
+                            android:layout_marginEnd="8dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="@color/white"
+                            android:text="@string/add_member"/>
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -138,7 +157,7 @@
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
-    <android.support.design.widget.FloatingActionButton
+    <!--<android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_edit"
         app:layout_anchor="@id/app_bar_layout"
         app:layout_anchorGravity="bottom|right|end"
@@ -150,5 +169,5 @@
         app:layout_anchor="@id/group_info_lista_partecipanti"
         app:layout_anchorGravity="bottom|right|end"
         android:src="@drawable/ic_mode_edit_white_24dp"
-        style="@style/FabStyle"/>
+        style="@style/FabStyle"/>-->
 </android.support.design.widget.CoordinatorLayout>

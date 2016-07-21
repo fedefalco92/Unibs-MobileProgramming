@@ -160,6 +160,18 @@ public class GroupInfoActivity extends AppCompatActivity {
             Button deleteButton = (Button) findViewById(R.id.group_info_delete_button);
             deleteButton.setVisibility(View.VISIBLE);
         }
+
+        View addMemberRow = findViewById(R.id.group_info_add_member_row);
+        addMemberRow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startAddMemberActivity();
+            }
+        });
+    }
+
+    private void startAddMemberActivity() {
+        Toast.makeText(GroupInfoActivity.this, "Aggiungi membrooooo", Toast.LENGTH_SHORT).show();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -200,9 +212,9 @@ public class GroupInfoActivity extends AppCompatActivity {
         mCollapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(primary));
         mCollapsingToolbarLayout.setStatusBarScrimColor(palette.getDarkMutedColor(primaryDark));
         supportStartPostponedEnterTransition();
-        updateBackground((FloatingActionButton) findViewById(R.id.fab_edit), palette);
+        /*updateBackground((FloatingActionButton) findViewById(R.id.fab_edit), palette);
         supportStartPostponedEnterTransition();
-        /*
+
         Palette.Swatch swatch = palette.getVibrantSwatch();
         if(swatch != null){
             mCollapsingToolbarLayout.setExpandedTitleColor(swatch.getTitleTextColor());
@@ -378,6 +390,10 @@ public class GroupInfoActivity extends AppCompatActivity {
             editGroupIntent.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
             startActivity(editGroupIntent);
         }
+        
+        if(id==R.id.add_member){
+            startAddMemberActivity();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -386,8 +402,8 @@ public class GroupInfoActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_group_edit, menu);
 
-        if(mScrollingDisabled)
-        menu.findItem(R.id.edit).setVisible(true);
+        //if(mScrollingDisabled)
+        //menu.findItem(R.id.edit).setVisible(true);
 
         return super.onCreateOptionsMenu(menu);
     }

@@ -4,7 +4,12 @@
     <item android:id="@+id/edit"
           android:title="@string/edit"
           android:icon="@drawable/ic_mode_edit_white_24dp"
-          app:showAsAction="always"
-          android:visible="false"/>
+          app:showAsAction="ifRoom"
+          android:visible="true"/>
+    <item android:id="@+id/add_member"
+          android:title="@string/add_member"
+          android:icon="@drawable/ic_person_add_white_24dp"
+          app:showAsAction="ifRoom"
+          android:visible="true"/>
 
 </menu>

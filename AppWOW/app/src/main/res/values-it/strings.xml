@@ -20,7 +20,7 @@
     <string name="login">Accedi</string>
     <string name="suggerimento_nome_gruppi">Inserisci il nome e l\'immagine (facoltativo) del gruppo</string>
     <string name="actual_members_string">Aggiunti</string>
-    <string name="add_member">Aggiungi</string>
+    <string name="add">Aggiungi</string>
     <string name="add_group_members_user_not_found">Utente non trovato</string>
     <string name="server_connection_error">Errore di connessione al server. Riprova.</string>
     <string name="error_invalid_group_name">Inserisci un nome valido per il gruppo</string>
@@ -130,5 +130,6 @@
     <string name="given_by_string_colon">Dato da:</string>
     <string name="all">Tutti</string>
     <string name="error_invalid_amount_user">Non puoi aggiungere un pagamento solo per te!</string>
+    <string name="add_member">Aggiungi membro</string>
     <string name="debt_settle_message_debtor">Hai dato %2$s a %1$s?</string>
 </resources>

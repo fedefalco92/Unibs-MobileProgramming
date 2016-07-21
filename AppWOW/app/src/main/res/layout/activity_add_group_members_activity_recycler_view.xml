@@ -79,7 +79,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/add_member"
+                    android:text="@string/add"
                     android:id="@+id/button_add_member"
                     android:layout_below="@+id/view2"
                     android:layout_alignRight="@+id/view2"
