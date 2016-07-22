@@ -354,6 +354,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         } else {
             // stopping swipe refresh
             mSwipeRefreshLayout.setRefreshing(false);
+            showProgress(false);
             Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
         }
     }
@@ -528,8 +529,10 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
 
     private void showProgress(boolean show){
+        /*
         mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-        mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);*/
+        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
 
