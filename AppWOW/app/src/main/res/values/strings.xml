@@ -37,7 +37,7 @@
     <!-- String resources for fragments within the GroupDetailsActivity -->
     <string name="title_add_cost">Add new cost</string>
 
-    <string name="favorite_groups_string">Favorite groups</string>
+    <string name="personal_info_string">Personal info</string>
     <string name="groups_string">Groups</string>
     <string name="group_details_string">Group details</string>
     <string name="welcome_message">Welcome to AppWOW</string>
@@ -291,5 +291,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="save_to_gallery">Save to gallery</string>
     <string name="image_saved_to_gallery">Photo saved to gallery</string>
+    <string name="error_google_maps">Connection to google maps failed</string>
+    <string name="visited_places">Visited places</string>
 
 </resources>

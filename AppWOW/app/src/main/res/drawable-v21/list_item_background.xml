@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- <ripple xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="?android:attr/colorControlHighlight">
+    <item android:drawable="@drawable/list_item_background" />
+</ripple> -->
+
+<!-- A green ripple drawn atop a black rectangle. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="@color/colorPrimary">
+    <!-- <item android:drawable="@color/item_default_color" /> -->
+    <item>
+        <selector>
+            <item android:state_selected="true">
+                <color android:color="@color/item_pressed_color" />
+            </item>
+
+            <item>
+                <color android:color="@color/item_default_color" />
+            </item>
+        </selector>
+    </item>
+</ripple>

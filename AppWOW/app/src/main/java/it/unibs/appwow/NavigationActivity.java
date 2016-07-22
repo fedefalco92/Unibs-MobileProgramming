@@ -23,6 +23,7 @@ import java.util.List;
 import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.OfflineGroupListFragment;
+import it.unibs.appwow.fragments.PersonalInfoFragment;
 import it.unibs.appwow.fragments.SettingsFragment;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.FileUtils;
@@ -38,7 +39,7 @@ public class NavigationActivity extends AppCompatActivity
     private LocalUser mLocalUser;
 
     private static final String TAG_GROUPS =  "_GROUPS_FRAGMENT";
-    private static final String TAG_FAVORITE_GROUPS = "_FAVORITE_GROUPS_FRAGMENT";
+    private static final String TAG_PERSONAL_INFO = "_PERSONAL_INFO_FRAGMENT";
     private static final String TAG_SETTINGS = "SETTINGS_FRAGMENT";
     private static final String VISIBLE_FRAGMENT = "VISIBLE_FRAGMENT";
 
@@ -113,13 +114,13 @@ public class NavigationActivity extends AppCompatActivity
                 // TODO: 12/05/2016 Gestione aggiunta gruppo online oppure offline modificando la classe di destinazione
                 Class destinationClass = null;
                 Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_GROUPS);
-                Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_FAVORITE_GROUPS);
+                Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_PERSONAL_INFO);
                 if (onlineFragment != null && onlineFragment.isVisible()) {
                     destinationClass = AddGroupActivity.class;
-                    Log.d(TAG_LOG, "ONLINE fragment visible");
+                    Log.d(TAG_LOG, "Groups fragment visible");
                 } else if (offlineFragment != null && offlineFragment.isVisible()) {
                     destinationClass = null;
-                    Log.d(TAG_LOG, "OFFLINE fragment visible");
+                    Log.d(TAG_LOG, "Personal fragment visible");
                 }
                 Intent createIntent = new Intent(NavigationActivity.this, destinationClass);
                 startActivity(createIntent);
@@ -167,10 +168,17 @@ public class NavigationActivity extends AppCompatActivity
             case TAG_GROUPS:
                 fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_GROUPS).commit();
                 navigationView.getMenu().findItem(R.id.nav_groups).setChecked(true);
+                fab.show();
+                break;
+            case TAG_PERSONAL_INFO:
+                fragmentTransaction.replace(R.id.containerView, PersonalInfoFragment.newInstance(mLocalUser), TAG_PERSONAL_INFO).commit();
+                navigationView.getMenu().findItem(R.id.nav_personal_info).setChecked(true);
+                fab.hide();
                 break;
             case TAG_SETTINGS:
                 fragmentTransaction.replace(R.id.containerView, new SettingsFragment(), TAG_SETTINGS).commit();
                 navigationView.getMenu().findItem(R.id.nav_settings).setChecked(true);
+                fab.hide();
                 break;
             default:
                 fragmentTransaction.replace(R.id.containerView, GroupListFragment.newInstance(mLocalUser), TAG_GROUPS).commit();
@@ -224,10 +232,10 @@ public class NavigationActivity extends AppCompatActivity
             fab.show();
 
             // Handle the camera action
-        } else if (id == R.id.nav_favourite_groups) {
+        } else if (id == R.id.nav_personal_info) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.containerView, new OfflineGroupListFragment(), TAG_FAVORITE_GROUPS).commit();
-            fab.show();
+            fragmentTransaction.replace(R.id.containerView, PersonalInfoFragment.newInstance(mLocalUser), TAG_PERSONAL_INFO).commit();
+            fab.hide();
 
         } else if (id == R.id.nav_settings) {
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();

@@ -81,6 +81,11 @@ public final class WebServiceUri {
         return Uri.withAppendedPath(USERS_URI,String.valueOf(idUser));
     }
 
+    public final static Uri getUserPlaceUri(int idUser){
+        Uri user_uri = Uri.withAppendedPath(WebServiceUri.USERS_URI, String.valueOf(idUser));
+        return Uri.withAppendedPath(user_uri, "all-places");
+    }
+
     public static URL uriToUrl(Uri uri){
         URL url = null;
         try {

@@ -116,7 +116,7 @@
     <string name="add_payment_transfer_checkbox_text">Questo è uno scambio di denaro tra due persone</string>
     <string name="action_sign_in">Accedi o registrati</string>
     <string name="action_sign_in_short">Accedi</string>
-    <string name="favorite_groups_string">Gruppi preferiti</string>
+    <string name="personal_info_string">Informazioni personali</string>
     <string name="prompt_email">E-mail</string>
     <string name="prompt_fullname">Nome</string>
     <string name="prompt_password_confirm">Conferma password</string>

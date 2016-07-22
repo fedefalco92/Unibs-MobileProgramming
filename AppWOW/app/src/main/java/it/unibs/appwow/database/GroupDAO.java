@@ -109,8 +109,9 @@ public class GroupDAO implements LocalDB_DAO {
     // TODO: 12/05/16 aggiungere parametro LocalUser? in realtà non serve perché lo user sono IO
     public List<GroupModel> getAllGroups() {
         List<GroupModel> data = new ArrayList<GroupModel>();
+        String orderby = AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups.COLUMN_HIGHLIGHTED + " DESC " + " , " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups.COLUMN_UPDATED_AT + " DESC";
         Cursor cursor = database.query(AppDB.Groups.TABLE_GROUPS,
-                allColumns,null,null,null,null,null);
+                allColumns,null,null,null,null,orderby);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
             GroupModel d = cursorToGroup(cursor);

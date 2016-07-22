@@ -10,7 +10,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -455,10 +453,10 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         Marker marker = mMap.addMarker(
                 new MarkerOptions().position(position).title(name).snippet(snippet)
         );
-        poitToPosition();
+        pointToPosition();
     }
 
-    private void poitToPosition() {
+    private void pointToPosition() {
         //Build camera position
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(mPlace.getLatLng())
@@ -520,6 +518,6 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(PaymentDetailsActivity.this, "Connection to google maps failed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PaymentDetailsActivity.this, R.string.error_google_maps, Toast.LENGTH_SHORT).show();
     }
 }

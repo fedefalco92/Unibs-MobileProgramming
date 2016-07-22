@@ -833,10 +833,10 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         Marker marker = mMap.addMarker(
                 new MarkerOptions().position(position).title(name).snippet(snippet)
         );
-        poitToPosition();
+        pointToPosition();
     }
 
-    private void poitToPosition() {
+    private void pointToPosition() {
         //Build camera position
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(mPlace.getLatLng())
