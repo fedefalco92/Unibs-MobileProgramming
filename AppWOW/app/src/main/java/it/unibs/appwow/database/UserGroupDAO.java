@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -138,5 +139,21 @@ public class UserGroupDAO implements LocalDB_DAO {
         String email = cursor.getString(2);
 
         return new SliderAmount(id, fullName, email);
+    }
+
+    public int removeUserFromGroup(int idUser, int idGroup) {
+        String table = AppDB.UserGroup.TABLE_USER_GROUP;
+        String where = AppDB.UserGroup.COLUMN_ID_USER + " = ? AND " + AppDB.UserGroup.COLUMN_ID_GROUP + " = ? ;";
+        String [] args =  {String.valueOf(idUser), String.valueOf(idGroup)};
+        return database.delete(table,where,args);
+    }
+
+    public boolean isUserInGroups(int idUser) {
+        String table = AppDB.UserGroup.TABLE_USER_GROUP;
+        String where = AppDB.UserGroup.COLUMN_ID_USER + " = ? ";
+        String [] args =  {String.valueOf(idUser)};
+        String[] columns = {"COUNT(*)"};
+        Cursor cursor = database.query(table, columns, where, args, null, null, null);
+        return cursor.getCount() > 0;
     }
 }

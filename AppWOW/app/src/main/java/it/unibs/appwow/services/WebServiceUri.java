@@ -73,6 +73,10 @@ public final class WebServiceUri {
         return Uri.withAppendedPath(getGroupUri(idGroup), "add-user");
     }
 
+    public final static Uri getRemoveGroupMemberUri(int idGroup){
+        return Uri.withAppendedPath(getGroupUri(idGroup), "remove-user");
+    }
+
     public final static Uri getUserUri(int idUser){
         return Uri.withAppendedPath(USERS_URI,String.valueOf(idUser));
     }

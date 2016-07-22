@@ -89,7 +89,6 @@
             android:label="@string/title_add_group_members_activity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-
         <activity
             android:name=".EditUserActivity"
             android:label="@string/title_activity_edit_user"
@@ -108,14 +107,21 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".AddSingleMemberActivity"
-                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"
-                  android:windowSoftInputMode="stateVisible|adjustResize">
+        <activity
+            android:name=".AddSingleMemberActivity"
+            android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"
+            android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
-        <activity android:name=".EditGroupNameActivity"
-                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"
-                  android:windowSoftInputMode="stateVisible|adjustResize">
-
+        <activity
+            android:name=".EditGroupNameActivity"
+            android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"
+            android:windowSoftInputMode="stateVisible|adjustResize">
+        </activity>
+        <activity
+            android:name=".ImageViewFullscreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_image_view_fullscreen"
+            android:theme="@style/FullscreenTheme">
         </activity>
     </application>
 

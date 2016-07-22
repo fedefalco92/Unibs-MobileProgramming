@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,8 +44,11 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import it.unibs.appwow.database.GroupDAO;
+import it.unibs.appwow.database.UserDAO;
+import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.parc.GroupModel;
@@ -59,6 +63,11 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     private static final String TAG_LOG = GroupInfoActivity.class.getSimpleName();
     private static final int EDIT_GROUP_NAME_INTENT = 1;
+
+    //server errors
+    private static final String PAYMENT_PRESENT = "PAYMENT_PRESENT";
+    private static final String USER_NOT_FOUND = "USER_NOT_FOUND";
+    private static final String GROUP_NOT_FOUND = "GROUP_NOT_FOUND";
 
     private LocalUser mLocalUser;
     private GroupModel mGroup;
@@ -82,19 +91,13 @@ public class GroupInfoActivity extends AppCompatActivity {
     private LinearLayout mMembersListView;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_info);
         mLocalUser = LocalUser.load(this);
         mGroup = getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
-        dao = new GroupDAO();
-        dao.open();
-        mMembers = dao.getAllAmounts(mGroup.getId());
-        dao.close();
-        Collections.sort(mMembers, new AmountComparator(mLocalUser.getId()));
-        Collections.reverse(mMembers);
+        loadMembers();
 
         initActivityTransitions();
         mScrollingDisabled = false;
@@ -124,10 +127,11 @@ public class GroupInfoActivity extends AppCompatActivity {
 
         mGroupImageView = (SquareImageView) findViewById(R.id.group_info_group_photo);
         File file = FileUtils.getGroupImageFile(mGroup.getId(), this);
-        if(file!=null){
+        if (file != null) {
             String fileUri = "file://" + file.getPath();
             Picasso.with(this).load(fileUri).into(mGroupImageView, new Callback() {
-                @Override public void onSuccess() {
+                @Override
+                public void onSuccess() {
                     Bitmap bitmap = ((BitmapDrawable) mGroupImageView.getDrawable()).getBitmap();
                     Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                         public void onGenerated(Palette palette) {
@@ -136,8 +140,16 @@ public class GroupInfoActivity extends AppCompatActivity {
                     });
                 }
 
-                @Override public void onError() {
+                @Override
+                public void onError() {
 
+                }
+            });
+
+            mGroupImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openFullScreenImage();
                 }
             });
         } else {
@@ -146,22 +158,17 @@ public class GroupInfoActivity extends AppCompatActivity {
         }
 
 
-
         //TextView title = (TextView) findViewById(R.id.group_info_group_name);
         //title.setText(mGroup.getGroupName());
-
 
 
         mMembersNumberTextView = (TextView) findViewById(R.id.group_info_members_number);
         mMembersNumberTextView.setText(String.format(getString(R.string.group_info_members_number), mMembers.size()));
 
         mMembersListView = (LinearLayout) findViewById(R.id.group_info_lista_partecipanti);
-        //settare listener
-        for(Amount a:mMembers){
-            inflateAmount(a);
-        }
+        loadMembersList();
 
-        if(mLocalUser.getId() == mGroup.getIdAdmin()){
+        if (mLocalUser.getId() == mGroup.getIdAdmin()) {
             Button deleteButton = (Button) findViewById(R.id.group_info_delete_button);
             deleteButton.setVisibility(View.VISIBLE);
 
@@ -178,6 +185,64 @@ public class GroupInfoActivity extends AppCompatActivity {
         });
     }
 
+    private void loadMembers(){
+        dao = new GroupDAO();
+        dao.open();
+        mMembers = dao.getAllAmounts(mGroup.getId());
+        dao.close();
+        Collections.sort(mMembers, new AmountComparator(mLocalUser.getId()));
+        Collections.reverse(mMembers);
+    }
+
+    private void loadMembersList(){
+        mMembersListView.removeAllViews();
+        for (Amount a : mMembers) {
+            View v = inflateAmount(a);
+            int idAdmin = mGroup.getIdAdmin();
+            if (mLocalUser.getId() == idAdmin) {
+                if (a.getUserId() != idAdmin) {
+                    v.setOnLongClickListener(onMemberLongClickListener(a));
+                }
+            }
+        }
+    }
+
+    private View.OnLongClickListener onMemberLongClickListener(final Amount a) {
+        return new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(final View v) {
+                v.setSelected(true);
+                AlertDialog.Builder builder = new AlertDialog.Builder(GroupInfoActivity.this);
+                builder.setTitle(getString(R.string.group_info_dialog_delete_member_title));
+                builder.setMessage(String.format(getString(R.string.group_info_dialog_delete_member_message), a.getFullName(), a.getEmail()));
+                //builder.setMessage(String.format(getString(R.string.payment_delete_message), selectedItem.getName()));
+                builder.setPositiveButton(getString(R.string.remove), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        showProgress(true);
+                        //sendRemoveMemberRequest((Integer) v.getTag());
+                        sendRemoveMemberRequest(a);
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        v.setSelected(false);
+                        dialog.dismiss();
+                    }
+                });
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        v.setSelected(false);
+                    }
+                });
+                builder.show();
+                return true;
+            }
+        };
+    }
+
     private void startAddMemberActivity() {
         Intent addSingleMember = new Intent(GroupInfoActivity.this, AddSingleMemberActivity.class);
         addSingleMember.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
@@ -187,7 +252,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void disableScrolling(){
+    private void disableScrolling() {
         /*mCollapsingToolbarLayout.setActivated(false);
         mCollapsingToolbarLayout.setEnabled(false);
         mCollapsingToolbarLayout.setNestedScrollingEnabled(false);*/
@@ -195,12 +260,12 @@ public class GroupInfoActivity extends AppCompatActivity {
         mAppBarLayout.setExpanded(false, false);
         mAppBarLayout.setActivated(false);
 
-       // mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        // mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         //mCoordinatorLayout.setNestedScrollingEnabled(false);
         //mGroupImageView.setVisibility(View.GONE);
 
         int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
-        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)mAppBarLayout.getLayoutParams();
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
         lp.height = px;
         mAppBarLayout.setLayoutParams(lp);
         //mCollapsingToolbarLayout.setTitle(mGroup.getGroupName());
@@ -235,7 +300,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     private void updateBackground(FloatingActionButton fab, Palette palette) {
-        int lightVibrantColor = palette.getLightVibrantColor(ContextCompat.getColor(this,android.R.color.white));
+        int lightVibrantColor = palette.getLightVibrantColor(ContextCompat.getColor(this, android.R.color.white));
         int vibrantColor = palette.getVibrantColor(ContextCompat.getColor(this, R.color.colorAccent));
 
         fab.setRippleColor(lightVibrantColor);
@@ -251,26 +316,27 @@ public class GroupInfoActivity extends AppCompatActivity {
         }
     }
 
-    private void inflateAmount(Amount a){
+    private View inflateAmount(Amount a) {
         View v = getLayoutInflater().inflate(R.layout.user_info, null);
         TextView fullname = (TextView) v.findViewById(R.id.user_fullname);
         TextView email = (TextView) v.findViewById(R.id.user_email);
-        
+
         String you = "";
-        if(mLocalUser.getId() == a.getUserId()){
-            you =  " (" +getString(R.string.you) + ")";
+        if (mLocalUser.getId() == a.getUserId()) {
+            you = " (" + getString(R.string.you) + ")";
         }
         fullname.setText(a.getFullName() + you);
         email.setText(a.getEmail());
-        if(mGroup.getIdAdmin() == a.getUserId()){
+        if (mGroup.getIdAdmin() == a.getUserId()) {
             TextView admintv = (TextView) v.findViewById(R.id.user_is_admin);
             admintv.setVisibility(View.VISIBLE);
         }
 
         mMembersListView.addView(v);
+        return v;
     }
 
-    public void deleteGroup(View view){
+    public void deleteGroup(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.group_info_dialog_delete_title));
         builder.setMessage(getString(R.string.group_info_dialog_delete_message));
@@ -291,7 +357,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public void resetGroup(View view){
+    public void resetGroup(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.group_info_dialog_reset_title));
         builder.setMessage(getString(R.string.group_info_dialog_reset_message));
@@ -345,52 +411,43 @@ public class GroupInfoActivity extends AppCompatActivity {
         }
     }
 
-    private void sendDeleteRequest(){
+    private void sendDeleteRequest() {
         String url = WebServiceUri.getGroupUri(mGroup.getId()).toString();
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if(!response.isEmpty()){
-                    if(response.equals("1")){
+                if (!response.isEmpty()) {
+                    if (response.equals("1")) {
                         showProgress(false);
                         Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_deleted_successfully), Toast.LENGTH_SHORT).show();
-                        Intent goToNavigationActivity = new Intent(GroupInfoActivity.this,NavigationActivity.class);
+                        Intent goToNavigationActivity = new Intent(GroupInfoActivity.this, NavigationActivity.class);
                         goToNavigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToNavigationActivity);
                         finish();
-                    }
-                    else{
+                    } else {
                         showProgress(false);
                         Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_not_present), Toast.LENGTH_SHORT).show();
-                        Intent goToNavigationActivity = new Intent(GroupInfoActivity.this,NavigationActivity.class);
+                        Intent goToNavigationActivity = new Intent(GroupInfoActivity.this, NavigationActivity.class);
                         goToNavigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToNavigationActivity);
                         finish();
                     }
-                }
-                else{
-                    showProgress(false);
-                    Toast.makeText(GroupInfoActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    serverInternalError();
                 }
 
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                showProgress(false);
-                Toast.makeText(GroupInfoActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
-            }
-        });
+        }, responseErrorListener());
         MyApplication.getInstance().addToRequestQueue(req);
 
     }
 
-    private void sendResetRequest(){
+    private void sendResetRequest() {
         String url = WebServiceUri.getGroupResetUri(mGroup.getId()).toString();
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if(!response.isEmpty()){
+                if (!response.isEmpty()) {
                     String success = "";
                     try {
                         JSONObject resjs = new JSONObject(response);
@@ -399,45 +456,142 @@ public class GroupInfoActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    if(success.equals("success")){
+                    if (success.equals("success")) {
                         showProgress(false);
                         Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_reset_successfully), Toast.LENGTH_SHORT).show();
-                    }
-                    else{
+                    } else {
                         showProgress(false);
                         Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_not_present), Toast.LENGTH_SHORT).show();
-                        Intent goToNavigationActivity = new Intent(GroupInfoActivity.this,NavigationActivity.class);
+                        Intent goToNavigationActivity = new Intent(GroupInfoActivity.this, NavigationActivity.class);
                         goToNavigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToNavigationActivity);
                         finish();
                     }
-                }
-                else{
-                    showProgress(false);
-                    Toast.makeText(GroupInfoActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    serverInternalError();
                 }
 
             }
-        }, new Response.ErrorListener() {
+        }, responseErrorListener());
+        MyApplication.getInstance().addToRequestQueue(req);
+
+    }
+
+    private void sendRemoveMemberRequest(final Amount a) {
+        String url = WebServiceUri.getRemoveGroupMemberUri(mGroup.getId()).toString();
+        String[] keys = {"idUser"};
+        String[] values = {String.valueOf(a.getUserId())};
+        Map<String, String> params = WebServiceRequest.createParametersMap(keys, values);
+        StringRequest req = WebServiceRequest.stringRequest(Request.Method.POST, url, params, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG_LOG, "RISPOSTA REMOVE MEMBER" + response);
+                if (!response.isEmpty()) {
+                    String status = "";
+                    JSONObject resjs = null;
+                    try {
+                        resjs = new JSONObject(response);
+                        status = resjs.getString("status");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (status.equals("success")) {
+
+                        //rimuovo l'utente dalla tabella UserGroup LOCALE
+                        UserGroupDAO ugdao = new UserGroupDAO();
+                        ugdao.open();
+                        int affectedRows = ugdao.removeUserFromGroup(a.getUserId(), mGroup.getId());
+                        if (affectedRows == 1) {
+                            //se l'utente non è più in nessun gruppo lo rimuovo
+                            boolean groupPresent = ugdao.isUserInGroups(a.getUserId());
+                            ugdao.close();
+                            if (!groupPresent) {
+                                UserDAO udao = new UserDAO();
+                                udao.open();
+                                udao.deleteSingleUser(a.getUserId());
+                                udao.close();
+                                Log.d(TAG_LOG, "user removed " + a.getUserId());
+                            }
+                        }
+                        showProgress(false);
+                        loadMembers();
+                        loadMembersList();
+                    } else {
+                        if (!resjs.isNull("type")) {
+                            String error = "";
+                            try {
+                                error = resjs.getString("type");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            switch (error) {
+                                case PAYMENT_PRESENT:
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MyApplication.getAppContext());
+                                    builder.setTitle(getString(R.string.group_info_dialog_cannot_delete_member_title));
+                                    builder.setMessage(getString(R.string.group_info_dialog_cannot_delete_member_message));
+                                    builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int item) {
+                                        }
+                                    });
+                                    builder.show();
+                                    break;
+                                case USER_NOT_FOUND:
+                                    Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_not_present), Toast.LENGTH_SHORT).show();
+                                    Intent goToGroupDetails = new Intent(GroupInfoActivity.this, GroupDetailsActivity.class);
+                                    goToGroupDetails.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(goToGroupDetails);
+                                    finish();
+
+                                    break;
+                                case GROUP_NOT_FOUND:
+                                    Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_not_present), Toast.LENGTH_SHORT).show();
+                                    Intent goToNavigationActivity = new Intent(GroupInfoActivity.this, NavigationActivity.class);
+                                    goToNavigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(goToNavigationActivity);
+                                    finish();
+                                    break;
+                            }
+                        }
+                        showProgress(false);
+                    }
+                } else {
+                    serverInternalError();
+                }
+            }
+        }, responseErrorListener());
+        Log.d(TAG_LOG, "RICHIESTA REMOVE MEMBER: " + req);
+        MyApplication.getInstance().addToRequestQueue(req);
+
+    }
+
+    private Response.ErrorListener responseErrorListener() {
+        return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
                 Toast.makeText(GroupInfoActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
             }
-        });
-        MyApplication.getInstance().addToRequestQueue(req);
-
+        };
     }
 
-    public void startViewImageIntent(View v){
+    private void serverInternalError() {
+        showProgress(false);
+        Toast.makeText(GroupInfoActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+    }
+
+    private void openFullScreenImage() {
+        Intent openFullScreen = new Intent(GroupInfoActivity.this, ImageViewFullscreenActivity.class);
+        openFullScreen.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
+        this.startActivity(openFullScreen);
+        /*
         File file = FileUtils.getGroupImageFile(mGroup.getId(), this);
-        if(file!=null){
+        if (file != null) {
             /*Log.d(TAG_LOG, "file path: " + file.getPath());
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.parse("file://" + file.getPath()),"image/*");
-            startActivity(intent);*/
-        }
-
+            startActivity(intent);
+        }*/
         /*Bitmap image= mGroupImageView.getDrawingCache();
 
         Bundle extras = new Bundle();
@@ -460,16 +614,16 @@ public class GroupInfoActivity extends AppCompatActivity {
             return true;
         }
 
-        if(id == R.id.edit){
+        if (id == R.id.edit) {
             //Intent editGroupIntent = new Intent (this, EditGroupActivity.class);
-            Intent editGroupNameIntent = new Intent (this, EditGroupNameActivity.class);
+            Intent editGroupNameIntent = new Intent(this, EditGroupNameActivity.class);
             //editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             editGroupNameIntent.putExtra(EditGroupNameActivity.GROUP_ID_EXTRA, mGroup.getId());
             editGroupNameIntent.putExtra(EditGroupNameActivity.GROUP_NAME_EXTRA, mGroup.getGroupName());
             startActivityForResult(editGroupNameIntent, EDIT_GROUP_NAME_INTENT);
         }
-        
-        if(id==R.id.add_member){
+
+        if (id == R.id.add_member) {
             startAddMemberActivity();
         }
 
@@ -482,7 +636,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
         //if(mScrollingDisabled)
         //menu.findItem(R.id.edit).setVisible(true);
-        if(mLocalUser.getId() == mGroup.getIdAdmin()){
+        if (mLocalUser.getId() == mGroup.getIdAdmin()) {
             menu.findItem(R.id.add_member).setVisible(true);
         }
 

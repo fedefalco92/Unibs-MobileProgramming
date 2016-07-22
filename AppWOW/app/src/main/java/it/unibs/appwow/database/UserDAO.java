@@ -158,4 +158,8 @@ public class UserDAO implements LocalDB_DAO {
         cursor.close();
         return ok;
     }
+
+    public void deleteSingleUser(int userId) {
+        database.delete(AppDB.Users.TABLE_USERS,AppDB.Users._ID + " = ? ;",new String[] {String.valueOf(userId)});
+    }
 }

@@ -3,7 +3,6 @@ package it.unibs.appwow;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -30,8 +29,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.GroupListFragment;
+import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.services.WebServiceRequest;
@@ -107,7 +108,8 @@ public class AddSingleMemberActivity extends AppCompatActivity {
     private void serverConnectionErrorToast(){
         Toast.makeText(AddSingleMemberActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
     }
-    private void serverInternalErrorToast(){
+    private void serverInternalError(){
+        showProgress(false);
         Toast.makeText(AddSingleMemberActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
     }
 
@@ -184,27 +186,41 @@ public class AddSingleMemberActivity extends AppCompatActivity {
                 Log.d(TAG_LOG, "RISPOSTA: " + response);
                 if(!response.isEmpty()){
                     String status = "";
+                    UserModel user = null;
+                    UserGroupModel pivot = null;
                     try {
                         JSONObject resjs = new JSONObject(response);
                         status = resjs.getString("status");
+                        JSONObject userjs = resjs.getJSONObject("data");
+                        user = UserModel.create(userjs);
+                        pivot = UserGroupModel.create(userjs.getJSONObject("pivot"));
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    if (status.equals("success")) {
+                    if (status.equals("success") && user != null && pivot != null ) {
+                        UserDAO dao = new UserDAO();
+                        dao.open();
+                        dao.insertUser(user);
+                        dao.close();
+
+                        UserGroupDAO ugdao = new UserGroupDAO();
+                        ugdao.open();
+                        ugdao.insertUserGroup(pivot);
+                        ugdao.close();
+
                         Intent groupInfoIntent = new Intent(AddSingleMemberActivity.this, GroupInfoActivity.class);
                         groupInfoIntent.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
                         groupInfoIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(groupInfoIntent);
                         finish();
                     } else {
-                        serverInternalErrorToast();
-                        showProgress(false);
+                        serverInternalError();
                     }
 
                 } else {
-                    serverInternalErrorToast();
-                    showProgress(false);
+                    serverInternalError();
                 }
             }
         },  responseErrorListener());

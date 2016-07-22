@@ -142,4 +142,8 @@
     <string name="user_found">Utente trovato</string>
     <string name="add_single_member_dialog_message">Vuoi aggiungere %1$s (%2$s) al gruppo?</string>
     <string name="add_single_member_include">Aggiungi membro in tutti i precedenti pagamenti \"per tutti\"</string>
+    <string name="group_info_dialog_cannot_delete_member_message">Non è possibile rimuovere %1$s perché è coinvolto/a in qualche spesa.</string>
+    <string name="group_info_dialog_cannot_delete_member_title">Impossibile rimuovere membro</string>
+    <string name="group_info_dialog_delete_member_message">Vuoi eliminare %1$s (%2$s) da questo gruppo?</string>
+    <string name="group_info_dialog_delete_member_title">Rimuovi membro?</string>
 </resources>

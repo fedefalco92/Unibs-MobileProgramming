@@ -281,5 +281,13 @@
     <string name="prompt_password_new_confirm">Confirm new password</string>
     <string name="title_activity_edit_user">Edit user</string>
     <string name="app_internal_error">App internal error</string>
+    <string name="group_info_dialog_delete_member_title">Remove member?</string>
+    <string name="group_info_dialog_delete_member_message">Do you want to remove %1$s (%2$s) from this group?</string>
+    <string name="group_info_dialog_cannot_delete_member_title">Cannot remove member</string>
+    <string name="group_info_dialog_cannot_delete_member_message">Cannot remove %1$s because he/she is envolved in some payments.</string>
+
+    <string name="title_activity_image_view_fullscreen">ImageViewFullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
