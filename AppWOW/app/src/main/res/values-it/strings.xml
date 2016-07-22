@@ -146,4 +146,6 @@
     <string name="group_info_dialog_cannot_delete_member_title">Impossibile rimuovere membro</string>
     <string name="group_info_dialog_delete_member_message">Vuoi eliminare %1$s (%2$s) da questo gruppo?</string>
     <string name="group_info_dialog_delete_member_title">Rimuovi membro?</string>
+    <string name="save_to_gallery">Salva nella galleria</string>
+    <string name="image_saved_to_gallery">Foto salvata nella galleria</string>
 </resources>

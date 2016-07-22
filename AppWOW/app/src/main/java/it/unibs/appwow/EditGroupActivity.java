@@ -64,9 +64,7 @@ public class EditGroupActivity extends AppCompatActivity {
     private String mFileName;
     private String mPreviousGroupName;
 
-    private int mChoosenPhotoTask;
-    private static final int TAKE_PHOTO = 1;
-    private static final int CHOOSE_PHOTO = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -239,11 +237,11 @@ public class EditGroupActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int item) {
                 boolean result = PermissionUtils.checkPermission(EditGroupActivity.this);
                 if (items[item].equals(takePhoto)) {
-                    mChoosenPhotoTask=TAKE_PHOTO;
+
                     if(result)
                         cameraIntent();
                 } else if (items[item].equals(choosePhoto)) {
-                    mChoosenPhotoTask=CHOOSE_PHOTO;
+
                     if(result)
                         galleryIntent();
                 } else if (items[item].equals(cancelPhoto)) {

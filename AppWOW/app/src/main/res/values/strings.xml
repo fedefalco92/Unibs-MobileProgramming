@@ -289,5 +289,7 @@
     <string name="title_activity_image_view_fullscreen">ImageViewFullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="save_to_gallery">Save to gallery</string>
+    <string name="image_saved_to_gallery">Photo saved to gallery</string>
 
 </resources>

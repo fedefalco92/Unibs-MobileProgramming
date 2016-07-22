@@ -68,6 +68,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     private static final String PAYMENT_PRESENT = "PAYMENT_PRESENT";
     private static final String USER_NOT_FOUND = "USER_NOT_FOUND";
     private static final String GROUP_NOT_FOUND = "GROUP_NOT_FOUND";
+    private static final int OPEN_IMAGE_INTENT = 2;
 
     private LocalUser mLocalUser;
     private GroupModel mGroup;
@@ -126,38 +127,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         mCollapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.white));
 
         mGroupImageView = (SquareImageView) findViewById(R.id.group_info_group_photo);
-        File file = FileUtils.getGroupImageFile(mGroup.getId(), this);
-        if (file != null) {
-            String fileUri = "file://" + file.getPath();
-            Picasso.with(this).load(fileUri).into(mGroupImageView, new Callback() {
-                @Override
-                public void onSuccess() {
-                    Bitmap bitmap = ((BitmapDrawable) mGroupImageView.getDrawable()).getBitmap();
-                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                        public void onGenerated(Palette palette) {
-                            applyPalette(palette);
-                        }
-                    });
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-
-            mGroupImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openFullScreenImage();
-                }
-            });
-        } else {
-            disableScrolling();
-            mScrollingDisabled = true;
-        }
-
-
+        reloadPhoto();
         //TextView title = (TextView) findViewById(R.id.group_info_group_name);
         //title.setText(mGroup.getGroupName());
 
@@ -204,6 +174,40 @@ public class GroupInfoActivity extends AppCompatActivity {
                     v.setOnLongClickListener(onMemberLongClickListener(a));
                 }
             }
+        }
+    }
+
+    private void reloadPhoto() {
+        File file = FileUtils.getGroupImageFile(mGroup.getId(), this);
+        if (file != null) {
+            String fileUri = "file://" + file.getPath();
+            Picasso.with(this).invalidate(fileUri);
+            Picasso.with(this).load(fileUri).into(mGroupImageView, new Callback() {
+                @Override
+                public void onSuccess() {
+                    Bitmap bitmap = ((BitmapDrawable) mGroupImageView.getDrawable()).getBitmap();
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        public void onGenerated(Palette palette) {
+                            applyPalette(palette);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError() {
+                    Log.d(TAG_LOG, "ERROR WHILE LOADING IMAGE");
+                }
+            });
+
+            mGroupImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openFullScreenImage();
+                }
+            });
+        } else {
+            disableScrolling();
+            mScrollingDisabled = true;
         }
     }
 
@@ -583,7 +587,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     private void openFullScreenImage() {
         Intent openFullScreen = new Intent(GroupInfoActivity.this, ImageViewFullscreenActivity.class);
         openFullScreen.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
-        this.startActivity(openFullScreen);
+        this.startActivityForResult(openFullScreen, OPEN_IMAGE_INTENT);
         /*
         File file = FileUtils.getGroupImageFile(mGroup.getId(), this);
         if (file != null) {
@@ -655,7 +659,13 @@ public class GroupInfoActivity extends AppCompatActivity {
                     mCollapsingToolbarLayout.setTitle(mGroup.getGroupName());
                 }
                 break;
+            case OPEN_IMAGE_INTENT:
+                boolean photoUpdated = data.getBooleanExtra(ImageViewFullscreenActivity.PHOTO_UPDATED_BOOLEAN_EXTRA, false);
+                Log.d(TAG_LOG, "PHOTO UPDATED: " + photoUpdated);
+                if(photoUpdated){
+                    reloadPhoto();
+                }
+                break;
         }
-
     }
 }
