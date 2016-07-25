@@ -292,6 +292,8 @@
     <string name="save_to_gallery">Save to gallery</string>
     <string name="image_saved_to_gallery">Photo saved to gallery</string>
     <string name="error_google_maps">Connection to google maps failed</string>
+    <string name="visited_places">Visited places</string>
+    <string name="add_photo">Add a photo</string>
     <string name="last_visited_places">Last visited places</string>
     <string name="spent_msg">You have spent</string>
 

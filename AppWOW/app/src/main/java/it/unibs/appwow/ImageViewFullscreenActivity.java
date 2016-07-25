@@ -72,6 +72,8 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     private View mProgressView;
     private Bitmap mBitmap;
 
+    private boolean mNoPhoto;
+
 
     private boolean mPhotoUpdated;
 
@@ -88,14 +90,25 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
 
         mGroup = getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
         setTitle(mGroup.getGroupName());
-        mBitmap = FileUtils.readGroupImage(mGroup.getId(), this);
+
         mPhotoView = (SquareImageView) findViewById(R.id.photo);
-        mPhotoView.setImageBitmap(mBitmap);
 
         mProgressView = findViewById(R.id.progress_bar);
 
         mPhotoUpdated = false;
         mFileName = "";
+
+        mNoPhoto = false;
+        mBitmap = FileUtils.readGroupImage(mGroup.getId(), this);
+        if (mBitmap==null) {
+            showProgress(true);
+            mNoPhoto = true;
+            selectImage();
+        } else {
+            mPhotoView.setImageBitmap(mBitmap);
+        }
+
+
 
     }
 
@@ -156,6 +169,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             File f = FileUtils.getGroupImageFile(mGroup.getId(), this);
             //shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+            shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(Intent.createChooser(shareIntent, "Share Image"));
 
 
@@ -185,10 +199,15 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                     if(result)
                         galleryIntent();
                 } else if (items[item].equals(cancelPhoto)) {
-                    dialog.dismiss();
+                    if(mNoPhoto){
+                        finish();
+                    } else {
+                        dialog.dismiss();
+                    }
                 }
             }
         });
+        builder.setCancelable(false);
         builder.show();
     }
 

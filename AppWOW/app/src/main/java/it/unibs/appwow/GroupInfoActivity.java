@@ -63,12 +63,13 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     private static final String TAG_LOG = GroupInfoActivity.class.getSimpleName();
     private static final int EDIT_GROUP_NAME_INTENT = 1;
+    private static final int OPEN_IMAGE_INTENT = 2;
+    public static final String NO_PHOTO_EXTRA = "no_photo";
 
     //server errors
     private static final String PAYMENT_PRESENT = "PAYMENT_PRESENT";
     private static final String USER_NOT_FOUND = "USER_NOT_FOUND";
     private static final String GROUP_NOT_FOUND = "GROUP_NOT_FOUND";
-    private static final int OPEN_IMAGE_INTENT = 2;
 
     private LocalUser mLocalUser;
     private GroupModel mGroup;
@@ -268,14 +269,15 @@ public class GroupInfoActivity extends AppCompatActivity {
         //mCoordinatorLayout.setNestedScrollingEnabled(false);
         //mGroupImageView.setVisibility(View.GONE);
 
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
+        /*int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
         CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
         lp.height = px;
-        mAppBarLayout.setLayoutParams(lp);
+        mAppBarLayout.setLayoutParams(lp);*/
         //mCollapsingToolbarLayout.setTitle(mGroup.getGroupName());
         //mCollapsingToolbarLayout.setTitleEnabled(false);
         //mToolbar = (Toolbar) findViewById(R.id.toolbar);
         //mToolbar.setTitle(mGroup.getGroupName());
+        getSupportActionBar().setTitle(mGroup.getGroupName());
     }
 
     private void initActivityTransitions() {
@@ -627,6 +629,10 @@ public class GroupInfoActivity extends AppCompatActivity {
             startActivityForResult(editGroupNameIntent, EDIT_GROUP_NAME_INTENT);
         }
 
+        if (id == R.id.add_photo) {
+            openFullScreenImage();
+        }
+
         if (id == R.id.add_member) {
             startAddMemberActivity();
         }
@@ -638,8 +644,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_group_edit, menu);
 
-        //if(mScrollingDisabled)
-        //menu.findItem(R.id.edit).setVisible(true);
+        if(mScrollingDisabled) menu.findItem(R.id.add_photo).setVisible(true);
         if (mLocalUser.getId() == mGroup.getIdAdmin()) {
             menu.findItem(R.id.add_member).setVisible(true);
         }
@@ -663,7 +668,8 @@ public class GroupInfoActivity extends AppCompatActivity {
                 boolean photoUpdated = data.getBooleanExtra(ImageViewFullscreenActivity.PHOTO_UPDATED_BOOLEAN_EXTRA, false);
                 Log.d(TAG_LOG, "PHOTO UPDATED: " + photoUpdated);
                 if(photoUpdated){
-                    reloadPhoto();
+                    if(mScrollingDisabled) recreate();
+                    else reloadPhoto();
                 }
                 break;
         }

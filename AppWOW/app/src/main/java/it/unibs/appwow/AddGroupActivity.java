@@ -11,13 +11,17 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +37,7 @@ import it.unibs.appwow.utils.CropOptionAdapter;
 import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.Validator;
 import it.unibs.appwow.utils.graphicTools.PermissionUtils;
+import it.unibs.appwow.utils.graphicTools.SquareImageView;
 
 public class AddGroupActivity extends AppCompatActivity {
 
@@ -42,8 +47,9 @@ public class AddGroupActivity extends AppCompatActivity {
     private static final int PICK_FROM_CAMERA_INTENT = 2;
     private static final int CROP_FROM_CAMERA = 3;
     public static final String PASSING_GROUP_EXTRA = "group";
-    private ImageView mGroupImage;
+    private SquareImageView mGroupImage;
     private TextView mGroupNameView;
+    private ImageButton mRemovePhotoButton;
     private GroupModel mGroup;
     //private Bitmap mThumbnail;
     private Uri mPhotoUri;
@@ -57,22 +63,30 @@ public class AddGroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         setTitle(getString(R.string.add_group_activity_title));
-        mGroupImage = (ImageView) findViewById(R.id.imageView2);
-        mGroupImage.setOnTouchListener(new View.OnTouchListener() {
+        mGroupImage = (SquareImageView) findViewById(R.id.imageView2);
+        /*mGroupImage.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 selectImage();
-                /*Intent intentPhoto = new Intent(Intent.ACTION_GET_CONTENT);
-                intentPhoto.setType("image/*");
-                startActivityForResult(Intent.createChooser(intentPhoto,getResources().getString(R.string.select_image_group)),SELECT_PICTURE_CODE);*/
+                //Intent intentPhoto = new Intent(Intent.ACTION_GET_CONTENT);
+                //intentPhoto.setType("image/*");
+                //startActivityForResult(Intent.createChooser(intentPhoto,getResources().getString(R.string.select_image_group)),SELECT_PICTURE_CODE);
                 return false;
             }
-        });
+        });*/
         mGroupNameView = (TextView) findViewById(R.id.group_name_field);
         mGroup = GroupModel.create("");
         mFileName = "";
         //mPhotoUri = "";
+
+        mRemovePhotoButton = (ImageButton) findViewById(R.id.remove_photo_button);
+        toggleRemovePhotoButton(false);
     }
 
     public GroupModel getGroup() {
@@ -115,6 +129,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     //mGroupImage.setImageBitmap(photo);
                     // TODO: 04/07/2016 scommentare riga precedente e cancellare istruzione successiva
                     mGroupImage.setImageBitmap(photo);
+                    toggleRemovePhotoButton(true);
                 }
                 File f = new File(mPhotoUri.getPath());
                 if (f.exists()) f.delete();
@@ -349,4 +364,59 @@ public class AddGroupActivity extends AppCompatActivity {
             return false;
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+            default:
+                return true;
+        }
+    }
+
+    public void removePhoto() {
+        mGroupImage.setImageResource(R.drawable.ic_group_black_48dp);
+        toggleRemovePhotoButton(false);
+        mPhotoUri = null;
+        mFileName = "";
+    }
+
+    private void toggleRemovePhotoButton(boolean showBin) {
+        if (showBin) {
+            mRemovePhotoButton.setImageResource(R.drawable.ic_delete_black_24dp);
+            mRemovePhotoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removePhoto();
+                }
+            });
+        } else {
+            mRemovePhotoButton.setImageResource(R.drawable.ic_add_a_photo_black_24dp);
+            mRemovePhotoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectImage();
+                }
+            });
+        }
+    }
+
+    /*
+    public void onInsertPhotoButtonClicked(View v){
+        galleryIntent();
+    }
+
+    public void onAddPhotoButtonClicked(View v){
+        cameraIntent();
+    }*/
+
+    public void onAddPhotoButtonClicked(View v){
+        selectImage();
+    }
+
 }

@@ -57,7 +57,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.unibs.appwow.LoginActivity"/>
         </activity>
-        <activity android:name=".AddGroupActivity"/>
+        <activity android:name=".AddGroupActivity"
+                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"/>
         <activity
             android:name=".PaymentDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">

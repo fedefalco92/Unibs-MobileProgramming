@@ -148,5 +148,7 @@
     <string name="group_info_dialog_delete_member_title">Rimuovi membro?</string>
     <string name="save_to_gallery">Salva nella galleria</string>
     <string name="image_saved_to_gallery">Foto salvata nella galleria</string>
+    <string name="add_photo">Aggiungi una foto</string>
+    <string name="app_internal_error"></string>
     <string name="last_visited_places">Ultimi luoghi visitati</string>
 </resources>
