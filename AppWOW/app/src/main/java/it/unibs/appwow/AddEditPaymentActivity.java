@@ -455,8 +455,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         }
 
         showProgress(true);
-        mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setEnabled(false);
-        //mToolbar.getMenu().clear();
+
         Map<String, String> requestParams = new HashMap<String, String>();
         String name = mPaymentNameEditText.getText().toString();
         String notes = mPaymentNotesEditText.getText().toString();
@@ -505,6 +504,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             }
 
         } else {
+            mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setVisible(false);
+
             String[] keys = {"date", "name", "notes", "position", "position_id"};
 
             position_id = mToEditPayment.getPositionId();
@@ -598,8 +599,10 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
-                mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setEnabled(true);
                 Log.e("Error",error.getMessage());
+                if(EDIT_MODE){
+                    mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setVisible(true);
+                }
                 //Toast.makeText(AddEditPaymentActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
                 Messages.showSnackbar(mContainerLayout,R.string.server_connection_error);
             }
