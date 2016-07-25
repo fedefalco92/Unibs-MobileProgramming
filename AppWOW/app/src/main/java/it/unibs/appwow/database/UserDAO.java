@@ -6,9 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.models.UserModel;
+import it.unibs.appwow.models.parc.PaymentModel;
 
 /**
  * Created by Alessandro on 15/06/2016.

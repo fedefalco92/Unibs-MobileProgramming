@@ -44,13 +44,14 @@ import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.FileUtils;
+import it.unibs.appwow.utils.graphicTools.Messages;
 import it.unibs.appwow.views.adapters.GroupAdapter;
 
 
@@ -152,22 +153,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.groups_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mProgressBar = (ProgressBar) view.findViewById(R.id.self_reload_progress_bar);
-        // Richiamo questo metodo per fare un refresh una volta aperta l'activity
-        //fetchGroups();
-        /**
-         * Showing Swipe Refresh animation on activity create
-         * As animation won't start on onCreate, post runnable is used
-         */
-        // Viene chiamato onResume
-        /*
-        mSwipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mSwipeRefreshLayout.setRefreshing(true);
-                                        fetchGroups();
-                                    }
-                                }
-        );*/
 
     }
 
@@ -241,6 +226,19 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void fetchGroups(){
         Log.d(TAG_LOG,"fetchGroups");
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(getView(),R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    fetchGroups();
+                }
+            });
+            mSwipeRefreshLayout.setRefreshing(false);
+            showProgress(false);
+            return;
+        }
+
         // showing refresh animation before making http call
         if(mLocalUser != null){
             Log.d(TAG_LOG,"mLocalUser is not null");
@@ -314,7 +312,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
                                 mAdapter.reload();
                             } else {
-                                Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getActivity(), getString(R.string.message_nothing_to_show), Toast.LENGTH_LONG).show();
+                                Messages.showSnackbar(getView(),R.string.message_nothing_to_show);
                             }
                             gruppiLocali.removeAll(gruppiRicevuti);
                             if(!gruppiLocali.isEmpty()){
@@ -355,7 +354,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
             // stopping swipe refresh
             mSwipeRefreshLayout.setRefreshing(false);
             showProgress(false);
-            Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
+            Messages.showSnackbar(getView(),R.string.message_nothing_to_show);
         }
     }
 
@@ -365,7 +365,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
 
-                Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
+                Messages.showSnackbar(getView(),R.string.message_nothing_to_show);
 
                 // stopping swipe refresh
                 mSwipeRefreshLayout.setRefreshing(false);

@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -81,6 +82,7 @@ import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.DecimalDigitsInputFilter;
 import it.unibs.appwow.utils.TimePickerFragment;
 import it.unibs.appwow.utils.Validator;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 /**
  * permette di creare un nuovo payment o di modificarne uno esistente
@@ -99,12 +101,6 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     private boolean EDIT_MODE;
 
-    //approssimazione importi
-    /*
-    private static final String CENT = "CENT";
-    private static final String TENCENTS = "TENCENTS";
-    private String mApproxType;*/
-
     private LocalUser mUser;
     private GroupModel mGroup;
     private Place mPlace;
@@ -112,9 +108,9 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     private Payment mToEditPayment;
 
+    private LinearLayout mContainerLayout;
     private EditText mPaymentNameEditText;
     private EditText mPaymentAmountEditText;
-    //private Spinner mPaymentCurrency;
     private TextView mPaymentCurrency;
     private EditText mPaymentDateEditText;
     private EditText mPaymentTimeEditText;
@@ -144,6 +140,8 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_payment);
+        mContainerLayout = (LinearLayout) findViewById(R.id.container);
+
         mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -160,20 +158,15 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         }
 
         mUser = LocalUser.load(this);
-        /*
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mApproxType = prefs.getString("pref_key_round_payments", CENT);
-        Log.d(TAG_LOG, " APPROX TYPE: " + mApproxType);*/
 
         UserGroupDAO dao = new UserGroupDAO();
-        dao = new UserGroupDAO();
         dao.open();
         mGroupUsers = dao.getAllUsers(mGroup.getId());
         mSliderAmountList = dao.getAllSliderAmounts(mGroup.getId());
         dao.close();
 
-        mLockedAmount = new HashSet<SliderAmount>();
-        mUnlockedAmount = new HashSet<SliderAmount>();
+        mLockedAmount = new HashSet<>();
+        mUnlockedAmount = new HashSet<>();
 
         mPlace = null;
 
@@ -332,10 +325,6 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                 mUserToSpinner.setSelection(0);
             }
         }
-
-
-
-
     }
 
     public void onAddPaymentButtonClicked(View v){
@@ -357,7 +346,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                 mPaymentAmountEditText.setError(getString(R.string.error_invalid_amount));
                 mPaymentAmountEditText.requestFocus();
             }
-            if(!paymentOk){
+            if(amountOk && !paymentOk){
                 mLocalUserSliderAmount.getAmountView().setError(getString(R.string.error_invalid_amount_user));
                 mLocalUserSliderAmount.getAmountView().requestFocus();
             }
@@ -367,8 +356,6 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private boolean verifyAmounts(){
         Log.d(TAG_LOG,"verifyAmounts");
         boolean res = true;
-        Log.d(TAG_LOG,"mPayment Amount" + mPaymentAmount);
-        Log.d(TAG_LOG,"mLocalUserSliderAmount" + mLocalUserSliderAmount.getAmount());
         if(mPaymentAmount == mLocalUserSliderAmount.getAmount()){
             res = false;
         }
@@ -456,9 +443,20 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     }
 
     private void sendPostRequest() {
+        Log.d(TAG_LOG,"sendPostRequest()");
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mContainerLayout,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    sendPostRequest();
+                }
+            });
+            return;
+        }
+
         showProgress(true);
-        //mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setEnabled(false);
-        mToolbar.getMenu().clear();
+        mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setEnabled(false);
+        //mToolbar.getMenu().clear();
         Map<String, String> requestParams = new HashMap<String, String>();
         String name = mPaymentNameEditText.getText().toString();
         String notes = mPaymentNotesEditText.getText().toString();
@@ -548,7 +546,6 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
         }
 
-
         String uri = WebServiceUri.PAYMENTS_URI.toString();
         if(EDIT_MODE) uri = WebServiceUri.getPaymentUri(mToEditPayment.getId()).toString();
         Log.d(TAG_LOG, "uri: " + uri);
@@ -601,8 +598,10 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
+                mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setEnabled(true);
                 Log.e("Error",error.getMessage());
-                Toast.makeText(AddEditPaymentActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(AddEditPaymentActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+                Messages.showSnackbar(mContainerLayout,R.string.server_connection_error);
             }
         };
     }

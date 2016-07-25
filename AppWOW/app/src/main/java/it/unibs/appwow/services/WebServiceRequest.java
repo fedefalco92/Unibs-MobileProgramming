@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -25,26 +26,46 @@ import it.unibs.appwow.MyApplication;
 public class WebServiceRequest {
 
     private static final String TAG_LOG = WebServiceRequest.class.getSimpleName();
+    private static final int MY_SOCKET_TIMEOUT_MS = 5000;
+    private static DefaultRetryPolicy mDefaultRetryPolicy = new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
 
     public static JsonObjectRequest objectRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> onResponseListener, Response.ErrorListener errListener) {
-        return new JsonObjectRequest(method, url, jsonRequest,onResponseListener ,errListener);
+        JsonObjectRequest req = new JsonObjectRequest(method, url, jsonRequest,onResponseListener ,errListener);
+        req.setRetryPolicy(mDefaultRetryPolicy);
+        return req;
+        //return new JsonObjectRequest(method, url, jsonRequest,onResponseListener ,errListener);
     }
 
     public static JsonArrayRequest arrayRequest(String url, Response.Listener<JSONArray> onResponseListener, Response.ErrorListener errListener) {
-        return new JsonArrayRequest(url,onResponseListener ,errListener);
+        JsonArrayRequest req = new JsonArrayRequest(url,onResponseListener ,errListener);
+        req.setRetryPolicy(mDefaultRetryPolicy);
+        return req;
+        //return new JsonArrayRequest(url,onResponseListener ,errListener);
     }
 
     public static StringRequest stringRequest(int method, String url, Response.Listener<String> onResponseListener, Response.ErrorListener errListener){
-        return new StringRequest(method,url,onResponseListener,errListener);
+        StringRequest req = new StringRequest(method,url,onResponseListener,errListener);
+        req.setRetryPolicy(mDefaultRetryPolicy);
+        return req;
+        //return new StringRequest(method,url,onResponseListener,errListener);
     }
 
     public static StringRequest stringRequest(int method, String url, final Map<String,String> params,  Response.Listener<String> onResponseListener, Response.ErrorListener errListener){
-        return new StringRequest(method,url,onResponseListener,errListener){
+        StringRequest req = new StringRequest(method,url,onResponseListener,errListener){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 return params;
             }
         };
+        req.setRetryPolicy(mDefaultRetryPolicy);
+        return req;
+
+        /*return new StringRequest(method,url,onResponseListener,errListener){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return params;
+            }
+        };*/
     }
 
     public static Map<String,String> createParametersMap(String[] keys, String[] values){
@@ -60,6 +81,10 @@ public class WebServiceRequest {
         return map;
     }
 
+    /**
+     * It checks if there is network available.
+     * @return true if There is connection.
+     */
     public static boolean checkNetwork(){
         ConnectivityManager cm = (ConnectivityManager) MyApplication.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 

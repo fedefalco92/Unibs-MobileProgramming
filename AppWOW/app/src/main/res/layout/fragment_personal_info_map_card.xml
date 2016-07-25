@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/visited_places"
+            android:text="@string/last_visited_places"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="?android:attr/textColorPrimary"
             android:padding="16dp"

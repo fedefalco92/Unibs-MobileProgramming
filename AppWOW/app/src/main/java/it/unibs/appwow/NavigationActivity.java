@@ -22,14 +22,13 @@ import java.util.List;
 
 import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.fragments.GroupListFragment;
-import it.unibs.appwow.fragments.OfflineGroupListFragment;
 import it.unibs.appwow.fragments.PersonalInfoFragment;
 import it.unibs.appwow.fragments.SettingsFragment;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.FileUtils;
 
 public class NavigationActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GroupListFragment.OnFragmentInteractionListener, OfflineGroupListFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GroupListFragment.OnFragmentInteractionListener {
 
     private static final String TAG_LOG = NavigationActivity.class.getSimpleName();
 

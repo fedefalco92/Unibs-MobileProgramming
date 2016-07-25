@@ -197,6 +197,35 @@ public class PaymentDAO implements LocalDB_DAO {
     public void removeSinglePayment(int id) {
         database.delete(AppDB.Payments.TABLE_PAYMENTS ,AppDB.Payments._ID + " = ? ;",new String[] {String.valueOf(id)});
     }
+
+    public List<String> getAllPlacesID(String limit){
+        List<String> placesID = new ArrayList<>();
+
+        String [] columns = {AppDB.Payments.COLUMN_POSITION_ID};
+        Cursor cursor = database.query(true, AppDB.Payments.TABLE_PAYMENTS, columns, AppDB.Payments.COLUMN_POSITION_ID + " <> '' AND " + AppDB.Payments.COLUMN_POSITION_ID + " IS NOT NULL", null, null, null, null, limit);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            String s = cursor.getString(0);
+            placesID.add(s);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return placesID;
+    }
+
+    public double getMoneySpent(int idUser){
+        double amountTotal = 0;
+
+        String [] columns = {AppDB.Payments.COLUMN_AMOUNT};
+        Cursor cursor = database.query(AppDB.Payments.TABLE_PAYMENTS,columns, AppDB.Payments.COLUMN_ID_USER + " = " + idUser, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            amountTotal += cursor.getDouble(0);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return amountTotal;
+    }
 /*
     public List<UserModel> getAllUsers(int idGroup) {
         List<UserModel> data = new ArrayList<UserModel>();

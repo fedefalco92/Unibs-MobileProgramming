@@ -23,6 +23,7 @@
         android:textAlignment="center"
         android:id="@+id/payment_slider_item_amount"
         android:text="10.00"
+        android:imeOptions="actionNext"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"/>
 

@@ -2,6 +2,8 @@ package it.unibs.appwow;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -48,8 +50,10 @@ import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.models.Amount;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 public class GroupDetailsActivity extends AppCompatActivity implements PaymentsFragment.OnListFragmentInteractionListener,
         AmountsFragment.OnListFragmentInteractionListener,
@@ -74,10 +78,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
+    private CoordinatorLayout mContainer;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
@@ -92,9 +94,9 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG_LOG,"onCreate");
-        //mRequestPending = 0;
-        
+
         setContentView(R.layout.activity_group_details);
+        mContainer = (CoordinatorLayout) findViewById(R.id.main_content);
 
         mLocalUser = LocalUser.load(MyApplication.getAppContext());
         mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
@@ -159,11 +161,13 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             public void onPageSelected(int position) {
                 //Log.d(TAG_LOG,"Page Selected : "+position);
                 //GroupDetailsActivity.this.invalidateOptionsMenu();
+                supportInvalidateOptionsMenu();
                 mCurrentPage = position;
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                supportInvalidateOptionsMenu();
             }
         });
     }
@@ -182,16 +186,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        /*
-        if (id == R.id.action_edit_group) {
-            Intent editGroupIntent = new Intent (this, EditGroupActivity.class);
-            //editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            editGroupIntent.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
-            startActivity(editGroupIntent);
-            return true;
-        }*/
-
         if(id == R.id.action_show_group_info){
             Intent showGroupInfo = new Intent (this, GroupInfoActivity.class);
             //editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -205,19 +199,16 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
     @Override
     public void onListFragmentInteraction(PaymentModel item) {
-        // TODO: 07/05/2016 Qui va implementato l'evento da gestire alla selezione dell'item
         Toast.makeText(GroupDetailsActivity.this, "Item: " + item.getId(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onListFragmentInteraction(Amount item) {
-        // TODO: 10/05/2016  Qui va implementato l'evento da gestire alla selezione dell'item
         Toast.makeText(GroupDetailsActivity.this, "Item: " + item.getUserId(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onListFragmentInteraction(Debt item) {
-        // TODO: 10/05/2016  Qui va implementato l'evento da gestire alla selezione dell'item
     }
 
     @Override
@@ -235,8 +226,20 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
      */
     private void fetchGroupDetails(){
         Log.d(TAG_LOG,"Fetching group details");
-        // showing refresh animation before making http call
-        fetchUsers();
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    fetchGroupDetails();
+                }
+            });
+            mSwipeRefreshLayout.setRefreshing(false);
+            showProgress(false);
+            return;
+        } else {
+            fetchUsers();
+        }
     }
 
     private void fetchGroup(){
@@ -284,7 +287,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                                 setFragmentAdapter();
                                 mSwipeRefreshLayout.setRefreshing(false);*/
                             } else {
-                                //se il gruppo locale è più aggiornato di quello del server?
+                                //se il gruppo locale è più aggiornato di quello del server
                                 Log.d(TAG_LOG, "Group up to date");
                                 setFragmentAdapter();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
@@ -300,9 +303,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                 errorResponseListener());
         // Adding request to request queue
         MyApplication.getInstance().addToRequestQueue(groupRequest,TAG_REQUEST_GROUP_DETAILS);
-        //mRequestPending++;
-
-        //mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private void fetchUsers(){
@@ -451,7 +451,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
-                Toast.makeText(MyApplication.getAppContext(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
+                //Toast.makeText(MyApplication.getAppContext(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
+                Messages.showSnackbar(mContainer,R.string.server_connection_error);
                 mSectionsPagerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
                 showProgress(false);
@@ -519,11 +520,11 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             // TODO: 10/05/2016  STRINGHE
             switch (position) {
                 case 0:
-                    return getString(R.string.payments);
+                    return getString(R.string.payments).toUpperCase();
                 case 1:
-                    return getString(R.string.summary);
+                    return getString(R.string.summary).toUpperCase();
                 case 2:
-                    return getString(R.string.debts);
+                    return getString(R.string.debts).toUpperCase();
             }
             return null;
         }

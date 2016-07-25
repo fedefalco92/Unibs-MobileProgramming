@@ -14,7 +14,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/activity_payment_details_container"
-    tools:context=".PaymentDetailsActivity">
+    tools:context=".PaymentDetailsActivity"
+    android:background="@color/white">
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -196,7 +197,9 @@
                 android:layout_alignParentStart="true"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:paddingStart="8dp"/>
+                android:paddingStart="8dp"
+                android:layout_weight="1"/>
+
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

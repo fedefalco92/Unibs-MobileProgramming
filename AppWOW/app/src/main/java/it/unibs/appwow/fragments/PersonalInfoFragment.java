@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -41,6 +42,8 @@ import java.util.List;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
+import it.unibs.appwow.database.PaymentDAO;
+import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -59,6 +62,7 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     private GoogleMap mGoogleMap;
     private SupportMapFragment mMapFragment;
     private MapView mMapView;
+    private TextView amountTotal;
 
     private String [] mPlaceIds;
     private List<Place> mPlacesObj;
@@ -123,6 +127,8 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        amountTotal = (TextView) view.findViewById(R.id.fragment_personal_info_money_spent_value);
+
         //mMapView = (MapView) view.findViewById(R.id.fragment_personal_info_map);
         //mMapView.getMapAsync(this);
         /*
@@ -133,13 +139,15 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
         mAdapter = new PersonalInfoAdapter(getActivity(), mDataSetTypes);
         mRecyclerView.setAdapter(mAdapter);*/
 
-        fetchUserPlaces();
+        fetchUserPlacesLocal();
+        fetchUserPaymentsInfo();
     }
 
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getActivity().setTitle(R.string.personal_info_string);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.fragment_personal_info_map);
         mMapFragment.getMapAsync(this);
     }
@@ -189,12 +197,16 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
         try {
             mGoogleMap.setMyLocationEnabled(true);
+            //CameraUpdate cameraPosition = CameraUpdateFactory.newCameraPosition(mGoogleMap.getCameraPosition());
+            //Zoom in and animate the camera.
+            //mGoogleMap.animateCamera(cameraPosition);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
     }
 
 
+    /*
     public void fetchUserPlaces() {
         String uri = WebServiceUri.getUserPlaceUri(mLocalUser.getId()).toString();
         JsonObjectRequest req = WebServiceRequest.objectRequest(Request.Method.GET, uri, null, new Response.Listener<JSONObject>() {
@@ -248,6 +260,50 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
             }
         });
         MyApplication.getInstance().addToRequestQueue(req);
+    }*/
+
+    private void fetchUserPlacesLocal(){
+        String limit = "10";
+        List<String> placesID = new ArrayList<>();
+        PaymentDAO dao = new PaymentDAO();
+        dao.open();
+        placesID.addAll(dao.getAllPlacesID(limit));
+        dao.close();
+        //Log.d(TAG_LOG, "placeID: " + placesID.toString());
+        mPlaceIds = placesID.toArray(new String[placesID.size()]);
+        //Log.d(TAG_LOG, "mplaceID: " + mPlaceIds.toString());
+
+        Places.GeoDataApi.getPlaceById(mClient, mPlaceIds)
+                .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                    @Override
+                    public void onResult(PlaceBuffer places) {
+                        if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                            //final Place myPlace = places.get(0);
+                            for (Place myPlace : places) {
+                                Log.i(TAG_LOG, "Place found: " + myPlace.getName());
+                                mPlacesObj.add(myPlace.freeze());
+                                //mAdapter.addPlaceObj(myPlace.freeze());
+                            }
+                            Log.d(TAG_LOG,"mPlacesObj size: " + mPlacesObj.size());
+                            addMarkerAndCenter();
+                            //mAdapter.notifyDataSetChanged();
+                            //mAdapter.notifyItemChanged(1);
+                        } else {
+                            Log.e(TAG_LOG, "Place not found");
+                        }
+                        places.release();
+                    }
+                });
+    }
+
+    private void fetchUserPaymentsInfo() {
+        double totalSpent = 0;
+        PaymentDAO dao = new PaymentDAO();
+        dao.open();
+        totalSpent = dao.getMoneySpent(mLocalUser.getId());
+        dao.close();
+
+        amountTotal.setText(Amount.getAmountStringCurrency(totalSpent,"EUR"));
     }
 
     private void addMarkerAndCenter() {
