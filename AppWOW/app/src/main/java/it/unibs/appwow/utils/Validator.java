@@ -18,7 +18,7 @@ public class Validator {
     }
 
     public static boolean isGroupNameValid(String groupName) {
-        if(!groupName.isEmpty()){
+        if(!groupName.isEmpty() && groupName.length()<=30){
             return true;
         } else {
             return false;

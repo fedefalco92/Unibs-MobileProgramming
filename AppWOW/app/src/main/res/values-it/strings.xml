@@ -151,4 +151,5 @@
     <string name="add_photo">Aggiungi una foto</string>
     <string name="app_internal_error"></string>
     <string name="last_visited_places">Ultimi luoghi visitati</string>
+    <string name="error_google_maps">Connessione a google maps fallita</string>
 </resources>

@@ -10,19 +10,19 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,8 +47,9 @@ public class AddGroupActivity extends AppCompatActivity {
     private static final int PICK_FROM_CAMERA_INTENT = 2;
     private static final int CROP_FROM_CAMERA = 3;
     public static final String PASSING_GROUP_EXTRA = "group";
+    private static final int PHOTO_SIZE_PX = 400;
     private SquareImageView mGroupImage;
-    private TextView mGroupNameView;
+    private TextInputEditText mGroupNameView;
     private ImageButton mRemovePhotoButton;
     private GroupModel mGroup;
     //private Bitmap mThumbnail;
@@ -80,7 +81,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 return false;
             }
         });*/
-        mGroupNameView = (TextView) findViewById(R.id.group_name_field);
+        mGroupNameView = (TextInputEditText) findViewById(R.id.group_name_field);
         mGroup = GroupModel.create("");
         mFileName = "";
         //mPhotoUri = "";
@@ -292,10 +293,10 @@ public class AddGroupActivity extends AppCompatActivity {
             return;
         } else {
             intent.setData(mPhotoUri);
-            intent.putExtra("outputX", 200);
-            intent.putExtra("outputY", 200);
-            intent.putExtra("aspectX", 1);
-            intent.putExtra("aspectY", 1);
+            intent.putExtra("outputX", PHOTO_SIZE_PX);
+            intent.putExtra("outputY", PHOTO_SIZE_PX);
+            intent.putExtra("aspectX", PHOTO_SIZE_PX);
+            intent.putExtra("aspectY", PHOTO_SIZE_PX);
             intent.putExtra("scale", true);
             intent.putExtra("return-data", true);
             if (size == 1) {
@@ -382,7 +383,7 @@ public class AddGroupActivity extends AppCompatActivity {
     public void removePhoto() {
         mGroupImage.setImageResource(R.drawable.ic_group_black_48dp);
         toggleRemovePhotoButton(false);
-        mPhotoUri = null;
+        //mPhotoUri = null;
         mFileName = "";
     }
 
@@ -415,8 +416,8 @@ public class AddGroupActivity extends AppCompatActivity {
         cameraIntent();
     }*/
 
-    public void onAddPhotoButtonClicked(View v){
+    /*public void onAddPhotoButtonClicked(View v){
         selectImage();
-    }
+    }*/
 
 }

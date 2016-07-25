@@ -65,6 +65,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     private static final int PICK_FROM_CAMERA_INTENT = 2;
     private static final int CROP_FROM_CAMERA = 3;
     public static final String PHOTO_UPDATED_BOOLEAN_EXTRA = "changed";
+    private static final int PHOTO_SIZE_PX =400;
 
     // UI
     private View mViewContainer;
@@ -287,10 +288,10 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             return;
         } else {
             intent.setData(mPhotoUri);
-            intent.putExtra("outputX", 200);
-            intent.putExtra("outputY", 200);
-            intent.putExtra("aspectX", 1);
-            intent.putExtra("aspectY", 1);
+            intent.putExtra("outputX", PHOTO_SIZE_PX);
+            intent.putExtra("outputY", PHOTO_SIZE_PX);
+            intent.putExtra("aspectX", PHOTO_SIZE_PX);
+            intent.putExtra("aspectY", PHOTO_SIZE_PX);
             intent.putExtra("scale", true);
             intent.putExtra("return-data", true);
             if (size == 1) {
