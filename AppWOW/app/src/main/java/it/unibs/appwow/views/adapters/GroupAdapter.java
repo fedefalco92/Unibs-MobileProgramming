@@ -2,9 +2,6 @@ package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
-import android.media.Image;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,14 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 
-import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.GroupDAO;
 import it.unibs.appwow.models.Amount;
@@ -142,7 +135,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // qui puo' esserce anche un if per alcuni viewType e usare inflater con diversi layout
-        View v = mInflater.inflate(R.layout.tile_group_layout_recycler, parent, false);
+        View v = mInflater.inflate(R.layout.fragment_group_item, parent, false);
         GroupViewHolder vh = new GroupViewHolder(v);
         return vh;
     }
@@ -266,10 +259,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
         private ImageView groupImageView;
         private TextView groupName;
-        //private TextView groupModified;
         private TextView personalStatus;
         private ImageView groupImageNew;
-        private ImageView groupImageFavorite;
+        //private ImageView groupImageFavorite;
         private ImageView groupImageTrending;
 
         private LinearLayout layout;
@@ -284,18 +276,17 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             personalStatus = (TextView) itemView.findViewById(R.id.group_tile_personalStatus);
             groupImageTrending = (ImageView) itemView.findViewById(R.id.group_tile_image_trending);
 
-            //groupModified = (TextView) itemView.findViewById(R.id.group_tile_modified_indicator);
             groupImageNew = (ImageView) itemView.findViewById(R.id.group_tile_image_new);
             layout = (LinearLayout) itemView.findViewById(R.id.group_details);
 
+            /*
             groupImageFavorite = (ImageView) itemView.findViewById(R.id.group_tile_image_favorite);
             groupImageFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: 20/07/16 completare
                     groupImageFavorite.setImageResource(R.drawable.ic_favorite_white_24dp);
                 }
-            });
+            });*/
         }
 
         @Override

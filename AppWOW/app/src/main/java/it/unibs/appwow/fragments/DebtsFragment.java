@@ -46,6 +46,7 @@ import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
+import it.unibs.appwow.utils.graphicTools.Messages;
 import it.unibs.appwow.views.adapters.DebtsAdapter;
 
 /**
@@ -120,7 +121,7 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_debts_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_debt_list, container, false);
         return view;
     }
 
@@ -223,6 +224,17 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
     }
 
     private void sendSettleRequest(final Debt selectedItem, final ProgressDialog dialog) {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(getView(),R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgressDialog(selectedItem);
+                }
+            });
+            dialog.dismiss();
+            return;
+        }
+
         URL url = WebServiceUri.uriToUrl(WebServiceUri.getGroupDebtsUri(mGroup.getId()));
         String [] keys = {"id"};
         String [] values = {String.valueOf(selectedItem.getId())};

@@ -6,7 +6,6 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -108,7 +107,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     private Payment mToEditPayment;
 
-    private LinearLayout mContainerLayout;
+    private View mViewContainer;
     private EditText mPaymentNameEditText;
     private EditText mPaymentAmountEditText;
     private TextView mPaymentCurrency;
@@ -140,7 +139,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_payment);
-        mContainerLayout = (LinearLayout) findViewById(R.id.container);
+        mViewContainer = findViewById(R.id.container);
 
         mGroup = getIntent().getParcelableExtra(PaymentsFragment.PASSING_GROUP_TAG);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -376,7 +375,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     private View buildView(SliderAmount sa){
         mUnlockedAmount.add(sa);
-        View view = getLayoutInflater().inflate(R.layout.payment_slider_item, null, false);
+        View view = getLayoutInflater().inflate(R.layout.activity_add_edit_payment_item, null, false);
         TextView fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
         TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
         EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
@@ -445,9 +444,10 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private void sendPostRequest() {
         Log.d(TAG_LOG,"sendPostRequest()");
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mContainerLayout,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
+                    showProgress(true);
                     sendPostRequest();
                 }
             });
@@ -604,7 +604,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                     mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setVisible(true);
                 }
                 //Toast.makeText(AddEditPaymentActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
-                Messages.showSnackbar(mContainerLayout,R.string.server_connection_error);
+                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
             }
         };
     }

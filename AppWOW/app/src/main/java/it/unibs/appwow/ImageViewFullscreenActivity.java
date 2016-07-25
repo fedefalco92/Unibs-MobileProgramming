@@ -50,6 +50,7 @@ import it.unibs.appwow.utils.CapturePhotoUtils;
 import it.unibs.appwow.utils.CropOption;
 import it.unibs.appwow.utils.CropOptionAdapter;
 import it.unibs.appwow.utils.FileUtils;
+import it.unibs.appwow.utils.graphicTools.Messages;
 import it.unibs.appwow.utils.graphicTools.PermissionUtils;
 import it.unibs.appwow.utils.graphicTools.SquareImageView;
 
@@ -65,16 +66,18 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     private static final int CROP_FROM_CAMERA = 3;
     public static final String PHOTO_UPDATED_BOOLEAN_EXTRA = "changed";
 
-    private GroupModel mGroup;
+    // UI
+    private View mViewContainer;
     private SquareImageView mPhotoView;
+    private View mProgressView;
+
+    private GroupModel mGroup;
+
     private Uri mPhotoUri;
     private String mFileName;
-    private View mProgressView;
     private Bitmap mBitmap;
 
     private boolean mNoPhoto;
-
-
     private boolean mPhotoUpdated;
 
 
@@ -83,6 +86,8 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_image_view_fullscreen);
+        mViewContainer = findViewById(R.id.main_container);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -359,6 +364,18 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     }
 
     private void sendPostRequest(final Bitmap photo) {
+
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendPostRequest(photo);
+                }
+            });
+            showProgress(false);
+            return;
+        }
 
         VolleyMultipartRequest postRequest = new VolleyMultipartRequest(Request.Method.POST, WebServiceUri.getGroupUri(mGroup.getId()).toString(),
                 new Response.Listener<NetworkResponse>() {

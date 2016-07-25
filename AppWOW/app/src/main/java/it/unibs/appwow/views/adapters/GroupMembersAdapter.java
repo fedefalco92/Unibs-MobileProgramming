@@ -108,11 +108,11 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         switch (viewType) {
             case VIEW_TYPE_USER:
-                View vClassic = mInflater.inflate(R.layout.listview_members_simpleitem_layout, parent, false);
+                View vClassic = mInflater.inflate(R.layout.activity_add_group_members_item_simple, parent, false);
                 vh = new MemberViewHolder(vClassic);
                 break;
             case VIEW_TYPE_ADMIN:
-                View vSpecial = mInflater.inflate(R.layout.listview_members_admin_layout, parent, false);
+                View vSpecial = mInflater.inflate(R.layout.activity_add_group_members_item_admin, parent, false);
                 vh = new AdminMemberViewHolder(vSpecial);
                 break;
             default:

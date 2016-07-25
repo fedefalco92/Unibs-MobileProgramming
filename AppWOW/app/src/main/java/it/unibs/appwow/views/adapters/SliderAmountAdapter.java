@@ -63,7 +63,7 @@ public class SliderAmountAdapter extends BaseAdapter {
         Holder holder = null;
         if(view==null) {
             holder = new Holder();
-            view = mInflater.inflate(R.layout.payment_slider_item,null);
+            view = mInflater.inflate(R.layout.activity_add_edit_payment_item,null);
             holder.fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
             holder.email = (TextView) view.findViewById(R.id.payment_slider_item_email);
             holder.amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);

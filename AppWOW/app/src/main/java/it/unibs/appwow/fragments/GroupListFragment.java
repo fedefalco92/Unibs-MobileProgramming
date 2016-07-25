@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -123,7 +122,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                              Bundle savedInstanceState) {
         Log.d(TAG_LOG,"onCreateView");
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.content_group_recycler, container, false);
+        return inflater.inflate(R.layout.fragment_group_list, container, false);
     }
 
 
@@ -261,7 +260,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                             dao.open();
                             Set<Integer> gruppiRicevuti = new HashSet<Integer>();
                             Set<Integer> gruppiLocali = dao.getLocalGroupsIds();
-                            // TODO: 04/07/2016  METODO CREATE(jSON) IN GROUPMODEL
                             if (response.length() > 0) {
                                 //dao.resetAllGroups();
                                 for(int i = 0; i < response.length(); i++){
@@ -289,11 +287,12 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
                                                 dao.updateSingleGroup(id,idAdmin, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, highlighted);
 
+                                                /*
                                                 UserGroupModel ugm = UserGroupModel.create(groupJs.getJSONObject("pivot"));
                                                 UserGroupDAO ugdao = new UserGroupDAO();
                                                 ugdao.open();
                                                 ugdao.insertUserGroup(ugm);
-                                                ugdao.close();
+                                                ugdao.close();*/
                                             }
 
                                             if (server_photo_updated_at > local_photo_updated_at) {
@@ -305,6 +304,14 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                             dao.insertGroup(gserver);
                                             fetchPhoto(gserver.getId(),server_photo_updated_at);
                                         }
+
+                                        // Aggiorno usergroup
+                                        UserGroupModel ugm = UserGroupModel.create(groupJs.getJSONObject("pivot"));
+                                        UserGroupDAO ugdao = new UserGroupDAO();
+                                        ugdao.open();
+                                        ugdao.insertUserGroup(ugm);
+                                        ugdao.close();
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -340,6 +347,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
                             Log.d(TAG_LOG, "GRUPPI RICEVUTI: " + gruppiRicevuti);
                             Log.d(TAG_LOG, "GRUPPI LOCALI: " + gruppiLocali);
+
+
                             // stopping swipe refresh
                             mSwipeRefreshLayout.setRefreshing(false);
                             showProgress(false);
@@ -377,7 +386,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void fetchPhoto(final int idGroup, final long server_photo_updated_at) {
         Log.d(TAG_LOG, "fetchPhoto");
-        // FIXME: 04/07/2016 COMMENTED FOR DEBUG
         Uri photoUri = WebServiceUri.getGroupPhotosUri(idGroup);
         //String url = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Jessica_Chastain_by_Gage_Skidmore.jpg";
         // Retrieves an image specified by the URL, displays it in the UI.
@@ -395,7 +403,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                         }
                         mAdapter.updateItem(idGroup);
                         Log.d(TAG_LOG, "FOTO SCARICATA!!");
-                        // TODO: 04/07/2016 NOTIFICARE ALL'ADAPTER........COME?
                     }
                 }, 0, 0, null,
                 new Response.ErrorListener() {
@@ -403,13 +410,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                         Log.e(TAG_LOG, "VOLLEY ERROR: " + error);
                     }
                 });
-        // FIXME: 05/07/2016  è possibile sistemare sta cosa?
-       /* int posizioneGruppo = mAdapter.getGroupPosition(idGroup);
-        Log.d(TAG_LOG, "posizione gruppo: " + posizioneGruppo);
-        View v = mAdapter.getView(posizioneGruppo,null,mGridView);
-        ImageView iv = (ImageView) v.findViewById(R.id.group_tile_imageView);
-        iv.setImageResource(R.drawable.ic_menu_send);
-*/
+
         request.setShouldCache(false);
         MyApplication.getInstance().addToRequestQueue(request,TAG_REQUEST_GROUP_LIST);
     }

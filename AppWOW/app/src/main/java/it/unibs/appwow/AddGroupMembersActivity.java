@@ -22,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -47,6 +46,7 @@ import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
+import it.unibs.appwow.utils.graphicTools.Messages;
 import it.unibs.appwow.views.adapters.GroupMembersAdapter;
 
 public class AddGroupMembersActivity extends AppCompatActivity implements GroupMembersAdapter.OnItemLongClickListener {
@@ -56,6 +56,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
     private LinearLayoutManager mLayoutManager;
     private RecyclerView mMembersListView;
     private GroupMembersAdapter mAdapter;
+    private View mViewContainer;
 
 
     private Button mAddMemberButton;
@@ -75,9 +76,9 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
         this.mGroup = getIntent().getExtras().getParcelable(AddGroupActivity.PASSING_GROUP_EXTRA);
         mLocalUser = LocalUser.load(MyApplication.getAppContext());
 
-
-        setContentView(R.layout.activity_add_group_members_activity_recycler_view);
+        setContentView(R.layout.activity_add_group_members);
         setTitle(getString(R.string.add_group_members_activity_title));
+        mViewContainer = findViewById(R.id.container);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -164,20 +165,40 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
     }
 
     public void onAddMemberButtonClick(View v){
-        if(WebServiceRequest.checkNetwork()) {
-            String[] keys = {"email"};
-            String[] values = {mEmailTextView.getText().toString()};
-            Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
-            StringRequest userRequest = WebServiceRequest.
-                    stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
-            showAddMemberProgress(true);
-            MyApplication.getInstance().addToRequestQueue(userRequest);
-        } else {
-            Toast.makeText(AddGroupMembersActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    //showAddMemberProgress(true);
+                    onAddMemberButtonClick(v);
+                }
+            });
+            showAddMemberProgress(false);
+            return;
         }
+
+        String[] keys = {"email"};
+        String[] values = {mEmailTextView.getText().toString()};
+        Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
+        StringRequest userRequest = WebServiceRequest.
+                stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
+        showAddMemberProgress(true);
+        MyApplication.getInstance().addToRequestQueue(userRequest);
     }
 
     private void sendPostRequest() {
+
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendPostRequest();
+                }
+            });
+            showProgress(false);
+            return;
+        }
 
         VolleyMultipartRequest postRequest = new VolleyMultipartRequest(Request.Method.POST, WebServiceUri.GROUPS_URI.toString(),
                 new Response.Listener<NetworkResponse>() {
@@ -199,7 +220,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
+                            Messages.showSnackbar(mViewContainer,R.string.add_group_success);
                             Intent navigationActivity = new Intent(AddGroupMembersActivity.this, NavigationActivity.class);
                             navigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(navigationActivity);
@@ -207,7 +229,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                         } else {
                             showProgress(false);
                             Log.d(TAG_LOG, "EMPTY RESPONSE ################################################");
-                            Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_error, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_error, Toast.LENGTH_SHORT).show();
+                            Messages.showSnackbar(mViewContainer,R.string.add_group_error);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -215,7 +238,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
                 Log.e(TAG_LOG,"VOLLEY ERROR " + error.getMessage());
-                Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
             }
         }) {
             @Override
@@ -251,7 +275,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
             @Override
             public void onResponse(String response) {
                 if (!response.isEmpty()) {
-                    Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
+                    Messages.showSnackbar(mViewContainer,R.string.add_group_success);
 
                     Intent navigationActivity = new Intent(AddGroupMembersActivity.this, NavigationActivity.class);
                     navigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -259,7 +284,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                 } else {
                     showProgress(false);
                     Log.d(TAG_LOG, "EMPTY RESPONSE ################################################");
-                    Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_error, Toast.LENGTH_SHORT).show();
+                    Messages.showSnackbar(mViewContainer,R.string.add_group_error);
+                    //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_error, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -271,7 +297,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
                 Log.e(TAG_LOG,"VOLLEY ERROR " + error.getMessage());
-                Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
             }
         };
     }
@@ -296,7 +323,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                         //    public void onClick(View v) {
                         //boolean userAlreadyExists = !mGroup.addUser(retrievedUser);
                         if(userAlreadyExists(retrievedUser)){
-                            Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_members_user_already_added, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_members_user_already_added, Toast.LENGTH_SHORT).show();
+                            Messages.showSnackbar(mViewContainer,R.string.add_group_members_user_already_added);
                         } else {
                             //((GroupMembersAdapter)mMembersListView.getAdapter()).add(retrievedUser);
                             mAdapter.add(retrievedUser);
@@ -320,7 +348,6 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                     //Toast.makeText(AddGroupMembersActivity.this, "LocalUser not found", Toast.LENGTH_SHORT).show();
                     mEmailTextView.requestFocus();
                     mEmailTextView.setError(getString(R.string.add_group_members_user_not_found));
-
                 }
             }
         };
@@ -373,7 +400,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
             public void onErrorResponse(VolleyError error) {
                 showAddMemberProgress(false);
                 //Log.e("Error",error.getMessage());
-                Toast.makeText(AddGroupMembersActivity.this, "Unable to process the request, try again!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(AddGroupMembersActivity.this, "Unable to process the request, try again!", Toast.LENGTH_SHORT).show();
+                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
             }
         };
     }

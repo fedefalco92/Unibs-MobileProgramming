@@ -3,10 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="it.unibs.appwow.AddGroupMembersActivity">
+    tools:context=".AddGroupMembersActivity"
+    android:background="@color/white">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -43,6 +45,14 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:orientation="vertical"
             >
+            <ProgressBar
+                android:id="@+id/add_group_members_add_member_pb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_marginTop="-8dp"
+                style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:paddingRight="@dimen/activity_horizontal_margin"
@@ -75,7 +85,8 @@
                     android:id="@+id/button_add_member"
                     android:layout_below="@+id/view2"
                     android:layout_alignRight="@+id/view2"
-                    android:layout_alignEnd="@+id/view2" />
+                    android:layout_alignEnd="@+id/view2"
+                    android:onClick="onAddMemberButtonClick"/>
                 <!--
                 <TextView
                     android:layout_width="wrap_content"
@@ -129,13 +140,11 @@
                     android:text="@string/actual_members_string"
                     android:id="@+id/actual_members_label" />
 
-                <ListView
+                <android.support.v7.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:attr/activatedBackgroundIndicator"
-                    android:choiceMode="multipleChoice"
                     android:id="@+id/listView_members"/>
-
             </LinearLayout>
 
             <Button
@@ -153,3 +162,4 @@
     </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>
+

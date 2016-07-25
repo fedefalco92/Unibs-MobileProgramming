@@ -53,6 +53,7 @@ import it.unibs.appwow.notifications.FirebaseInstanceIDService;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -91,11 +92,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private View mViewContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mViewContainer = findViewById(R.id.main_container);
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -116,13 +120,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(!WebServiceRequest.checkNetwork()){
+                    Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                            attemptLogin();
+                        }
+                    });
+                    return;
+                }
+                attemptLogin();
+
+                /*
                 if(WebServiceRequest.checkNetwork()){
                     attemptLogin();
                 } else {
                     String err_no_connection_message = getResources().getString(R.string.err_no_connection);
                     Toast.makeText(LoginActivity.this, err_no_connection_message,
                             Toast.LENGTH_LONG).show();
-                }
+                }*/
             }
         });
 
@@ -348,7 +365,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
             int userExists = checkUser(mEmail);
             switch (userExists){

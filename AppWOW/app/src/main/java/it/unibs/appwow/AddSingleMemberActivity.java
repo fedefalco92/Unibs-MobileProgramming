@@ -38,6 +38,7 @@ import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 public class AddSingleMemberActivity extends AppCompatActivity {
 
@@ -51,11 +52,13 @@ public class AddSingleMemberActivity extends AppCompatActivity {
     private View mContainer;
     private EditText mEmailEditText;
     private GroupModel mUser;
+    private View mViewContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_single_member);
+        mViewContainer = findViewById(R.id.main_container);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -106,24 +109,37 @@ public class AddSingleMemberActivity extends AppCompatActivity {
     }
 
     private void serverConnectionErrorToast(){
-        Toast.makeText(AddSingleMemberActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+        showProgress(false);
+        Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
+        //Toast.makeText(AddSingleMemberActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
     }
+
     private void serverInternalError(){
         showProgress(false);
-        Toast.makeText(AddSingleMemberActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(AddSingleMemberActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+        Messages.showSnackbar(mViewContainer,R.string.server_internal_error);
     }
 
     private void sendSearchRequest() {
-        if(WebServiceRequest.checkNetwork()) {
-            String[] keys = {"email"};
-            String[] values = {mEmailEditText.getText().toString()};
-            Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
-            StringRequest userRequest = WebServiceRequest.
-                    stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(),  responseErrorListener());
-            MyApplication.getInstance().addToRequestQueue(userRequest);
-        } else {
-            serverConnectionErrorToast();
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendSearchRequest();
+                }
+            });
+            showProgress(false);
+            return;
         }
+
+        String[] keys = {"email"};
+        String[] values = {mEmailEditText.getText().toString()};
+        Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
+        StringRequest userRequest = WebServiceRequest.
+                stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(),  responseErrorListener());
+        MyApplication.getInstance().addToRequestQueue(userRequest);
+
     }
 
     private Response.Listener<String> responseListenerUser(){
@@ -175,6 +191,18 @@ public class AddSingleMemberActivity extends AppCompatActivity {
     }
 
     private void sendPostRequest(UserModel user, boolean include) {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendSearchRequest();
+                }
+            });
+            showProgress(false);
+            return;
+        }
+
         String [] keys = {"idUser", "include"};
         String [] values = {String.valueOf(user.getId()), String.valueOf(include?1:0)};
         Map<String, String> params =  WebServiceRequest.createParametersMap(keys, values);

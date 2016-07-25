@@ -37,14 +37,14 @@ import it.unibs.appwow.notifications.FirebaseInstanceIDService;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 public class EditUserActivity extends AppCompatActivity {
 
     private static final String TAG_LOG = EditUserActivity.class.getSimpleName();
 
-
+    // UI
     private Toolbar mToolbar;
-
     private EditText mFullname;
     private EditText mEmail;
     private EditText mOldPassword;
@@ -52,6 +52,7 @@ public class EditUserActivity extends AppCompatActivity {
     private EditText mConfirmNewPassword;
     private ProgressBar mProgressView;
     private LinearLayout mLayoutForm;
+    private View mViewContainer;
 
     private LocalUser mLocalUser;
 
@@ -60,6 +61,7 @@ public class EditUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_edit_user);
+        mViewContainer = findViewById(R.id.main_container);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -176,6 +178,18 @@ public class EditUserActivity extends AppCompatActivity {
 
 
     private void sendEditUserRequest() {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendEditUserRequest();
+                }
+            });
+            showProgress(false);
+            return;
+        }
+
         String url = WebServiceUri.getUserUri(mLocalUser.getId()).toString();
         String [] keys = {"fullName", "oldPassword", "password"};
         String fullname = mFullname.getText().toString();

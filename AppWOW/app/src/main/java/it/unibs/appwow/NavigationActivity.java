@@ -18,6 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.IOException;
 import java.util.List;
 
 import it.unibs.appwow.database.AppDB;
@@ -25,6 +28,7 @@ import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.fragments.PersonalInfoFragment;
 import it.unibs.appwow.fragments.SettingsFragment;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.notifications.FirebaseInstanceIDService;
 import it.unibs.appwow.utils.FileUtils;
 
 public class NavigationActivity extends AppCompatActivity
@@ -67,6 +71,11 @@ public class NavigationActivity extends AppCompatActivity
 
             @Override
             public void onDrawerOpened(View drawerView) {
+                if(mLocalUser != null){
+                    mLocalUser = LocalUser.load(getApplicationContext());
+                    TextView fullname = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_fullname);
+                    fullname.setText(mLocalUser.getFullName());
+                }
             }
 
             @Override
@@ -75,10 +84,7 @@ public class NavigationActivity extends AppCompatActivity
 
             @Override
             public void onDrawerStateChanged(int newState) {
-                //Log.d(TAG_LOG,"onDrawerStateChanged");
-                mLocalUser = LocalUser.load(getApplicationContext());
-                TextView fullname = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_fullname);
-                fullname.setText(mLocalUser.getFullName());
+
             }
         });
 
@@ -243,12 +249,25 @@ public class NavigationActivity extends AppCompatActivity
             fab.hide();
 
         } else if (id == R.id.nav_logout) {
-            // TODO: 19/05/2016 PULIRE IL DATABASE QUANDO SI FA LOGOUT
+            //// Doing logout
             LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
             currentUser.logout(MyApplication.getAppContext());
-            deleteDatabase(AppDB.DATABASE_NAME); // Elimina il db
-            FileUtils.clearPhotoDir(this); //elimina le foto dei gruppi
+
+            // Deleting db
+            deleteDatabase(AppDB.DATABASE_NAME);
+
+            // Deleting photos
+            FileUtils.clearPhotoDir(this);
             FileUtils.clearCache(this);
+
+            // Invalidate token
+            try {
+                Log.d(TAG_LOG,"Token deleted");
+                FirebaseInstanceId.getInstance().deleteInstanceId();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
             login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(login);

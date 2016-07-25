@@ -35,6 +35,7 @@ import it.unibs.appwow.notifications.FirebaseInstanceIDService;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -42,11 +43,13 @@ public class RegistrationActivity extends AppCompatActivity {
     private static final String TAG_LOG = RegistrationActivity.class.getSimpleName();
 
     private LocalUser mReceived;
+
+    // UI
+    private View mViewContainer;
     private TextView mFullname;
     private TextView mEmail;
     private TextView mPassword;
     private TextView mConfirmPassword;
-    
     private View mRegistrationFormView;
     private View mProgressView;
 
@@ -54,6 +57,7 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        mViewContainer = findViewById(R.id.main_container);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -112,6 +116,18 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void sendRegistrationRequest() {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendRegistrationRequest();
+                }
+            });
+            showProgress(false);
+            return;
+        }
+
         String url = WebServiceUri.USERS_URI.toString();
         String [] keys = {"fullName", "email" , "password"};
         String fullname = mFullname.getText().toString();
@@ -167,7 +183,7 @@ public class RegistrationActivity extends AppCompatActivity {
         MyApplication.getInstance().addToRequestQueue(req);
     }
 
-    private void registerToken(int id, String token) {
+    private void registerToken(final int id, final String token) {
         String[] keys = {"id","msg_token"};
         String[] values = {String.valueOf(id),token};
 

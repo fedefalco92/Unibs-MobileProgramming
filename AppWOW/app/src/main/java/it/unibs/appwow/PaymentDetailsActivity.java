@@ -57,6 +57,7 @@ import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.DateUtils;
 import it.unibs.appwow.utils.IdEncodingUtils;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 public class PaymentDetailsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
@@ -68,7 +69,9 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     private GroupModel mGroup;
     private LocalUser mUser;
 
+    // UI
     private View mRootLayout;
+    private View mViewContainer;
     private TextView mPaymentName;
     private TextView mFullName;
     private TextView mEmail;
@@ -97,6 +100,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_details);
+        mViewContainer = findViewById(R.id.main_container);
 
         mUser = LocalUser.load(this);
 
@@ -232,7 +236,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private View buildView(Amount a){
-        View view = getLayoutInflater().inflate(R.layout.payment_slider_item, null, false);
+        View view = getLayoutInflater().inflate(R.layout.activity_add_edit_payment_item, null, false);
         TextView fullName = (TextView) view.findViewById(R.id.payment_slider_item_fullname);
         TextView email = (TextView) view.findViewById(R.id.payment_slider_item_email);
         EditText amount = (EditText) view.findViewById(R.id.payment_slider_item_amount);
@@ -250,6 +254,16 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void sendPlaceDetailRequest(final String place_id) {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    sendPlaceDetailRequest(place_id);
+                }
+            });
+            return;
+        }
+
         String uri = WebServiceUri.getPlaceDetailsUri(this, place_id);
         Log.d(TAG_LOG, "URI: " + uri);
         StringRequest req = new StringRequest(uri,
@@ -391,6 +405,17 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void sendDeleteRequest(final ProgressDialog dialog) {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgressDialog();
+                }
+            });
+            dialog.dismiss();
+            return;
+        }
+
         URL url = WebServiceUri.uriToUrl(WebServiceUri.getDeletePaymentUri(mPayment.getId()));
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.DELETE, url.toString(), new Response.Listener<String>() {
             @Override

@@ -29,6 +29,7 @@ import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.Validator;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 public class EditGroupNameActivity extends AppCompatActivity {
 
@@ -36,15 +37,18 @@ public class EditGroupNameActivity extends AppCompatActivity {
     public static final String GROUP_ID_EXTRA = "group_id";
 
     private int mGroupId;
-    
+
+    // UI
     private View mProgressView;
     private View mContainer;
     private EditText mNewNameEditText;
+    private View mViewContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_group_name);
+        mViewContainer = findViewById(R.id.main_container);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -95,6 +99,19 @@ public class EditGroupNameActivity extends AppCompatActivity {
     }
 
     private void sendPostRequest() {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendPostRequest();
+
+                }
+            });
+            showProgress(false);
+            return;
+        }
+
         String [] keys = {"name"};
         String [] values = {mNewNameEditText.getText().toString()};
         Map<String, String> params =  WebServiceRequest.createParametersMap(keys, values);

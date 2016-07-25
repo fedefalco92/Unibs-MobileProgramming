@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +12,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -33,21 +28,15 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
-import it.unibs.appwow.services.WebServiceUri;
-import it.unibs.appwow.views.adapters.PersonalInfoAdapter;
+import it.unibs.appwow.utils.graphicTools.Messages;
 
 
 public class PersonalInfoFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
@@ -68,15 +57,6 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     private List<Place> mPlacesObj;
 
     private LocalUser mLocalUser;
-
-    // ADAPTER
-    private PersonalInfoAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView mRecyclerView;
-    private int mDataSetTypes[] = {PersonalInfoAdapter.PERSONAL_INFO_SUMMARY, PersonalInfoAdapter.PERSONAL_INFO_MAPS, PersonalInfoAdapter.PERSONAL_INFO_MAPS};
-    //private String[] mDataset = {"29 degrees", "Seahawks 24 - 27 Bengals",
-    //        "Flash missing, vanishes in crisis", "Half Life 3 announced"};
-    //private int mDatasetTypes[] = {WEATHER, SCORE, NEWS, NEWS}; //view types
 
     public PersonalInfoFragment() {
         // Required empty public constructor
@@ -128,16 +108,6 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
         super.onViewCreated(view, savedInstanceState);
 
         amountTotal = (TextView) view.findViewById(R.id.fragment_personal_info_money_spent_value);
-
-        //mMapView = (MapView) view.findViewById(R.id.fragment_personal_info_map);
-        //mMapView.getMapAsync(this);
-        /*
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        mAdapter = new PersonalInfoAdapter(getActivity(), mDataSetTypes);
-        mRecyclerView.setAdapter(mAdapter);*/
 
         fetchUserPlacesLocal();
         fetchUserPaymentsInfo();
@@ -273,27 +243,40 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
         mPlaceIds = placesID.toArray(new String[placesID.size()]);
         //Log.d(TAG_LOG, "mplaceID: " + mPlaceIds.toString());
 
-        Places.GeoDataApi.getPlaceById(mClient, mPlaceIds)
-                .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                    @Override
-                    public void onResult(PlaceBuffer places) {
-                        if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                            //final Place myPlace = places.get(0);
-                            for (Place myPlace : places) {
-                                Log.i(TAG_LOG, "Place found: " + myPlace.getName());
-                                mPlacesObj.add(myPlace.freeze());
-                                //mAdapter.addPlaceObj(myPlace.freeze());
+
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(getView(),R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    fetchUserPlacesLocal();
+                }
+            });
+            return;
+        }
+
+        if(mPlaceIds.length > 0){
+            Places.GeoDataApi.getPlaceById(mClient, mPlaceIds)
+                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                        @Override
+                        public void onResult(PlaceBuffer places) {
+                            if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                                //final Place myPlace = places.get(0);
+                                for (Place myPlace : places) {
+                                    Log.i(TAG_LOG, "Place found: " + myPlace.getName());
+                                    mPlacesObj.add(myPlace.freeze());
+                                    //mAdapter.addPlaceObj(myPlace.freeze());
+                                }
+                                Log.d(TAG_LOG,"mPlacesObj size: " + mPlacesObj.size());
+                                addMarkerAndCenter();
+                                //mAdapter.notifyDataSetChanged();
+                                //mAdapter.notifyItemChanged(1);
+                            } else {
+                                Log.e(TAG_LOG, "Place not found");
                             }
-                            Log.d(TAG_LOG,"mPlacesObj size: " + mPlacesObj.size());
-                            addMarkerAndCenter();
-                            //mAdapter.notifyDataSetChanged();
-                            //mAdapter.notifyItemChanged(1);
-                        } else {
-                            Log.e(TAG_LOG, "Place not found");
+                            places.release();
                         }
-                        places.release();
-                    }
-                });
+                    });
+        }
     }
 
     private void fetchUserPaymentsInfo() {

@@ -2,8 +2,6 @@ package it.unibs.appwow;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -79,7 +77,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
-    private CoordinatorLayout mContainer;
+    private View mViewContainer;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
@@ -96,7 +94,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         Log.d(TAG_LOG,"onCreate");
 
         setContentView(R.layout.activity_group_details);
-        mContainer = (CoordinatorLayout) findViewById(R.id.main_content);
+        mViewContainer = findViewById(R.id.main_container);
 
         mLocalUser = LocalUser.load(MyApplication.getAppContext());
         mGroup = (GroupModel) getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
@@ -227,7 +225,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     private void fetchGroupDetails(){
         Log.d(TAG_LOG,"Fetching group details");
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -452,7 +450,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
                 //Toast.makeText(MyApplication.getAppContext(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
-                Messages.showSnackbar(mContainer,R.string.server_connection_error);
+                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
                 mSectionsPagerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
                 showProgress(false);

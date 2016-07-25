@@ -57,6 +57,7 @@ import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.AmountComparator;
 import it.unibs.appwow.utils.FileUtils;
+import it.unibs.appwow.utils.graphicTools.Messages;
 import it.unibs.appwow.utils.graphicTools.SquareImageView;
 
 public class GroupInfoActivity extends AppCompatActivity {
@@ -79,16 +80,17 @@ public class GroupInfoActivity extends AppCompatActivity {
     private View mGroupInfoContainerView;
     private View mProgressView;
 
+
+
+    //UI
+    private View mViewContainer;
     private CoordinatorLayout mCoordinatorLayout;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
     private boolean mScrollingDisabled;
-
-    //private RoundedImageView mGroupImageView;
     private SquareImageView mGroupImageView;
     private TextView mGroupNameTextView;
-
     private TextView mMembersNumberTextView;
     private LinearLayout mMembersListView;
 
@@ -97,6 +99,8 @@ public class GroupInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_info);
+        mViewContainer = findViewById(R.id.main_container);
+
         mLocalUser = LocalUser.load(this);
         mGroup = getIntent().getParcelableExtra(GroupListFragment.PASSING_GROUP_TAG);
         loadMembers();
@@ -418,6 +422,18 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     private void sendDeleteRequest() {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendDeleteRequest();
+                }
+            });
+            showProgress(false);
+            return;
+        }
+
         String url = WebServiceUri.getGroupUri(mGroup.getId()).toString();
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
             @Override
@@ -449,6 +465,18 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     private void sendResetRequest() {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendResetRequest();
+                }
+            });
+            showProgress(false);
+            return;
+        }
+
         String url = WebServiceUri.getGroupResetUri(mGroup.getId()).toString();
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -484,6 +512,18 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     private void sendRemoveMemberRequest(final Amount a) {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    showProgress(true);
+                    sendRemoveMemberRequest(a);
+                }
+            });
+            showProgress(false);
+            return;
+        }
+
         String url = WebServiceUri.getRemoveGroupMemberUri(mGroup.getId()).toString();
         String[] keys = {"idUser"};
         String[] values = {String.valueOf(a.getUserId())};
@@ -621,7 +661,6 @@ public class GroupInfoActivity extends AppCompatActivity {
         }
 
         if (id == R.id.edit) {
-            //Intent editGroupIntent = new Intent (this, EditGroupActivity.class);
             Intent editGroupNameIntent = new Intent(this, EditGroupNameActivity.class);
             //editGroupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             editGroupNameIntent.putExtra(EditGroupNameActivity.GROUP_ID_EXTRA, mGroup.getId());

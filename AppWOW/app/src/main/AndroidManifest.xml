@@ -21,7 +21,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"/>
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
@@ -79,8 +78,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD6KjbNsLY-Bl3iYwPoiUoMdGbNkjSWja0"/>
 
-        <activity android:name=".EditGroupActivity">
-        </activity>
         <activity
             android:name=".GroupInfoActivity"
             android:theme="@style/AppTheme.NoActionBar.Scrolling">

@@ -48,6 +48,7 @@ import it.unibs.appwow.models.parc.PaymentModel;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
+import it.unibs.appwow.utils.graphicTools.Messages;
 import it.unibs.appwow.views.adapters.PaymentAdapter;
 
 /**
@@ -185,7 +186,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     /*
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       inflater.inflate(R.menu.costs_fragment_menu,menu);
+       inflater.inflate(R.menu.menu_payments_fragment,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -269,6 +270,16 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     }
 
     private void sendDeleteRequest(final Payment selectedItem) {
+        if(!WebServiceRequest.checkNetwork()){
+            Messages.showSnackbarWithAction(getView(),R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    sendDeleteRequest(selectedItem);
+                }
+            });
+            return;
+        }
+
         URL url = WebServiceUri.uriToUrl(WebServiceUri.getDeletePaymentUri(selectedItem.getId()));
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.DELETE, url.toString(), new Response.Listener<String>() {
             @Override
