@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -115,6 +116,11 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         if (getArguments() != null) {
             mLocalUser = getArguments().getParcelable(ARG_USER);
         }
+
+        GroupDAO dao = new GroupDAO();
+        dao.open();
+        mItems = dao.getAllGroups();
+        dao.close();
     }
 
     @Override
@@ -153,6 +159,18 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mProgressBar = (ProgressBar) view.findViewById(R.id.self_reload_progress_bar);
 
+        // FIXME: 25/07/16 Mettere nel punto giusto no groups
+        /*
+        TextView emptyTextView = (TextView) view.findViewById(R.id.group_fragment_empty_view);
+        // If there are no groups
+        if (mAdapter.getItemCount() == 0) {
+            mRecyclerView.setVisibility(View.GONE);
+            emptyTextView.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            emptyTextView.setVisibility(View.GONE);
+        }*/
+
     }
 
     @Override
@@ -160,13 +178,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG_LOG,"onActivityCreated");
         getActivity().setTitle(R.string.groups_string);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -343,11 +354,11 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                 snackbar.show();
                                 mAdapter.reload();
                             }
+                            mItems = dao.getAllGroups();
                             dao.close();
 
                             Log.d(TAG_LOG, "GRUPPI RICEVUTI: " + gruppiRicevuti);
                             Log.d(TAG_LOG, "GRUPPI LOCALI: " + gruppiLocali);
-
 
                             // stopping swipe refresh
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -373,6 +384,11 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
+
+                GroupDAO dao = new GroupDAO();
+                dao.open();
+                mItems = dao.getAllGroups();
+                dao.close();
 
                 //Toast.makeText(getActivity(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
                 Messages.showSnackbar(getView(),R.string.message_nothing_to_show);
@@ -450,6 +466,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        Log.d(TAG_LOG,"onQueryTextChange");
         final List<GroupModel> filteredModelList = filter(mItems, newText);
         mAdapter.animateTo(filteredModelList);
         mRecyclerView.scrollToPosition(0);
@@ -512,21 +529,11 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     }
     @Override
     public void onResume() {
+        super.onResume();
         Log.d(TAG_LOG,"onResume");
 
-        // Serve per allineare il filtraggio degli elementi
-        GroupDAO dao;
-        dao = new GroupDAO();
-        dao.open();
-        mItems = dao.getAllGroups();
-        dao.close();
-
-        //fetchGroups();
-        //refreshGrid();
-        //Log.d(TAG_LOG, "on resume completed");
         showProgress(true);
         fetchGroups();
-        super.onResume();
     }
 
 

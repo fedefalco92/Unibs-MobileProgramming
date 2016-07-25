@@ -106,7 +106,6 @@ public class GroupDAO implements LocalDB_DAO {
         return d;
     }
 
-    // TODO: 12/05/16 aggiungere parametro LocalUser? in realtà non serve perché lo user sono IO
     public List<GroupModel> getAllGroups() {
         List<GroupModel> data = new ArrayList<GroupModel>();
         String orderby = AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups.COLUMN_HIGHLIGHTED + " DESC " + " , " + AppDB.Groups.TABLE_GROUPS + "." + AppDB.Groups.COLUMN_UPDATED_AT + " DESC";

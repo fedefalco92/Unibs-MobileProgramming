@@ -299,7 +299,8 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
                     dao.removeSinglePayment(selectedItem.getId());
                     dao.close();*/
                     mItems.remove(selectedItem);
-                    ((GroupDetailsActivity) getActivity()).onRefresh();
+                    //((GroupDetailsActivity) getActivity()).onRefresh();
+                    ((GroupDetailsActivity) getActivity()).onUpdate();
                 } else {
                     mAdapter.reload();
                     showUnableToRemoveSnackbar(selectedItem, WebServiceUri.SERVER_ERROR);
@@ -420,6 +421,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        Log.d(TAG_LOG,"onQueryTextChange");
         final List<Payment> filteredModelList = filter(mItems, newText);
         mAdapter.animateTo(filteredModelList);
         mRecyclerView.scrollToPosition(0);

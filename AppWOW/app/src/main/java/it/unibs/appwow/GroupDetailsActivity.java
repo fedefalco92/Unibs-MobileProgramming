@@ -461,11 +461,16 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
     @Override
     protected void onResume() {
-
+        super.onResume();
         Log.d(TAG_LOG,"onResume");
         showProgress(true);
         fetchGroupDetails();
-        super.onResume();
+    }
+
+    public void onUpdate(){
+        Log.d(TAG_LOG,"onResume");
+        showProgress(true);
+        fetchGroupDetails();
     }
 
     @Override

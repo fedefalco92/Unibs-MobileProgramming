@@ -253,7 +253,8 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
 
                 if(p!=null){
                     dialog.dismiss();
-                    ((GroupDetailsActivity) getActivity()).onRefresh();
+                    //((GroupDetailsActivity) getActivity()).onRefresh();
+                    ((GroupDetailsActivity) getActivity()).onUpdate();
                 } else {
                     dialog.dismiss();
                     showUnableToRemoveSnackbar(selectedItem, WebServiceUri.SERVER_ERROR);

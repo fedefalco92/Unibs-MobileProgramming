@@ -27,6 +27,7 @@
             android:gravity="center"
             android:text="@string/group_fragment_empty_message"
             android:visibility="gone"/>
+
     </android.support.v4.widget.SwipeRefreshLayout>
     <ProgressBar
         android:id="@+id/self_reload_progress_bar"
