@@ -10,6 +10,18 @@
         <!-- <item name="android:windowTranslucentNavigation">true</item> -->
         <item name="windowActionModeOverlay">true</item>
 
+        <!-- Transitions -->
+        <!-- enable window content transitions -->
+        <item name="android:windowActivityTransitions">true</item>
+
+        <!-- specify enter and exit transitions -->
+        <item name="android:windowEnterTransition">@android:transition/explode</item>
+        <item name="android:windowExitTransition">@android:transition/explode</item>
+
+        <!-- specify shared element transitions -->
+        <item name="android:windowSharedElementEnterTransition">@android:transition/slide_left</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/slide_right</item>
+
         <!--
         <item name="android:windowContentTransitions">true</item>
 
@@ -34,16 +46,8 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
-    <style name="SplashTheme" parent="AppTheme.NoActionBar">
+    <style name="SplashTheme" parent="AppTheme.NoActionBar.FullScreen">
         <item name="android:windowBackground">@drawable/background_splash</item>
-    </style>
-
-
-    <style name="TextInputLayoutWhite">
-        <item name="android:textColorHint">@color/md_grey_300</item>
-        <item name="colorControlNormal">@color/white</item>
-        <item name="colorControlActivated">@color/md_amber_900</item>
-        <item name="colorControlHighlight">@color/md_yellow_A100</item>
     </style>
 
     <!-- Edit Text Style -->

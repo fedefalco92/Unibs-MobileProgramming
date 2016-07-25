@@ -6,14 +6,13 @@
 
 
     <item android:drawable="@drawable/icon"
-          android:adjustViewBounds="true"
-          android:scaleType="fitCenter"
-          android:width="100dp"
-          android:height="100dp"
-          android:gravity="center">
-        <!--<bitmap
-            android:gravity="center"
-            android:src="@drawable/icon"/>-->
+       android:adjustViewBounds="true"
+       android:scaleType="fitCenter"
+       android:width="100dp"
+       android:height="100dp"
+       android:gravity="center">
+     <!-- <bitmap
+         android:gravity="center"
+         android:src="@drawable/icon"/>-->
     </item>
-
 </layer-list>
