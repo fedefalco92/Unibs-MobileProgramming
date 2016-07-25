@@ -80,10 +80,13 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
 
-    // Nuove variabili per recycler view.
+    // Variables for recyler view
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private GroupAdapter mAdapter;
+
+    // UI
+    private TextView mEmptyTextView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -117,6 +120,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
             mLocalUser = getArguments().getParcelable(ARG_USER);
         }
 
+        // Vengono caricati gli elementi dal dao per il filtraggio.
         GroupDAO dao = new GroupDAO();
         dao.open();
         mItems = dao.getAllGroups();
@@ -159,18 +163,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mProgressBar = (ProgressBar) view.findViewById(R.id.self_reload_progress_bar);
 
-        // FIXME: 25/07/16 Mettere nel punto giusto no groups
-        /*
-        TextView emptyTextView = (TextView) view.findViewById(R.id.group_fragment_empty_view);
-        // If there are no groups
-        if (mAdapter.getItemCount() == 0) {
-            mRecyclerView.setVisibility(View.GONE);
-            emptyTextView.setVisibility(View.VISIBLE);
-        } else {
-            mRecyclerView.setVisibility(View.VISIBLE);
-            emptyTextView.setVisibility(View.GONE);
-        }*/
-
+        mEmptyTextView = (TextView) view.findViewById(R.id.group_fragment_empty_view);
     }
 
     @Override
@@ -297,13 +290,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                                 int highlighted = GroupModel.HIGHLIGHTED;
 
                                                 dao.updateSingleGroup(id,idAdmin, groupName, photoFileName, photoUpdatedAt, createdAt, updatedAt, highlighted);
-
-                                                /*
-                                                UserGroupModel ugm = UserGroupModel.create(groupJs.getJSONObject("pivot"));
-                                                UserGroupDAO ugdao = new UserGroupDAO();
-                                                ugdao.open();
-                                                ugdao.insertUserGroup(ugm);
-                                                ugdao.close();*/
                                             }
 
                                             if (server_photo_updated_at > local_photo_updated_at) {
@@ -363,6 +349,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                             // stopping swipe refresh
                             mSwipeRefreshLayout.setRefreshing(false);
                             showProgress(false);
+                            showEmptyTextView();
 
                         }
                     }, errorResponseListener());
@@ -374,6 +361,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
             // stopping swipe refresh
             mSwipeRefreshLayout.setRefreshing(false);
             showProgress(false);
+            showEmptyTextView();
             //Toast.makeText(getActivity(), getString(R.string.toast_message_nothing_to_show), Toast.LENGTH_LONG).show();
             Messages.showSnackbar(getView(),R.string.message_nothing_to_show);
         }
@@ -396,6 +384,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                 // stopping swipe refresh
                 mSwipeRefreshLayout.setRefreshing(false);
                 showProgress(false);
+                showEmptyTextView();
             }
         };
     }
@@ -536,6 +525,21 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         fetchGroups();
     }
 
+
+    // FIXME: 25/07/16 Non si sa perche ma la textview non viene vista
+    private void showEmptyTextView(){
+        Log.d(TAG_LOG,"showEmptyTextView " + mAdapter.getItemCount());
+        // If there are no groups
+        if(mAdapter != null){
+            if (mAdapter.getItemCount() == 0) {
+                mRecyclerView.setVisibility(View.GONE);
+                mEmptyTextView.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyTextView.setVisibility(View.GONE);
+            }
+        }
+    }
 
     private void showProgress(boolean show){
         /*
