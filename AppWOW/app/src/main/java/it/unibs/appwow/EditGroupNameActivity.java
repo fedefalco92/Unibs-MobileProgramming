@@ -52,7 +52,6 @@ public class EditGroupNameActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String name =getIntent().getStringExtra(GROUP_NAME_EXTRA);

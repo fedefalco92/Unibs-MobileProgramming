@@ -18,7 +18,7 @@
         <Preference
             android:title="@string/preferences_option_account">
             <intent android:targetPackage="it.unibs.appwow"
-                android:targetClass="it.unibs.appwow.EditUserActivity">
+                android:targetClass="it.unibs.appwow.UserInfoActivity">
             </intent>
         </Preference>
 

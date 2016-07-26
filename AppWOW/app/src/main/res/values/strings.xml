@@ -126,7 +126,7 @@
     <string name="group_edit_dialog_title">Confirm changes?</string>
     <string name="group_edit_saving_changes">Saving changes...</string>
     <string name="server_internal_error">Server internal error. Try again later.</string>
-    <string name="error_invalid_fullname">This name is too short</string>
+    <string name="error_invalid_fullname">Insert a valid fullname</string>
     <string name="error_email_not_available">This e-mail is already associated with an account</string>
     <string name="group_info_members_number">Members: %1$s</string>
     <string name="amministratore_gruppo">Group administrator</string>
@@ -278,7 +278,7 @@
     <string name="add_single_member_include">Add member in all previous \"for all\" payments</string>
     <string name="prompt_password_old">Old password</string>
     <string name="prompt_password_new">New password</string>
-    <string name="prompt_password_new_confirm">Confirm new password</string>
+    <string name="prompt_password_new_confirm">Confirm password</string>
     <string name="title_activity_edit_user">Edit user</string>
     <string name="app_internal_error">App internal error</string>
     <string name="group_info_dialog_delete_member_title">Remove member?</string>
@@ -298,9 +298,11 @@
     <string name="spent_msg">You have spent</string>
     <string name="group_info_user_not_present">User does not exist anymore</string>
     <string name="preferences_category_account">Account</string>
-    <string name="preferences_option_account">Edit your account</string>
+    <string name="preferences_option_account">Account settings</string>
     <string name="preferences_category_notifications">Notifications</string>
     <string name="preferences_option_notifications">Enable/disable notifications</string>
     <string name="hide_show_other_debts_hint">Hide/show other debts</string>
+    <string name="edit_full_name_title">Edit fullname</string>
+    <string name="prompt_change_password">Password change</string>
 
 </resources>

@@ -83,7 +83,7 @@
     <string name="group_edit_saving_changes">Salvataggio in corso...</string>
     <string name="server_internal_error">Errore server. Riprova.</string>
     <string name="error_invalid_email">L\'indirizzo e-mail non è valido</string>
-    <string name="error_invalid_fullname">Il nome è troppo corto</string>
+    <string name="error_invalid_fullname">Il nome non è valido</string>
     <string name="error_invalid_password">La password è troppo corta</string>
     <string name="error_password_matching">Le password non corrispondono</string>
     <string name="group_details_string">Dettagli </string>
@@ -152,8 +152,13 @@
     <string name="app_internal_error"></string>
     <string name="last_visited_places">Ultimi luoghi visitati</string>
     <string name="error_google_maps">Connessione a google maps fallita</string>
-    <string name="preferences_category_account">Profilo personale</string>
-    <string name="preferences_option_account">Modifica i tuoi dati</string>
+    <string name="preferences_category_account">Account</string>
+    <string name="preferences_option_account">Impostazioni account</string>
     <string name="preferences_category_notifications">Notifiche</string>
     <string name="preferences_option_notifications">Abilita/disabilita le notifiche</string>
+    <string name="prompt_password_new">Nuova password</string>
+    <string name="prompt_password_new_confirm">Conferma password</string>
+    <string name="prompt_password_old">Vecchia password</string>
+    <string name="edit_full_name_title">Modifica nome</string>
+    <string name="prompt_change_password">Cambia password</string>
 </resources>

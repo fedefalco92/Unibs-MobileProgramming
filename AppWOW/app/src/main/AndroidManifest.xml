@@ -93,7 +93,7 @@
         </activity>
 
         <activity
-            android:name=".EditUserActivity"
+            android:name=".UserInfoActivity"
             android:label="@string/title_activity_edit_user"
             android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark">
         </activity>
@@ -115,6 +115,15 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_image_view_fullscreen"
             android:theme="@style/AppTheme.NoActionBar.FullScreen">
+        </activity>
+
+        <activity android:name=".EditFullNameActivity"
+                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"
+                  android:windowSoftInputMode="stateVisible|adjustResize">
+        </activity>
+        <activity android:name=".EditPasswordActivity"
+                  android:theme="@style/AppTheme.NoActionBar.StatusBarPrimaryDark"
+                  android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
 
         <!-- Google Api Key -->
