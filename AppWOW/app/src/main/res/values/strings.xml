@@ -295,7 +295,7 @@
     <string name="visited_places">Visited places</string>
     <string name="add_photo">Add a photo</string>
     <string name="last_visited_places">Last visited places</string>
-    <string name="spent_msg">You have spent</string>
+    <string name="statistics_you_have_payed">You have payed</string>
     <string name="group_info_user_not_present">User does not exist anymore</string>
     <string name="preferences_category_account">Account</string>
     <string name="preferences_option_account">Account settings</string>
@@ -305,6 +305,9 @@
     <string name="edit_full_name_title">Edit fullname</string>
     <string name="prompt_change_password">Password change</string>
     <string name="prompt_enter_password">Enter your password</string>
+    <string name="statistics_you_have_received">You have received</string>
+    <string name="statistics_you_have_given">You have given</string>
+    <string name="statistics_you_have_spent">You have spent</string>
     <string name="share_image">Share Image</string>
 
 </resources>

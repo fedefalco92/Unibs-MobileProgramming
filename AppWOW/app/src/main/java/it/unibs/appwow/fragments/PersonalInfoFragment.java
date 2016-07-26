@@ -51,7 +51,11 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     private GoogleMap mGoogleMap;
     private SupportMapFragment mMapFragment;
     private MapView mMapView;
-    private TextView amountTotal;
+    private TextView mMoneySpentView;
+    private TextView mMoneyPayedView;
+    private TextView mMoneyGivenView;
+    private TextView mMoneyReceivedView;
+
 
     private String [] mPlaceIds;
     private List<Place> mPlacesObj;
@@ -109,8 +113,10 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        amountTotal = (TextView) view.findViewById(R.id.fragment_personal_info_money_spent_value);
-
+        mMoneySpentView = (TextView) view.findViewById(R.id.money_spent_value);
+        mMoneyPayedView = (TextView) view.findViewById(R.id.money_payed_value);
+        mMoneyGivenView = (TextView) view.findViewById(R.id.money_given_value);
+        mMoneyReceivedView = (TextView) view.findViewById(R.id.money_received_value);
         fetchUserPlacesLocal();
         fetchUserPaymentsInfo();
     }
@@ -297,13 +303,29 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     }
 
     private void fetchUserPaymentsInfo() {
+        int idUser = mLocalUser.getId();
         double totalSpent = 0;
+        double totalPayed = 0;
+        double totalGiven = 0;
+        double totalReceived = 0;
+
         PaymentDAO dao = new PaymentDAO();
         dao.open();
-        totalSpent = dao.getMoneySpent(mLocalUser.getId());
-        dao.close();
 
-        amountTotal.setText(Amount.getAmountStringCurrency(totalSpent,"EUR"));
+        totalSpent = dao.getMoneySpent(idUser);
+        mMoneySpentView.setText(Amount.getAmountStringCurrency(totalSpent,"EUR"));
+
+        totalPayed = dao.getMoneyPayed(idUser);
+        mMoneyPayedView.setText(Amount.getAmountStringCurrency(totalPayed,"EUR"));
+
+        totalGiven = dao.getMoneyGiven(idUser);
+        mMoneyGivenView.setText(Amount.getAmountStringCurrency(totalGiven,"EUR"));
+
+        totalReceived = dao.getMoneyReceived(idUser);
+        mMoneyReceivedView.setText(Amount.getAmountStringCurrency(totalReceived,"EUR"));
+
+
+        dao.close();
     }
 
     private void addMarkerAndCenter() {

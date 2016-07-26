@@ -162,4 +162,9 @@
     <string name="edit_full_name_title">Modifica nome</string>
     <string name="prompt_change_password">Cambia password</string>
     <string name="prompt_enter_password">Inserisci la tua password</string>
+    <string name="slideshow"></string>
+    <string name="statistics_you_have_payed">Hai pagato</string>
+    <string name="statistics_you_have_received">Hai ricevuto</string>
+    <string name="statistics_you_have_given">Hai dato</string>
+    <string name="statistics_you_have_spent">Hai speso</string>
 </resources>

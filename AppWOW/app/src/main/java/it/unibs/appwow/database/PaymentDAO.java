@@ -212,11 +212,47 @@ public class PaymentDAO implements LocalDB_DAO {
         return placesID;
     }
 
-    public double getMoneySpent(int idUser){
+    public double getMoneyPayed(int idUser){
         double amountTotal = 0;
 
         String [] columns = {AppDB.Payments.COLUMN_AMOUNT};
-        Cursor cursor = database.query(AppDB.Payments.TABLE_PAYMENTS,columns, AppDB.Payments.COLUMN_ID_USER + " = " + idUser, null, null, null, null);
+        String selection = AppDB.Payments.COLUMN_ID_USER + " = ? AND " + AppDB.Payments.COLUMN_IS_EXCHANGE + " = 0 ";
+        String [] args = {String.valueOf(idUser)};
+        Cursor cursor = database.query(AppDB.Payments.TABLE_PAYMENTS,columns, selection, args, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            amountTotal += cursor.getDouble(0);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return amountTotal;
+    }
+
+    public double getMoneySpent(int idUser) {
+        return getMoneyPayed(idUser) - getMoneyReceived(idUser) + getMoneyGiven(idUser);
+    }
+
+    public double getMoneyGiven(int idUser) {
+        double amountTotal = 0;
+        String [] columns = {AppDB.Payments.COLUMN_AMOUNT};
+        String selection = AppDB.Payments.COLUMN_ID_USER + " = ? AND " + AppDB.Payments.COLUMN_IS_EXCHANGE + " = 1 ";
+        String [] args = {String.valueOf(idUser)};
+        Cursor cursor = database.query(AppDB.Payments.TABLE_PAYMENTS,columns, selection, args, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            amountTotal += cursor.getDouble(0);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return amountTotal;
+    }
+
+    public double getMoneyReceived(int idUser) {
+        double amountTotal = 0;
+        String [] columns = {AppDB.Payments.COLUMN_AMOUNT};
+        String selection = AppDB.Payments.COLUMN_ID_USER_TO + " = ? AND " + AppDB.Payments.COLUMN_IS_EXCHANGE + " = 1 ";
+        String [] args = {String.valueOf(idUser)};
+        Cursor cursor = database.query(AppDB.Payments.TABLE_PAYMENTS,columns, selection, args, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){
             amountTotal += cursor.getDouble(0);
