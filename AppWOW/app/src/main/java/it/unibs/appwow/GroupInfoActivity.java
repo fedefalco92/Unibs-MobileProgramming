@@ -150,15 +150,18 @@ public class GroupInfoActivity extends AppCompatActivity {
 
             Button resetButton = (Button) findViewById(R.id.group_info_reset_button);
             resetButton.setVisibility(View.VISIBLE);
+
+            View addMemberRow = findViewById(R.id.group_info_add_member_row);
+            addMemberRow.setVisibility(View.VISIBLE);
+            addMemberRow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startAddMemberActivity();
+                }
+            });
         }
 
-        View addMemberRow = findViewById(R.id.group_info_add_member_row);
-        addMemberRow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startAddMemberActivity();
-            }
-        });
+
     }
 
     private void loadMembers(){
