@@ -3,7 +3,7 @@ package it.unibs.appwow.fragments;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -73,6 +73,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     private static final String ARG_USER= "user";
     public static final String PASSING_GROUP_TAG = "group";
     public static final int LAYOUT_MANAGER_GRID_NUMBER = 2;
+    public static final int LAYOUT_LANDSCAPE_MANAGER_GRID_NUMBER = 3;
 
     //parameters
     private LocalUser mLocalUser;
@@ -102,7 +103,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
      * @param localUser
      * @return A new instance of fragment GroupListFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static GroupListFragment newInstance(LocalUser localUser) {
         GroupListFragment fragment = new GroupListFragment();
         Bundle args = new Bundle();
@@ -149,7 +149,12 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         mRecyclerView.setHasFixedSize(true);
 
         // use a grid layout manager
-        mLayoutManager = new GridLayoutManager(getContext(),LAYOUT_MANAGER_GRID_NUMBER);
+        Configuration config = getResources().getConfiguration();
+        if(config.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            mLayoutManager = new GridLayoutManager(getContext(), LAYOUT_LANDSCAPE_MANAGER_GRID_NUMBER);
+        } else {
+            mLayoutManager = new GridLayoutManager(getContext(),LAYOUT_MANAGER_GRID_NUMBER);
+        }
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
@@ -514,7 +519,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 

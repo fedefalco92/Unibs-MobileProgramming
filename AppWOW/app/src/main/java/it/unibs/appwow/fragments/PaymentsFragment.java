@@ -62,10 +62,9 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     private static final String TAG_LOG = PaymentsFragment.class.getSimpleName();
 
     public static final String PASSING_GROUP_TAG = "group";
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     public static final String PASSING_PAYMENT_TAG = "cost";
-    // TODO: Customize parameters
+
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private GroupModel mGroup;
@@ -87,7 +86,6 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
 
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static PaymentsFragment newInstance(int columnCount, GroupModel group) {
         PaymentsFragment fragment = new PaymentsFragment();
@@ -481,7 +479,6 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(PaymentModel item);
     }
 }

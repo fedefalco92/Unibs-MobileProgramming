@@ -24,17 +24,17 @@ public class AmountsFragment extends Fragment {
 
     private static final String TAG_LOG = AmountsFragment.class.getSimpleName();
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     public static final String PASSING_GROUP_TAG = "group";
     private static final String ARG_LOCAL_USER_ID = "local_usesr_id";
-    // TODO: Customize parameters
+
     private int mColumnCount = 1;
     private int mLocalUserId;
     private OnListFragmentInteractionListener mListener;
     private AmountItemAdapter mAdapter;
     private GroupModel mGroup;
     private ListView mAmountList;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -42,7 +42,6 @@ public class AmountsFragment extends Fragment {
     public AmountsFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static AmountsFragment newInstance(int columnCount, GroupModel group, int localUserId) {
         AmountsFragment fragment = new AmountsFragment();
@@ -131,7 +130,6 @@ public class AmountsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(Amount item);
     }
 }

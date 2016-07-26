@@ -72,7 +72,6 @@ public class Amount {
 
     @Override
     public String toString() {
-        // FIXME: 07/07/2016  OCIO ALLA VALUTA
         return mFullName + " (" + mEmail + "): " +  getAmountString() + " eur";
     }
 

@@ -17,8 +17,6 @@ public class DateUtils {
 
     private static final String TAG_LOG = DateUtils.class.getSimpleName();
 
-    // TODO: 19/07/2016 SISTEMARE QUESTIONE FORMATI
-
     public static final String DATE_FORMAT ="yyyy-MM-dd HH:mm:ss";
     public static final String DATE_HOUR_FORMAT ="dd/MM/yyyy HH:mm";
     public static final String DATE_HOUR_FORMAT_ENG ="MM/dd/yyyy HH:mm";

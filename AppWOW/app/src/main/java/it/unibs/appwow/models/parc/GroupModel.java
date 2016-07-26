@@ -156,7 +156,6 @@ public class GroupModel implements Parcelable {
         {
             this.mHighlighted = in.readInt();
         }
-        // FIXME: 26/05/2016 LA HashMap con gli utenti viene annullata quando si parcellizza il gruppo
         //this.mUsers = new HashMap<Integer, LocalUser>();
     }
 

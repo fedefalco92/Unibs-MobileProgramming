@@ -2,6 +2,7 @@ package it.unibs.appwow.views.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -156,12 +157,12 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         Bitmap bm = FileUtils.readGroupImage(itemGroup.getId(), mContext);
         if(bm!=null){
             holder.groupImageView.setImageBitmap(bm);
-            // FIXME: 20/07/16 Sistemare PAlette
             Palette.from(bm).generate(new Palette.PaletteAsyncListener() {
                 public void onGenerated(Palette p) {
+                    //holder.layout.setBackgroundColor(p.getVibrantColor(ContextCompat.getColor(mContext,R.color.md_grey_700)));
+
                     Palette.Swatch swatch = p.getVibrantSwatch();
                     if(swatch != null){
-                        //holder.layout.setBackgroundColor(p.getVibrantColor(mContext.getResources().getColor(R.color.md_grey_700)));
                         holder.layout.setBackgroundColor(swatch.getRgb());
                         //holder.groupName.setTextColor(swatch.getTitleTextColor());
                         //holder.personalStatus.setTextColor(swatch.getBodyTextColor());
@@ -189,8 +190,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         if (userAmount!=null){
             //// FIXME: 20/07/16 Da sistemare currency...
             //Currency curr = Currency.getInstance(Locale.getDefault());
-            Currency curr = Currency.getInstance("EUR");
-            holder.personalStatus.setText(curr.getSymbol() + " " + Amount.getAmountString(userAmount));
+            //Currency curr = Currency.getInstance("EUR");
+            //holder.personalStatus.setText(curr.getSymbol() + " " + Amount.getAmountString(userAmount));
+
+            holder.personalStatus.setText(Amount.getAmountStringCurrency(userAmount,"EUR"));
             if(userAmount>0){
                 //holder.personalStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green));
                 holder.groupImageTrending.setImageResource(R.drawable.ic_trending_up_white_24dp);

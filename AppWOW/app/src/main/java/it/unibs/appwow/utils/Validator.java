@@ -14,7 +14,6 @@ public class Validator {
     }
 
     public static boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 2;
     }
 

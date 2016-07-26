@@ -278,7 +278,6 @@ public class GroupDAO implements LocalDB_DAO {
         Cursor cursor = database.rawQuery(query, null);
         boolean ok = cursor.moveToFirst(); // Ritorna falso se e' vuoto.
         cursor.close();
-        // FIXME: 04/07/2016 RITORNARE TRUE O FALSE...CAPIRE COME FUNZIONA RAWQUERY...EVENTUALMENTE USARE IL METODO UPDATE();
         return ok;
     }
 

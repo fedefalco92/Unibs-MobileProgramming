@@ -97,8 +97,9 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         itemHolder.debtNameMailFrom.setText(itemDebt.getEmailFrom());
         itemHolder.debtNameMailTo.setText(itemDebt.getEmailTo());
 
-        Currency curr = Currency.getInstance("EUR");
-        itemHolder.debtAmount.setText(curr.getSymbol() + " " + Amount.getAmountString(itemDebt.getAmount()));
+        //Currency curr = Currency.getInstance("EUR");
+        //itemHolder.debtAmount.setText(curr.getSymbol() + " " + Amount.getAmountString(itemDebt.getAmount()));
+        itemHolder.debtAmount.setText(Amount.getAmountStringCurrency(itemDebt.getAmount(),"EUR"));
     }
 
     @Override
@@ -193,7 +194,6 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         public boolean onItemLongClicked(View v, int position);
     }
 
-    // FIXME: 14/07/16 Controllare click perche a volte non funzionano molto bene...
     public class DebtViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         public TextView debtNameUserFrom;
         public TextView debtNameUserTo;

@@ -89,7 +89,6 @@ public class PaymentDAO implements LocalDB_DAO {
         values.put(AppDB.Payments.COLUMN_NOTES,data.getNotes());
         values.put(AppDB.Payments.COLUMN_CREATED_AT, data.getCreatedAt());
         values.put(AppDB.Payments.COLUMN_UPDATED_AT, data.getUpdatedAt());
-        // FIXME: 30/06/2016 VERIFICARE FUNZIONAMENTO BOOLEAN - INTEGER
         values.put(AppDB.Payments.COLUMN_IS_EXCHANGE, data.isExchange());
         values.put(AppDB.Payments.COLUMN_POSITION, data.getPosition());
         values.put(AppDB.Payments.COLUMN_POSITION_ID, data.getPositionId());

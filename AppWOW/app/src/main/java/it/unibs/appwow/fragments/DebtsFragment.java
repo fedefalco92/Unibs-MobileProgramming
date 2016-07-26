@@ -83,7 +83,6 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
     private LinearLayoutManager mLayoutManager;
     private DebtsAdapter mAdapter;
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static DebtsFragment newInstance(int columnCount, GroupModel group) {
         DebtsFragment fragment = new DebtsFragment();
@@ -457,7 +456,6 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(Debt item);
     }
 

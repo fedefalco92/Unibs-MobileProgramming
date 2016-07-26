@@ -93,8 +93,9 @@ public class AmountItemAdapter extends BaseAdapter {
             holder.fullName.setText(item.getFullName());
             holder.email.setText(item.getEmail());
         }
-        Currency curr = Currency.getInstance("EUR");
-        holder.amount.setText(curr.getSymbol() + " " + item.getAmountString());
+        //Currency curr = Currency.getInstance("EUR");
+        //holder.amount.setText(curr.getSymbol() + " " + item.getAmountString());
+        holder.amount.setText(Amount.getAmountStringCurrency(item.getAmount(),"EUR"));
 
         //colore
         if(item.getAmount() >0){
