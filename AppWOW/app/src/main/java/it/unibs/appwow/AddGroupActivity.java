@@ -118,6 +118,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 doCrop();
                 break;
             case CROP_FROM_CAMERA:
+                Log.d(TAG_LOG,"mPhotoUri: " + mPhotoUri.getPath());
                 Bundle extras = data.getExtras();
                 if (extras != null) {
                     Bitmap photo = extras.getParcelable("data");
@@ -305,6 +306,14 @@ public class AddGroupActivity extends AppCompatActivity {
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
                 startActivityForResult(i, CROP_FROM_CAMERA);
             } else {
+
+                // FIXME: 27/07/16 In questo modo sceglie quello di default e non ha problemi ...
+                Intent i = new Intent(cropIntent);
+                ResolveInfo res = list.get(0);
+                i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                startActivityForResult(i, CROP_FROM_CAMERA);
+
+                /* Exception on some mobile devices
                 Log.d(TAG_LOG,"mPhotoUri " + mPhotoUri.getPath());
                 List<Intent> allIntents = new  ArrayList<>();
                 for (ResolveInfo res : list) {
@@ -319,9 +328,18 @@ public class AddGroupActivity extends AppCompatActivity {
 
                 Intent chooserIntent = Intent.createChooser(mainIntent,getString(R.string.choose_crop_app));
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,allIntents.toArray(new Parcelable[allIntents.size()]));
-                startActivityForResult(chooserIntent, CROP_FROM_CAMERA);
+                startActivityForResult(chooserIntent, CROP_FROM_CAMERA); */
 
-                /*
+                /* It should work but it does not :(
+                Intent chooserIntent = Intent.createChooser(cropIntent,getString(R.string.choose_crop_app));
+                Log.d(TAG_LOG,chooserIntent.toString());
+                if(cropIntent.resolveActivity(getPackageManager()) != null){
+                    startActivityForResult(chooserIntent,CROP_FROM_CAMERA);
+                } else {
+                    Log.d(TAG_LOG,"no resolved activity for cropIntent");
+                } */
+
+                /* OLD CODE WITH CUSTOM CHOOSER
                 for (ResolveInfo res : list) {
                     final CropOption co = new CropOption();
                     co.title = getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
