@@ -161,7 +161,7 @@ public class EditPasswordActivity extends AppCompatActivity {
         }
 
         String url = WebServiceUri.getUserUri(mLocalUser.getId()).toString();
-        String [] keys = {"oldPassword", "password"};
+        String [] keys = {"password", "newPassword"};
         String oldPassword = mOldPassword.getText().toString();
         String newPassword = mNewPassword.getText().toString();
         String [] values = {oldPassword, newPassword};

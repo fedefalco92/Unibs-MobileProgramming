@@ -3,9 +3,9 @@ package it.unibs.appwow;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -27,7 +27,6 @@ import java.util.Map;
 
 import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.models.UserModel;
-import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -92,7 +91,8 @@ public class EditFullNameActivity extends AppCompatActivity {
     private void checkErrors(){
         String name = mNewNameEditText.getText().toString();
         if(Validator.isFullNameValid(name) && name.length() < MAX_LENGTH){
-            showProgress(true);
+            showPasswordDialog();
+            //showProgress(true);
             //sendEditFullnameRequest();
             Toast.makeText(EditFullNameActivity.this, "DIALOG RICHIESTA PASSWORD", Toast.LENGTH_SHORT).show();
         } else {
@@ -100,6 +100,33 @@ public class EditFullNameActivity extends AppCompatActivity {
             mNewNameEditText.requestFocus();
         }
 
+    }
+
+    private void showPasswordDialog(){
+        // get prompts.xml view
+        View promptView = getLayoutInflater().inflate(R.layout.password_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(promptView);
+
+        final EditText password = (EditText) promptView.findViewById(R.id.password);
+        // setup a dialog window
+        builder.setCancelable(false)
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        showProgress(true);
+                        sendEditFullnameRequest(password.getText().toString());
+                    }
+                })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create an alert dialog
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 
@@ -136,13 +163,13 @@ public class EditFullNameActivity extends AppCompatActivity {
         }
     }
 
-    private void sendEditFullnameRequest() {
+    private void sendEditFullnameRequest(final String password) {
         if(!WebServiceRequest.checkNetwork()){
             Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
-                    sendEditFullnameRequest();
+                    sendEditFullnameRequest(password);
                 }
             });
             showProgress(false);
@@ -150,9 +177,9 @@ public class EditFullNameActivity extends AppCompatActivity {
         }
 
         String url = WebServiceUri.getUserUri(mLocalUser.getId()).toString();
-        String [] keys = {"fullName"};
+        String [] keys = {"fullName", "password"};
         String fullName = mNewNameEditText.getText().toString();
-        String [] values = {fullName};
+        String [] values = {fullName, password};
         Map<String, String> params = WebServiceRequest.createParametersMap(keys, values);
         StringRequest req = WebServiceRequest.stringRequest(Request.Method.PUT, url, params, new Response.Listener<String>() {
             @Override

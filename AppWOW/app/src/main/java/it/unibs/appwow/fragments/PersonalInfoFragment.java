@@ -117,7 +117,7 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle(R.string.personal_info_string);
+        getActivity().setTitle(R.string.user_statistics_string);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.fragment_personal_info_map);
         mMapFragment.getMapAsync(this);
     }

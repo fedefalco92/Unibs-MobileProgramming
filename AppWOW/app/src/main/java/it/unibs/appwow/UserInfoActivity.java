@@ -59,10 +59,8 @@ public class UserInfoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(getString(R.string.preferences_option_account));
 
-        mLocalUser = LocalUser.load(this);
-
         mFullname = (EditText) findViewById(R.id.activity_edit_user_fullname);
-        mFullname.setText(mLocalUser.getFullName());
+        loadFullName();
 
         mEmail = (EditText) findViewById(R.id.activity_edit_user_email);
         mEmail.setText(mLocalUser.getEmail());
@@ -87,5 +85,16 @@ public class UserInfoActivity extends AppCompatActivity {
     public void changePassword(View view) {
         Intent changePassword = new Intent(UserInfoActivity.this, EditPasswordActivity.class);
         startActivity(changePassword);
+    }
+
+    private void loadFullName() {
+        mLocalUser = LocalUser.load(this);
+        mFullname.setText(mLocalUser.getFullName());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFullName();
     }
 }

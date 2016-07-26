@@ -37,7 +37,7 @@
     <!-- String resources for fragments within the GroupDetailsActivity -->
     <string name="title_add_cost">Add new cost</string>
 
-    <string name="personal_info_string">Personal info</string>
+    <string name="user_statistics_string">Your statistics</string>
     <string name="groups_string">Groups</string>
     <string name="group_details_string">Group details</string>
     <string name="welcome_message">Welcome to AppWOW</string>
@@ -304,5 +304,6 @@
     <string name="hide_show_other_debts_hint">Hide/show other debts</string>
     <string name="edit_full_name_title">Edit fullname</string>
     <string name="prompt_change_password">Password change</string>
+    <string name="prompt_enter_password">Enter your password</string>
 
 </resources>
