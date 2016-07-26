@@ -1,6 +1,7 @@
 package it.unibs.appwow.fragments;
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,8 +16,12 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -30,12 +35,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import it.unibs.appwow.AddEditPaymentActivity;
 import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
+import it.unibs.appwow.database.DebtDAO;
+import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.Payment;
@@ -58,18 +67,18 @@ import it.unibs.appwow.views.adapters.DebtsAdapter;
 public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickListener, DebtsAdapter.OnItemLongClickListener{
 
     private static final String TAG_LOG = DebtsFragment.class.getSimpleName();
+
+    // Variables
     private GroupModel mGroup;
     private LocalUser mLocalUser;
-    private boolean mShowOnlyYourDebts;
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+    private List<Debt> mItems;
 
-    // TODO: Customize parameter argument names
+    private int mColumnCount = 1;
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     private OnListFragmentInteractionListener mListener;
 
-    // Nuove variabili per recycler view.
+    // UI
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private DebtsAdapter mAdapter;
@@ -95,22 +104,72 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //per poter popolare l'action bar dell'activity
+        setHasOptionsMenu(true);
+
         mLocalUser = LocalUser.load(getContext());
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mGroup = getArguments().getParcelable(GroupListFragment.PASSING_GROUP_TAG);
         }
+    }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mShowOnlyYourDebts = prefs.getBoolean("pref_key_show_debts", false);
-        //per poter popolare l'action bar dell'activity
-        //setHasOptionsMenu(true);
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_debts_fragment, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.filter:
+                boolean isChecked = item.isChecked();
+                if(isChecked){
+                    Log.d(TAG_LOG,"isChecked");
+                    item.setChecked(false);
+                    final List<Debt> filteredModelList = filterMyDebts(mItems);
+                    mAdapter.animateTo(filteredModelList);
+                    mRecyclerView.scrollToPosition(0);
+                } else {
+                    Log.d(TAG_LOG,"isNotChecked");
+                    item.setChecked(true);
+                    mAdapter.animateTo(mItems);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * It shows only my debts
+     * @param items
+     * @return
+     */
+    private List<Debt> filterMyDebts(List<Debt> items){
+        final List<Debt> filteredItemList = new ArrayList<>();
+        for (Debt item: items){
+            if(item.getIdFrom() == mLocalUser.getId() || item.getIdTo() == mLocalUser.getId()){
+                filteredItemList.add(item);
+            }
+        }
+        return filteredItemList;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        // Serve per allineare il filtraggio degli elementi
+        DebtDAO dao;
+        dao = new DebtDAO();
+        dao.open();
+        mItems = dao.getAllDebtsExtra(mGroup.getId());
+        dao.close();
+
         Log.d(TAG_LOG, "onResume()");
         if(mAdapter != null){
             mAdapter.notifyDataSetChanged();
@@ -140,7 +199,7 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
         mLayoutManager.setSmoothScrollbarEnabled(true);
 
         // specify an adapter
-        mAdapter = new DebtsAdapter(getContext(), mGroup.getId(), mShowOnlyYourDebts);
+        mAdapter = new DebtsAdapter(getContext(), mGroup.getId());
         mAdapter.setOnItemClickListener(this);
         mAdapter.setOnItemLongClickListener(this);
         //mAdapter.reloadItems();

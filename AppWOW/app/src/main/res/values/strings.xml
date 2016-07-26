@@ -297,5 +297,6 @@
     <string name="last_visited_places">Last visited places</string>
     <string name="spent_msg">You have spent</string>
     <string name="group_info_user_not_present">User does not exist anymore</string>
+    <string name="hide_show_other_debts_hint">Hide/show other debts</string>
 
 </resources>

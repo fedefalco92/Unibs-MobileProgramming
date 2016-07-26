@@ -65,16 +65,11 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        // Empty view
-        if (mItems.size() == 0) {
-            return PAYMENT_EMPTY_VIEW;
+        // Special payment
+        if (mItems.get(position).isExchange()) {
+            return PAYMENT_SPECIAL_VIEW;
         } else {
-            // Special payment
-            if (mItems.get(position).isExchange()) {
-                return PAYMENT_SPECIAL_VIEW;
-            } else {
-                return PAYMENT_CLASSIC_VIEW;
-            }
+            return PAYMENT_CLASSIC_VIEW;
         }
     }
 

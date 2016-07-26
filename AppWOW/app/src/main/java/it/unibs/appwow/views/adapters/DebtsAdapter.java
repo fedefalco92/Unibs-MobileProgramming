@@ -13,6 +13,7 @@ import java.util.Currency;
 import java.util.List;
 
 import it.unibs.appwow.R;
+import it.unibs.appwow.database.AppDB;
 import it.unibs.appwow.database.DebtDAO;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Debt;
@@ -31,7 +32,6 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private LocalUser mUser;
     private List<Debt> mItems = new ArrayList<Debt>();
     private DebtDAO dao;
-    private boolean mShowOnlyYourDebts;
     private int mIdGroup;
     private LayoutInflater mInflater;
 
@@ -39,30 +39,28 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
 
-    public DebtsAdapter(Context context, int idGroup, boolean showOnlyYourDebts){
+    public DebtsAdapter(Context context, int idGroup){
         mContext = context;
         mInflater = LayoutInflater.from(context);
         mUser = LocalUser.load(context);
-        mShowOnlyYourDebts = showOnlyYourDebts;
         mIdGroup = idGroup;
         dao = new DebtDAO();
         dao.open();
-        mItems = dao.getAllDebtsExtra(mIdGroup, mShowOnlyYourDebts, mUser.getId());
+        mItems = dao.getAllDebtsExtra(mIdGroup);
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
     }
 
-    public DebtsAdapter(Context context, int idGroup, boolean showOnlyYourDebts, OnItemClickListener onItemClickListener, OnItemLongClickListener onItemLongClickListener){
+    public DebtsAdapter(Context context, int idGroup, OnItemClickListener onItemClickListener, OnItemLongClickListener onItemLongClickListener){
         mInflater = LayoutInflater.from(context);
         mOnItemClickListener = onItemClickListener;
         mOnItemLongClickListener = onItemLongClickListener;
 
         mUser = LocalUser.load(context);
-        mShowOnlyYourDebts = showOnlyYourDebts;
         mIdGroup = idGroup;
         dao = new DebtDAO();
         dao.open();
-        mItems = dao.getAllDebtsExtra(mIdGroup, mShowOnlyYourDebts, mUser.getId());
+        mItems = dao.getAllDebtsExtra(mIdGroup);
         dao.close();
         Log.d(TAG_LOG, "Size mItems = "+ mItems.size());
     }
@@ -112,30 +110,70 @@ public class DebtsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         return mItems.get(position);
     }
 
-    public void remove(int position){
+    public void removeItem(int position){
         mItems.remove(position);
         notifyItemRemoved(position);
     }
 
-    /*@Override CANNOT DO IT
-    public void notifyDataSetChanged() {
-        reloadItems();
-        super.notifyDataSetChanged();
+    public void removeItem(Debt item){
+        int position = mItems.indexOf(item);
+        if(position != -1){
+            mItems.remove(item);
+            notifyItemRemoved(position);
+        }
     }
 
-    private void reloadItems(){
-        Log.d(TAG_LOG, "RELOADING ITEMS...");
-        dao.open();
-        //mUser = LocalUser.load(MyApplication.getAppContext());
-        mItems = dao.getAllDebtsExtra(mIdGroup, mShowOnlyYourDebts, mUser.getId());
-        dao.close();
-    }*/
+    public void addItem(int position, Debt model) {
+        mItems.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final Debt model = mItems.remove(fromPosition);
+        mItems.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void animateTo(List<Debt> items) {
+        applyAndAnimateRemovals(items);
+        applyAndAnimateAdditions(items);
+        applyAndAnimateMovedItems(items);
+    }
+
+    private void applyAndAnimateRemovals(List<Debt> newItems) {
+        for (int i = mItems.size() - 1; i >= 0; i--) {
+            final Debt item = mItems.get(i);
+            if (!newItems.contains(item)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<Debt> newItems) {
+        for (int i = 0, count = newItems.size(); i < count; i++) {
+            final Debt item = newItems.get(i);
+            if (!mItems.contains(item)) {
+                addItem(i, item);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<Debt> newItems) {
+        for (int toPosition = newItems.size() - 1; toPosition >= 0; toPosition--) {
+            final Debt model = newItems.get(toPosition);
+            final int fromPosition = mItems.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
+    }
+
 
     public void reloadItems(){
         Log.d(TAG_LOG, "RELOADING ITEMS...");
         dao.open();
         //mUser = LocalUser.load(MyApplication.getAppContext());
-        mItems = dao.getAllDebtsExtra(mIdGroup, mShowOnlyYourDebts, mUser.getId());
+        mItems = dao.getAllDebtsExtra(mIdGroup);
         dao.close();
     }
 

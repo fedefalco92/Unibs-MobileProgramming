@@ -173,6 +173,22 @@ public class DebtDAO implements LocalDB_DAO {
         return data;
     }
 
+    public List<Debt> getAllDebtsExtra(int idGroup){
+        List<Debt> data = new ArrayList<Debt>();
+        String [] params = new String[] {String.valueOf(idGroup)};
+
+        Cursor cursor = database.query("debts LEFT JOIN users users1 ON debts.idFrom = users1._id LEFT JOIN users users2 ON debts.idTo = users2._id",
+                allColumnsExtra, AppDB.Debts.COLUMN_ID_GROUP + " = ? ", params,null,null,null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            Debt d = cursorToDebtWithFullNamesAndEmails(cursor);
+            data.add(d);
+            cursor.moveToNext();
+        }
+        cursor.close(); // remember to always close the cursor!
+        return data;
+    }
+
 
 
 }

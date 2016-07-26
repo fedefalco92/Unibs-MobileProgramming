@@ -77,8 +77,6 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     private LinearLayoutManager mLayoutManager;
     private PaymentAdapter mAdapter;
 
-    //private Payment mSelectedItem;
-    //private List<PaymentModel> mPaymentsListView; //da riempire
     private List<Payment> mItems;
 
     /**
@@ -113,8 +111,6 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
             mGroup = getArguments().getParcelable(PASSING_GROUP_TAG);
         }
 
-
-
         /*
         PaymentDAO dao;
         dao = new PaymentDAO();
@@ -142,7 +138,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.menu_payments, menu);
+        inflater.inflate(R.menu.menu_payments_fragment, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
 

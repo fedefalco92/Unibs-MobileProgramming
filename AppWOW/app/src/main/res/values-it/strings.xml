@@ -34,7 +34,7 @@
     <string name="transaction_fragment_empty_message">Nessun debito</string>
     <string name="delete">Elimina</string>
     <string name="email">email</string>
-    <string name="payment_fragment_empty_message">Nessuna spesa</string>
+    <string name="payment_fragment_empty_message">Nessun pagamento</string>
     <string name="add_cost_menu_item">Aggiungi spesa</string>
     <string name="error_invalid_cost_name">Inserisci un nome valido per la spesa</string>
     <string name="error_invalid_amount">Inserisci un importo</string>

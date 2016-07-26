@@ -525,8 +525,6 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         fetchGroups();
     }
 
-
-    // FIXME: 25/07/16 Non si sa perche ma la textview non viene vista
     private void showEmptyTextView(){
         Log.d(TAG_LOG,"showEmptyTextView " + mAdapter.getItemCount());
         // If there are no groups
