@@ -297,6 +297,10 @@
     <string name="last_visited_places">Last visited places</string>
     <string name="spent_msg">You have spent</string>
     <string name="group_info_user_not_present">User does not exist anymore</string>
+    <string name="preferences_category_account">Account</string>
+    <string name="preferences_option_account">Edit your account</string>
+    <string name="preferences_category_notifications">Notifications</string>
+    <string name="preferences_option_notifications">Enable/disable notifications</string>
     <string name="hide_show_other_debts_hint">Hide/show other debts</string>
 
 </resources>

@@ -152,4 +152,8 @@
     <string name="app_internal_error"></string>
     <string name="last_visited_places">Ultimi luoghi visitati</string>
     <string name="error_google_maps">Connessione a google maps fallita</string>
+    <string name="preferences_category_account">Profilo personale</string>
+    <string name="preferences_option_account">Modifica i tuoi dati</string>
+    <string name="preferences_category_notifications">Notifiche</string>
+    <string name="preferences_option_notifications">Abilita/disabilita le notifiche</string>
 </resources>

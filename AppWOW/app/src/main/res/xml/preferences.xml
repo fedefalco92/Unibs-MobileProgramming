@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+    <!--<PreferenceCategory
         android:title="Group details">
 
         <SwitchPreferenceCompat
@@ -10,12 +11,12 @@
             android:summary="Do you want to show only your debts?"
             android:title="Show your debts only?"/>
 
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
     <PreferenceCategory
-        android:title="User Info">
+        android:title="@string/preferences_category_account">
         <Preference
-            android:title="Modify user info">
+            android:title="@string/preferences_option_account">
             <intent android:targetPackage="it.unibs.appwow"
                 android:targetClass="it.unibs.appwow.EditUserActivity">
             </intent>
@@ -24,11 +25,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="App">
+        android:title="@string/preferences_category_notifications">
 
         <SwitchPreferenceCompat
             android:key="pref_key_notification"
-            android:title="Notification"
+            android:title="@string/preferences_option_notifications"
             android:defaultValue="true"/>
 
     </PreferenceCategory>
