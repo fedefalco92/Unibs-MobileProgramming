@@ -471,7 +471,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         fetchGroupDetails();
 
         //Broadcast Receiver part
-        IntentFilter filterUpdate = new IntentFilter("it.unibs.appwow.notificationReceiver");
+        IntentFilter filterUpdate = new IntentFilter(NotificationReceiver.NOTIFICATION_RECEIVER_GROUP_DETAILS_UPDATER);
         registerReceiver(mNotificationReceiver,filterUpdate);
     }
 

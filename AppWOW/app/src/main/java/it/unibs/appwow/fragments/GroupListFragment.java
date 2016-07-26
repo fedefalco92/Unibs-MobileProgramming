@@ -546,10 +546,9 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void showProgress(boolean show){
-        /*
         mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-        mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);*/
-        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+        /*mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);*/
     }
 
 

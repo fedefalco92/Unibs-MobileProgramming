@@ -172,7 +172,7 @@ public class NavigationActivity extends AppCompatActivity
         super.onResume();
 
         //Broadcast Receiver part
-        IntentFilter filterUpdate = new IntentFilter("it.unibs.appwow.notificationReceiver");
+        IntentFilter filterUpdate = new IntentFilter(NotificationReceiver.NOTIFICATION_RECEIVER_GROUPS_UPDATER);
         registerReceiver(mNotificationReceiver,filterUpdate);
     }
 
