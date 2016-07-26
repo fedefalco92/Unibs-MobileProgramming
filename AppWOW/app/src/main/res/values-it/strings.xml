@@ -96,7 +96,7 @@
     <string name="group_info_dialog_delete_message">Vuoi davvero eliminare il gruppo? L\'operazione sarà IRREVERSIBILE e il gruppo sarà eliminato anche dai dispositivi degli altri membri</string>
     <string name="action_show_group_info">Info gruppo</string>
     <string name="cancel">Annulla</string>
-    <string name="group_fragment_empty_message">Nessun gruppo</string>
+    <string name="group_fragment_empty_message">Nessun gruppo da visualizzare</string>
     <string name="payments">Pagamenti</string>
     <string name="summary">Riassunto</string>
     <string name="debts">Debiti</string>
