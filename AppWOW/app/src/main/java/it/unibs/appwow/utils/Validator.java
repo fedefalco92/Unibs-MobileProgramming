@@ -1,5 +1,8 @@
 package it.unibs.appwow.utils;
 
+import android.text.TextUtils;
+import android.util.Patterns;
+
 /**
  * Created by federicofalcone on 03/06/16.
  */
@@ -8,13 +11,12 @@ public class Validator {
     private static final String TAG_LOG = Validator.class.getSimpleName();
 
     public static boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     public static boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return true;// password.length() > 4;
+        return password.length() > 2;
     }
 
     public static boolean isGroupNameValid(String groupName) {
