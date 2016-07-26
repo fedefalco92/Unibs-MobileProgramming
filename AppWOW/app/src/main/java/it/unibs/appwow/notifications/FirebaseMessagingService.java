@@ -60,6 +60,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         try {
             JSONObject obj = new JSONObject(remoteMessage.getData().get("message"));
             showNotification(type, obj);
+            Intent update = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER);
+            sendBroadcast(update);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,8 @@
 package it.unibs.appwow;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -48,6 +50,7 @@ import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.notifications.NotificationReceiver;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.models.Amount;
@@ -60,6 +63,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
     private final String TAG_LOG = GroupDetailsActivity.class.getSimpleName();
     private final String TAG_REQUEST_GROUP_DETAILS = "GROUP_DETAILS";
+
+    private final BroadcastReceiver mNotificationReceiver = new NotificationReceiver();
 
     /**
      * Gruppo ricevuto, già "pieno"
@@ -458,19 +463,28 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
         };
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG_LOG,"onResume");
         showProgress(true);
         fetchGroupDetails();
+
+        //Broadcast Receiver part
+        IntentFilter filterUpdate = new IntentFilter("it.unibs.appwow.notificationReceiver");
+        registerReceiver(mNotificationReceiver,filterUpdate);
     }
 
     public void onUpdate(){
-        Log.d(TAG_LOG,"onResume");
+        Log.d(TAG_LOG,"onUpdate");
         showProgress(true);
         fetchGroupDetails();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mNotificationReceiver);
     }
 
     @Override

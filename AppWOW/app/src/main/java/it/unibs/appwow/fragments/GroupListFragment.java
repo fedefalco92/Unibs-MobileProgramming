@@ -3,6 +3,7 @@ package it.unibs.appwow.fragments;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -516,6 +517,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
     @Override
     public void onResume() {
         super.onResume();

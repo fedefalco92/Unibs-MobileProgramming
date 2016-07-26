@@ -1,6 +1,8 @@
 package it.unibs.appwow;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -29,6 +31,7 @@ import it.unibs.appwow.fragments.PersonalInfoFragment;
 import it.unibs.appwow.fragments.SettingsFragment;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.notifications.FirebaseInstanceIDService;
+import it.unibs.appwow.notifications.NotificationReceiver;
 import it.unibs.appwow.utils.FileUtils;
 
 public class NavigationActivity extends AppCompatActivity
@@ -36,8 +39,10 @@ public class NavigationActivity extends AppCompatActivity
 
     private static final String TAG_LOG = NavigationActivity.class.getSimpleName();
 
+    private final BroadcastReceiver mNotificationReceiver = new NotificationReceiver();
+
+
     private FragmentManager mFragmentManager;
-    //private FragmentTransaction mFragmentTransaction;
     private NavigationView navigationView;
     private LocalUser mLocalUser;
 
@@ -46,8 +51,6 @@ public class NavigationActivity extends AppCompatActivity
     private static final String TAG_SETTINGS = "SETTINGS_FRAGMENT";
     private static final String VISIBLE_FRAGMENT = "VISIBLE_FRAGMENT";
 
-    // private String MENU_ONLINE = NavigationActivity.class.getSimpleName().concat(".MENU_ONLINE");
-    // private String MENU_OFFLINE = NavigationActivity.class.getSimpleName().concat(".MENU_OFFLINE");
     private FloatingActionButton fab;
 
     @Override
@@ -119,11 +122,11 @@ public class NavigationActivity extends AppCompatActivity
                 // TODO: 12/05/2016 Gestione aggiunta gruppo online oppure offline modificando la classe di destinazione
                 Class destinationClass = null;
                 Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_GROUPS);
-                Fragment offlineFragment = mFragmentManager.findFragmentByTag(TAG_PERSONAL_INFO);
+                Fragment personalInfoFragment = mFragmentManager.findFragmentByTag(TAG_PERSONAL_INFO);
                 if (onlineFragment != null && onlineFragment.isVisible()) {
                     destinationClass = AddGroupActivity.class;
                     Log.d(TAG_LOG, "Groups fragment visible");
-                } else if (offlineFragment != null && offlineFragment.isVisible()) {
+                } else if (personalInfoFragment != null && personalInfoFragment.isVisible()) {
                     destinationClass = null;
                     Log.d(TAG_LOG, "Personal fragment visible");
                 }
@@ -162,6 +165,21 @@ public class NavigationActivity extends AppCompatActivity
         outState.putString(VISIBLE_FRAGMENT, tag);
         MyApplication.getInstance().cancelPendingRequests();
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //Broadcast Receiver part
+        IntentFilter filterUpdate = new IntentFilter("it.unibs.appwow.notificationReceiver");
+        registerReceiver(mNotificationReceiver,filterUpdate);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mNotificationReceiver);
     }
 
     @Override
