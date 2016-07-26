@@ -201,9 +201,14 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         mAddPositionButton.setTag(FIND_PLACE_TAG);
         mAddPositionButton.setOnClickListener(this);
         if(EDIT_MODE){
-            mAddPositionButton.setTag(DELETE_PLACE_TAG);
-            mPaymentPositionEditText.setEnabled(false);
-            mAddPositionButton.setImageResource(R.drawable.ic_highlight_off_black_24dp);
+            if(mToEditPayment.getPosition() != null){
+                mPaymentPositionEditText.setText(mToEditPayment.getPosition());
+            }
+            if(mToEditPayment.getPositionId() != null){
+                mAddPositionButton.setTag(DELETE_PLACE_TAG);
+                mPaymentPositionEditText.setEnabled(false);
+                mAddPositionButton.setImageResource(R.drawable.ic_highlight_off_black_24dp);
+            }
         }
 
         mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.add_payment_position_map_fragment));

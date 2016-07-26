@@ -180,7 +180,7 @@ public class PaymentDAO implements LocalDB_DAO {
 
     public List<Payment> getAllPayments(int idGroup) {
         List<Payment> data = new ArrayList<Payment>();
-        String orderby = AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_CREATED_AT + " DESC";
+        String orderby = AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_DATE + " DESC";
         Cursor cursor = database.query(AppDB.Payments.TABLE_PAYMENTS + " LEFT JOIN " + AppDB.Users.TABLE_USERS + " ON " +
                 AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_USER + "=" + AppDB.Users.TABLE_USERS + "." + AppDB.Users._ID,
                 allColumnsExtra, AppDB.Payments.COLUMN_ID_GROUP + " = " + idGroup,null,null,null,orderby);

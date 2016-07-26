@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
-                android:focusable="false"
+                android:enabled="false"
                 android:hint="@string/prompt_email"/>
 
         </android.support.design.widget.TextInputLayout>
