@@ -51,6 +51,7 @@ import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.models.Amount;
+import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
@@ -572,9 +573,13 @@ public class GroupInfoActivity extends AppCompatActivity {
                             }
                             switch (error) {
                                 case PAYMENT_PRESENT:
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(MyApplication.getAppContext());
+                                    UserDAO dao = new UserDAO();
+                                    dao.open();
+                                    String [] userInfo = dao.getSingleUserInfo(a.getUserId());
+                                    dao.close();
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(GroupInfoActivity.this);
                                     builder.setTitle(getString(R.string.group_info_dialog_cannot_delete_member_title));
-                                    builder.setMessage(getString(R.string.group_info_dialog_cannot_delete_member_message));
+                                    builder.setMessage(getString(R.string.group_info_dialog_cannot_delete_member_message, userInfo[0]));
                                     builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int item) {
@@ -583,7 +588,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                                     builder.show();
                                     break;
                                 case USER_NOT_FOUND:
-                                    Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_not_present), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_user_not_present), Toast.LENGTH_SHORT).show();
                                     Intent goToGroupDetails = new Intent(GroupInfoActivity.this, GroupDetailsActivity.class);
                                     goToGroupDetails.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(goToGroupDetails);

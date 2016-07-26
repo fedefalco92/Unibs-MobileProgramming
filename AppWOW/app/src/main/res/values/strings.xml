@@ -131,7 +131,7 @@
     <string name="group_info_members_number">Members: %1$s</string>
     <string name="amministratore_gruppo">Group administrator</string>
     <string name="group_info_group_deleted_successfully">Group deleted successfully</string>
-    <string name="group_info_group_not_present">Group doesn\'t exists any more</string>
+    <string name="group_info_group_not_present">Group does not exist anymore</string>
     <string name="group_info_dialog_delete_title">Delete group?</string>
     <string name="group_info_dialog_delete_message">Do you really want to delete this group? This action CAN NOT BE UNDONE and the group will be deleted also on the device of any member</string>
     <string name="action_show_group_info">Group info</string>
@@ -296,5 +296,6 @@
     <string name="add_photo">Add a photo</string>
     <string name="last_visited_places">Last visited places</string>
     <string name="spent_msg">You have spent</string>
+    <string name="group_info_user_not_present">User does not exist anymore</string>
 
 </resources>
