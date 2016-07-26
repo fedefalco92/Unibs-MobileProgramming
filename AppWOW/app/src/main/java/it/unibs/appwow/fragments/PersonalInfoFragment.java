@@ -84,12 +84,14 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
             mLocalUser = getArguments().getParcelable(ARG_USER);
         }
 
-        mClient = new GoogleApiClient
-                .Builder(getContext())
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
-                .build();
+        if(mClient == null){
+            mClient = new GoogleApiClient
+                    .Builder(getContext())
+                    .addApi(Places.GEO_DATA_API)
+                    .addApi(Places.PLACE_DETECTION_API)
+                    //.enableAutoManage(getActivity(), this)
+                    .build();
+        }
 
         mPlacesObj = new ArrayList<Place>();
         //fetchUserPlaces();
@@ -125,38 +127,53 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if(mClient != null){
+            mClient.connect();
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        if(mClient != null){
+            //mClient.stopAutoManage(getActivity());
+            mClient.disconnect();
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mClient.connect();
+        if(mClient != null){
+            mClient.connect();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mClient.stopAutoManage(getActivity());
-        mClient.disconnect();
+        if(mClient != null){
+            //mClient.stopAutoManage(getActivity());
+            mClient.disconnect();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mClient.stopAutoManage(getActivity());
-        mClient.disconnect();
+        if(mClient != null){
+            //mClient.stopAutoManage(getActivity());
+            mClient.disconnect();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mClient.stopAutoManage(getActivity());
-        mClient.disconnect();
+        if(mClient != null){
+            //mClient.stopAutoManage(getActivity());
+            mClient.disconnect();
+        }
     }
 
 

@@ -147,7 +147,6 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         }
 
         if (id == R.id.download) {
-            // TODO: 22/07/2016 VERIFICARE
             //Toast.makeText(ImageViewFullscreenActivity.this, "GESTIRE CARICAMENTO FOTO", Toast.LENGTH_SHORT).show();
             String title = mGroup.getGroupName() + "_photo_" + System.currentTimeMillis() + ".png";
             String newfile = CapturePhotoUtils.insertImage(getContentResolver(), mBitmap, title, "");
@@ -174,15 +173,12 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             }*/
             File f = FileUtils.getGroupImageFile(mGroup.getId(), this);
             //shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
+            //shareIntent.setData(Uri.fromFile(f));
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
             shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(shareIntent, "Share Image"));
-
-
-
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)));
 
             //shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
         }
         return super.onOptionsItemSelected(item);
     }

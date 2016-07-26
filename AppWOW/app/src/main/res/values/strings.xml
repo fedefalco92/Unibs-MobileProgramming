@@ -305,5 +305,6 @@
     <string name="edit_full_name_title">Edit fullname</string>
     <string name="prompt_change_password">Password change</string>
     <string name="prompt_enter_password">Enter your password</string>
+    <string name="share_image">Share Image</string>
 
 </resources>
