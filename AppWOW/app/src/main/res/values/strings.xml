@@ -148,19 +148,19 @@
 
     <!-- Notification Strings -->
     <string name="notification_group_created">New group!</string>
-    <string name="notification_group_created_msg"><b>%1$s</b> was created.</string>
+    <string name="notification_group_created_msg">%1$s was created.</string>
     <string name="notification_group_modified">Group modified.</string>
-    <string name="notification_group_modified_msg"><b>%1$s</b> was modified.</string>
+    <string name="notification_group_modified_msg">%1$s was modified.</string>
     <string name="notification_group_deleted">Group deleted!</string>
-    <string name="notification_group_deleted_msg"><b>%1$s</b> was deleted.</string>
+    <string name="notification_group_deleted_msg">%1$s was deleted.</string>
     <string name="notification_payment_created">New Payment</string>
-    <string name="notification_payment_created_msg"><b>%1$s</b> was created.</string>
+    <string name="notification_payment_created_msg">%1$s was created.</string>
     <string name="notification_payment_modified">Payment modified</string>
-    <string name="notification_payment_modified_msg"><b>%1$s</b> was modified.</string>
+    <string name="notification_payment_modified_msg">%1$s was modified.</string>
     <string name="notification_payment_deleted">Payment deleted!</string>
-    <string name="notification_payment_deleted_msg"><b>%1$s</b> was deleted.</string>
+    <string name="notification_payment_deleted_msg">%1$s was deleted.</string>
     <string name="notification_debt_solved">Debt settled</string>
-    <!-- <string name="notification_debt_solved_msg"><b>%1$s</b> gave %2$d %3$d to %4$d</string> -->
+    <!-- <string name="notification_debt_solved_msg">%1$s gave %2$d %3$d to %4$d</string> -->
     <string name="notification_debt_solved_msg">A debt is solved.</string>
     <plurals name="notification_counter">
         <item quantity="one">1 notification</item>

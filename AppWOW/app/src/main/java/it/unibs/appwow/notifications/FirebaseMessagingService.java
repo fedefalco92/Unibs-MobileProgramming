@@ -93,28 +93,28 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             case GROUP_CREATED:
                 title = res.getString(R.string.notification_group_created);
                 param = msgObj.getString("name");
-                message = res.getString(R.string.notification_group_created_msg, param);
+                message = res.getString(R.string.notification_group_created_msg, Html.fromHtml("<br>" + param + "</br>"));
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUPS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
                 break;
             case GROUP_MODIFIED:
                 title = res.getString(R.string.notification_group_modified);
                 param = msgObj.getString("name");
-                message = res.getString(R.string.notification_group_modified_msg, param);
+                message = res.getString(R.string.notification_group_modified_msg, Html.fromHtml("<br>" + param + "</br>"));
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUPS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
                 break;
             case GROUP_DELETED:
                 title = res.getString(R.string.notification_group_deleted);
                 param = msgObj.getString("name");
-                message = res.getString(R.string.notification_group_deleted_msg, param);
+                message = res.getString(R.string.notification_group_deleted_msg, Html.fromHtml("<br>" + param + "</br>"));
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUPS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
                 break;
             case PAYMENT_CREATED:
                 title = res.getString(R.string.notification_payment_created);
                 param = msgObj.getString("name");
-                message = res.getString(R.string.notification_payment_created_msg, param);
+                message = res.getString(R.string.notification_payment_created_msg, Html.fromHtml("<br>" + param + "</br>"));
 
                 // Gestione Intent
                 dao.open();
@@ -128,9 +128,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 sendBroadcast(updateIntentBroadcast);
                 break;
             case PAYMENT_MODIFIED:
+                // FIXME: 26/07/16 Problema con pagamento #
                 title = res.getString(R.string.notification_payment_modified);
                 param = msgObj.getString("name");
-                message = res.getString(R.string.notification_payment_modified_msg, param);
+                message = res.getString(R.string.notification_payment_modified_msg, Html.fromHtml("<br>" + param + "</br>"));
 
                 // Gestione Intent
                 dao.open();
@@ -146,7 +147,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             case PAYMENT_DELETED:
                 title = res.getString(R.string.notification_payment_deleted);
                 param = msgObj.getString("name");
-                message = res.getString(R.string.notification_payment_deleted_msg, param);
+                message = res.getString(R.string.notification_payment_deleted_msg, Html.fromHtml("<br>" + param + "</br>"));
 
                 // Gestione Intent
                 dao.open();
