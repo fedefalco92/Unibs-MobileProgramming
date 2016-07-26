@@ -14,9 +14,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -157,28 +160,18 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
 
         if (id == R.id.share) {
 
-            //Bitmap bitmap = FileUtils.readGroupImage(mGroup.getId(), this);
+            Bitmap bitmap = FileUtils.readGroupImage(mGroup.getId(),this);
+            String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "temp", null);
+            Uri bitmapUri = Uri.parse(path);
+
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("image/png");
-            //ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            //File f = new File(Environment.getExternalStorageDirectory() + File.separator + "temporary_file.png");
-           /*
-            try {
-                f.createNewFile();
-                FileOutputStream fo = new FileOutputStream(f);
-                fo.write(bytes.toByteArray());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-            File f = FileUtils.getGroupImageFile(mGroup.getId(), this);
-            //shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
-            //shareIntent.setData(Uri.fromFile(f));
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
-            shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)));
 
-            //shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+            shareIntent.setType("image/png");
+
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -274,33 +267,49 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     private void doCrop() {
         Log.d(TAG_LOG, "doCrop method");
         final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setType("image/*");
-        List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        cropIntent.setType("image/*");
+        List<ResolveInfo> list = getPackageManager().queryIntentActivities(cropIntent, 0);
         int size = list.size();
         Log.d(TAG_LOG, "method doCrop() list size: " + size);
         if (size == 0) {
             Toast.makeText(this, "Can not find image crop app", Toast.LENGTH_SHORT).show();
             return;
         } else {
-            intent.setData(mPhotoUri);
-            intent.putExtra("outputX", PHOTO_SIZE_PX);
-            intent.putExtra("outputY", PHOTO_SIZE_PX);
-            intent.putExtra("aspectX", PHOTO_SIZE_PX);
-            intent.putExtra("aspectY", PHOTO_SIZE_PX);
-            intent.putExtra("scale", true);
-            intent.putExtra("return-data", true);
+            cropIntent.setData(mPhotoUri);
+            cropIntent.putExtra("outputX", PHOTO_SIZE_PX);
+            cropIntent.putExtra("outputY", PHOTO_SIZE_PX);
+            cropIntent.putExtra("aspectX", PHOTO_SIZE_PX);
+            cropIntent.putExtra("aspectY", PHOTO_SIZE_PX);
+            cropIntent.putExtra("scale", true);
+            cropIntent.putExtra("return-data", true);
             if (size == 1) {
-                Intent i = new Intent(intent);
+                Intent i = new Intent(cropIntent);
                 ResolveInfo res = list.get(0);
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
                 startActivityForResult(i, CROP_FROM_CAMERA);
             } else {
+                Log.d(TAG_LOG,"mPhotoUri " + mPhotoUri.getPath());
+                List<Intent> allIntents = new  ArrayList<>();
+                for (ResolveInfo res : list) {
+                    Log.d(TAG_LOG,"res pckname: " + res.activityInfo.packageName + " - name: " + res.activityInfo.name);
+                    Intent i = new Intent(cropIntent);
+                    i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    allIntents.add(i);
+                }
+
+                Intent mainIntent = allIntents.get(allIntents.size()-1);
+                allIntents.remove(mainIntent);
+
+                Intent chooserIntent = Intent.createChooser(mainIntent,getString(R.string.choose_crop_app));
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,allIntents.toArray(new Parcelable[allIntents.size()]));
+                startActivityForResult(chooserIntent, CROP_FROM_CAMERA);
+                /*
                 for (ResolveInfo res : list) {
                     final CropOption co = new CropOption();
                     co.title = getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
                     co.icon = getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
-                    co.appIntent = new Intent(intent);
+                    co.appIntent = new Intent(cropIntent);
                     co.appIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
                     cropOptions.add(co);
                 }
@@ -322,7 +331,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                     }
                 });
                 android.app.AlertDialog alert = builder.create();
-                alert.show();
+                alert.show();*/
             }
         }
     }

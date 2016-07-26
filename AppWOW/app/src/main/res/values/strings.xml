@@ -309,5 +309,6 @@
     <string name="statistics_you_have_given">You have given</string>
     <string name="statistics_you_have_spent">You have spent</string>
     <string name="share_image">Share Image</string>
+    <string name="choose_crop_app">Choose Crop App</string>
 
 </resources>

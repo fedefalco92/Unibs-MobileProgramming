@@ -29,7 +29,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     // posso richiamare dei metodi specifici di GroupDetailsActivity
                     GroupDetailsActivity activity = (GroupDetailsActivity) context;
                     Log.d(TAG_LOG,"Notification received");
-                    Toast.makeText(activity, "Notification received", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, "Notification received", Toast.LENGTH_SHORT).show();
                     activity.onUpdate();
                 } else if(context instanceof NavigationActivity){
                     Fragment visibleFragment = ((NavigationActivity) context).getVisibleFragment();

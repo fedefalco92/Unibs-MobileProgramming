@@ -5,14 +5,18 @@
         android:drawable="@color/white"/>
 
 
-    <item android:drawable="@drawable/icon"
+    <!-- <item android:drawable="@drawable/icon"
        android:adjustViewBounds="true"
        android:scaleType="fitCenter"
        android:width="100dp"
        android:height="100dp"
        android:gravity="center">
-     <!-- <bitmap
-         android:gravity="center"
-         android:src="@drawable/icon"/>-->
+    </item> -->
+
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@mipmap/ic_launcher_new"/>
     </item>
+
 </layer-list>

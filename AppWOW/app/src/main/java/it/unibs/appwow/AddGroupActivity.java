@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
@@ -127,8 +128,6 @@ public class AddGroupActivity extends AppCompatActivity {
                     mFileName = FileUtils.writeTemporaryBitmap(photo, this);
                     Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
                     //Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);
-                    //mGroupImage.setImageBitmap(photo);
-                    // TODO: 04/07/2016 scommentare riga precedente e cancellare istruzione successiva
                     mGroupImage.setImageBitmap(photo);
                     toggleRemovePhotoButton(true);
                 }
@@ -283,28 +282,46 @@ public class AddGroupActivity extends AppCompatActivity {
     }
 
     private void doCrop() {
+        Log.d(TAG_LOG,"doCrop");
         final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setType("image/*");
-        List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        cropIntent.setType("image/*");
+        List<ResolveInfo> list = getPackageManager().queryIntentActivities(cropIntent, 0);
         int size = list.size();
         if (size == 0) {
             Toast.makeText(this, "Can not find image crop app", Toast.LENGTH_SHORT).show();
             return;
         } else {
-            intent.setData(mPhotoUri);
-            intent.putExtra("outputX", PHOTO_SIZE_PX);
-            intent.putExtra("outputY", PHOTO_SIZE_PX);
-            intent.putExtra("aspectX", PHOTO_SIZE_PX);
-            intent.putExtra("aspectY", PHOTO_SIZE_PX);
-            intent.putExtra("scale", true);
-            intent.putExtra("return-data", true);
+            cropIntent.setData(mPhotoUri);
+            cropIntent.putExtra("outputX", PHOTO_SIZE_PX);
+            cropIntent.putExtra("outputY", PHOTO_SIZE_PX);
+            cropIntent.putExtra("aspectX", PHOTO_SIZE_PX);
+            cropIntent.putExtra("aspectY", PHOTO_SIZE_PX);
+            cropIntent.putExtra("scale", true);
+            cropIntent.putExtra("return-data", true);
             if (size == 1) {
-                Intent i = new Intent(intent);
+                Intent i = new Intent(cropIntent);
                 ResolveInfo res = list.get(0);
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
                 startActivityForResult(i, CROP_FROM_CAMERA);
             } else {
+                Log.d(TAG_LOG,"mPhotoUri " + mPhotoUri.getPath());
+                List<Intent> allIntents = new  ArrayList<>();
+                for (ResolveInfo res : list) {
+                    Log.d(TAG_LOG,"res pckname: " + res.activityInfo.packageName + " - name: " + res.activityInfo.name);
+                    Intent i = new Intent(cropIntent);
+                    i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    allIntents.add(i);
+                }
+
+                Intent mainIntent = allIntents.get(allIntents.size()-1);
+                allIntents.remove(mainIntent);
+
+                Intent chooserIntent = Intent.createChooser(mainIntent,getString(R.string.choose_crop_app));
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,allIntents.toArray(new Parcelable[allIntents.size()]));
+                startActivityForResult(chooserIntent, CROP_FROM_CAMERA);
+
+                /*
                 for (ResolveInfo res : list) {
                     final CropOption co = new CropOption();
                     co.title = getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
@@ -315,7 +332,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 }
                 CropOptionAdapter adapter = new CropOptionAdapter(getApplicationContext(), cropOptions);
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-                builder.setTitle("Choose Crop App");
+                builder.setTitle(R.string.choose_crop_app);
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         startActivityForResult(cropOptions.get(item).appIntent, CROP_FROM_CAMERA);
@@ -331,7 +348,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     }
                 });
                 android.app.AlertDialog alert = builder.create();
-                alert.show();
+                alert.show();*/
             }
         }
     }
