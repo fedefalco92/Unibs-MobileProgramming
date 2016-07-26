@@ -160,18 +160,20 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             Palette.from(bm).generate(new Palette.PaletteAsyncListener() {
                 public void onGenerated(Palette p) {
                     //holder.layout.setBackgroundColor(p.getVibrantColor(ContextCompat.getColor(mContext,R.color.md_grey_700)));
-
                     Palette.Swatch swatch = p.getVibrantSwatch();
                     if(swatch != null){
                         holder.layout.setBackgroundColor(swatch.getRgb());
                         //holder.groupName.setTextColor(swatch.getTitleTextColor());
                         //holder.personalStatus.setTextColor(swatch.getBodyTextColor());
                         //holder.layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_amber_500));
+                    } else {
+                        holder.layout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.md_grey_700));
                     }
                 }
             });
         } else {
             holder.groupImageView.setImageResource(R.drawable.ic_group_black_48dp);
+            holder.layout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.md_grey_700));
         }
 
 
@@ -188,7 +190,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         Double userAmount = dao.getAmount(itemGroup.getId(), mLocalUser.getId());
         dao.close();
         if (userAmount!=null){
-            //// FIXME: 20/07/16 Da sistemare currency...
             //Currency curr = Currency.getInstance(Locale.getDefault());
             //Currency curr = Currency.getInstance("EUR");
             //holder.personalStatus.setText(curr.getSymbol() + " " + Amount.getAmountString(userAmount));
