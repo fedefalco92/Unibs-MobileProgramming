@@ -111,7 +111,20 @@ public class AddGroupActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) return;
         switch (requestCode) {
             case PICK_FROM_CAMERA_INTENT:
-                //doCrop();
+                try {
+                    Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
+                    //pulisco un eventuale file temporaneo precedente
+                    if(!mFileName.isEmpty()){
+                        FileUtils.deleteTemporaryFile(mFileName, this);
+                    }
+                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
+                    Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                    mGroupImage.setImageBitmap(photo);
+                    toggleRemovePhotoButton(true);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case SELECT_PICTURE_INTENT:
                 mPhotoUri = data.getData();
