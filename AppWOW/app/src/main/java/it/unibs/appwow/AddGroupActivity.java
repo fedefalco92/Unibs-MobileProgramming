@@ -160,8 +160,6 @@ public class AddGroupActivity extends AppCompatActivity {
                     mGroupImage.setImageBitmap(photo);
                     toggleRemovePhotoButton(true);
                 }
-                File f = new File(mPhotoUri.getPath());
-                if (f.exists()) f.delete();
                 break;
 
         }

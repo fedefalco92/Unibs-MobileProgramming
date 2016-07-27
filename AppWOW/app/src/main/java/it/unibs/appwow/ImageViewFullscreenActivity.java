@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -147,7 +148,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         }
 
         if (id == R.id.crop) {
-            String path = MediaStore.Images.Media.insertImage(getContentResolver(), mBitmap, "temp", null);
+            String path = MediaStore.Images.Media.insertImage(getContentResolver(), mBitmap, "temp_" + System.currentTimeMillis(), null);
             mPhotoUri = Uri.parse(path);
             doCrop();
         }
@@ -164,7 +165,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         if (id == R.id.share) {
 
             Bitmap bitmap = FileUtils.readGroupImage(mGroup.getId(),this);
-            String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "temp", null);
+            String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "temp_" + System.currentTimeMillis(), null);
             Uri bitmapUri = Uri.parse(path);
 
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -233,7 +234,10 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
         if (mNoPhoto) {
+
             if(data == null) {
                 finish();
                 return;
@@ -244,6 +248,8 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             }
         }
         if (resultCode != RESULT_OK) {
+            int deleted = getContentResolver().delete(mPhotoUri, null, null); //MediaStore.Images.Media.TITLE + "=?", new String[]{ mPhotoUri.getLastPathSegment()} );
+            Log.i(TAG_LOG, "total deleted rows:" + deleted);
             return;
         }
         switch (requestCode) {
@@ -296,11 +302,11 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                     sendPostRequest(photo);
 
                 }
-                File f = new File(mPhotoUri.getPath());
-                if (f.exists()) f.delete();
                 break;
 
         }
+        int deleted = getContentResolver().delete(mPhotoUri, null, null); //MediaStore.Images.Media.TITLE + "=?", new String[]{ mPhotoUri.getLastPathSegment()} );
+        Log.i(TAG_LOG, "total deleted rows:" + deleted);
     }
 
     private void doCrop() {

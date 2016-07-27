@@ -18,6 +18,7 @@ public class Validator {
     }
 
     public static boolean isGroupNameValid(String groupName) {
+        groupName = groupName.trim();
         if(!groupName.isEmpty() && groupName.length()<=30){
             return true;
         } else {
@@ -26,6 +27,7 @@ public class Validator {
     }
 
     public static boolean isCostNameValid(String costName) {
+        costName = costName.trim();
         if(!costName.isEmpty()){
             return true;
         } else {
@@ -42,6 +44,7 @@ public class Validator {
     }
 
     public static boolean isFullNameValid(String fullname){
+        fullname = fullname.trim();
         if(!fullname.isEmpty()){
             return true;
         } else {
