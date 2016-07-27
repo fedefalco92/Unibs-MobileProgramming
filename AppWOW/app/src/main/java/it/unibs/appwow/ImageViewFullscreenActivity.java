@@ -329,7 +329,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
 
                 startActivityForResult(i, CROP_INTENT);
             } else {
-                Intent chooserIntent = Intent.createChooser(cropIntent,getString(R.string.choose_crop_app));
+                Intent chooserIntent = Intent.createChooser(cropIntent,getString(R.string.action_choose_crop_app));
                 Log.d(TAG_LOG,chooserIntent.toString());
                 if(cropIntent.resolveActivity(getPackageManager()) != null){
                     startActivityForResult(chooserIntent, CROP_INTENT);
