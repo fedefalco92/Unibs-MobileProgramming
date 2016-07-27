@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,7 @@ import it.unibs.appwow.fragments.PersonalInfoFragment;
 import it.unibs.appwow.fragments.SettingsFragment;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.notifications.FirebaseInstanceIDService;
+import it.unibs.appwow.notifications.FirebaseMessagingService;
 import it.unibs.appwow.notifications.NotificationReceiver;
 import it.unibs.appwow.utils.FileUtils;
 
@@ -56,8 +58,12 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_navigation);
+
+        if(!TextUtils.isEmpty(getIntent().getStringExtra(FirebaseMessagingService.FROM_NOTIFICATION))){
+            FirebaseMessagingService.clearMessages();
+            FirebaseMessagingService.resetNotificationID();
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

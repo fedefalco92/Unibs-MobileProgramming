@@ -153,6 +153,9 @@
     <string name="notification_group_modified_msg">%1$s was modified.</string>
     <string name="notification_group_deleted">Group deleted!</string>
     <string name="notification_group_deleted_msg">%1$s was deleted.</string>
+    <string name="notification_group_member_added">New group!</string>
+    <string name="notification_group_member_added_msg">%1$s added you to %2$s.</string>
+    <string name="notification_group_member_added_save_msg">You were added to %1$s. group</string>
     <string name="notification_payment_created">New Payment</string>
     <string name="notification_payment_created_msg">%1$s was created.</string>
     <string name="notification_payment_modified">Payment modified</string>

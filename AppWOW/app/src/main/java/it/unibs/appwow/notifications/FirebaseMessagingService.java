@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
@@ -22,17 +23,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibs.appwow.GroupDetailsActivity;
+import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.NavigationActivity;
 import it.unibs.appwow.R;
-import it.unibs.appwow.database.GroupDAO;
-import it.unibs.appwow.fragments.GroupListFragment;
-import it.unibs.appwow.models.parc.GroupModel;
+import it.unibs.appwow.database.UserDAO;
 
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
 
     private final String TAG_LOG = FirebaseMessagingService.class.getSimpleName();
+
+    public final static String FROM_NOTIFICATION = "FROM_NOTIFICATION";
 
     private static String KEY_GROUP = "key";
     private static int notificationID = 0;
@@ -62,7 +63,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         String type = remoteMessage.getData().get("type");
         try {
             JSONObject obj = new JSONObject(remoteMessage.getData().get("message"));
-            showNotification(type, obj);
+
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean switchOn = sp.getBoolean("pref_key_notification",true);
+            if(switchOn){
+                showNotification(type, obj);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -76,15 +83,16 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         Intent i = new Intent(this, NavigationActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.putExtra(FROM_NOTIFICATION,"true");
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(NavigationActivity.class);
         stackBuilder.addNextIntent(i);
 
         // Preparazione gestione intent
-        GroupDAO dao = new GroupDAO();
+        /*GroupDAO dao = new GroupDAO();
         GroupModel gm;
-        Intent iGroupDetailsActivity = new Intent(this, GroupDetailsActivity.class);
+        Intent iGroupDetailsActivity = new Intent(this, GroupDetailsActivity.class);*/
 
         Intent updateIntentBroadcast = null;
 
@@ -94,6 +102,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 title = res.getString(R.string.notification_group_created);
                 param = msgObj.getString("name");
                 message = res.getString(R.string.notification_group_created_msg, Html.fromHtml("<br>" + param + "</br>"));
+
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUPS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
                 break;
@@ -101,28 +110,50 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 title = res.getString(R.string.notification_group_modified);
                 param = msgObj.getString("name");
                 message = res.getString(R.string.notification_group_modified_msg, Html.fromHtml("<br>" + param + "</br>"));
+
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUPS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
                 break;
+
             case GROUP_DELETED:
                 title = res.getString(R.string.notification_group_deleted);
                 param = msgObj.getString("name");
                 message = res.getString(R.string.notification_group_deleted_msg, Html.fromHtml("<br>" + param + "</br>"));
+
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUPS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
                 break;
+
+            case GROUP_MEMBER_ADDED:
+                title = res.getString(R.string.notification_group_member_added);
+                param = msgObj.getString("name");
+                UserDAO dao = new UserDAO();
+                dao.open();
+                String [] infoAdmin = dao.getSingleUserInfo(msgObj.getInt("idAdmin"));
+                dao.close();
+                if(TextUtils.isEmpty(infoAdmin[0])){
+                    message = res.getString(R.string.notification_group_member_added_save_msg, param);
+                }else {
+                    message = res.getString(R.string.notification_group_member_added_msg, infoAdmin[0], param);
+                }
+                break;
+
             case PAYMENT_CREATED:
                 title = res.getString(R.string.notification_payment_created);
                 param = msgObj.getString("name");
+                if(param.equalsIgnoreCase("#")){
+                    param = MyApplication.getAppContext().getResources().getString(R.string.debt_settlement);
+                }
                 message = res.getString(R.string.notification_payment_created_msg, Html.fromHtml("<br>" + param + "</br>"));
 
-                // Gestione Intent
+                /* Gestione Intent
                 dao.open();
                 gm = dao.getSingleGroup(msgObj.getInt("idGroup"));
                 dao.close();
 
                 iGroupDetailsActivity.putExtra(GroupListFragment.PASSING_GROUP_TAG, gm);
-                stackBuilder.addNextIntent(iGroupDetailsActivity);
+                iGroupDetailsActivity.putExtra(FROM_NOTIFICATION,"true");
+                stackBuilder.addNextIntent(iGroupDetailsActivity);*/
 
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUP_DETAILS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
@@ -131,15 +162,19 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 // FIXME: 26/07/16 Problema con pagamento #
                 title = res.getString(R.string.notification_payment_modified);
                 param = msgObj.getString("name");
+                if(param.equalsIgnoreCase("#")){
+                    param = MyApplication.getAppContext().getResources().getString(R.string.debt_settlement);
+                }
                 message = res.getString(R.string.notification_payment_modified_msg, Html.fromHtml("<br>" + param + "</br>"));
 
-                // Gestione Intent
+                /* Gestione Intent
                 dao.open();
                 gm = dao.getSingleGroup(msgObj.getInt("idGroup"));
                 dao.close();
 
                 iGroupDetailsActivity.putExtra(GroupListFragment.PASSING_GROUP_TAG, gm);
-                stackBuilder.addNextIntent(iGroupDetailsActivity);
+                iGroupDetailsActivity.putExtra(FROM_NOTIFICATION,"true");
+                stackBuilder.addNextIntent(iGroupDetailsActivity);*/
 
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUP_DETAILS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
@@ -147,15 +182,19 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             case PAYMENT_DELETED:
                 title = res.getString(R.string.notification_payment_deleted);
                 param = msgObj.getString("name");
+                if(param.equalsIgnoreCase("#")){
+                    param = MyApplication.getAppContext().getResources().getString(R.string.debt_settlement);
+                }
                 message = res.getString(R.string.notification_payment_deleted_msg, Html.fromHtml("<br>" + param + "</br>"));
 
-                // Gestione Intent
+                /* Gestione Intent
                 dao.open();
                 gm = dao.getSingleGroup(msgObj.getInt("idGroup"));
                 dao.close();
 
                 iGroupDetailsActivity.putExtra(GroupListFragment.PASSING_GROUP_TAG, gm);
-                stackBuilder.addNextIntent(iGroupDetailsActivity);
+                iGroupDetailsActivity.putExtra(FROM_NOTIFICATION,"true");
+                stackBuilder.addNextIntent(iGroupDetailsActivity);*/
 
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUP_DETAILS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
@@ -164,13 +203,14 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 title = res.getString(R.string.notification_debt_solved);
                 message = res.getString(R.string.notification_debt_solved_msg);
 
-                // Gestione Intent
+                /* Gestione Intent
                 dao.open();
                 gm = dao.getSingleGroup(msgObj.getInt("idGroup"));
                 dao.close();
 
                 iGroupDetailsActivity.putExtra(GroupListFragment.PASSING_GROUP_TAG, gm);
-                stackBuilder.addNextIntent(iGroupDetailsActivity);
+                iGroupDetailsActivity.putExtra(FROM_NOTIFICATION,"true");
+                stackBuilder.addNextIntent(iGroupDetailsActivity);*/
 
                 updateIntentBroadcast = new Intent(NotificationReceiver.NOTIFICATION_RECEIVER_GROUP_DETAILS_UPDATER);
                 sendBroadcast(updateIntentBroadcast);
@@ -214,15 +254,18 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean switchOn = sp.getBoolean("pref_key_notification",true);
-        if(switchOn){
-            notificationID++;
-            notificationManager.notify(0, notification);
-            // vibration for 800 milliseconds
-            ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(100);
-        }
+        notificationID++;
+        notificationManager.notify(0, notification);
+        // vibration for 800 milliseconds
+        ((Vibrator)getSystemService(VIBRATOR_SERVICE)).vibrate(100);
+    }
 
+    public static void clearMessages(){
+        messages.clear();
+    }
+
+    public static void resetNotificationID(){
+        notificationID = 0;
     }
 
     @Override

@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,6 +51,7 @@ import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
+import it.unibs.appwow.notifications.FirebaseMessagingService;
 import it.unibs.appwow.notifications.NotificationReceiver;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -97,8 +99,8 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG_LOG,"onCreate");
-
         setContentView(R.layout.activity_group_details);
+
         mViewContainer = findViewById(R.id.main_container);
 
         mLocalUser = LocalUser.load(MyApplication.getAppContext());
