@@ -30,9 +30,9 @@
             <FrameLayout
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="center">
 
                 <it.unibs.appwow.utils.graphicTools.SquareImageView
                     android:layout_width="match_parent"
@@ -46,8 +46,15 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_add_a_photo_black_24dp"
-                    android:layout_marginBottom="8dp"
                     android:layout_gravity="top|right"/>
+                <ImageButton
+                    android:id="@+id/crop_photo_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_crop_black_24dp"
+                    android:layout_gravity="bottom|left"
+                    android:visibility="gone"
+                    android:onClick="doCrop"/>
                 <!--<LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

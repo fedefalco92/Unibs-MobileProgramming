@@ -54,6 +54,7 @@
     <string name="action_choose_crop_app">Choose crop app</string>
     <string name="action_date_picker">Pick a date</string>
     <string name="action_time_picker">Pick a time</string>
+    <string name="action_crop">Crop</string>
 
     <!-- prompts -->
     <string name="prompt_email">E-mail</string>
@@ -231,5 +232,6 @@
         <item quantity="other">%d notifications</item>
     </plurals>
     <string name="email">email</string>
+    <string name="gallery">Gallery</string>
 
 </resources>

@@ -3,6 +3,7 @@ package it.unibs.appwow.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -20,6 +21,7 @@ import it.unibs.appwow.NavigationActivity;
 public class FileUtils {
     public static final String GROUP_IMAGES_DIR = "group_images";
     private static final String GROUP_IMAGE_FILE_NAME = "photo_group_%d.png";
+    private static final int PHOTO_SIZE_PX = 400;
 
     public static String getGroupImageFileName(int idGroup){
         return String.format(GROUP_IMAGE_FILE_NAME, idGroup);
@@ -167,6 +169,11 @@ public class FileUtils {
         return new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), fileName);
     }
 
+
+    public static File getTemporaryImageFile(String fileName, Context context){
+        return new File(context.getCacheDir(), fileName);
+    }
+
     public static boolean renameImageFile(String oldImageName, String newImageName, Context context){
         File old = new File(context.getCacheDir(), oldImageName);
         File file = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), newImageName);
@@ -192,6 +199,32 @@ public class FileUtils {
             for (File child : fileOrDirectory.listFiles())
                 deleteRecursive(child);
         fileOrDirectory.delete();
+    }
+
+    public static Bitmap resizeBitmap(Bitmap bm) {
+
+        /*int height = bm.getHeight();
+        int width = bm.getWidth();
+        if(height < PHOTO_SIZE_PX && width < PHOTO_SIZE_PX){
+            return bm;
+        }
+        int newHeight = PHOTO_SIZE_PX;
+        int newWidth = PHOTO_SIZE_PX;
+        float scaleHeight = ((float) newHeight) / height;
+        float scaleWidth = ((float) newWidth) / width;*/
+
+        float ratio = Math.max(
+                (float) PHOTO_SIZE_PX / bm.getWidth(),
+                (float) PHOTO_SIZE_PX / bm.getHeight());
+        int width = Math.round((float) ratio * bm.getWidth());
+        int height = Math.round((float) ratio * bm.getHeight());
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(bm, width,
+                height, true);
+
+        return newBitmap;
+
+       // return Bitmap.createScaledBitmap(bm,PHOTO_SIZE_PX,PHOTO_SIZE_PX, true);
     }
 
 

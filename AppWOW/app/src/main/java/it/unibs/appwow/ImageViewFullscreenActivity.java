@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE_INTENT = 1;
     private static final int PICK_FROM_CAMERA_INTENT = 2;
-    private static final int CROP_FROM_CAMERA = 3;
+    private static final int CROP_INTENT = 3;
     public static final String PHOTO_UPDATED_BOOLEAN_EXTRA = "changed";
     private static final int PHOTO_SIZE_PX =400;
 
@@ -143,6 +144,12 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
 
         if (id == R.id.edit) {
             selectImage();
+        }
+
+        if (id == R.id.crop) {
+            String path = MediaStore.Images.Media.insertImage(getContentResolver(), mBitmap, "temp", null);
+            mPhotoUri = Uri.parse(path);
+            doCrop();
         }
 
         if (id == R.id.download) {
@@ -241,14 +248,41 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         }
         switch (requestCode) {
             case PICK_FROM_CAMERA_INTENT:
-                doCrop();
+                try {
+                    Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
+                    //pulisco un eventuale file temporaneo precedente
+                    if(!mFileName.isEmpty()){
+                        FileUtils.deleteTemporaryFile(mFileName, this);
+                    }
+                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
+                    Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                    showProgress(true);
+                    sendPostRequest(photo);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case SELECT_PICTURE_INTENT:
                 mPhotoUri = data.getData();
                 Log.d(TAG_LOG, "OnActivityResult (SELECT_PICTURE_INTENT): PHOTOURI=" + mPhotoUri);
-                doCrop();
+                //doCrop();
+                try {
+                    Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
+                    //pulisco un eventuale file temporaneo precedente
+                    if(!mFileName.isEmpty()){
+                        FileUtils.deleteTemporaryFile(mFileName, this);
+                    }
+                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
+                    Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                    showProgress(true);
+                    sendPostRequest(photo);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
-            case CROP_FROM_CAMERA:
+            case CROP_INTENT:
                 Bundle extras = data.getExtras();
                 if (extras != null) {
                     Bitmap photo = extras.getParcelable("data");
@@ -258,9 +292,6 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                     }
                     mFileName = FileUtils.writeTemporaryBitmap(photo, this);
                     Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
-                    //Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);
-                    //mGroupImage.setImageBitmap(photo);
-                    // TODO: 04/07/2016 caricare l'immagine subito
                     showProgress(true);
                     sendPostRequest(photo);
 
@@ -273,13 +304,13 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     }
 
     private void doCrop() {
-        Log.d(TAG_LOG, "doCrop method");
+        Log.d(TAG_LOG,"doCrop");
         final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         cropIntent.setType("image/*");
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(cropIntent, 0);
         int size = list.size();
-        Log.d(TAG_LOG, "method doCrop() list size: " + size);
+        Log.d(TAG_LOG, "CROP OPTIONS SIZE: " + size);
         if (size == 0) {
             Toast.makeText(this, "Can not find image crop app", Toast.LENGTH_SHORT).show();
             return;
@@ -295,51 +326,16 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                 Intent i = new Intent(cropIntent);
                 ResolveInfo res = list.get(0);
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                startActivityForResult(i, CROP_FROM_CAMERA);
+
+                startActivityForResult(i, CROP_INTENT);
             } else {
-                Log.d(TAG_LOG,"mPhotoUri " + mPhotoUri.getPath());
-                List<Intent> allIntents = new  ArrayList<>();
-                for (ResolveInfo res : list) {
-                    Log.d(TAG_LOG,"res pckname: " + res.activityInfo.packageName + " - name: " + res.activityInfo.name);
-                    Intent i = new Intent(cropIntent);
-                    i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                    allIntents.add(i);
+                Intent chooserIntent = Intent.createChooser(cropIntent,getString(R.string.choose_crop_app));
+                Log.d(TAG_LOG,chooserIntent.toString());
+                if(cropIntent.resolveActivity(getPackageManager()) != null){
+                    startActivityForResult(chooserIntent, CROP_INTENT);
+                } else {
+                    Log.d(TAG_LOG,"no resolved activity for cropIntent");
                 }
-
-                Intent mainIntent = allIntents.get(allIntents.size()-1);
-                allIntents.remove(mainIntent);
-
-                Intent chooserIntent = Intent.createChooser(mainIntent,getString(R.string.action_choose_crop_app));
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,allIntents.toArray(new Parcelable[allIntents.size()]));
-                startActivityForResult(chooserIntent, CROP_FROM_CAMERA);
-                /*
-                for (ResolveInfo res : list) {
-                    final CropOption co = new CropOption();
-                    co.title = getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
-                    co.icon = getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
-                    co.appIntent = new Intent(cropIntent);
-                    co.appIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                    cropOptions.add(co);
-                }
-                CropOptionAdapter adapter = new CropOptionAdapter(getApplicationContext(), cropOptions);
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-                builder.setTitle("Choose Crop App");
-                builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        startActivityForResult(cropOptions.get(item).appIntent, CROP_FROM_CAMERA);
-                    }
-                });
-                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        if (mPhotoUri != null) {
-                            getContentResolver().delete(mPhotoUri, null, null);
-                            mPhotoUri = null;
-                        }
-                    }
-                });
-                android.app.AlertDialog alert = builder.create();
-                alert.show();*/
             }
         }
     }
@@ -408,11 +404,16 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                             if (g != null) {
                                 showProgress(false);
                                 //DELETING TEMPORARY FILE
-                                FileUtils.deleteTemporaryFile(mFileName, getBaseContext());
-                                boolean res = FileUtils.writeGroupImage(mGroup.getId(), photo, ImageViewFullscreenActivity.this);
-                                Log.d(TAG_LOG, "NEW PHOTO WRITTEN :" + res);
+                                FileUtils.deleteTemporaryFile(mFileName, ImageViewFullscreenActivity.this);
+                                Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
+                                boolean success = FileUtils.writeGroupImage(mGroup.getId(), resizedPhoto, ImageViewFullscreenActivity.this);
+                                if(success){
+                                    mBitmap =resizedPhoto;
+                                }
+                                Log.d(TAG_LOG, "NEW PHOTO WRITTEN :" + success);
                                 mPhotoView.setImageBitmap(photo);
                                 mPhotoUpdated = true;
+
                             } else {
                                 showProgress(false);
                                 Toast.makeText(ImageViewFullscreenActivity.this, R.string.error_server_internal_error, Toast.LENGTH_SHORT).show();
@@ -432,7 +433,9 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                 if (!mFileName.isEmpty()) {
                     // file name could found file base or direct access from real path
                     // for now just get bitmap data from ImageView
-                    params.put("photo", new DataPart(mFileName, VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readTemporaryBitmap(mFileName, getBaseContext())), "image/png"));
+                    Bitmap photo = FileUtils.readTemporaryBitmap(mFileName, ImageViewFullscreenActivity.this);
+                    Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
+                    params.put("photo", new DataPart(mFileName, VolleyMultipartHelper.getFileDataFromBitmap(resizedPhoto), "image/png"));
                 }
                 return params;
             }

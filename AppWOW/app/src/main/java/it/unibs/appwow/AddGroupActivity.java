@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,12 +43,14 @@ public class AddGroupActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE_INTENT = 1;
     private static final int PICK_FROM_CAMERA_INTENT = 2;
-    private static final int CROP_FROM_CAMERA = 3;
+    private static final int CROP_INTENT = 3;
     public static final String PASSING_GROUP_EXTRA = "group";
     private static final int PHOTO_SIZE_PX = 400;
+
     private SquareImageView mGroupImage;
     private TextInputEditText mGroupNameView;
     private ImageButton mRemovePhotoButton;
+    private ImageButton mCropButton;
     private GroupModel mGroup;
     //private Bitmap mThumbnail;
     private Uri mPhotoUri;
@@ -84,6 +87,7 @@ public class AddGroupActivity extends AppCompatActivity {
         //mPhotoUri = "";
 
         mRemovePhotoButton = (ImageButton) findViewById(R.id.remove_photo_button);
+        mCropButton = (ImageButton) findViewById(R.id.crop_photo_button);
         toggleRemovePhotoButton(false);
     }
 
@@ -107,13 +111,28 @@ public class AddGroupActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) return;
         switch (requestCode) {
             case PICK_FROM_CAMERA_INTENT:
-                doCrop();
+                //doCrop();
                 break;
             case SELECT_PICTURE_INTENT:
                 mPhotoUri = data.getData();
-                doCrop();
+                try {
+                    Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
+                    //pulisco un eventuale file temporaneo precedente
+                    if(!mFileName.isEmpty()){
+                        FileUtils.deleteTemporaryFile(mFileName, this);
+                    }
+                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
+                    Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                    //Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);
+                    mGroupImage.setImageBitmap(photo);
+                    toggleRemovePhotoButton(true);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //doCrop();
                 break;
-            case CROP_FROM_CAMERA:
+            case CROP_INTENT:
                 Log.d(TAG_LOG,"mPhotoUri: " + mPhotoUri.getPath());
                 Bundle extras = data.getExtras();
                 if (extras != null) {
@@ -134,6 +153,7 @@ public class AddGroupActivity extends AppCompatActivity {
 
         }
     }
+
 
     private void selectImage() {
         final String takePhoto = getString(R.string.message_take_photo);
@@ -278,7 +298,7 @@ public class AddGroupActivity extends AppCompatActivity {
         }
     }
 
-    private void doCrop() {
+    public void doCrop(View v) {
         Log.d(TAG_LOG,"doCrop");
         final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
@@ -302,14 +322,14 @@ public class AddGroupActivity extends AppCompatActivity {
                 ResolveInfo res = list.get(0);
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
 
-                startActivityForResult(i, CROP_FROM_CAMERA);
+                startActivityForResult(i, CROP_INTENT);
             } else {
 
                 // FIXME: 27/07/16 In questo modo sceglie quello di default e non ha problemi ...
-                Intent i = new Intent(cropIntent);
+                /*Intent i = new Intent(cropIntent);
                 ResolveInfo res = list.get(0);
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                startActivityForResult(i, CROP_FROM_CAMERA);
+                startActivityForResult(i, CROP_INTENT);*/
 
                 /* Exception on some mobile devices
                 Log.d(TAG_LOG,"mPhotoUri " + mPhotoUri.getPath());
@@ -326,16 +346,16 @@ public class AddGroupActivity extends AppCompatActivity {
 
                 Intent chooserIntent = Intent.createChooser(mainIntent,getString(R.string.choose_crop_app));
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,allIntents.toArray(new Parcelable[allIntents.size()]));
-                startActivityForResult(chooserIntent, CROP_FROM_CAMERA); */
+                startActivityForResult(chooserIntent, CROP_INTENT); */
 
-                /* It should work but it does not :(
+                // It should work but it does not :(
                 Intent chooserIntent = Intent.createChooser(cropIntent,getString(R.string.choose_crop_app));
                 Log.d(TAG_LOG,chooserIntent.toString());
                 if(cropIntent.resolveActivity(getPackageManager()) != null){
-                    startActivityForResult(chooserIntent,CROP_FROM_CAMERA);
+                    startActivityForResult(chooserIntent, CROP_INTENT);
                 } else {
                     Log.d(TAG_LOG,"no resolved activity for cropIntent");
-                } */
+                }
 
                 /*OLD CODE WITH CUSTOM CHOOSER
                 for (ResolveInfo res : list) {
@@ -351,7 +371,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 builder.setTitle(R.string.choose_crop_app);
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        startActivityForResult(cropOptions.get(item).appIntent, CROP_FROM_CAMERA);
+                        startActivityForResult(cropOptions.get(item).appIntent, CROP_INTENT);
                     }
                 });
                 builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -420,6 +440,8 @@ public class AddGroupActivity extends AppCompatActivity {
         mFileName = "";
     }
 
+
+
     private void toggleRemovePhotoButton(boolean showBin) {
         if (showBin) {
             mRemovePhotoButton.setImageResource(R.drawable.ic_delete_black_24dp);
@@ -429,6 +451,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     removePhoto();
                 }
             });
+            mCropButton.setVisibility(View.VISIBLE);
         } else {
             mRemovePhotoButton.setImageResource(R.drawable.ic_add_a_photo_black_24dp);
             mRemovePhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -437,6 +460,7 @@ public class AddGroupActivity extends AppCompatActivity {
                     selectImage();
                 }
             });
+            mCropButton.setVisibility(View.GONE);
         }
     }
 

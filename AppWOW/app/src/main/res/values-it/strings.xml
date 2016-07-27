@@ -166,4 +166,5 @@
     <string name="action_time_picker">Scegli orario</string>
     <string name="alert_permission_external_storage">L\'applicazione non ha i permessi per accedere alla memoria esterna</string>
     <string name="alert_permission_necessary">L\'applicazione non ha i permessi necessari</string>
+    <string name="action_crop">Ritaglia</string>
 </resources>

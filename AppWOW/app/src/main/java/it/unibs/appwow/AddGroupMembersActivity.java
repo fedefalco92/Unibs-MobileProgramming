@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
@@ -208,8 +209,11 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                         if (!resultResponse.isEmpty()) {
                             try {
                                 GroupModel created = GroupModel.create(new JSONObject(resultResponse));
-                                String fileName = mGroup.getPhotoFileName();
-                                boolean success = FileUtils.renameImageFile(fileName,FileUtils.getGroupImageFileName(created.getId()), getBaseContext());
+                                String fileTempName = mGroup.getPhotoFileName();
+                                Bitmap photo = FileUtils.readTemporaryBitmap(fileTempName, AddGroupMembersActivity.this);
+                                Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
+                                //boolean success = FileUtils.renameImageFile(fileTempName,FileUtils.getGroupImageFileName(created.getId()), getBaseContext());
+                                boolean success = FileUtils.writeGroupImage(created.getId(), resizedPhoto, AddGroupMembersActivity.this);
                                 if(success){
                                     created.setPhotoFileName(FileUtils.getGroupImageFileName(created.getId()));
                                 }
@@ -260,7 +264,9 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                 if(photoFileName!= null && !photoFileName.isEmpty()){
                     // file name could found file base or direct access from real path
                     // for now just get bitmap data from ImageView
-                    params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext())), "image/png"));
+                    Bitmap photo = FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext());
+                    Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
+                    params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(resizedPhoto), "image/png"));
                 }
                 return params;
             }
