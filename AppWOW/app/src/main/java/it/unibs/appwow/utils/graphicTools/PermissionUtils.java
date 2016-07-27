@@ -29,8 +29,8 @@ public class PermissionUtils {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
                     alertBuilder.setCancelable(true);
-                    alertBuilder.setTitle(context.getString(R.string.alert_permission_necessary));
-                    alertBuilder.setMessage(context.getString(R.string.alert_permission_external_storage));
+                    alertBuilder.setTitle(context.getString(R.string.error_permission_necessary));
+                    alertBuilder.setMessage(context.getString(R.string.error_permission_external_storage));
                     alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                         public void onClick(DialogInterface dialog, int which) {

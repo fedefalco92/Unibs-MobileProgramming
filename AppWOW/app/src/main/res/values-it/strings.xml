@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Plurali -->
+    <plurals name="message_dialog_group_deleted">
+        <item quantity="one"> 1 gruppo eliminato</item>
+        <item quantity="other"> %d gruppi eleminati</item>
+    </plurals>
+
+    <plurals name="notification_counter">
+        <item quantity="one">1 notifica</item>
+        <item quantity="other">%d notifiche</item>
+    </plurals>
+
     <string name="app_name">AppWOW</string>
     <string name="gallery">Galleria</string>
-    <string name="send">Invia</string>
+    <string name="action_send">Invia</string>
     <string name="prompt_password">Password</string>
     <string name="action_share">Condividi</string>
     <string name="welcome_message">Benvenuto in AppWOW</string>
@@ -48,10 +60,7 @@
     <string name="error_field_required">Questo campo è obbligatorio</string>
     <string name="error_incorrect_password">Password errata</string>
     <string name="success_group_deleted">Gruppo eliminato</string>
-    <plurals name="message_dialog_group_deleted">
-        <item quantity="one"> 1 gruppo eliminato</item>
-        <item quantity="other"> %d gruppi eleminati</item>
-    </plurals>
+
     <string name="details">Dettagli</string>
     <string name="message_payment_deleting_param">Elimino il pagamento %1$s...</string>
     <string name="undo">Annulla</string>
@@ -98,7 +107,7 @@
     <string name="success_edit_payment">Spesa modificata con successo!</string>
     <string name="debt_settlement">Saldo debito</string>
     <string name="to">A</string>
-    <string name="for_string">per</string>
+    <string name="for_string">Per</string>
     <string name="prompt_payment_notes">Note</string>
     <string name="prompt_payment_position">Luogo</string>
     <string name="action_remove">Rimuovi</string>
@@ -164,7 +173,38 @@
     <string name="action_add">Aggiungi</string>
     <string name="action_share_image">Condividi immagine</string>
     <string name="action_time_picker">Scegli orario</string>
-    <string name="alert_permission_external_storage">L\'applicazione non ha i permessi per accedere alla memoria esterna</string>
-    <string name="alert_permission_necessary">L\'applicazione non ha i permessi necessari</string>
+    <string name="error_permission_external_storage">L\'applicazione non ha i permessi per accedere alla memoria esterna</string>
+    <string name="error_permission_necessary">L\'applicazione non ha i permessi necessari</string>
     <string name="action_crop">Ritaglia</string>
+    <string name="error_app_internal">Errore interno dell\'app</string>
+    <string name="error_permission_contacts">L\'applicazione non ha i permessi per leggere i contatti</string>
+    <string name="message_group_info_user_not_present">L\'utente non esiste più</string>
+    <string name="message_nothing_to_show">Qui non c\'è nulla da mostrare</string>
+    <string name="navigation_drawer_close">Chiudi menu di navigazione</string>
+    <string name="navigation_drawer_open">Apri meno di navigazione</string>
+    <string name="notification_debt_solved">Debito saldato!</string>
+    <string name="notification_debt_solved_msg">Un debito è stato saldato</string>
+    <string name="notification_group_created">Nuovo gruppo!</string>
+    <string name="notification_group_created_msg">%1$s è stato creato.</string>
+    <string name="notification_group_deleted">Gruppo eliminato!</string>
+    <string name="notification_group_member_added">Nuovo gruppo!</string>
+    <string name="notification_group_deleted_msg">%1$s è stato eliminato.</string>
+    <string name="notification_group_member_added_msg">%1$s ti ha aggiunto al gruppo %2$s.</string>
+    <string name="notification_group_member_added_save_msg">Sei stato aggiunto al gruppo %1$s.</string>
+    <string name="notification_group_modified">Gruppo modificato!</string>
+    <string name="notification_payment_created">Nuovo pagamento!</string>
+    <string name="notification_payment_deleted">Pagamento cancellato!</string>
+    <string name="notification_payment_modified">Pagamento modificato!</string>
+    <string name="notification_group_modified_msg">%1$s è stato modificato.</string>
+    <string name="notification_payment_created_msg">%1$s è stato creato.</string>
+    <string name="notification_payment_deleted_msg">%1$s è stato cancellato.</string>
+    <string name="notification_payment_modified_msg">%1$s è stato modificato.</string>
+    <string name="success_password_edited">La password è stata cambiata correttamente</string>
+    <string name="title_activity_edit_user">Modifica utente</string>
+    <string name="title_activity_group_details">Dettagli gruppo</string>
+    <string name="title_activity_image_view_fullscreen">Immagine</string>
+    <string name="title_activity_login">Accedi</string>
+    <string name="title_activity_navigation">Navigazione</string>
+    <string name="title_activity_registration_activity">Registrazione</string>
+    <string name="visited_places">Luoghi visitati</string>
 </resources>

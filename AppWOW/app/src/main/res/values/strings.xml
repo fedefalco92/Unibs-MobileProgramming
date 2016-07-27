@@ -1,17 +1,17 @@
 <resources>
     <!-- APPNAME -->
     <string name="app_name">AppWOW</string>
+    <string name="welcome_message">Welcome in AppWOW</string>
     <string name="details">Details</string>
     <string name="payments">Payments</string>
     <string name="summary">Summary</string>
     <string name="debts">Debts</string>
 
-
     <!-- ////////////////////////////////////// -->
     <!-- title -->
     <string name="title_activity_login">Sign in</string>
-    <string name="title_activity_group_details">Group details activity</string>
-    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_activity_group_details">Group details</string>
+    <string name="title_activity_navigation">Navigation</string>
     <string name="title_activity_registration_activity">Registration</string>
     <string name="title_activity_add_payment">New payment</string>
     <string name="title_activity_add_group">New group</string>
@@ -19,7 +19,7 @@
     <string name="title_activity_edit_group">Edit group</string>
     <string name="title_activity_edit_group_name">Edit name</string>
     <string name="title_activity_edit_user">Edit user</string>
-    <string name="title_activity_image_view_fullscreen">ImageViewFullscreenActivity</string>
+    <string name="title_activity_image_view_fullscreen">Image</string>
     <string name="title_activity_edit_full_name">Edit fullname</string>
 
     <!-- action buttons -->
@@ -103,9 +103,9 @@
     <string name="error_no_connection">No connection</string>
     <string name="error_server_connection">Connection to server failed. Try again later.</string>
     <string name="error_server_internal_error">Server internal error. Try again later.</string>
-    <string name="alert_permission_necessary">Permissions necessary</string>
+    <string name="error_permission_necessary">Permissions necessary</string>
     <string name="error_permission_contacts">Contacts permissions are needed for providing email completions.</string>
-    <string name="alert_permission_external_storage">External storage permission is necessary</string>
+    <string name="error_permission_external_storage">External storage permission is necessary</string>
     <string name="error_invalid_payment_name">Insert a valid name for the payment</string>
     <string name="error_invalid_amount">Insert an amount</string>
     <string name="error_invalid_group_name">Insert a valid name for the group</string>
@@ -177,20 +177,20 @@
     <!-- notifications -->
     <string name="notification_group_created">New group!</string>
     <string name="notification_group_created_msg">%1$s was created.</string>
-    <string name="notification_group_modified">Group modified.</string>
+    <string name="notification_group_modified">Group modified!</string>
     <string name="notification_group_modified_msg">%1$s was modified.</string>
     <string name="notification_group_deleted">Group deleted!</string>
     <string name="notification_group_deleted_msg">%1$s was deleted.</string>
     <string name="notification_group_member_added">New group!</string>
     <string name="notification_group_member_added_msg">%1$s added you to %2$s.</string>
-    <string name="notification_group_member_added_save_msg">You were added to %1$s. group</string>
-    <string name="notification_payment_created">New Payment</string>
+    <string name="notification_group_member_added_save_msg">You were added to %1$s group.</string>
+    <string name="notification_payment_created">New payment!</string>
     <string name="notification_payment_created_msg">%1$s was created.</string>
-    <string name="notification_payment_modified">Payment modified</string>
+    <string name="notification_payment_modified">Payment modified!</string>
     <string name="notification_payment_modified_msg">%1$s was modified.</string>
     <string name="notification_payment_deleted">Payment deleted!</string>
     <string name="notification_payment_deleted_msg">%1$s was deleted.</string>
-    <string name="notification_debt_solved">Debt settled</string>
+    <string name="notification_debt_solved">Debt settled!</string>
     <string name="notification_debt_solved_msg">A debt is solved.</string>
 
     <!-- ////////////////////////////////////// -->
@@ -231,7 +231,5 @@
         <item quantity="one">1 notification</item>
         <item quantity="other">%d notifications</item>
     </plurals>
-    <string name="email">email</string>
-    <string name="gallery">Gallery</string>
 
 </resources>
