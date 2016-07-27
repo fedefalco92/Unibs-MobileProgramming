@@ -159,7 +159,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 sendBroadcast(updateIntentBroadcast);
                 break;
             case PAYMENT_MODIFIED:
-                // FIXME: 26/07/16 Problema con pagamento #
                 title = res.getString(R.string.notification_payment_modified);
                 param = msgObj.getString("name");
                 if(param.equalsIgnoreCase("#")){

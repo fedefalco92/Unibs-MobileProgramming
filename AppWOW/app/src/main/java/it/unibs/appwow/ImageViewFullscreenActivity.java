@@ -15,11 +15,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -51,7 +48,6 @@ import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
 import it.unibs.appwow.utils.CapturePhotoUtils;
 import it.unibs.appwow.utils.CropOption;
-import it.unibs.appwow.utils.CropOptionAdapter;
 import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.graphicTools.Messages;
 import it.unibs.appwow.utils.graphicTools.PermissionUtils;
@@ -154,7 +150,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             String title = mGroup.getGroupName() + "_photo_" + System.currentTimeMillis() + ".png";
             String newfile = CapturePhotoUtils.insertImage(getContentResolver(), mBitmap, title, "");
             Log.d(TAG_LOG, "new file: " + newfile);
-            Toast.makeText(ImageViewFullscreenActivity.this, getString(R.string.image_saved_to_gallery), Toast.LENGTH_SHORT).show();
+            Toast.makeText(ImageViewFullscreenActivity.this, getString(R.string.success_image_saved_to_gallery), Toast.LENGTH_SHORT).show();
         }
 
 
@@ -171,18 +167,18 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             shareIntent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
             shareIntent.setType("image/png");
 
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)));
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.action_share_image)));
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void selectImage() {
-        final String takePhoto = getString(R.string.add_group_take_photo);
-        final String choosePhoto =  getString(R.string.add_group_choose_photo_from_library);
-        final String cancelPhoto =  getString(R.string.add_group_cancel);
+        final String takePhoto = getString(R.string.message_take_photo);
+        final String choosePhoto =  getString(R.string.message_choose_photo_from_library);
+        final String cancelPhoto =  getString(R.string.action_cancel);
         final CharSequence[] items = { takePhoto,choosePhoto, cancelPhoto};
         AlertDialog.Builder builder = new AlertDialog.Builder(ImageViewFullscreenActivity.this);
-        builder.setTitle(getString(R.string.add_group_add_photo_title));
+        builder.setTitle(getString(R.string.message_select_image));
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
@@ -224,7 +220,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_PICK);//
-        startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_image_group)), SELECT_PICTURE_INTENT);
+        startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.prompt_group_select_image)), SELECT_PICTURE_INTENT);
     }
 
     @Override
@@ -313,7 +309,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                 Intent mainIntent = allIntents.get(allIntents.size()-1);
                 allIntents.remove(mainIntent);
 
-                Intent chooserIntent = Intent.createChooser(mainIntent,getString(R.string.choose_crop_app));
+                Intent chooserIntent = Intent.createChooser(mainIntent,getString(R.string.action_choose_crop_app));
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,allIntents.toArray(new Parcelable[allIntents.size()]));
                 startActivityForResult(chooserIntent, CROP_FROM_CAMERA);
                 /*
@@ -384,7 +380,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     private void sendPostRequest(final Bitmap photo) {
 
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -419,7 +415,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                                 mPhotoUpdated = true;
                             } else {
                                 showProgress(false);
-                                Toast.makeText(ImageViewFullscreenActivity.this, R.string.server_internal_error, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ImageViewFullscreenActivity.this, R.string.error_server_internal_error, Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -427,7 +423,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
-                Toast.makeText(ImageViewFullscreenActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ImageViewFullscreenActivity.this, R.string.error_server_connection, Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override

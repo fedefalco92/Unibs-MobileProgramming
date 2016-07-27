@@ -6,7 +6,7 @@
         android:icon="@android:drawable/ic_menu_search"
         app:showAsAction="always"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        android:title="@string/search"/>
+        android:title="@string/action_search"/>
 
     <item
         android:id="@+id/filter"
@@ -14,5 +14,5 @@
         app:showAsAction="always"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/hide_show_my_payments_hint"/>
+        android:title="@string/prompt_hide_show_my_payments_hint"/>
 </menu>

@@ -81,7 +81,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/add"
+                    android:text="@string/action_add"
                     android:id="@+id/button_add_member"
                     android:layout_below="@+id/view2"
                     android:layout_alignRight="@+id/view2"
@@ -137,7 +137,7 @@
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:paddingBottom="@dimen/activity_vertical_margin"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/actual_members_string"
+                    android:text="@string/group_actual_members"
                     android:id="@+id/actual_members_label" />
 
                 <android.support.v7.widget.RecyclerView
@@ -155,7 +155,7 @@
                 android:background="@color/colorPrimary"
                 android:textColor="@android:color/white"
                 android:layout_margin="@dimen/activity_horizontal_margin"
-                android:text="@string/go_ahead_menu"
+                android:text="@string/action_go_ahead"
                 android:onClick="onAddGroupButtonClick"/>
 
         </LinearLayout>

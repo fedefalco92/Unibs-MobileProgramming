@@ -4,7 +4,7 @@
     <item
         android:id="@+id/edit_payment_save_item"
         android:icon="@drawable/ic_done_white_24dp"
-        android:title="@string/save"
+        android:title="@string/action_save"
         app:showAsAction="always"
         />
 </menu>

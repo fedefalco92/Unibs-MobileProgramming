@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/suggerimento_nome_gruppi"
+                android:text="@string/prompt_group_new"
                 android:id="@+id/textHint"
                 android:paddingBottom="8dp"/>
 
@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
                 android:textColor="@android:color/white"
-                android:text="@string/go_ahead_menu"
+                android:text="@string/action_go_ahead"
                 android:onClick="onGoAheadButtonClick"/>
 
         </LinearLayout>

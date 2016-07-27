@@ -176,7 +176,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG_LOG,"onActivityCreated");
-        getActivity().setTitle(R.string.groups_string);
+        getActivity().setTitle(R.string.groups);
     }
 
     @Override
@@ -236,7 +236,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
     private void fetchGroups(){
         Log.d(TAG_LOG,"fetchGroups");
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(getView(),R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(getView(),R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -335,7 +335,7 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                                     //alertGroupGone(id, dao);
                                     dao.deleteSingleLGroup(id);
                                 }
-                                Snackbar snackbar = Snackbar.make(getView(), getResources().getQuantityString(R.plurals.dialog_group_deleted, size, size), Snackbar.LENGTH_INDEFINITE);
+                                Snackbar snackbar = Snackbar.make(getView(), getResources().getQuantityString(R.plurals.message_dialog_group_deleted, size, size), Snackbar.LENGTH_INDEFINITE);
                                 snackbar.setAction(R.string.ok, new View.OnClickListener(){
                                     @Override
                                     public void onClick(View v) {
@@ -349,8 +349,8 @@ public class GroupListFragment extends Fragment implements SwipeRefreshLayout.On
                             mItems = dao.getAllGroups();
                             dao.close();
 
-                            Log.d(TAG_LOG, "GRUPPI RICEVUTI: " + gruppiRicevuti);
-                            Log.d(TAG_LOG, "GRUPPI LOCALI: " + gruppiLocali);
+                            //Log.d(TAG_LOG, "GRUPPI RICEVUTI: " + gruppiRicevuti);
+                            //Log.d(TAG_LOG, "GRUPPI LOCALI: " + gruppiLocali);
 
                             // stopping swipe refresh
                             mSwipeRefreshLayout.setRefreshing(false);

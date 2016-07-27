@@ -21,7 +21,6 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -51,7 +50,6 @@ import it.unibs.appwow.database.UserDAO;
 import it.unibs.appwow.database.UserGroupDAO;
 import it.unibs.appwow.fragments.GroupListFragment;
 import it.unibs.appwow.models.Amount;
-import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.services.WebServiceRequest;
@@ -234,10 +232,10 @@ public class GroupInfoActivity extends AppCompatActivity {
             public boolean onLongClick(final View v) {
                 v.setSelected(true);
                 AlertDialog.Builder builder = new AlertDialog.Builder(GroupInfoActivity.this);
-                builder.setTitle(getString(R.string.group_info_dialog_delete_member_title));
-                builder.setMessage(String.format(getString(R.string.group_info_dialog_delete_member_message), a.getFullName(), a.getEmail()));
+                builder.setTitle(getString(R.string.message_group_info_dialog_delete_member_title));
+                builder.setMessage(String.format(getString(R.string.message_group_info_dialog_delete_member), a.getFullName(), a.getEmail()));
                 //builder.setMessage(String.format(getString(R.string.payment_delete_message), selectedItem.getName()));
-                builder.setPositiveButton(getString(R.string.remove), new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getString(R.string.action_remove), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
                         showProgress(true);
@@ -245,7 +243,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                         sendRemoveMemberRequest(a);
                     }
                 });
-                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
                         v.setSelected(false);
@@ -270,8 +268,8 @@ public class GroupInfoActivity extends AppCompatActivity {
             public boolean onLongClick(final View v) {
                 v.setSelected(true);
                 AlertDialog.Builder builder = new AlertDialog.Builder(GroupInfoActivity.this);
-                builder.setTitle(getString(R.string.group_info_dialog_delete_member_error_title));
-                builder.setMessage(String.format(getString(R.string.group_info_dialog_delete_member_error_message), a.getFullName(), a.getEmail()));
+                builder.setTitle(getString(R.string.message_group_info_dialog_delete_member_error_title));
+                builder.setMessage(String.format(getString(R.string.message_group_info_dialog_delete_member_error), a.getFullName(), a.getEmail()));
                 //builder.setMessage(String.format(getString(R.string.payment_delete_message), selectedItem.getName()));
                 builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
@@ -387,17 +385,17 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     public void deleteGroup(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.group_info_dialog_delete_title));
-        builder.setMessage(getString(R.string.group_info_dialog_delete_message));
+        builder.setTitle(getString(R.string.message_group_info_delete_title));
+        builder.setMessage(getString(R.string.message_group_info_dialog_delete));
         //builder.setMessage(String.format(getString(R.string.payment_delete_message), selectedItem.getName()));
-        builder.setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.action_delete), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 showProgress(true);
                 sendDeleteRequest();
             }
         });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
@@ -408,17 +406,17 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     public void resetGroup(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.group_info_dialog_reset_title));
-        builder.setMessage(getString(R.string.group_info_dialog_reset_message));
+        builder.setTitle(getString(R.string.message_group_info_reset_title));
+        builder.setMessage(getString(R.string.message_group_info_reset));
         //builder.setMessage(String.format(getString(R.string.payment_delete_message), selectedItem.getName()));
-        builder.setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.action_delete), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 showProgress(true);
                 sendResetRequest();
             }
         });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
@@ -462,7 +460,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     private void sendDeleteRequest() {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -480,14 +478,14 @@ public class GroupInfoActivity extends AppCompatActivity {
                 if (!response.isEmpty()) {
                     if (response.equals("1")) {
                         showProgress(false);
-                        Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_deleted_successfully), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroupInfoActivity.this, getString(R.string.success_group_info_group_deleted_successfully), Toast.LENGTH_SHORT).show();
                         Intent goToNavigationActivity = new Intent(GroupInfoActivity.this, NavigationActivity.class);
                         goToNavigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToNavigationActivity);
                         finish();
                     } else {
                         showProgress(false);
-                        Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_not_present), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroupInfoActivity.this, getString(R.string.error_group_info_group_not_present), Toast.LENGTH_SHORT).show();
                         Intent goToNavigationActivity = new Intent(GroupInfoActivity.this, NavigationActivity.class);
                         goToNavigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToNavigationActivity);
@@ -505,7 +503,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     private void sendResetRequest() {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -531,10 +529,10 @@ public class GroupInfoActivity extends AppCompatActivity {
 
                     if (success.equals("success")) {
                         showProgress(false);
-                        Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_reset_successfully), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroupInfoActivity.this, getString(R.string.success_group_info_group_reset), Toast.LENGTH_SHORT).show();
                     } else {
                         showProgress(false);
-                        Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_not_present), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroupInfoActivity.this, getString(R.string.error_group_info_group_not_present), Toast.LENGTH_SHORT).show();
                         Intent goToNavigationActivity = new Intent(GroupInfoActivity.this, NavigationActivity.class);
                         goToNavigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToNavigationActivity);
@@ -552,7 +550,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     private void sendRemoveMemberRequest(final Amount a) {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -616,8 +614,8 @@ public class GroupInfoActivity extends AppCompatActivity {
                                     String [] userInfo = dao.getSingleUserInfo(a.getUserId());
                                     dao.close();
                                     AlertDialog.Builder builder = new AlertDialog.Builder(GroupInfoActivity.this);
-                                    builder.setTitle(getString(R.string.group_info_dialog_cannot_delete_member_title));
-                                    builder.setMessage(getString(R.string.group_info_dialog_cannot_delete_member_message, userInfo[0]));
+                                    builder.setTitle(getString(R.string.message_group_info_dialog_cannot_delete_member_title));
+                                    builder.setMessage(getString(R.string.message_group_info_dialog_cannot_delete_member, userInfo[0]));
                                     builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int item) {
@@ -626,7 +624,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                                     builder.show();
                                     break;
                                 case USER_NOT_FOUND:
-                                    Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_user_not_present), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GroupInfoActivity.this, getString(R.string.message_group_info_user_not_present), Toast.LENGTH_SHORT).show();
                                     Intent goToGroupDetails = new Intent(GroupInfoActivity.this, GroupDetailsActivity.class);
                                     goToGroupDetails.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(goToGroupDetails);
@@ -634,7 +632,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
                                     break;
                                 case GROUP_NOT_FOUND:
-                                    Toast.makeText(GroupInfoActivity.this, getString(R.string.group_info_group_not_present), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GroupInfoActivity.this, getString(R.string.error_group_info_group_not_present), Toast.LENGTH_SHORT).show();
                                     Intent goToNavigationActivity = new Intent(GroupInfoActivity.this, NavigationActivity.class);
                                     goToNavigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(goToNavigationActivity);
@@ -659,14 +657,14 @@ public class GroupInfoActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
-                Toast.makeText(GroupInfoActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupInfoActivity.this, getString(R.string.error_server_connection), Toast.LENGTH_SHORT).show();
             }
         };
     }
 
     private void serverInternalError() {
         showProgress(false);
-        Toast.makeText(GroupInfoActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+        Toast.makeText(GroupInfoActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
     }
 
     private void openFullScreenImage() {

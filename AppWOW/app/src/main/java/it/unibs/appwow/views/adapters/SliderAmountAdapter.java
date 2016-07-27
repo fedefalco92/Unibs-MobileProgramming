@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class SliderAmountAdapter extends BaseAdapter {
         TextView fullName;
         EditText amount;
         TextView email;
-        AppCompatSeekBar seekbar;
+        ProgressBar seekbar;
     }
 
     public SliderAmountAdapter(Context context, List<SliderAmount> list){
@@ -86,7 +87,7 @@ public class SliderAmountAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                 }
             });
-            holder.seekbar = (AppCompatSeekBar) view.findViewById(R.id.payment_slider_item_slider);
+            holder.seekbar = (ProgressBar) view.findViewById(R.id.payment_slider_item_slider);
             view.setTag(holder);
         } else {
             holder = (Holder)view.getTag();
@@ -96,7 +97,6 @@ public class SliderAmountAdapter extends BaseAdapter {
         holder.amount.setText(item.getAmountString());
         holder.fullName.setText(item.getFullName());
         holder.email.setText(item.getEmail());
-        // TODO: 06/07/2016 gestire slider
         return view;
     }
 

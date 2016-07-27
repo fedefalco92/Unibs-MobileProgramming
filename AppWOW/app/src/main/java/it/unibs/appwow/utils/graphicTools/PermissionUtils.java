@@ -12,8 +12,10 @@ import android.support.v7.app.AlertDialog;
 
 import android.Manifest;
 
+import it.unibs.appwow.R;
+
 /**
- * Created by Alessandro on 29/06/2016.
+ * Permission Utils for Marshmellow
  */
 public class PermissionUtils {
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
@@ -27,8 +29,8 @@ public class PermissionUtils {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
                     alertBuilder.setCancelable(true);
-                    alertBuilder.setTitle("Permission necessary");
-                    alertBuilder.setMessage("External storage permission is necessary");
+                    alertBuilder.setTitle(context.getString(R.string.alert_permission_necessary));
+                    alertBuilder.setMessage(context.getString(R.string.alert_permission_external_storage));
                     alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                         public void onClick(DialogInterface dialog, int which) {

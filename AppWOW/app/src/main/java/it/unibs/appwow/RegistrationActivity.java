@@ -25,7 +25,6 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import it.unibs.appwow.database.UserDAO;
@@ -117,7 +116,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void sendRegistrationRequest() {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -169,7 +168,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     finish();
                 } else {
                     showProgress(false);
-                    Toast.makeText(RegistrationActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -177,7 +176,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
-                Toast.makeText(RegistrationActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegistrationActivity.this, getString(R.string.error_server_connection), Toast.LENGTH_SHORT).show();
             }
         });
         MyApplication.getInstance().addToRequestQueue(req);

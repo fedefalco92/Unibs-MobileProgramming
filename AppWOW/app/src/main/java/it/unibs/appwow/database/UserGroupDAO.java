@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,7 @@ import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 
 /**
- * Created by Alessandro on 15/06/2016.
+ * It is a UserGroupDAO that manages UserGroup Table
  */
 public class UserGroupDAO implements LocalDB_DAO {
 
@@ -23,7 +22,7 @@ public class UserGroupDAO implements LocalDB_DAO {
 
     private SQLiteDatabase database;
     private AppSQLiteHelper dbHelper;
-    private String[] allColumns = {AppDB.UserGroup.COLUMN_ID_GROUP,
+    private final String[] allColumns = {AppDB.UserGroup.COLUMN_ID_GROUP,
             AppDB.UserGroup.COLUMN_ID_USER,
             AppDB.UserGroup.COLUMN_AMOUNT,
             AppDB.UserGroup.COLUMN_UPDATED_AT
@@ -154,6 +153,11 @@ public class UserGroupDAO implements LocalDB_DAO {
         String [] args =  {String.valueOf(idUser)};
         String[] columns = {"COUNT(*)"};
         Cursor cursor = database.query(table, columns, where, args, null, null, null);
-        return cursor.getCount() > 0;
+
+        boolean res = cursor.getCount()>0;
+        cursor.close();
+
+        return res;
+        //return cursor.getCount() > 0;
     }
 }

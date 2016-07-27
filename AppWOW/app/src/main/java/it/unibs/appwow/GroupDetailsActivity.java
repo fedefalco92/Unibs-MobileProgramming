@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,7 +50,6 @@ import it.unibs.appwow.models.UserGroupModel;
 import it.unibs.appwow.models.UserModel;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
-import it.unibs.appwow.notifications.FirebaseMessagingService;
 import it.unibs.appwow.notifications.NotificationReceiver;
 import it.unibs.appwow.services.WebServiceRequest;
 import it.unibs.appwow.services.WebServiceUri;
@@ -232,7 +230,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
     private void fetchGroupDetails(){
         Log.d(TAG_LOG,"Fetching group details");
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -288,7 +286,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                                 dao.insertGroup(mGroup);
                                 dao.close();
 
-                                // TODO: 29/06/2016  DA OTTIMIZZARE
                                 setFragmentAdapter();
                                 mSwipeRefreshLayout.setRefreshing(false);*/
                             } else {
@@ -436,7 +433,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
                         gdao.touchGroup(mGroup.getId(),server_updated_at);
                         gdao.close();
 
-                        // TODO: 29/06/2016  DA OTTIMIZZARE*/
                         setFragmentAdapter();
                         mSectionsPagerAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -457,7 +453,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG_LOG, "VOLLEY_ERROR - " + "Server Error: " + error.getMessage());
                 //Toast.makeText(MyApplication.getAppContext(), getString(R.string.server_connection_error), Toast.LENGTH_LONG).show();
-                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
+                Messages.showSnackbar(mViewContainer,R.string.error_server_connection);
                 mSectionsPagerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
                 showProgress(false);
@@ -536,7 +532,6 @@ public class GroupDetailsActivity extends AppCompatActivity implements PaymentsF
 
         @Override
         public CharSequence getPageTitle(int position) {
-            // TODO: 10/05/2016  STRINGHE
             switch (position) {
                 case 0:
                     return getString(R.string.payments).toUpperCase();

@@ -87,7 +87,7 @@
 
         <activity
             android:name=".AddGroupMembersActivity"
-            android:label="@string/title_add_group_members_activity"
+            android:label="@string/title_activity_add_group_members"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
         </activity>

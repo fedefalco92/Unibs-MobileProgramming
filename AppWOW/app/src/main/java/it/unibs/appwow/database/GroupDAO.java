@@ -3,7 +3,6 @@ package it.unibs.appwow.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,11 +11,10 @@ import java.util.Set;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.models.Amount;
-import it.unibs.appwow.models.SliderAmount;
 import it.unibs.appwow.models.parc.GroupModel;
 
 /**
- * Created by federicofalcone on 12/05/16.
+ * It is a GroupDAO that manages Group Table
  */
 public class GroupDAO implements LocalDB_DAO {
 
@@ -24,7 +22,7 @@ public class GroupDAO implements LocalDB_DAO {
 
     private SQLiteDatabase database;
     private AppSQLiteHelper dbHelper;
-    private String[] allColumns = {AppDB.Groups._ID,
+    private final String[] allColumns = {AppDB.Groups._ID,
             AppDB.Groups.COLUMN_ID_ADMIN,
             AppDB.Groups.COLUMN_NAME,
             AppDB.Groups.COLUMN_PHOTO,

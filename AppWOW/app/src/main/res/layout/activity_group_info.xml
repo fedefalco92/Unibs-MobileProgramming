@@ -137,7 +137,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:textColor="@color/white"
-                            android:text="@string/add_member"/>
+                            android:text="@string/action_add_member"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -150,7 +150,7 @@
                     android:id="@+id/group_info_reset_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/reset_group"
+                    android:text="@string/action_reset_group"
                     android:visibility="gone"
                     android:textColor="@color/colorAccent"
                     android:background="@android:color/white"
@@ -161,7 +161,7 @@
                     android:id="@+id/group_info_delete_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/delete_group"
+                    android:text="@string/action_delete_group"
                     android:visibility="gone"
                     android:background="@color/colorAccent"
                     android:textColor="@android:color/white"

@@ -1,152 +1,179 @@
 <resources>
+    <!-- APPNAME -->
     <string name="app_name">AppWOW</string>
-    <!-- TODO: Riorganizzare gerarchia stringe (Errori, messaggi, suggerimenti, toast)... -->
-    <string name="title_activity_login">Sign in</string>
-
-    <!-- Strings related to login -->
-    <string name="prompt_email">E-mail</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="action_offline_mode">Continue without registration</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
-    <string name="title_activity_navigation">NavigationActivity</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_settings">Settings</string>
-    <string name="gallery">Gallery</string>
-    <string name="slideshow">Slideshow</string>
-    <string name="tools">Tools</string>
-    <string name="share">Share</string>
-    <string name="send">Send</string>
-    <string name="title_activity_group">GroupActivity</string>
-    <string name="title_activity_group_details">GroupDetailsActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <!-- String resources for fragments within the GroupDetailsActivity -->
-    <string name="title_add_cost">Add new cost</string>
-
-    <string name="user_statistics_string">Your statistics</string>
-    <string name="groups_string">Groups</string>
-    <string name="group_details_string">Group details</string>
-    <string name="welcome_message">Welcome to AppWOW</string>
-    <string name="request_for_fullname">Insert your name</string>
-    <string name="save">Save</string>
-    <string name="prompt_group_name">Group name</string>
-    <string name="go_ahead_menu">Go ahead</string>
-    <string name="create_group">Create</string>
-    <string name="add">Add</string>
-    <string name="err_no_connection">No connection</string>
-    <string name="registration_message">Registration</string>
-    <string name="settings">Settings</string>
-    <string name="logout">Logout</string>
-    <string name="login">Login</string>
-    <string name="title_activity_registration_activity">Registration</string>
-    <string name="prompt_fullname">Fullname</string>
-    <string name="email">email</string>
-
-    <string name="select_image_group">Select a picture for the group</string>
-    <string name="delete">Delete</string>
-    <string name="suggerimento_nome_gruppi">Insert a group name and a photo (optional)</string>
-    <string name="actual_members_string">Actual members</string>
-    <string name="add_group_members_user_not_found">User not found</string>
-    <string name="server_connection_error">Connection to server failed. Try again later.</string>
-    <string name="error_invalid_group_name">Insert a valid name for the group</string>
-    <string name="prompt_password_confirm">Confirm password</string>
-    <string name="error_password_matching">Passwords do not match</string>
-
-    <string name="message_nothing_to_show">Nothing to show</string>
-    <string name="cost_detail_notes">Notes</string>
-    <string name="payment_detail_payed_by">Payed by </string>
-    <string name="cost_detail_date_preposition">On</string>
-    <string name="prompt_payment_name">Purpose</string>
-    <string name="prompt_cost_amount">Amount</string>
-    <string name="prompt_payment_notes">Notes</string>
-    <string name="action_add_payment_add_position">Find place with google</string>
-    <string name="action_add_payment">Add payment</string>
-    <string name="prompt_payment_position">Place</string>
-    <string name="action_add_cost_delete_position">Delete place</string>
-    <string name="transaction_fragment_empty_message">Nothing to show</string>
-    <string name="payment_fragment_empty_message">No payments to show</string>
-    <string name="add_cost_menu_item">Add payment</string>
-    <string name="error_invalid_cost_name">Insert a valid name for the cost</string>
-    <string name="error_invalid_amount">Insert an amount</string>
-    <string name="you">You</string>
-    <string name="add_payment_activity_title">New payment</string>
-    <string name="add_group_activity_title">New group</string>
-    <string name="add_group_members_activity_title">Add group members</string>
-    <string name="add_group_members_user_already_added">User already added</string>
-    <string name="add_member_button">Add</string>
-    <string name="add_payment_success">Payment inserted successfully</string>
-    <string name="add_payment_error">Unable to process the request, try again!</string>
-    <string name="add_group_success">Group created successfully</string>
-    <string name="add_group_error">Unable to process the request, try again!</string>
-    <string name="add_group_take_photo">Take Photo</string>
-    <string name="add_group_choose_photo_from_library">Choose from Library</string>
-    <string name="add_group_cancel">Cancel</string>
-    <string name="add_group_add_photo_title">Select Image</string>
-    <string name="dialog_group_deleted_old">The group %1$s was deleted by %2$s! It will be also deleted from your device.</string>
-    <string name="ok">OK</string>
-    <string name="dialog_group_deleted_confirm">Group deleted</string>
     <string name="details">Details</string>
-    <string name="payment_deleting_param">Deleting payment %1$s...</string>
-    <plurals name="dialog_group_deleted">
-        <item quantity="one"> 1 group deleted</item>
-        <item quantity="other"> %d groups deleted</item>
-    </plurals>
-    <string name="undo">Undo</string>
-    <string name="payment_delete_unsuccess_server_error">Unable to delete payment %1$s due to a server error</string>
-    <string name="retry">Retry</string>
-    <string name="payment_delete_unsuccess_network_error">Unable to delete payment %1$s due to a network error</string>
-    <string name="payment_delete_title">Delete payment?</string>
-    <string name="payment_delete_message">Do you want to delete the payment %1$s?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="payment_deleting">Deleting payment...</string>
-    <string name="debt_settle_title">Mark as settled</string>
-    <string name="debt_settle_message_creditor">Did %1$s give you %2$s?</string>
-    <string name="debt_settle_message_debtor">Did you give %2$s to %1$s?</string>
-    <string name="debt_settling">Settling debt...</string>
-    <string name="debt_settle_unsuccess_server_error">Unable to settle %1$s\'s debt due to a server error</string>
-    <string name="debt_settle_unsuccess_network_error">Unable to settle %1$s\'s debt due to a network error</string>
-    <string name="action_edit_group">Edit group</string>
-    <string name="group_edit_activity_title">Edit group</string>
-    <string name="edit">Edit</string>
-    <string name="group_edit_dialog_title">Confirm changes?</string>
-    <string name="group_edit_saving_changes">Saving changes...</string>
-    <string name="server_internal_error">Server internal error. Try again later.</string>
-    <string name="error_invalid_fullname">Insert a valid fullname</string>
-    <string name="error_email_not_available">This e-mail is already associated with an account</string>
-    <string name="group_info_members_number">Members: %1$s</string>
-    <string name="amministratore_gruppo">Group administrator</string>
-    <string name="group_info_group_deleted_successfully">Group deleted successfully</string>
-    <string name="group_info_group_not_present">Group does not exist anymore</string>
-    <string name="group_info_dialog_delete_title">Delete group?</string>
-    <string name="group_info_dialog_delete_message">Do you really want to delete this group? This action CAN NOT BE UNDONE and the group will be deleted also on the device of any member</string>
-    <string name="action_show_group_info">Group info</string>
-    <string name="cancel">Cancel</string>
-    <string name="group_fragment_empty_message">No groups to show</string>
     <string name="payments">Payments</string>
     <string name="summary">Summary</string>
     <string name="debts">Debts</string>
-    <string name="add_group_members_member_delete_title">Remove member?</string>
-    <string name="add_group_members_member_delete_message">Do you want to remove %1$s?</string>
-    <string name="remove">Remove</string>
-    <string name="title_add_group_members_activity">Add Group Members</string>
-    <string name="search">Search</string>
 
-    <!-- Notification Strings -->
+
+    <!-- ////////////////////////////////////// -->
+    <!-- title -->
+    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_group_details">Group details activity</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_activity_registration_activity">Registration</string>
+    <string name="title_activity_add_payment">New payment</string>
+    <string name="title_activity_add_group">New group</string>
+    <string name="title_activity_add_group_members">Add group members</string>
+    <string name="title_activity_edit_group">Edit group</string>
+    <string name="title_activity_edit_group_name">Edit name</string>
+    <string name="title_activity_edit_user">Edit user</string>
+    <string name="title_activity_image_view_fullscreen">ImageViewFullscreenActivity</string>
+    <string name="title_activity_edit_full_name">Edit fullname</string>
+
+    <!-- action buttons -->
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_share">Share</string>
+    <string name="action_go_ahead">Go ahead</string>
+    <string name="action_create_group">Create</string>
+    <string name="action_add">Add</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_login">Login</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_search">Search</string>
+    <string name="action_edit_group">Edit group</string>
+    <string name="action_show_group_info">Group info</string>
+    <string name="action_add_photo">Add a photo</string>
+    <string name="action_add_payment_add_position">Find place with google</string>
+    <string name="action_add_payment">Add payment</string>
+    <string name="action_add_payment_delete_position">Delete place</string>
+    <string name="action_add_member">Add member</string>
+    <string name="action_reset_group">Clear all payments</string>
+    <string name="action_delete_group">Delete group</string>
+    <string name="action_save_to_gallery">Save to gallery</string>
+    <string name="action_share_image">Share Image</string>
+    <string name="action_choose_crop_app">Choose crop app</string>
+    <string name="action_date_picker">Pick a date</string>
+    <string name="action_time_picker">Pick a time</string>
+
+    <!-- prompts -->
+    <string name="prompt_email">E-mail</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_password_confirm">Confirm password</string>
+    <string name="prompt_group_name">Group name</string>
+    <string name="prompt_fullname">Fullname</string>
+    <string name="prompt_payment_name">Purpose</string>
+    <string name="prompt_payment_amount">Amount</string>
+    <string name="prompt_payment_notes">Notes</string>
+    <string name="prompt_payment_position">Place</string>
+    <string name="prompt_group_select_image">Select a picture for the group</string>
+    <string name="prompt_group_new">Insert a group name and a photo (optional)</string>
+    <string name="prompt_password_old">Old password</string>
+    <string name="prompt_password_new">New password</string>
+    <string name="prompt_password_new_confirm">Confirm password</string>
+    <string name="prompt_change_password">Password change</string>
+    <string name="prompt_enter_password">Enter your password</string>
+    <string name="prompt_hide_show_my_payments_hint">Show/hide my payments</string>
+
+
+    <!-- evergreen strings -->
+    <string name="ok">OK</string>
+    <string name="you">You</string>
+    <string name="retry">Retry</string>
+    <string name="undo">Undo</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="to">To</string>
+    <string name="for_string">For</string>
+    <string name="paid_by_colon">Paid by:</string>
+    <string name="for_string_colon">For:</string>
+    <string name="to_string_colon">To:</string>
+    <string name="given_by_string_colon">Given by:</string>
+    <string name="all">All</string>
+
+
+    <!-- ////////////////////////////////////// -->
+    <!-- errors -->
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_email_not_available">This e-mail is already associated with an account</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_invalid_fullname">Insert a valid fullname</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_no_connection">No connection</string>
+    <string name="error_server_connection">Connection to server failed. Try again later.</string>
+    <string name="error_server_internal_error">Server internal error. Try again later.</string>
+    <string name="alert_permission_necessary">Permissions necessary</string>
+    <string name="error_permission_contacts">Contacts permissions are needed for providing email completions.</string>
+    <string name="alert_permission_external_storage">External storage permission is necessary</string>
+    <string name="error_invalid_payment_name">Insert a valid name for the payment</string>
+    <string name="error_invalid_amount">Insert an amount</string>
+    <string name="error_invalid_group_name">Insert a valid name for the group</string>
+    <string name="error_password_matching">Passwords do not match</string>
+    <string name="error_user_not_found">User not found</string>
+    <string name="error_add_group">Unable to add the group, try again!</string>
+    <string name="error_user_already_added">User already added</string>
+    <string name="error_add_payment">Unable to add a new payment, try again!</string>
+    <string name="error_debt_settle_server">Unable to settle %1$s\'s debt due to a server error</string>
+    <string name="error_debt_settle_network_error">Unable to settle %1$s\'s debt due to a network error</string>
+    <string name="error_payment_delete_server_error">Unable to delete payment %1$s due to a server error</string>
+    <string name="error_payment_delete_network_error">Unable to delete payment %1$s due to a network error</string>
+    <string name="error_group_info_group_not_present">Group does not exist anymore</string>
+    <string name="error_invalid_amount_user">Cannot add a payment just for you!</string>
+    <string name="error_add_single_group_member_user_already_exists">User already belongs to the group</string>
+    <string name="error_app_internal">App internal error</string>
+    <string name="error_google_maps">Connection to google maps failed</string>
+
+    <!-- success -->
+    <string name="success_add_group">Group created successfully</string>
+    <string name="success_add_payment">Payment inserted successfully</string>
+    <string name="success_group_info_group_deleted_successfully">Group deleted successfully</string>
+    <string name="success_edit_payment">Payment edited successfully</string>
+    <string name="success_group_deleted">Group deleted</string>
+    <string name="success_group_info_group_reset">All payments have been successfully deleted</string>
+    <string name="success_user_found">User found</string>
+    <string name="success_image_saved_to_gallery">Photo saved to gallery</string>
+    <string name="success_password_edited">Password has been changed successfully</string>
+
+    <!-- messages -->
+    <string name="message_nothing_to_show">Nothing to show</string>
+    <string name="message_take_photo">Take Photo</string>
+    <string name="message_choose_photo_from_library">Choose from library</string>
+    <string name="message_select_image">Select image</string>
+
+    <string name="message_payment_empty">No payments to show</string>
+    <string name="message_payment_delete_title">Delete payment?</string>
+    <string name="message_payment_delete">Do you want to delete the payment %1$s?</string>
+    <string name="message_payment_deleting_param">Deleting payment %1$s…</string>
+    <string name="message_payment_deleting">Deleting payment…</string>
+    <string name="message_payment_or_transfer">Payment or transfer?</string>
+
+    <string name="message_debt_empty">No debts to show</string>
+    <string name="message_debt_settle_title">Mark as settled</string>
+    <string name="message_debt_settle_creditor">Did %1$s give you %2$s?</string>
+    <string name="message_debt_settle_debtor">Did you give %2$s to %1$s?</string>
+    <string name="message_debt_settling">Settling debt…</string>
+
+    <string name="message_group_empty">No groups to show</string>
+    <string name="message_group_info_delete_title">Delete group?</string>
+    <string name="message_group_info_dialog_delete">Do you really want to delete this group? This action CAN NOT BE UNDONE and the group will be deleted also on the device of any member</string>
+    <string name="message_group_info_reset_title">Clear all payments?</string>
+    <string name="message_group_edit_dialog_title">Confirm changes?</string>
+    <string name="message_group_edit_saving_changes">Saving changes…</string>
+    <string name="message_group_info_reset">Do you really want to clear all payments? This action CANNOT BE UNDONE and it will affect all members</string>
+    <string name="message_group_info_dialog_delete_member_title">Remove member?</string>
+    <string name="message_group_info_dialog_delete_member">Do you want to remove %1$s (%2$s) from this group?</string>
+    <string name="message_group_info_dialog_cannot_delete_member_title">Cannot remove member</string>
+    <string name="message_group_info_dialog_cannot_delete_member">Cannot remove %1$s because he/she is envolved in some payments.</string>
+    <string name="message_group_info_user_not_present">User does not exist anymore</string>
+    <string name="message_group_info_dialog_delete_member_error_title">Cannot remove member</string>
+    <string name="message_group_info_dialog_delete_member_error">You cannot remove  %1$s (%2$s) from this group because it must consist of two people at least</string>
+    <string name="message_add_single_member">Do you want to add %1$s (%2$s) to this group?</string>
+    <string name="message_add_single_member_include">Add member in all previous \"for all\" payments</string>
+    <string name="message_add_group_members_member_delete_title">Remove member?</string>
+    <string name="message_add_group_members_member_delete">Do you want to remove %1$s?</string>
+
+    <!-- ////////////////////////////////////// -->
+    <!-- notifications -->
     <string name="notification_group_created">New group!</string>
     <string name="notification_group_created_msg">%1$s was created.</string>
     <string name="notification_group_modified">Group modified.</string>
@@ -163,161 +190,46 @@
     <string name="notification_payment_deleted">Payment deleted!</string>
     <string name="notification_payment_deleted_msg">%1$s was deleted.</string>
     <string name="notification_debt_solved">Debt settled</string>
-    <!-- <string name="notification_debt_solved_msg">%1$s gave %2$d %3$d to %4$d</string> -->
     <string name="notification_debt_solved_msg">A debt is solved.</string>
-    <plurals name="notification_counter">
-        <item quantity="one">1 notification</item>
-        <item quantity="other">%d notifications</item>
-    </plurals>
-    <string name="edit_payment_success">Payment edited successfully!</string>
-    <string name="debt_settlement">Debt settlement</string>
-    <string name="to">To</string>
-    <string name="for_string">For</string>
-    <string name="payment_or_transfer">Payment or transfer?</string>
-    <string name="add_payment_transfer_checkbox_text">This is a transfer between two people</string>
-    <string name="paid_by_colon">Paid by:</string>
-    <string name="for_string_colon">For:</string>
-    <string name="to_string_colon">To:</string>
-    <string name="given_by_string_colon">Given by:</string>
-    <string name="all">All</string>
-    <string name="hide_show_my_payments_hint">Show/hide my payments</string>
-    <string name="error_invalid_amount_user">Cannot add a payment just for you!</string>
-    <string name="title_activity_group_info_activity_scrolling">GroupInfoActivityScrolling</string>
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
 
-        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
-        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
-        "technologically advanced and open to imagination and magic.\n"
-        "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
-        "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
-        "flexibility of the material creates new affordances that supercede those in the physical "
-        "world, without breaking the rules of physics.\n"
-        "The fundamentals of light, surface, and movement are key to conveying how objects move, "
-        "interact, and exist in space and in relation to each other. Realistic lighting shows "
-        "seams, divides space, and indicates moving parts.\n\n"
-
-        "Bold, graphic, intentional.\n\n"
-
-        "The foundational elements of print based design typography, grids, space, scale, color, "
-        "and use of imagery guide visual treatments. These elements do far more than please the "
-        "eye. They create hierarchy, meaning, and focus. Deliberate color choices, edge to edge "
-        "imagery, large scale typography, and intentional white space create a bold and graphic "
-        "interface that immerse the user in the experience.\n"
-        "An emphasis on user actions makes core functionality immediately apparent and provides "
-        "waypoints for the user.\n\n"
-
-        "Motion provides meaning.\n\n"
-
-        "Motion respects and reinforces the user as the prime mover. Primary user actions are "
-        "inflection points that initiate motion, transforming the whole design.\n"
-        "All action takes place in a single environment. Objects are presented to the user without "
-        "breaking the continuity of experience even as they transform and reorganize.\n"
-        "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
-        "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
-
-        "3D world.\n\n"
-
-        "The material environment is a 3D space, which means all objects have x, y, and z "
-        "dimensions. The z-axis is perpendicularly aligned to the plane of the display, with the "
-        "positive z-axis extending towards the viewer. Every sheet of material occupies a single "
-        "position along the z-axis and has a standard 1dp thickness.\n"
-        "On the web, the z-axis is used for layering and not for perspective. The 3D world is "
-        "emulated by manipulating the y-axis.\n\n"
-
-        "Light and shadow.\n\n"
-
-        "Within the material environment, virtual lights illuminate the scene. Key lights create "
-        "directional shadows, while ambient light creates soft shadows from all angles.\n"
-        "Shadows in the material environment are cast by these two light sources. In Android "
-        "development, shadows occur when light sources are blocked by sheets of material at "
-        "various positions along the z-axis. On the web, shadows are depicted by manipulating the "
-        "y-axis only. The following example shows the card with a height of 6dp.\n\n"
-
-        "Resting elevation.\n\n"
-
-        "All material objects, regardless of size, have a resting elevation, or default elevation "
-        "that does not change. If an object changes elevation, it should return to its resting "
-        "elevation as soon as possible.\n\n"
-
-        "Component elevations.\n\n"
-
-        "The resting elevation for a component type is consistent across apps (e.g., FAB elevation "
-        "does not vary from 6dp in one app to 16dp in another app).\n"
-        "Components may have different resting elevations across platforms, depending on the depth "
-        "of the environment (e.g., TV has a greater depth than mobile or desktop).\n\n"
-
-        "Responsive elevation and dynamic elevation offsets.\n\n"
-
-        "Some component types have responsive elevation, meaning they change elevation in response "
-        "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
-        "changes are consistently implemented using dynamic elevation offsets.\n"
-        "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
-        "to the component’s resting state. They ensure that elevation changes are consistent "
-        "across actions and component types. For example, all components that lift on press have "
-        "the same elevation change relative to their resting elevation.\n"
-        "Once the input event is completed or cancelled, the component will return to its resting "
-        "elevation.\n\n"
-
-        "Avoiding elevation interference.\n\n"
-
-        "Components with responsive elevations may encounter other components as they move between "
-        "their resting elevations and dynamic elevation offsets. Because material cannot pass "
-        "through other material, components avoid interfering with one another any number of ways, "
-        "whether on a per component basis or using the entire app layout.\n"
-        "On a component level, components can move or be removed before they cause interference. "
-        "For example, a floating action button (FAB) can disappear or move off screen before a "
-        "user picks up a card, or it can move if a snackbar appears.\n"
-        "On the layout level, design your app layout to minimize opportunities for interference. "
-        "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
-        "when a user tries to pick up one of cards.\n\n"
-    </string>
-    <string name="add_member">Add member</string>
-    <string name="reset_group">Clear all payments</string>
-    <string name="group_info_dialog_reset_title">Clear all payments?</string>
-    <string name="group_info_dialog_reset_message">Do you really want to clear all payments? This action CAN NOT BE UNDONE and will affect all members</string>
-    <string name="group_info_group_reset_successfully">All payments have been successfully deleted</string>
-    <string name="delete_group">Delete group</string>
-    <string name="edit_group_name_title">Edit name</string>
-    <string name="add_single_group_member_user_already_exists">User already belongs to the group</string>
-    <string name="user_found">User found</string>
-    <string name="add_single_member_dialog_message">Do you want to add %1$s (%2$s) to this group?</string>
-    <string name="add_single_member_include">Add member in all previous \"for all\" payments</string>
-    <string name="prompt_password_old">Old password</string>
-    <string name="prompt_password_new">New password</string>
-    <string name="prompt_password_new_confirm">Confirm password</string>
-    <string name="title_activity_edit_user">Edit user</string>
-    <string name="app_internal_error">App internal error</string>
-    <string name="group_info_dialog_delete_member_title">Remove member?</string>
-    <string name="group_info_dialog_delete_member_message">Do you want to remove %1$s (%2$s) from this group?</string>
-    <string name="group_info_dialog_cannot_delete_member_title">Cannot remove member</string>
-    <string name="group_info_dialog_cannot_delete_member_message">Cannot remove %1$s because he/she is envolved in some payments.</string>
-
-    <string name="title_activity_image_view_fullscreen">ImageViewFullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="save_to_gallery">Save to gallery</string>
-    <string name="image_saved_to_gallery">Photo saved to gallery</string>
-    <string name="error_google_maps">Connection to google maps failed</string>
-    <string name="visited_places">Visited places</string>
-    <string name="add_photo">Add a photo</string>
-    <string name="last_visited_places">Last visited places</string>
-    <string name="statistics_you_have_payed">You have payed</string>
-    <string name="group_info_user_not_present">User does not exist anymore</string>
+    <!-- ////////////////////////////////////// -->
+    <!-- Preferences -->
     <string name="preferences_category_account">Account</string>
     <string name="preferences_option_account">Account settings</string>
     <string name="preferences_category_notifications">Notifications</string>
     <string name="preferences_option_notifications">Enable/disable notifications</string>
-    <string name="hide_show_other_debts_hint">Hide/show other debts</string>
-    <string name="edit_full_name_title">Edit fullname</string>
-    <string name="prompt_change_password">Password change</string>
-    <string name="prompt_enter_password">Enter your password</string>
+
+    <!-- ////////////////////////////////////// -->
+    <!-- other strings -->
+    <string name="user_statistics">Your statistics</string>
+    <string name="groups">Groups</string>
+    <string name="group_details">Group details</string>
+    <string name="group_actual_members">Actual members</string>
+    <string name="payment_detail_payed_by">Paid by </string>
+    <string name="payment_detail_date_preposition">On</string>
+    <string name="group_info_members_number">Members: %1$s</string>
+    <string name="group_info_administrator">Group administrator</string>
+    <string name="debt_settlement">Debt settlement</string>
+    <string name="statistics_you_have_payed">You have paid</string>
     <string name="statistics_you_have_received">You have received</string>
     <string name="statistics_you_have_given">You have given</string>
     <string name="statistics_you_have_spent">You have spent</string>
-    <string name="share_image">Share Image</string>
-    <string name="choose_crop_app">Choose Crop App</string>
-    <string name="group_info_dialog_delete_member_error_title">Cannot remove member</string>
-    <string name="group_info_dialog_delete_member_error_message">You cannot remove  %1$s (%2$s) from this group because it must consist of two people at least</string>
+    <string name="action_hide_show_other_debts_hint">Hide/show other debts</string>
+    <string name="add_payment_transfer_checkbox_text">This is a transfer between two people</string>
+    <string name="visited_places">Visited places</string>
+    <string name="last_visited_places">Last visited places</string>
+
+    <!-- ////////////////////////////////////// -->
+    <!-- Plurals -->
+    <plurals name="message_dialog_group_deleted">
+        <item quantity="one"> 1 group deleted</item>
+        <item quantity="other"> %d groups deleted</item>
+    </plurals>
+
+    <plurals name="notification_counter">
+        <item quantity="one">1 notification</item>
+        <item quantity="other">%d notifications</item>
+    </plurals>
+    <string name="email">email</string>
 
 </resources>

@@ -65,7 +65,7 @@
                             android:id="@+id/add_payment_amount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/prompt_cost_amount"
+                            android:hint="@string/prompt_payment_amount"
                             android:inputType="numberDecimal"
                             android:digits="0123456789.,"
                             android:maxLines="1"
@@ -168,7 +168,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/payment_or_transfer"
+                        android:text="@string/message_payment_or_transfer"
                         />
                     <CheckBox
                         android:layout_width="match_parent"

@@ -115,7 +115,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:textColor="@android:color/white"
-            android:text="@string/save"
+            android:text="@string/action_save"
             android:onClick="register"/>
 
 

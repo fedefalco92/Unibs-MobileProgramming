@@ -6,14 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.models.UserModel;
-import it.unibs.appwow.models.parc.PaymentModel;
 
 /**
- * Created by Alessandro on 15/06/2016.
+ * It is a UserDAO that manages User Table
  */
 public class UserDAO implements LocalDB_DAO {
 
@@ -21,7 +19,7 @@ public class UserDAO implements LocalDB_DAO {
 
     private SQLiteDatabase database;
     private AppSQLiteHelper dbHelper;
-    private String[] allColumns = {AppDB.Users._ID,
+    private final String[] allColumns = {AppDB.Users._ID,
             AppDB.Users.COLUMN_FULLNAME,
             AppDB.Users.COLUMN_EMAIL,
             AppDB.Users.COLUMN_CREATED_AT,

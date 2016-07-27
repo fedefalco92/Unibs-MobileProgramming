@@ -22,7 +22,6 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import it.unibs.appwow.models.parc.GroupModel;
@@ -61,7 +60,7 @@ public class EditGroupNameActivity extends AppCompatActivity {
 
         mProgressView =  findViewById(R.id.save_name_progress_bar);
         mContainer = findViewById(R.id.container);
-        setTitle(getString(R.string.edit_group_name_title));
+        setTitle(getString(R.string.title_activity_edit_group_name));
     }
 
     @Override
@@ -99,7 +98,7 @@ public class EditGroupNameActivity extends AppCompatActivity {
 
     private void sendPostRequest() {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -140,19 +139,19 @@ public class EditGroupNameActivity extends AppCompatActivity {
                         finish();
                     } else {
                         showProgress(false);
-                        Toast.makeText(EditGroupNameActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditGroupNameActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
                     }
 
                 } else {
                     showProgress(false);
-                    Toast.makeText(EditGroupNameActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditGroupNameActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
-                Toast.makeText(EditGroupNameActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditGroupNameActivity.this, getString(R.string.error_server_connection), Toast.LENGTH_SHORT).show();
             }
         });
 

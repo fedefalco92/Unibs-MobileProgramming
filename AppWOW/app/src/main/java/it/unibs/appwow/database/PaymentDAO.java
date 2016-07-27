@@ -13,7 +13,7 @@ import it.unibs.appwow.models.Payment;
 import it.unibs.appwow.models.parc.PaymentModel;
 
 /**
- * Created by Alessandro on 15/06/2016.
+ * It is a PaymentDAO that manages Payment Table
  */
 public class PaymentDAO implements LocalDB_DAO {
 
@@ -21,7 +21,7 @@ public class PaymentDAO implements LocalDB_DAO {
 
     private SQLiteDatabase database;
     private AppSQLiteHelper dbHelper;
-    private String[] allColumns = {
+    private final String[] allColumns = {
             AppDB.Payments._ID,
             AppDB.Payments.COLUMN_ID_GROUP,
             AppDB.Payments.COLUMN_ID_USER,
@@ -40,7 +40,7 @@ public class PaymentDAO implements LocalDB_DAO {
             AppDB.Payments.COLUMN_ID_USER_TO
     };
 
-    private String[] allColumnsExtra = {
+    private final String[] allColumnsExtra = {
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments._ID,
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_GROUP,
             AppDB.Payments.TABLE_PAYMENTS + "." + AppDB.Payments.COLUMN_ID_USER,

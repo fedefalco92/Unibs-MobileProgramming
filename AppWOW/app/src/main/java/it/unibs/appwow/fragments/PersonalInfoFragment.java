@@ -125,7 +125,7 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle(R.string.user_statistics_string);
+        getActivity().setTitle(R.string.user_statistics);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.fragment_personal_info_map);
         mMapFragment.getMapAsync(this);
     }
@@ -268,7 +268,7 @@ public class PersonalInfoFragment extends Fragment implements GoogleApiClient.On
 
 
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(getView(),R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(getView(),R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     fetchUserPlacesLocal();

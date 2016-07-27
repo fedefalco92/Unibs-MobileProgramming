@@ -1,15 +1,11 @@
 package it.unibs.appwow.database;
 
-import android.database.sqlite.SQLiteDatabase;
-
-import it.unibs.appwow.MyApplication;
-
 /**
- * Created by Massi on 12/05/2016.
+ * Interface for DAO
  */
-public interface LocalDB_DAO {
+interface LocalDB_DAO {
 
-    public void open();
-    public void close();
+    void open();
+    void close();
 
 }

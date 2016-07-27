@@ -72,7 +72,7 @@ public class AddSingleMemberActivity extends AppCompatActivity {
 
         mProgressView =  findViewById(R.id.progress_bar);
         mContainer = findViewById(R.id.container);
-        setTitle(getString(R.string.add_member));
+        setTitle(getString(R.string.action_add_member));
     }
 
     @Override
@@ -110,19 +110,19 @@ public class AddSingleMemberActivity extends AppCompatActivity {
 
     private void serverConnectionErrorToast(){
         showProgress(false);
-        Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
+        Messages.showSnackbar(mViewContainer,R.string.error_server_connection);
         //Toast.makeText(AddSingleMemberActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
     }
 
     private void serverInternalError(){
         showProgress(false);
         //Toast.makeText(AddSingleMemberActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
-        Messages.showSnackbar(mViewContainer,R.string.server_internal_error);
+        Messages.showSnackbar(mViewContainer,R.string.error_server_internal_error);
     }
 
     private void sendSearchRequest() {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -151,7 +151,7 @@ public class AddSingleMemberActivity extends AppCompatActivity {
                         JSONObject resjs = new JSONObject(response);
                         UserModel user = UserModel.create(resjs);
                         if(userAlreadyExists(user)){
-                            Toast.makeText(AddSingleMemberActivity.this, R.string.add_single_group_member_user_already_exists, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddSingleMemberActivity.this, R.string.error_add_single_group_member_user_already_exists, Toast.LENGTH_SHORT).show();
                             showProgress(false);
                         } else {
                             showProgress(false);
@@ -164,7 +164,7 @@ public class AddSingleMemberActivity extends AppCompatActivity {
                 } else{
                     showProgress(false);
                     mEmailEditText.requestFocus();
-                    mEmailEditText.setError(getString(R.string.add_group_members_user_not_found));
+                    mEmailEditText.setError(getString(R.string.error_user_not_found));
 
                 }
             }
@@ -192,7 +192,7 @@ public class AddSingleMemberActivity extends AppCompatActivity {
 
     private void sendPostRequest(UserModel user, boolean include) {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -291,7 +291,7 @@ public class AddSingleMemberActivity extends AppCompatActivity {
 
     private void showConfirmDialog(final UserModel user){
         final CheckBox checkBox = new CheckBox(this);
-        checkBox.setText(R.string.add_single_member_include);
+        checkBox.setText(R.string.message_add_single_member_include);
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT));
@@ -300,16 +300,16 @@ public class AddSingleMemberActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(linearLayout);
-        builder.setTitle(getString(R.string.add_member));
-        builder.setMessage(String.format(getString(R.string.add_single_member_dialog_message), user.getFullName(), user.getEmail()));
-        builder.setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.action_add_member));
+        builder.setMessage(String.format(getString(R.string.message_add_single_member), user.getFullName(), user.getEmail()));
+        builder.setPositiveButton(getString(R.string.action_add), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 showProgress(true);
                 sendPostRequest(user, checkBox.isChecked());
             }
         });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();

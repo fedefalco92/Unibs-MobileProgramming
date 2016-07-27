@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -61,8 +60,6 @@ import it.unibs.appwow.utils.IdEncodingUtils;
 import it.unibs.appwow.utils.graphicTools.Messages;
 
 public class PaymentDetailsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
-
-    // TODO: 06/07/2016  AGGIUNGERE NEI DETTAGLI DELLA SPESA I SINGOLI AMOUNT
 
     private final String TAG_LOG = PaymentDetailsActivity.class.getSimpleName();
 
@@ -256,7 +253,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
     private void sendPlaceDetailRequest(final String place_id) {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     sendPlaceDetailRequest(place_id);
@@ -368,8 +365,8 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
                 return true;
             case R.id.menu_payment_details_delete:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(getString(R.string.payment_delete_title));
-                builder.setMessage(String.format(getString(R.string.payment_delete_message), mPayment.getName()));
+                builder.setTitle(getString(R.string.message_payment_delete_title));
+                builder.setMessage(String.format(getString(R.string.message_payment_delete), mPayment.getName()));
                 builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
@@ -398,7 +395,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
     private void showProgressDialog() {
         ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(getString(R.string.payment_deleting));
+        progressDialog.setTitle(getString(R.string.message_payment_deleting));
         progressDialog.setCancelable(false);
         progressDialog.show();
         sendDeleteRequest(progressDialog);
@@ -407,7 +404,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
 
     private void sendDeleteRequest(final ProgressDialog dialog) {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgressDialog();
@@ -452,10 +449,10 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         String msg = "";
         switch (errorType){
             case WebServiceUri.SERVER_ERROR:
-                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_server_error), mPayment.getName());
+                msg = String.format(getResources().getString(R.string.error_payment_delete_server_error), mPayment.getName());
                 break;
             case WebServiceUri.NETWORK_ERROR:
-                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_network_error), mPayment.getName());
+                msg = String.format(getResources().getString(R.string.error_payment_delete_network_error), mPayment.getName());
         }
         final Snackbar snackbar = Snackbar.make(mRootLayout, msg , Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.retry, new View.OnClickListener(){
@@ -508,37 +505,11 @@ public class PaymentDetailsActivity extends AppCompatActivity implements OnMapRe
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         mClient.connect();
-        /*
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "CostDetails Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://it.unibs.appwow/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(mClient, viewAction);*/
     }
 
     @Override
     public void onStop() {
         super.onStop();
-/*
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "CostDetails Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://it.unibs.appwow/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(mClient, viewAction);*/
         mClient.disconnect();
     }
 

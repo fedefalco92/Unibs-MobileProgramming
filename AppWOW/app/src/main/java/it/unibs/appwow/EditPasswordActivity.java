@@ -149,7 +149,7 @@ public class EditPasswordActivity extends AppCompatActivity {
 
     private void sendEditPasswordRequest() {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -182,7 +182,7 @@ public class EditPasswordActivity extends AppCompatActivity {
                             Toast.makeText(EditPasswordActivity.this, getString(R.string.error_incorrect_password), Toast.LENGTH_SHORT).show();
                         }else{
                             showProgress(false);
-                            Toast.makeText(EditPasswordActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EditPasswordActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
                         }
                     } else if(status.equalsIgnoreCase("success")){
                         JSONObject userObj = obj.getJSONObject("data");
@@ -192,15 +192,15 @@ public class EditPasswordActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     showProgress(false);
-                    Toast.makeText(EditPasswordActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditPasswordActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
                 }
 
                 if(um!=null){
-                    Toast.makeText(EditPasswordActivity.this, "Password modificata con successo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditPasswordActivity.this, getString(R.string.success_password_edited), Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     showProgress(false);
-                    Toast.makeText(EditPasswordActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditPasswordActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -208,7 +208,7 @@ public class EditPasswordActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
-                Toast.makeText(EditPasswordActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditPasswordActivity.this, getString(R.string.error_server_connection), Toast.LENGTH_SHORT).show();
             }
         });
         MyApplication.getInstance().addToRequestQueue(req);

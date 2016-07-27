@@ -125,11 +125,10 @@ public class NavigationActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 12/05/2016 Gestione aggiunta gruppo online oppure offline modificando la classe di destinazione
                 Class destinationClass = null;
-                Fragment onlineFragment = mFragmentManager.findFragmentByTag(TAG_GROUPS);
+                Fragment groupListFragment = mFragmentManager.findFragmentByTag(TAG_GROUPS);
                 Fragment personalInfoFragment = mFragmentManager.findFragmentByTag(TAG_PERSONAL_INFO);
-                if (onlineFragment != null && onlineFragment.isVisible()) {
+                if (groupListFragment != null && groupListFragment.isVisible()) {
                     destinationClass = AddGroupActivity.class;
                     Log.d(TAG_LOG, "Groups fragment visible");
                 } else if (personalInfoFragment != null && personalInfoFragment.isVisible()) {

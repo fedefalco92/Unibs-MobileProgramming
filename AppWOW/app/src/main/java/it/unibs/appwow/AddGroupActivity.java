@@ -12,14 +12,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +31,6 @@ import java.util.List;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.CropOption;
-import it.unibs.appwow.utils.CropOptionAdapter;
 import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.Validator;
 import it.unibs.appwow.utils.graphicTools.PermissionUtils;
@@ -70,7 +66,7 @@ public class AddGroupActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        setTitle(getString(R.string.add_group_activity_title));
+        setTitle(getString(R.string.title_activity_add_group));
         mGroupImage = (SquareImageView) findViewById(R.id.imageView2);
         /*mGroupImage.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -140,12 +136,12 @@ public class AddGroupActivity extends AppCompatActivity {
     }
 
     private void selectImage() {
-        final String takePhoto = getString(R.string.add_group_take_photo);
-        final String choosePhoto =  getString(R.string.add_group_choose_photo_from_library);
-        final String cancelPhoto =  getString(R.string.add_group_cancel);
+        final String takePhoto = getString(R.string.message_take_photo);
+        final String choosePhoto =  getString(R.string.message_choose_photo_from_library);
+        final String cancelPhoto =  getString(R.string.action_cancel);
         final CharSequence[] items = { takePhoto,choosePhoto, cancelPhoto};
         AlertDialog.Builder builder = new AlertDialog.Builder(AddGroupActivity.this);
-        builder.setTitle(getString(R.string.add_group_add_photo_title));
+        builder.setTitle(getString(R.string.message_select_image));
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
@@ -184,7 +180,7 @@ public class AddGroupActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_PICK);//
-        startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_image_group)), SELECT_PICTURE_INTENT);
+        startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.prompt_group_select_image)), SELECT_PICTURE_INTENT);
     }
 
     /*

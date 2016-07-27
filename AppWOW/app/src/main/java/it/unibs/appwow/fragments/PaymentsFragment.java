@@ -245,7 +245,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
     }
 
     private void showUndoSnackbar(final Payment selectedItem){
-        final Snackbar snackbar = Snackbar.make(getView(), String.format(getResources().getString(R.string.payment_deleting_param), selectedItem.getName()) , Snackbar.LENGTH_SHORT);
+        final Snackbar snackbar = Snackbar.make(getView(), String.format(getResources().getString(R.string.message_payment_deleting_param), selectedItem.getName()) , Snackbar.LENGTH_SHORT);
         snackbar.setAction(R.string.undo, new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -265,7 +265,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
 
     private void sendDeleteRequest(final Payment selectedItem) {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(getView(),R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(getView(),R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     sendDeleteRequest(selectedItem);
@@ -315,10 +315,10 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
         String msg = "";
         switch (errorType){
             case WebServiceUri.SERVER_ERROR:
-                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_server_error), selectedItem.getName());
+                msg = String.format(getResources().getString(R.string.error_payment_delete_server_error), selectedItem.getName());
                 break;
             case WebServiceUri.NETWORK_ERROR:
-                msg = String.format(getResources().getString(R.string.payment_delete_unsuccess_network_error), selectedItem.getName());
+                msg = String.format(getResources().getString(R.string.error_payment_delete_network_error), selectedItem.getName());
         }
         final Snackbar snackbar = Snackbar.make(getView(), msg , Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.retry, new View.OnClickListener(){
@@ -379,9 +379,9 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
             v.setSelected(true);
             Resources res = getResources();
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(res.getString(R.string.payment_delete_title));
-            builder.setMessage(String.format(res.getString(R.string.payment_delete_message), selectedItem.getName()));
-            builder.setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
+            builder.setTitle(res.getString(R.string.message_payment_delete_title));
+            builder.setMessage(String.format(res.getString(R.string.message_payment_delete), selectedItem.getName()));
+            builder.setPositiveButton(res.getString(R.string.action_delete), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int item) {
                     mAdapter.removeItem(pos);
@@ -389,7 +389,7 @@ public class PaymentsFragment extends Fragment implements PaymentAdapter.OnItemC
                     v.setSelected(false);
                 }
             });
-            builder.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(res.getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int item) {
                     dialog.dismiss();

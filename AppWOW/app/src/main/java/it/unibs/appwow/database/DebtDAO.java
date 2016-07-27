@@ -12,14 +12,14 @@ import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.DebtModel;
 
 /**
- * Created by Alessandro on 15/06/2016.
+ * It is a DebtDAO that manages Debt Table
  */
 public class DebtDAO implements LocalDB_DAO {
     private static final String TAG_LOG = DebtDAO.class.getName();
 
     private SQLiteDatabase database;
     private AppSQLiteHelper dbHelper;
-    private String[] allColumns = {
+    private final String[] allColumns = {
             AppDB.Debts._ID,
             AppDB.Debts.COLUMN_ID_GROUP,
             AppDB.Debts.COLUMN_ID_FROM,
@@ -27,7 +27,7 @@ public class DebtDAO implements LocalDB_DAO {
             AppDB.Debts.COLUMN_AMOUNT,
     };
 
-    private String[] allColumnsExtra = {
+    private final String[] allColumnsExtra = {
             AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts._ID,
             AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts.COLUMN_ID_GROUP,
             AppDB.Debts.TABLE_DEBTS + "." +AppDB.Debts.COLUMN_ID_FROM,
@@ -119,24 +119,6 @@ public class DebtDAO implements LocalDB_DAO {
        database.delete(AppDB.Debts.TABLE_DEBTS, AppDB.Debts.COLUMN_ID_GROUP + " = ?" , new String[]{String.valueOf(idGroup)});
     }
 
-    /*
-    public List<Debt> getAllDebtsFrom(int idGroup, int idUser) {
-        List<Debt> data = new ArrayList<Debt>();
-        //String query = "SELECT idTo, amount FROM groups LEFT JOIN balancings ON groups._id = balancings.idGroup LEFT JOIN transactions ON balancings._id = transactions.idBalancing WHERE groups._id = ? AND transactions.idFrom = ?";
-        String query = "SELECT transactions._id, transactions.amount, transactions.idBalancing, transactions.idFrom, transactions.idTo, transactions.payed_at, users.fullName " +
-                "FROM groups LEFT JOIN balancings ON groups._id = balancings.idGroup LEFT JOIN transactions ON balancings._id = transactions.idBalancing LEFT JOIN users ON transactions.idTo = users._id "+
-                "WHERE groups._id = ? AND  (transactions.idFrom = ? OR transactions.idTo = ?)";
-        String[] values =  new String[]{String.valueOf(idGroup), String.valueOf(idUser),String.valueOf(idUser)};
-        Cursor cursor = database.rawQuery(query, values);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
-            Debt d = cursorToDebtWithFullName(cursor);
-            data.add(d);
-            cursor.moveToNext();
-        }
-        cursor.close(); // remember to always close the cursor!
-        return data;
-    }*/
 
     public List<DebtModel> getAllDebts(int idGroup) {
         List<DebtModel> data = new ArrayList<DebtModel>();
@@ -152,6 +134,7 @@ public class DebtDAO implements LocalDB_DAO {
         return data;
     }
 
+    /*
     public List<Debt> getAllDebtsExtra(int idGroup, boolean showOnlyYourDebts, int localUserId) {
         List<Debt> data = new ArrayList<Debt>();
         String whereDebts = "";
@@ -171,7 +154,7 @@ public class DebtDAO implements LocalDB_DAO {
         }
         cursor.close(); // remember to always close the cursor!
         return data;
-    }
+    }*/
 
     public List<Debt> getAllDebtsExtra(int idGroup){
         List<Debt> data = new ArrayList<Debt>();

@@ -6,25 +6,25 @@
         <item
             android:id="@+id/nav_groups"
             android:icon="@drawable/ic_group_black_24dp"
-            android:title="@string/groups_string" />
+            android:title="@string/groups" />
 
         <item
             android:id="@+id/nav_personal_info"
             android:icon="@drawable/ic_assessment_black_24dp"
-            android:title="@string/user_statistics_string" />
+            android:title="@string/user_statistics" />
 
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
-            android:title="@string/settings" />
+            android:title="@string/action_settings" />
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_exit_to_app_black_24dp"
-            android:title="@string/logout" />
+            android:title="@string/action_logout" />
         <item
             android:id="@+id/nav_login"
             android:icon="@drawable/ic_account_circle_black_24dp"
-            android:title="@string/login" />
+            android:title="@string/action_login" />
     </group>
 
 </menu>

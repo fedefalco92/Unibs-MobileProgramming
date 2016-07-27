@@ -64,7 +64,7 @@ public class EditFullNameActivity extends AppCompatActivity {
 
         mProgressView =  findViewById(R.id.save_name_progress_bar);
         mContainer = findViewById(R.id.container);
-        setTitle(getString(R.string.edit_full_name_title));
+        setTitle(getString(R.string.title_activity_edit_full_name));
     }
 
     @Override
@@ -92,9 +92,6 @@ public class EditFullNameActivity extends AppCompatActivity {
         String name = mNewNameEditText.getText().toString();
         if(Validator.isFullNameValid(name) && name.length() < MAX_LENGTH){
             showPasswordDialog();
-            //showProgress(true);
-            //sendEditFullnameRequest();
-            Toast.makeText(EditFullNameActivity.this, "DIALOG RICHIESTA PASSWORD", Toast.LENGTH_SHORT).show();
         } else {
             mNewNameEditText.setError(getString(R.string.error_invalid_fullname));
             mNewNameEditText.requestFocus();
@@ -111,13 +108,13 @@ public class EditFullNameActivity extends AppCompatActivity {
         final EditText password = (EditText) promptView.findViewById(R.id.password);
         // setup a dialog window
         builder.setCancelable(false)
-                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         showProgress(true);
                         sendEditFullnameRequest(password.getText().toString());
                     }
                 })
-                .setNegativeButton(R.string.cancel,
+                .setNegativeButton(R.string.action_cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
@@ -165,7 +162,7 @@ public class EditFullNameActivity extends AppCompatActivity {
 
     private void sendEditFullnameRequest(final String password) {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -195,7 +192,7 @@ public class EditFullNameActivity extends AppCompatActivity {
                             Toast.makeText(EditFullNameActivity.this, getString(R.string.error_incorrect_password), Toast.LENGTH_SHORT).show();
                         }else{
                             showProgress(false);
-                            Toast.makeText(EditFullNameActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EditFullNameActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
                         }
                     } else if(status.equalsIgnoreCase("success")){
                         JSONObject userObj = obj.getJSONObject("data");
@@ -205,7 +202,7 @@ public class EditFullNameActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     showProgress(false);
-                    Toast.makeText(EditFullNameActivity.this, getString(R.string.server_internal_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditFullNameActivity.this, getString(R.string.error_server_internal_error), Toast.LENGTH_SHORT).show();
                 }
 
                 if(um!=null){
@@ -222,7 +219,7 @@ public class EditFullNameActivity extends AppCompatActivity {
                     finish();
                 } else if(um == null && status.equalsIgnoreCase("success")){
                     showProgress(false);
-                    Toast.makeText(EditFullNameActivity.this, getString(R.string.app_internal_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditFullNameActivity.this, getString(R.string.error_app_internal), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -230,7 +227,7 @@ public class EditFullNameActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 showProgress(false);
-                Toast.makeText(EditFullNameActivity.this, getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditFullNameActivity.this, getString(R.string.error_server_connection), Toast.LENGTH_SHORT).show();
             }
         });
         MyApplication.getInstance().addToRequestQueue(req);

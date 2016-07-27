@@ -146,7 +146,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        setTitle(getString(R.string.add_payment_activity_title));
+        setTitle(getString(R.string.title_activity_add_payment));
 
         EDIT_MODE = false;
         mToEditPayment = getIntent().getParcelableExtra(PaymentsFragment.PASSING_PAYMENT_TAG);
@@ -343,7 +343,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
             sendPostRequest();
         } else {
             if(!nomeOk){
-                mPaymentNameEditText.setError(getString(R.string.error_invalid_cost_name));
+                mPaymentNameEditText.setError(getString(R.string.error_invalid_payment_name));
                 mPaymentNameEditText.requestFocus();
             }
             if(!amountOk){
@@ -368,13 +368,13 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
     public void showDatePicker(View v){
         DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
+        newFragment.show(getSupportFragmentManager(), getString(R.string.action_date_picker));
         //mPaymentDateEditText.setClickable(false);
     }
 
     public void showTimePicker(View v){
         DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
+        newFragment.show(getSupportFragmentManager(), getString(R.string.action_time_picker));
         //mPaymentDateEditText.setClickable(false);
     }
 
@@ -387,7 +387,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
         amount.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(getMaxDecimalDigits())});
         ProgressBar seekBar = (ProgressBar) view.findViewById(R.id.payment_slider_item_slider);
 
-        fullName.setText(sa.getFullName() + ((mUser.getId() == sa.getUserId())?" (you) ":""));
+        fullName.setText(sa.getFullName() + ((mUser.getId() == sa.getUserId())?" (" + getString(R.string.you) + ") ":""));
         email.setText(sa.getEmail());
         amount.setText(sa.getAmountString());
         view.setTag(sa.getUserId());
@@ -449,7 +449,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
     private void sendPostRequest() {
         Log.d(TAG_LOG,"sendPostRequest()");
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -586,14 +586,14 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                 }
 
                 if(success){
-                    Toast.makeText(AddEditPaymentActivity.this, EDIT_MODE? R.string.edit_payment_success: R.string.add_payment_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddEditPaymentActivity.this, EDIT_MODE? R.string.success_edit_payment : R.string.success_add_payment, Toast.LENGTH_SHORT).show();
                     Intent toGroupDetails = new Intent(MyApplication.getAppContext(),GroupDetailsActivity.class);
                     toGroupDetails.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     toGroupDetails.putExtra(GroupListFragment.PASSING_GROUP_TAG,mGroup);
                     startActivity(toGroupDetails);
                 } else {
                     showProgress(false);
-                    Toast.makeText(AddEditPaymentActivity.this, R.string.server_internal_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddEditPaymentActivity.this, R.string.error_server_internal_error, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -609,7 +609,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                     mToolbar.getMenu().findItem(R.id.edit_payment_save_item).setVisible(true);
                 }
                 //Toast.makeText(AddEditPaymentActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
-                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
+                Messages.showSnackbar(mViewContainer,R.string.error_server_connection);
             }
         };
     }
@@ -723,7 +723,6 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
 
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG_LOG, "NO PERMISSIONS");
-                // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
                 //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -750,9 +749,7 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                             .build(this);
             startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
         } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle the error.
         } catch (GooglePlayServicesNotAvailableException e) {
-            // TODO: Handle the error.
         }
     }
 
@@ -786,7 +783,6 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                 Log.i(TAG_LOG, "Place: " + mPlace.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
-                // TODO: Handle the error.
                 Log.i(TAG_LOG, status.getStatusMessage());
 
             } else if (resultCode == RESULT_CANCELED) {

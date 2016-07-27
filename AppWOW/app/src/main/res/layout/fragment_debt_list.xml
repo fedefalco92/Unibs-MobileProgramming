@@ -26,6 +26,6 @@
         android:layout_height="fill_parent"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearance"
-        android:text="@string/transaction_fragment_empty_message"
+        android:text="@string/message_debt_empty"
         android:visibility="gone"/>
 </FrameLayout>

@@ -77,7 +77,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
         mLocalUser = LocalUser.load(MyApplication.getAppContext());
 
         setContentView(R.layout.activity_add_group_members);
-        setTitle(getString(R.string.add_group_members_activity_title));
+        setTitle(getString(R.string.title_activity_add_group_members));
         mViewContainer = findViewById(R.id.container);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -166,7 +166,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
 
     public void onAddMemberButtonClick(View v){
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     //showAddMemberProgress(true);
@@ -189,7 +189,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
     private void sendPostRequest() {
 
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(mViewContainer,R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -221,7 +221,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                                 e.printStackTrace();
                             }
                             //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
-                            Messages.showSnackbar(mViewContainer,R.string.add_group_success);
+                            Messages.showSnackbar(mViewContainer,R.string.success_add_group);
                             Intent navigationActivity = new Intent(AddGroupMembersActivity.this, NavigationActivity.class);
                             navigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(navigationActivity);
@@ -230,7 +230,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                             showProgress(false);
                             Log.d(TAG_LOG, "EMPTY RESPONSE ################################################");
                             //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_error, Toast.LENGTH_SHORT).show();
-                            Messages.showSnackbar(mViewContainer,R.string.add_group_error);
+                            Messages.showSnackbar(mViewContainer,R.string.error_add_group);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -239,7 +239,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                 showProgress(false);
                 Log.e(TAG_LOG,"VOLLEY ERROR " + error.getMessage());
                 //Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
-                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
+                Messages.showSnackbar(mViewContainer,R.string.error_server_connection);
             }
         }) {
             @Override
@@ -276,7 +276,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
             public void onResponse(String response) {
                 if (!response.isEmpty()) {
                     //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_success, Toast.LENGTH_SHORT).show();
-                    Messages.showSnackbar(mViewContainer,R.string.add_group_success);
+                    Messages.showSnackbar(mViewContainer,R.string.success_add_group);
 
                     Intent navigationActivity = new Intent(AddGroupMembersActivity.this, NavigationActivity.class);
                     navigationActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -284,7 +284,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                 } else {
                     showProgress(false);
                     Log.d(TAG_LOG, "EMPTY RESPONSE ################################################");
-                    Messages.showSnackbar(mViewContainer,R.string.add_group_error);
+                    Messages.showSnackbar(mViewContainer,R.string.error_add_group);
                     //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_error, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -298,7 +298,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                 showProgress(false);
                 Log.e(TAG_LOG,"VOLLEY ERROR " + error.getMessage());
                 //Toast.makeText(AddGroupMembersActivity.this, R.string.server_connection_error, Toast.LENGTH_SHORT).show();
-                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
+                Messages.showSnackbar(mViewContainer,R.string.error_server_connection);
             }
         };
     }
@@ -324,7 +324,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                         //boolean userAlreadyExists = !mGroup.addUser(retrievedUser);
                         if(userAlreadyExists(retrievedUser)){
                             //Toast.makeText(AddGroupMembersActivity.this, R.string.add_group_members_user_already_added, Toast.LENGTH_SHORT).show();
-                            Messages.showSnackbar(mViewContainer,R.string.add_group_members_user_already_added);
+                            Messages.showSnackbar(mViewContainer,R.string.error_user_already_added);
                         } else {
                             //((GroupMembersAdapter)mMembersListView.getAdapter()).add(retrievedUser);
                             mAdapter.add(retrievedUser);
@@ -347,7 +347,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                 } else{
                     //Toast.makeText(AddGroupMembersActivity.this, "LocalUser not found", Toast.LENGTH_SHORT).show();
                     mEmailTextView.requestFocus();
-                    mEmailTextView.setError(getString(R.string.add_group_members_user_not_found));
+                    mEmailTextView.setError(getString(R.string.error_user_not_found));
                 }
             }
         };
@@ -401,7 +401,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                 showAddMemberProgress(false);
                 //Log.e("Error",error.getMessage());
                 //Toast.makeText(AddGroupMembersActivity.this, "Unable to process the request, try again!", Toast.LENGTH_SHORT).show();
-                Messages.showSnackbar(mViewContainer,R.string.server_connection_error);
+                Messages.showSnackbar(mViewContainer,R.string.error_server_connection);
             }
         };
     }
@@ -416,16 +416,16 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
         final int pos = position;
         v.setSelected(true);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.add_group_members_member_delete_title));
-        builder.setMessage(String.format(getString(R.string.add_group_members_member_delete_message), selectedItem.getFullName()));
-        builder.setPositiveButton(getString(R.string.remove), new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.message_add_group_members_member_delete_title));
+        builder.setMessage(String.format(getString(R.string.message_add_group_members_member_delete), selectedItem.getFullName()));
+        builder.setPositiveButton(getString(R.string.action_remove), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 mAdapter.remove(pos);
                 v.setSelected(false);
             }
         });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();

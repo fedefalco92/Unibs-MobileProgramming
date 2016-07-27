@@ -1,22 +1,18 @@
 package it.unibs.appwow.fragments;
 
 import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,7 +40,6 @@ import it.unibs.appwow.GroupDetailsActivity;
 import it.unibs.appwow.MyApplication;
 import it.unibs.appwow.R;
 import it.unibs.appwow.database.DebtDAO;
-import it.unibs.appwow.database.PaymentDAO;
 import it.unibs.appwow.models.Amount;
 import it.unibs.appwow.models.Debt;
 import it.unibs.appwow.models.Payment;
@@ -275,7 +270,7 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
 
     private void showProgressDialog(Debt selectedItem) {
         ProgressDialog progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle(getString(R.string.debt_settling));
+        progressDialog.setTitle(getString(R.string.message_debt_settling));
         progressDialog.setCancelable(false);
         progressDialog.show();
         sendSettleRequest(selectedItem, progressDialog);
@@ -283,7 +278,7 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
 
     private void sendSettleRequest(final Debt selectedItem, final ProgressDialog dialog) {
         if(!WebServiceRequest.checkNetwork()){
-            Messages.showSnackbarWithAction(getView(),R.string.err_no_connection,R.string.retry,new View.OnClickListener(){
+            Messages.showSnackbarWithAction(getView(),R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgressDialog(selectedItem);
@@ -333,10 +328,10 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
         String msg = "";
         switch (errorType){
             case WebServiceUri.SERVER_ERROR:
-                msg = String.format(getResources().getString(R.string.debt_settle_unsuccess_server_error), selectedItem.getFullNameFrom());
+                msg = String.format(getResources().getString(R.string.error_debt_settle_server), selectedItem.getFullNameFrom());
                 break;
             case WebServiceUri.NETWORK_ERROR:
-                msg = String.format(getResources().getString(R.string.debt_settle_unsuccess_network_error), selectedItem.getFullNameFrom());
+                msg = String.format(getResources().getString(R.string.error_debt_settle_network_error), selectedItem.getFullNameFrom());
         }
         final Snackbar snackbar = Snackbar.make(getView(), msg , Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.retry, new View.OnClickListener(){
@@ -366,12 +361,12 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
             view.setSelected(true);
             Resources res = getResources();
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(res.getString(R.string.debt_settle_title));
+            builder.setTitle(res.getString(R.string.message_debt_settle_title));
             String msg;
             if(mLocalUser.getId() == selectedItem.getIdFrom()){
-                msg = String.format(res.getString(R.string.debt_settle_message_debtor), selectedItem.getFullNameTo(), Amount.getAmountStringCurrency(selectedItem.getAmount(),"EUR"));
+                msg = String.format(res.getString(R.string.message_debt_settle_debtor), selectedItem.getFullNameTo(), Amount.getAmountStringCurrency(selectedItem.getAmount(),"EUR"));
             } else{
-                msg = String.format(res.getString(R.string.debt_settle_message_creditor), selectedItem.getFullNameFrom(), Amount.getAmountStringCurrency(selectedItem.getAmount(),"EUR"));
+                msg = String.format(res.getString(R.string.message_debt_settle_creditor), selectedItem.getFullNameFrom(), Amount.getAmountStringCurrency(selectedItem.getAmount(),"EUR"));
             }
 
 
@@ -393,7 +388,7 @@ public class DebtsFragment extends Fragment implements DebtsAdapter.OnItemClickL
             });
 
             if(mLocalUser.getId() == selectedItem.getIdFrom()){
-                builder.setNeutralButton(R.string.edit, new DialogInterface.OnClickListener() {
+                builder.setNeutralButton(R.string.action_edit, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Intent

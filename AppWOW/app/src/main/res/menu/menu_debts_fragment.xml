@@ -8,5 +8,5 @@
         app:showAsAction="always"
         android:checkable="true"
         android:checked="true"
-        android:title="@string/hide_show_other_debts_hint"/>
+        android:title="@string/action_hide_show_other_debts_hint"/>
 </menu>

@@ -1,18 +1,15 @@
 package it.unibs.appwow.database;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import it.unibs.appwow.database.AppDB.*;
-import it.unibs.appwow.models.Payment;
-import it.unibs.appwow.models.parc.GroupModel;
 
 /**
- * Created by Massi on 12/05/2016.
+ * This class extends an SQLiteOpenHelper and it provides statements to create db.
  */
-public class AppSQLiteHelper extends SQLiteOpenHelper {
+class AppSQLiteHelper extends SQLiteOpenHelper {
 
     private static final String TAG_LOG = AppSQLiteHelper.class.getSimpleName();
 
