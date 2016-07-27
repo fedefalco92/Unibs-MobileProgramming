@@ -934,9 +934,17 @@ public class AddEditPaymentActivity extends AppCompatActivity implements View.On
                     mLockedAmount.add(sa);
                     sa.getAmountView().setTextColor(ContextCompat.getColor(getBaseContext(), COLOR_LOCKED));
                     //cambio i valori di tutti gli unlocked
+                    int others = mUnlockedAmount.size();
+                    double each = Math.floor(((residualAmount - partialAmount) / others)*100)/100;
+                    double delta = (residualAmount - partialAmount) - each*others;
+                    Log.d(TAG_LOG, "DELTA: " + delta);
                     for (SliderAmount sa_local : mUnlockedAmount) {
-                        double each = (residualAmount - partialAmount) / mUnlockedAmount.size();
-                        sa_local.setAmount(each);
+                        double ddelta = 0;
+                        if(delta>0){
+                            ddelta = delta;
+                            delta = 0;
+                        }
+                        sa_local.setAmount(each + ddelta);
                         sa_local.setAmountText(sa_local.getAmountString());
                         sa_local.setSeekBarProgress(sa_local.getAmount(), mPaymentAmount);
                     }
