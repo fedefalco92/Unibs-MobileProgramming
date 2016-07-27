@@ -139,7 +139,6 @@ public class GroupInfoActivity extends AppCompatActivity {
 
 
         mMembersNumberTextView = (TextView) findViewById(R.id.group_info_members_number);
-        mMembersNumberTextView.setText(String.format(getString(R.string.group_info_members_number), mMembers.size()));
 
         mMembersListView = (LinearLayout) findViewById(R.id.group_info_lista_partecipanti);
         loadMembersList();
@@ -174,13 +173,22 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     private void loadMembersList(){
+        mMembersNumberTextView.setText(String.format(getString(R.string.group_info_members_number), mMembers.size()));
         mMembersListView.removeAllViews();
         for (Amount a : mMembers) {
             View v = inflateAmount(a);
             int idAdmin = mGroup.getIdAdmin();
-            if (mLocalUser.getId() == idAdmin) {
-                if (a.getUserId() != idAdmin) {
-                    v.setOnLongClickListener(onMemberLongClickListener(a));
+            if (mMembers.size() > 2) {
+                if (mLocalUser.getId() == idAdmin) {
+                    if (a.getUserId() != idAdmin) {
+                        v.setOnLongClickListener(onMemberLongClickListener(a));
+                    }
+                }
+            } else {
+                if (mLocalUser.getId() == idAdmin) {
+                    if (a.getUserId() != idAdmin) {
+                        v.setOnLongClickListener(onMemberErrorLongClickListener(a));
+                    }
                 }
             }
         }
@@ -242,6 +250,33 @@ public class GroupInfoActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int item) {
                         v.setSelected(false);
                         dialog.dismiss();
+                    }
+                });
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        v.setSelected(false);
+                    }
+                });
+                builder.show();
+                return true;
+            }
+        };
+    }
+
+    private View.OnLongClickListener onMemberErrorLongClickListener(final Amount a) {
+        return new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(final View v) {
+                v.setSelected(true);
+                AlertDialog.Builder builder = new AlertDialog.Builder(GroupInfoActivity.this);
+                builder.setTitle(getString(R.string.group_info_dialog_delete_member_error_title));
+                builder.setMessage(String.format(getString(R.string.group_info_dialog_delete_member_error_message), a.getFullName(), a.getEmail()));
+                //builder.setMessage(String.format(getString(R.string.payment_delete_message), selectedItem.getName()));
+                builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+
                     }
                 });
                 builder.setOnDismissListener(new DialogInterface.OnDismissListener() {

@@ -167,4 +167,6 @@
     <string name="statistics_you_have_received">Hai ricevuto</string>
     <string name="statistics_you_have_given">Hai dato</string>
     <string name="statistics_you_have_spent">Hai speso</string>
+    <string name="group_info_dialog_delete_member_error_message">Non è possibile rimuovere  %1$s (%2$s) perché il gruppo deve contenere almeno due persone</string>
+    <string name="group_info_dialog_delete_member_error_title">Impossibile rimuovere membro</string>
 </resources>

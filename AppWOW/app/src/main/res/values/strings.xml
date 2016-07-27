@@ -314,5 +314,7 @@
     <string name="statistics_you_have_spent">You have spent</string>
     <string name="share_image">Share Image</string>
     <string name="choose_crop_app">Choose Crop App</string>
+    <string name="group_info_dialog_delete_member_error_title">Cannot remove member</string>
+    <string name="group_info_dialog_delete_member_error_message">You cannot remove  %1$s (%2$s) from this group because it must consist of two people at least</string>
 
 </resources>

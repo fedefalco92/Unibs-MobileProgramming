@@ -110,7 +110,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         mNoPhoto = false;
         mBitmap = FileUtils.readGroupImage(mGroup.getId(), this);
         if (mBitmap==null) {
-            showProgress(true);
+            //showProgress(true);
             mNoPhoto = true;
             selectImage();
         } else {
@@ -230,7 +230,19 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) return;
+        if (mNoPhoto) {
+            if(data == null) {
+                finish();
+                return;
+            }
+            if (resultCode != RESULT_OK) {
+                finish();
+                return;
+            }
+        }
+        if (resultCode != RESULT_OK) {
+            return;
+        }
         switch (requestCode) {
             case PICK_FROM_CAMERA_INTENT:
                 doCrop();

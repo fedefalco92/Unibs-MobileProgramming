@@ -289,6 +289,7 @@ public class AddGroupActivity extends AppCompatActivity {
         cropIntent.setType("image/*");
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(cropIntent, 0);
         int size = list.size();
+        Log.d(TAG_LOG, "CROP OPTIONS SIZE: " + size);
         if (size == 0) {
             Toast.makeText(this, "Can not find image crop app", Toast.LENGTH_SHORT).show();
             return;
@@ -304,6 +305,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 Intent i = new Intent(cropIntent);
                 ResolveInfo res = list.get(0);
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+
                 startActivityForResult(i, CROP_FROM_CAMERA);
             } else {
 
@@ -339,12 +341,12 @@ public class AddGroupActivity extends AppCompatActivity {
                     Log.d(TAG_LOG,"no resolved activity for cropIntent");
                 } */
 
-                /* OLD CODE WITH CUSTOM CHOOSER
+                /*OLD CODE WITH CUSTOM CHOOSER
                 for (ResolveInfo res : list) {
                     final CropOption co = new CropOption();
                     co.title = getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
                     co.icon = getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
-                    co.appIntent = new Intent(intent);
+                    co.appIntent = new Intent(cropIntent);
                     co.appIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
                     cropOptions.add(co);
                 }
