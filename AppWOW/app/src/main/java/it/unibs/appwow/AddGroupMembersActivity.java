@@ -18,6 +18,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +44,7 @@ import it.unibs.appwow.services.VolleyMultipartHelper;
 import it.unibs.appwow.services.VolleyMultipartRequest;
 import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.IdEncodingUtils;
+import it.unibs.appwow.utils.Validator;
 import it.unibs.appwow.utils.graphicTools.DividerItemDecoration;
 import it.unibs.appwow.models.parc.GroupModel;
 import it.unibs.appwow.services.WebServiceRequest;
@@ -166,6 +168,23 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
     }
 
     public void onAddMemberButtonClick(View v){
+        if(checkEmail()){
+            showAddMemberProgress(true);
+            sendCheckUserRequest();
+        }
+    }
+
+    private boolean checkEmail() {
+        String email = mEmailTextView.getText().toString();
+        if(TextUtils.isEmpty(email) || !Validator.isEmailValid(email)) {
+            mEmailTextView.setError(getString(R.string.error_invalid_email));
+            mEmailTextView.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
+    private void sendCheckUserRequest(){
         if(!WebServiceRequest.checkNetwork()){
             Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
@@ -183,7 +202,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
         Map<String, String> requestParams = WebServiceRequest.createParametersMap(keys, values);
         StringRequest userRequest = WebServiceRequest.
                 stringRequest(Request.Method.POST, WebServiceUri.CHECK_USER_URI.toString(), requestParams, responseListenerUser(), responseErrorListenerUser());
-        showAddMemberProgress(true);
+
         MyApplication.getInstance().addToRequestQueue(userRequest);
     }
 
@@ -313,6 +332,7 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
         return new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                showAddMemberProgress(false);
                 if(!response.isEmpty()){
                     try {
                         JSONObject jsonObject = new JSONObject(response);
@@ -334,12 +354,8 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                         } else {
                             //((GroupMembersAdapter)mMembersListView.getAdapter()).add(retrievedUser);
                             mAdapter.add(retrievedUser);
-                            showAddMemberProgress(false);
                             //mAdapter.notifyDataSetChanged();
                         }
-
-
-
                         mEmailTextView.setText("");
                         //AGGIORNO IL MENU
                         //invalidateOptionsMenu();

@@ -83,8 +83,8 @@
     <string name="message_group_edit_dialog_title">Confermi i cambiamenti?</string>
     <string name="message_group_edit_saving_changes">Salvataggio in corso...</string>
     <string name="error_server_internal_error">Errore server. Riprova.</string>
-    <string name="error_invalid_email">L\'indirizzo e-mail non è valido</string>
-    <string name="error_invalid_fullname">Il nome non è valido</string>
+    <string name="error_invalid_email">Inserisci un indirizzo e-mail valido</string>
+    <string name="error_invalid_fullname">Inserisci un nome valido</string>
     <string name="error_invalid_password">La password è troppo corta</string>
     <string name="error_password_matching">Le password non corrispondono</string>
     <string name="group_details">Dettagli </string>

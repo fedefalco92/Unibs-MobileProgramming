@@ -94,7 +94,7 @@
 
     <!-- ////////////////////////////////////// -->
     <!-- errors -->
-    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_email">Insert a valid e-mail address</string>
     <string name="error_email_not_available">This e-mail is already associated with an account</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>

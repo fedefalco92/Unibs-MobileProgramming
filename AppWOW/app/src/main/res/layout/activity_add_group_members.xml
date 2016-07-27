@@ -155,7 +155,7 @@
                 android:background="@color/colorPrimary"
                 android:textColor="@android:color/white"
                 android:layout_margin="@dimen/activity_horizontal_margin"
-                android:text="@string/action_go_ahead"
+                android:text="@string/action_create_group"
                 android:onClick="onAddGroupButtonClick"/>
 
         </LinearLayout>
