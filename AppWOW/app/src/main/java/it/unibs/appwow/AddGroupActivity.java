@@ -2,6 +2,7 @@ package it.unibs.appwow;
 
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,6 +39,7 @@ import it.unibs.appwow.models.parc.LocalUser;
 import it.unibs.appwow.utils.CropOption;
 import it.unibs.appwow.utils.FileUtils;
 import it.unibs.appwow.utils.Validator;
+import it.unibs.appwow.utils.graphicTools.Messages;
 import it.unibs.appwow.utils.graphicTools.PermissionUtils;
 import it.unibs.appwow.utils.graphicTools.SquareImageView;
 
@@ -245,8 +247,33 @@ public class AddGroupActivity extends AppCompatActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mPhotoUri = Uri.parse("file:" + image.getAbsolutePath());
+        //mPhotoUri = Uri.parse("file:" + image.getAbsolutePath());
+        //mPhotoUri = Uri.fromFile(image);
+        mPhotoUri = getImageContentUri(this,image);
         return image;
+    }
+
+    public static Uri getImageContentUri(Context context, File imageFile) {
+        String filePath = imageFile.getAbsolutePath();
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[] { MediaStore.Images.Media._ID },
+                MediaStore.Images.Media.DATA + "=? ",
+                new String[] { filePath }, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            cursor.close();
+            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
+        } else {
+            if (imageFile.exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, filePath);
+                return context.getContentResolver().insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
+            }
+        }
     }
 
     private void galleryIntent() {
@@ -401,13 +428,14 @@ public class AddGroupActivity extends AppCompatActivity {
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,allIntents.toArray(new Parcelable[allIntents.size()]));
                 startActivityForResult(chooserIntent, CROP_INTENT); */
 
-                // It should work but it does not :(
+                //
                 Intent chooserIntent = Intent.createChooser(cropIntent,getString(R.string.action_choose_crop_app));
                 Log.d(TAG_LOG,chooserIntent.toString());
-                if(cropIntent.resolveActivity(getPackageManager()) != null){
+                if(cropIntent.resolveActivity(AddGroupActivity.this.getPackageManager()) != null){
                     startActivityForResult(chooserIntent, CROP_INTENT);
                 } else {
                     Log.d(TAG_LOG,"no resolved activity for cropIntent");
+                    Toast.makeText(AddGroupActivity.this,getString(R.string.error_crop),Toast.LENGTH_SHORT).show();
                 }
 
                 /*OLD CODE WITH CUSTOM CHOOSER

@@ -363,6 +363,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                     startActivityForResult(chooserIntent, CROP_INTENT);
                 } else {
                     Log.d(TAG_LOG,"no resolved activity for cropIntent");
+                    Toast.makeText(ImageViewFullscreenActivity.this,getString(R.string.error_crop),Toast.LENGTH_SHORT).show();
                 }
             }
         }

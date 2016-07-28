@@ -207,4 +207,5 @@
     <string name="title_activity_navigation">Navigazione</string>
     <string name="title_activity_registration_activity">Registrazione</string>
     <string name="visited_places">Luoghi visitati</string>
+    <string name="error_crop">Non è possibile ritagliare questa immagine</string>
 </resources>

@@ -123,6 +123,7 @@
     <string name="error_add_single_group_member_user_already_exists">User already belongs to the group</string>
     <string name="error_app_internal">App internal error</string>
     <string name="error_google_maps">Connection to google maps failed</string>
+    <string name="error_crop">Cannot crop this image</string>
 
     <!-- success -->
     <string name="success_add_group">Group created successfully</string>
@@ -219,6 +220,7 @@
     <string name="add_payment_transfer_checkbox_text">This is a transfer between two people</string>
     <string name="visited_places">Visited places</string>
     <string name="last_visited_places">Last visited places</string>
+
 
     <!-- ////////////////////////////////////// -->
     <!-- Plurals -->
