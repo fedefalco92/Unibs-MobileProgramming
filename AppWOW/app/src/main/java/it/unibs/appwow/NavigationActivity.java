@@ -276,6 +276,25 @@ public class NavigationActivity extends AppCompatActivity
             LocalUser currentUser = LocalUser.load(MyApplication.getAppContext());
             currentUser.logout(MyApplication.getAppContext());
 
+            //deleting token - invalidate...must be executed in a separated thread!
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // Invalidate token
+                    try {
+                        FirebaseInstanceId.getInstance().deleteInstanceId();
+                        Log.d(TAG_LOG,"Token deleted");
+                        //force reload of a new token...it will invoke the onTokenRefresh() method
+                        FirebaseInstanceId.getInstance().getToken();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            ).start();
+
             // Deleting db
             deleteDatabase(AppDB.DATABASE_NAME);
 
@@ -283,13 +302,7 @@ public class NavigationActivity extends AppCompatActivity
             FileUtils.clearPhotoDir(this);
             FileUtils.clearCache(this);
 
-            // Invalidate token
-            try {
-                Log.d(TAG_LOG,"Token deleted");
-                FirebaseInstanceId.getInstance().deleteInstanceId();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
 
             Intent login = new Intent(NavigationActivity.this, LoginActivity.class);
             login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

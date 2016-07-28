@@ -6,21 +6,25 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +41,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -211,17 +217,38 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     }
 
     private void cameraIntent() {
-        /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+       /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, PICK_FROM_CAMERA_INTENT);*/
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mPhotoUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".png"));
+        //mPhotoUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".png"));
+        try {
+            mFileName = createImageFile().getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mPhotoUri);
         try {
-            intent.putExtra("return-data", true);
+            //intent.putExtra("return-data", true);
             startActivityForResult(intent, PICK_FROM_CAMERA_INTENT);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PNG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".png",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mPhotoUri = Uri.parse("file:" + image.getAbsolutePath());
+        return image;
     }
 
     private void galleryIntent() {
@@ -248,65 +275,60 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             }
         }
         if (resultCode != RESULT_OK) {
-            int deleted = getContentResolver().delete(mPhotoUri, null, null); //MediaStore.Images.Media.TITLE + "=?", new String[]{ mPhotoUri.getLastPathSegment()} );
-            Log.i(TAG_LOG, "total deleted rows:" + deleted);
             return;
         }
         switch (requestCode) {
             case PICK_FROM_CAMERA_INTENT:
                 try {
                     Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
-                    //pulisco un eventuale file temporaneo precedente
-                    if(!mFileName.isEmpty()){
-                        FileUtils.deleteTemporaryFile(mFileName, this);
-                    }
-                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
                     Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
                     showProgress(true);
-                    sendPostRequest(photo);
-
+                    sendPostRequest();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case SELECT_PICTURE_INTENT:
                 mPhotoUri = data.getData();
-                Log.d(TAG_LOG, "OnActivityResult (SELECT_PICTURE_INTENT): PHOTOURI=" + mPhotoUri);
-                //doCrop();
-                try {
-                    Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
-                    //pulisco un eventuale file temporaneo precedente
-                    if(!mFileName.isEmpty()){
-                        FileUtils.deleteTemporaryFile(mFileName, this);
-                    }
-                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
-                    Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                mFileName = getRealPathFromURI(this, mPhotoUri);
+                Log.d(TAG_LOG, "PHOTOURI: " + mPhotoUri);
+                Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                //try {
+                    //Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
                     showProgress(true);
-                    sendPostRequest(photo);
-
+                    sendPostRequest();
+/*
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
                 break;
             case CROP_INTENT:
                 Bundle extras = data.getExtras();
                 if (extras != null) {
                     Bitmap photo = extras.getParcelable("data");
-                    //pulisco un eventuale file temporaneo precedente
-                    if(!mFileName.isEmpty()){
-                        FileUtils.deleteTemporaryFile(mFileName, this);
-                    }
                     mFileName = FileUtils.writeTemporaryBitmap(photo, this);
                     Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
                     showProgress(true);
-                    sendPostRequest(photo);
+                    sendPostRequest();
 
                 }
                 break;
-
         }
-        int deleted = getContentResolver().delete(mPhotoUri, null, null); //MediaStore.Images.Media.TITLE + "=?", new String[]{ mPhotoUri.getLastPathSegment()} );
-        Log.i(TAG_LOG, "total deleted rows:" + deleted);
+    }
+
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     private void doCrop() {
@@ -379,14 +401,14 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         }
     }
 
-    private void sendPostRequest(final Bitmap photo) {
+    private void sendPostRequest() {
 
         if(!WebServiceRequest.checkNetwork()){
             Messages.showSnackbarWithAction(mViewContainer,R.string.error_no_connection,R.string.retry,new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
-                    sendPostRequest(photo);
+                    sendPostRequest();
                 }
             });
             showProgress(false);
@@ -408,23 +430,24 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             if (g != null) {
-                                showProgress(false);
-                                //DELETING TEMPORARY FILE
-                                FileUtils.deleteTemporaryFile(mFileName, ImageViewFullscreenActivity.this);
-                                Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
-                                boolean success = FileUtils.writeGroupImage(mGroup.getId(), resizedPhoto, ImageViewFullscreenActivity.this);
-                                if(success){
-                                    mBitmap =resizedPhoto;
+                                Bitmap photo = FileUtils.readBitmapFromPath(mFileName, ImageViewFullscreenActivity.this);
+                                if (photo != null) {
+                                    Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
+                                    boolean success = FileUtils.writeGroupImage(mGroup.getId(), resizedPhoto, ImageViewFullscreenActivity.this);
+                                    if(success){
+                                        mBitmap =resizedPhoto;
+                                    }
+                                    Log.d(TAG_LOG, "NEW PHOTO WRITTEN :" + success);
+                                    mPhotoView.setImageBitmap(resizedPhoto);
+                                    mPhotoUpdated = true;
+                                } else {
+                                    Log.d(TAG_LOG, "photo null!!!!!!! filename=" + mFileName);
                                 }
-                                Log.d(TAG_LOG, "NEW PHOTO WRITTEN :" + success);
-                                mPhotoView.setImageBitmap(photo);
-                                mPhotoUpdated = true;
-
                             } else {
-                                showProgress(false);
                                 Toast.makeText(ImageViewFullscreenActivity.this, R.string.error_server_internal_error, Toast.LENGTH_SHORT).show();
                             }
                         }
+                        showProgress(false);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -436,12 +459,19 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                if (!mFileName.isEmpty()) {
+                if(!TextUtils.isEmpty(mFileName)){
                     // file name could found file base or direct access from real path
-                    // for now just get bitmap data from ImageView
-                    Bitmap photo = FileUtils.readTemporaryBitmap(mFileName, ImageViewFullscreenActivity.this);
-                    Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
-                    params.put("photo", new DataPart(mFileName, VolleyMultipartHelper.getFileDataFromBitmap(resizedPhoto), "image/png"));
+                    //Bitmap photo = FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext());
+                    Log.d(TAG_LOG, "sent file name: " +
+                            mFileName);
+                    Bitmap photo = FileUtils.readBitmapFromPath(mFileName, ImageViewFullscreenActivity.this);
+                    if (photo != null) {
+                        Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
+                        params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(resizedPhoto), "image/png"));
+                    } else{
+                        Log.d(TAG_LOG, "OPS....NULL PHOTO");
+                    }
+
                 }
                 return params;
             }

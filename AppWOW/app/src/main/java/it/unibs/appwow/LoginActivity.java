@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -360,7 +362,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
-            mMsgToken = FirebaseInstanceIDService.getToken();
+            mMsgToken = FirebaseInstanceId.getInstance().getToken();
         }
 
         @Override

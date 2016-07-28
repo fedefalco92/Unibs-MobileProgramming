@@ -228,13 +228,14 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
                         if (!resultResponse.isEmpty()) {
                             try {
                                 GroupModel created = GroupModel.create(new JSONObject(resultResponse));
-                                String fileTempName = mGroup.getPhotoFileName();
-                                Bitmap photo = FileUtils.readTemporaryBitmap(fileTempName, AddGroupMembersActivity.this);
-                                Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
-                                //boolean success = FileUtils.renameImageFile(fileTempName,FileUtils.getGroupImageFileName(created.getId()), getBaseContext());
-                                boolean success = FileUtils.writeGroupImage(created.getId(), resizedPhoto, AddGroupMembersActivity.this);
-                                if(success){
-                                    created.setPhotoFileName(FileUtils.getGroupImageFileName(created.getId()));
+                                String fileTempPath = mGroup.getPhotoFileName();
+                                if (!TextUtils.isEmpty(fileTempPath)) {
+                                    Bitmap photo = FileUtils.readBitmapFromPath(fileTempPath, AddGroupMembersActivity.this);
+                                    Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
+                                    boolean success = FileUtils.writeGroupImage(created.getId(), resizedPhoto, AddGroupMembersActivity.this);
+                                    if(success){
+                                        created.setPhotoFileName(FileUtils.getGroupImageFileName(created.getId()));
+                                    }
                                 }
                                 GroupDAO dao = new GroupDAO();
                                 dao.open();
@@ -280,12 +281,17 @@ public class AddGroupMembersActivity extends AppCompatActivity implements GroupM
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
                 String photoFileName = mGroup.getPhotoFileName();
-                if(photoFileName!= null && !photoFileName.isEmpty()){
+                if(!TextUtils.isEmpty(photoFileName)){
                     // file name could found file base or direct access from real path
-                    // for now just get bitmap data from ImageView
-                    Bitmap photo = FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext());
-                    Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
-                    params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(resizedPhoto), "image/png"));
+                    //Bitmap photo = FileUtils.readTemporaryBitmap(mGroup.getPhotoFileName(), getBaseContext());
+                    Bitmap photo = FileUtils.readBitmapFromPath(photoFileName, AddGroupMembersActivity.this);
+                    if (photo != null) {
+                        Bitmap resizedPhoto = FileUtils.resizeBitmap(photo);
+                        params.put("photo", new DataPart(mGroup.getPhotoFileName(), VolleyMultipartHelper.getFileDataFromBitmap(resizedPhoto), "image/png"));
+                    } else{
+                        Log.d(TAG_LOG, "OPS....NULL PHOTO");
+                    }
+
                 }
                 return params;
             }

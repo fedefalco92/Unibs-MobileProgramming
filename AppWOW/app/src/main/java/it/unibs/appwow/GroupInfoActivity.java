@@ -79,6 +79,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     private View mGroupInfoContainerView;
     private View mProgressView;
 
+    private boolean mPhotoUpdated;
 
 
     //UI
@@ -158,6 +159,7 @@ public class GroupInfoActivity extends AppCompatActivity {
             });
         }
 
+        mPhotoUpdated = false;
 
     }
 
@@ -668,6 +670,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     private void openFullScreenImage() {
+        mPhotoUpdated = true;
         Intent openFullScreen = new Intent(GroupInfoActivity.this, ImageViewFullscreenActivity.class);
         openFullScreen.putExtra(GroupListFragment.PASSING_GROUP_TAG, mGroup);
         this.startActivityForResult(openFullScreen, OPEN_IMAGE_INTENT);
@@ -745,13 +748,22 @@ public class GroupInfoActivity extends AppCompatActivity {
                 }
                 break;
             case OPEN_IMAGE_INTENT:
-                boolean photoUpdated = data.getBooleanExtra(ImageViewFullscreenActivity.PHOTO_UPDATED_BOOLEAN_EXTRA, false);
-                Log.d(TAG_LOG, "PHOTO UPDATED: " + photoUpdated);
-                if(photoUpdated){
+                mPhotoUpdated = data.getBooleanExtra(ImageViewFullscreenActivity.PHOTO_UPDATED_BOOLEAN_EXTRA, false);
+                Log.d(TAG_LOG, "PHOTO UPDATED: " + mPhotoUpdated);
+                if(mPhotoUpdated){
                     if(mScrollingDisabled) recreate();
                     else reloadPhoto();
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mPhotoUpdated){
+            if(mScrollingDisabled) recreate();
+            else reloadPhoto();
         }
     }
 }

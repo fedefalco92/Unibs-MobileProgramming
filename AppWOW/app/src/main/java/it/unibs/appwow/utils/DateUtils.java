@@ -63,7 +63,7 @@ public class DateUtils {
     }
 
     public static String formatSimpleDate(int year, int month, int day){
-        return padWithZeros(day) + "/" + padWithZeros(month) + "/" + year;
+        return padWithZeros(day) + "/" + padWithZeros(month +1) + "/" + year;
     }
 
     public static String formatSimpleTime(int hour, int minutes){
@@ -89,7 +89,7 @@ public class DateUtils {
 
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.YEAR,year);
-            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.MONTH, month-1); //MONTH VA DA 0 A 11
             cal.set(Calendar.DAY_OF_MONTH, day);
             cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
             cal.set(Calendar.MINUTE, minOfDay);

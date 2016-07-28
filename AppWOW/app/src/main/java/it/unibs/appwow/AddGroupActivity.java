@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,6 +18,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.test.ServiceTestCase;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +28,9 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import it.unibs.appwow.models.parc.GroupModel;
@@ -111,39 +115,19 @@ public class AddGroupActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) return;
         switch (requestCode) {
             case PICK_FROM_CAMERA_INTENT:
-                try {
-                    Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
-                    //pulisco un eventuale file temporaneo precedente
-                    if(!mFileName.isEmpty()){
-                        FileUtils.deleteTemporaryFile(mFileName, this);
-                    }
-                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
-                    Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
-                    mGroupImage.setImageBitmap(photo);
-                    toggleRemovePhotoButton(true);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                //mFileName = getRealPathFromURI(this, mPhotoUri);
+                Log.d(TAG_LOG, "PHOTOURI: " + mPhotoUri);
+                Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                setPic();
+                toggleRemovePhotoButton(true);
                 break;
             case SELECT_PICTURE_INTENT:
                 mPhotoUri = data.getData();
-                try {
-                    Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mPhotoUri);
-                    //pulisco un eventuale file temporaneo precedente
-                    if(!mFileName.isEmpty()){
-                        FileUtils.deleteTemporaryFile(mFileName, this);
-                    }
-                    mFileName = FileUtils.writeTemporaryBitmap(photo, this);
-                    Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
-                    //Bitmap readBitmap = FileUtils.readBitmap(mFileName, this);
-                    mGroupImage.setImageBitmap(photo);
-                    toggleRemovePhotoButton(true);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                //doCrop();
+                mFileName = getRealPathFromURI(this, mPhotoUri);
+                Log.d(TAG_LOG, "PHOTOURI: " + mPhotoUri);
+                Log.d(TAG_LOG, "FILE NAME RETURNED: " + mFileName);
+                setPic();
+                toggleRemovePhotoButton(true);
                 break;
             case CROP_INTENT:
                 Log.d(TAG_LOG,"mPhotoUri: " + mPhotoUri.getPath());
@@ -165,6 +149,43 @@ public class AddGroupActivity extends AppCompatActivity {
         }
     }
 
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    private void setPic() {
+        // Get the dimensions of the View
+        int targetW = mGroupImage.getWidth();
+        int targetH = mGroupImage.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mFileName, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mFileName, bmOptions);
+        mGroupImage.setImageBitmap(bitmap);
+    }
 
     private void selectImage() {
         final String takePhoto = getString(R.string.message_take_photo);
@@ -197,14 +218,35 @@ public class AddGroupActivity extends AppCompatActivity {
         /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, PICK_FROM_CAMERA_INTENT);*/
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mPhotoUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".png"));
+        //mPhotoUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".png"));
+        try {
+            mFileName = createImageFile().getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mPhotoUri);
         try {
-            intent.putExtra("return-data", true);
+            //intent.putExtra("return-data", true);
             startActivityForResult(intent, PICK_FROM_CAMERA_INTENT);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PNG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".png",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mPhotoUri = Uri.parse("file:" + image.getAbsolutePath());
+        return image;
     }
 
     private void galleryIntent() {

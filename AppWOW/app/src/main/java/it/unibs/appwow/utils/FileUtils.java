@@ -113,7 +113,8 @@ public class FileUtils {
         }
 
         if(destination.exists())
-            return fileName;
+            //return fileName;
+            return destination.getAbsolutePath();
         else return null;
     }
 
@@ -149,6 +150,17 @@ public class FileUtils {
     public static Bitmap readBitmap(String fileName, Context context){
         Bitmap immagine = null;
         File toOpen = new File(context.getDir(FileUtils.GROUP_IMAGES_DIR, context.MODE_PRIVATE), fileName);
+        if(toOpen.exists()){
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            immagine= BitmapFactory.decodeFile(toOpen.getPath(), options);
+        }
+        return immagine;
+    }
+
+    public static Bitmap readBitmapFromPath(String path, Context context){
+        Bitmap immagine = null;
+        File toOpen = new File(path);
         if(toOpen.exists()){
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
